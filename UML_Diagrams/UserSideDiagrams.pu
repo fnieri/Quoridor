@@ -1,0 +1,67 @@
+@startuml UserSideDiagrams
+class Guest {
+    'Fields
+    isLoggedIn : bool
+    userAccount : User
+    'Methods
+        logIn()
+        register()        
+}
+
+class User {
+    'Fields
+        username : string /' (Could also be guest so no username yet) '/
+        profilePicture : img
+        friendsList : vector of strings  /' (Could be empty if no friends. Story of my life :() '/
+        ELO : int
+}
+
+class passwordEncrypter {
+    'Fields
+        passwordToEncrypt : string
+        finalPassword : string
+    'Methods
+        hashingAlgorithm(password) : string
+
+}
+
+
+class passwordStocker{
+    'Fields
+        passwordToStock : string
+        usernameToStock : string
+        passwordFile : string /'(File to store passwords to) '/
+        passwordEncrypter : passwordEncrypter
+    'Methods
+        stockPassword(password)
+        checkPasswordAlreadyExists(password)
+}
+
+class userVerifier {
+    'Fields
+        username : string
+        password : string
+        passwordEncrypter : passwordEncrypter
+    'Methods
+        lookupUsernamePassword(username, password)
+}
+
+class Leaderboard {
+    'Fields
+        topPlayers /' (Glicko rating + W/L ratio or something like that. Glicko probably takes that into account) '/
+    'Methods
+        sortBy()
+        filterBy()
+}
+class Message {
+    'Fields
+        timeSent
+        Sender : User
+        Receiver : User
+        sentMessage : string or image    
+}
+
+class chatBox {
+    usersConnected : vector of usernames strings  
+}
+@enduml

@@ -1,0 +1,73 @@
+@startuml GameDiagrams
+
+enum Color {
+    'Fields
+        Yellow
+        Green
+        Blue
+        Purple
+}
+
+enum wallOrientation {
+    'Fields
+        Vertical
+        Horizontal
+}
+
+enum Direction {
+    'Fields
+        Down
+        Up
+        Left
+        Right
+}
+
+class Player{
+    'Fields
+        Color : Color
+        Position : Point
+    'Methods
+        move()
+    
+}
+class Wall{
+    'Fields
+        Position
+        Orientation : Orientation
+    'Methods
+}
+
+class Cell{
+    'Fields
+        Position : Point
+        Occupied : bool
+        OccupyingPlayer: nullptr if none
+}
+
+class playerBoard {
+    'Fields
+        Cells : Vector of cells   
+} 
+
+class wallBoard {
+    'Fields
+        Corridors : Vectors of corridors
+}
+
+class Board{
+    'Fields
+        playerBoard : playerBoard
+        wallBoard : playerAction
+}
+
+class Action  {
+    'Fields
+        playerAction
+    'Methods
+        isActionValid(Action)  
+        isWallPlacementLegal() : bool /* (inside board and on empty space) */
+        isWallPlacementValid() : bool /* (all players can still get to other side)*/
+
+}
+
+@enduml
