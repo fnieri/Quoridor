@@ -1,6 +1,6 @@
 @startuml GameDiagrams
 
-enum Color {
+enum pawnColors {
     'Fields
         Yellow
         Green
@@ -8,11 +8,16 @@ enum Color {
         Purple
 }
 
+
+/' Class is useless I think
 enum wallOrientation {
     'Fields
         Vertical
         Horizontal
+    
 }
+'/
+
 
 enum Direction {
     'Fields
@@ -52,6 +57,7 @@ class playerBoard {
 class wallBoard {
     'Fields
         Corridors : Vectors of corridors
+        placedWalls : vector of Walls
 }
 
 class Board{
@@ -65,9 +71,21 @@ class Action  {
         playerAction
     'Methods
         isActionValid(Action)  
-        isWallPlacementLegal() : bool /* (inside board and on empty space) */
-        isWallPlacementValid() : bool /* (all players can still get to other side)*/
+        isWallPlacementLegal() : bool /' (inside board and on empty space) '/
+        isWallPlacementValid() : bool /' (all players can still get to other side)'/
 
 }
+
+
+Cell - playerBoard
+playerBoard -u- Board
+wallBoard -d- Board
+wallOrientation -u- Wall
+Wall - wallBoard
+Player -u- Action
+Action - playerBoard
+Action- Wall
+Player -d- "1" pawnColors : > uses
+
 
 @enduml
