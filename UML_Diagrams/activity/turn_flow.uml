@@ -10,15 +10,17 @@ while(Action valid) is (no)
         - is not legal;
             - cell is not accessible;
                 - cell is occupied;
-                - cell in too far;
-            - interspace blocks at least one player;
+                - cell is too far;
+            - wall blocks at least one player;
+            - wall goes through a cell;
+            - wall is longer than two cells wide;
     end note
     note left
         Input format:
         - __move__ (in pawnBoard):
             **m:src>dest**
         - __put__ (in wallBoard):
-            **p:src>dest**
+            **p:from>to**
     end note
     :Get input;
     :Analyze input;
