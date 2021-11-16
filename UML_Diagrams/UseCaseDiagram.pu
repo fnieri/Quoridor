@@ -6,7 +6,7 @@ actor Player
 rectangle QuoridorGame {
 
 
-Player -left- (Sign In)
+Player -left- (Log In)
 Player -- (StartGame)
 Player -- (Manage List Of Friends)
 Player -- (Chat With Friends)
@@ -21,12 +21,12 @@ Player -- (Check ELO Ranking)
 
 (Play) .--> (StartGame) : include
 (GiveUp) .--> (StartGame) : extends
-(Pause/Save Game) .--> (StartGame) : exntends
+(Pause/Save Game) .--> (StartGame) : extends
 (Play) <|-up- (Move)
 (Play) <|-up- (PlaceWall)
 
-(Valide User) .-up-> (Sign In) : include
-(Sign Up) .-up-> (Sign In) : extends
+(Valide User) .-up-> (Log In) : include
+(Register) .-up-> (Log In) : extends
 
 
 }
