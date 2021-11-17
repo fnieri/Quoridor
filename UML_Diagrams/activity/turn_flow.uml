@@ -1,6 +1,6 @@
 @startuml
 
-title "Flow of a turn"
+title "Flow of a turn\n"
 
 start
 while(Action valid) is (no)
