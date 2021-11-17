@@ -17,7 +17,7 @@ end note
 
 while (There is a winner) is (no)
     note left
-        A player has won reached when
+        A player has won when
         he has reached the opposite side
         of the board.
     end note

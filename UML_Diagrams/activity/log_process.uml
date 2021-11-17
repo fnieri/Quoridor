@@ -13,8 +13,8 @@ end note
 if (Has account) then (yes)
     :Fills credentials;
     note left
-        Usually a Username
-        or email with and a
+        Usually a username
+        or email and a
         password.
     end note
 else (no)
