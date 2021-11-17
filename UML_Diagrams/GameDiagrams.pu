@@ -1,5 +1,8 @@
 @startuml GameDiagrams
 
+header Quoridor
+title Game diagrams
+
 enum pawnColors {
     'Fields
         Yellow
@@ -9,15 +12,25 @@ enum pawnColors {
 }
 
 
-/' Class is useless I think
-enum wallOrientation {
+enum Orientation {
     'Fields
         Vertical
         Horizontal
     
 }
-'/
 
+class MainWindow {
+    'Methods
+        handleKeypress(key)
+        display()
+}
+
+note right of MainWindow
+MainWindow contains all 
+visual components, such as 
+the board and the score.
+It also handles keyboardInput.
+endnote
 
 enum Direction {
     'Fields
@@ -32,9 +45,18 @@ class Player{
         Color : Color
         Position : Point
     'Methods
-        move()
+        move(Action)
     
 }
+
+note top of Player
+A player can call 
+move method,
+which will create
+an action and check
+if it is valid.
+endnote
+
 class Wall{
     'Fields
         Position
@@ -66,6 +88,14 @@ class Board{
         wallBoard : playerAction
 }
 
+note top of Board
+Board contains both wall
+and player boards.
+The class must overlap
+the two boards to allow 
+them to be displayed.
+endnote
+
 class Action  {
     'Fields
         playerAction
@@ -77,15 +107,15 @@ class Action  {
 }
 
 
-Cell - playerBoard
-playerBoard -u- Board
-wallBoard -d- Board
-wallOrientation -u- Wall
+Board -d- MainWindow
+playerBoard -l- Board
+wallBoard -r- Board
+Cell -l- playerBoard
 Wall - wallBoard
-Player -u- Action
-Action - playerBoard
-Action- Wall
-Player -d- "1" pawnColors : > uses
-
+' Player - Action
+Player -d- playerBoard
+Player -r- "1" pawnColors : > uses
+Action -u- "1" Direction : > uses
+Wall -u- "1" Orientation : > uses
 
 @enduml
