@@ -1,110 +1,139 @@
 @startuml UserSideDiagrams
+title User Side Diagrams
+skinparam ClassAttributeIconSize 0
+skinparam Guillemet false
+left to right direction
 
-class User {
-    'Fields
-        - username : string /' (Could also be guest so no username yet) '/
-        - profilePicture : image
-        - friendsList : vector of strings  /' (Could be empty if no friends. Story of my life :() '/
-        - ELO : int
-        - isLoggedIn : bool
-    'Methods
-        + << constructor >> User()
-        +  << constructor >> User(username : string) 
-        + getUsername() : string
-        + setUsername() : string
-        + getProfilePicture() : image
-        + setProfilePicture()
-        + getFriendsList() : vector of strings
-        + getElo() : int
-        + setElo()
-        + logIn()
-        + register()
-        + logOut()
-        + addFriend(username : string)
-        + removeFriend(username : string)
-        + sendMessage(message : Message)
-        + inviteFriendToMatch()
-        + joinFriendsMatch()
-        + askToPauseMatch()
-        + loadMatch()
-        
+
+package MainMenu {
+
+    class User {
+        'Fields
+            - username : string /' (Could also be guest so no username yet) '/
+            - friendsList : vector of strings  /' (Could be empty if no friends. Story of my life :() '/
+            - ELO : int
+            - isLoggedIn : bool
+        'Methods
+            + << constructor >> User()
+            + << constructor >> User(username : string) 
+            + getUsername() : string
+            + getFriendsList() : vector of Users
+            + getElo() : int
+            + setElo()
+            + logIn()
+            + registerAccount()
+            + logOut()
+            + checkLeaderboard()
+            + accesSettings()
+            + addFriend(username : string)
+            + removeFriend(username : string)
+            + connectToChat() 
+            + sendMessage(message : Message)
+            + play(mod : string)
+            + inviteFriendsToMatch()
+            + joinFriendsMatch()
+            + askToPauseMatch()
+            + saveMatch()
+            + loadMatch()
+            + displayUser()
+            
+            
+
+    }
+
+        class ChatBox {
+            'Fields
+            - usersConnected : vector of Users
+            - messagesLog : FILE    
+        'Methods
+            + receiveMessage(Message : message)
+    }
+
+
+    class Leaderboard {
+        'Fields
+            - listOfUsers : vector of Users
+        'Methods
+            + getUsers() : vector of Users
+            + sortBy()
+            + filterBy()
+    }
+
+
+}
+note left of User
+    default Constructor is for 
+    guest access, Constructor only
+    needs user to recognize him, as
+    his data will be looked up in database.
+    User class has no knowledge of his password
+end note
+
+package userAuth {
+
+
+    class loginHandler {
+        'Fields
+            - username : string
+            - password : string
+        'Methods
+            + processlogin() : bool
+    }
+
+    class registerHandler {
+        'Fields
+            - email : string
+            - username : string
+            - password : string
+        'Methods
+            + processRegister() : bool
+    }
+
+    class passwordEncrypter {
+        'Fields
+            - passwordToEncrypt : string
+            - finalPassword : string
+        'Methods
+            +  << constructor >> passwordEncrypter(passwordToEncrypt : string)
+            + hashingAlgorithm(password : string) : string 
+
+    }
+
 
 }
 
-class passwordEncrypter {
+class Message <<struct>> {
     'Fields
-        - passwordToEncrypt : string
-        - finalPassword : string
-    'Methods
-        +  << constructor >> passwordEncrypter(passwordToEncrypt : string)
-        + hashingAlgorithm(password : string) : string 
-
-}
-
-
-class Leaderboard {
-    'Fields
-        - listOfUsers : vector of Users
-    'Methods
-        + getUsers() : vector of Users
-        + sortBy()
-        + filterBy()
-}
-
-class Message {
-    'Fields
-        - timeSent : chrono
+        - timeSent : Date
         - sender : User
         - receiver : User
-        - sentMessage : string or image 
-    'Methods
-        + << constructor >> Message(sentMessage : string or image,
-         sender : User, receiver : User, timeSent : chrono)
-        + getSentMessage() : string or image
-        + getSender() : User
-        + getReceiver() : User
-        + getTimeSent() : chrono 
-}
+        - sentMessage : string 
+    }
 
-class gameChatBox {
+
+class Date <<struct>>{
     'Fields
-        - usersConnected : vector of Users
-        - messagesLog : text
-    'Methods
-        + receiveMessage()
-
+        +hour : int
+        +minute : int
+        +second : int
+        +year : int
+        +month : int
+        +day : int
 }
 
+note top of Leaderboard
+    Leaderboard can be sorted for all
+    users or just friends
+end note
 
-class loginHandler {
-    'Fields
-        - username : string
-        - password : string
-    'Methods
-        + login() 
-}
-
-class registerHandler {
-    'Fields
-        - email : string
-        - username : string
-        - password : string
-    'Methods
-        + register()
-}
-
-class MainMenu {
-    'Fields
-        - loggedUser : User
-    'Methods
-        + choosePlayMod() : Button
-        + play(mod : string)
-        + userDropDownChoice() : Button
-        + showLeaderboard() : Button
-}
-gameChatBox ---* "*" Message  
-gameChatBox "0..1" --- "1..*" User   : > contains
+ChatBox ---* "0..*" Message 
+ChatBox "0..1" --- "1..*" User   : > contains
 Leaderboard --- "*" User : > contains 
 loginHandler --- passwordEncrypter : > uses
+User -- loginHandler : > logs in via
+User -- registerHandler : > registers via
+User --r-- Message : > can send
 registerHandler --- passwordEncrypter : > uses
+Message -- Date : > uses
+
 @enduml
