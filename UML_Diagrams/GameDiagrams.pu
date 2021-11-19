@@ -3,7 +3,11 @@
 header Quoridor
 title Game diagrams
 
-enum pawnColors {
+package Game {
+
+
+package Player {
+    enum pawnColors {
     'Fields
         Yellow
         Green
@@ -11,26 +15,6 @@ enum pawnColors {
         Purple
 }
 
-
-enum Orientation {
-    'Fields
-        Vertical
-        Horizontal
-    
-}
-
-class MainWindow {
-    'Methods
-        handleKeypress(key)
-        display()
-}
-
-note right of MainWindow
-MainWindow contains all 
-visual components, such as 
-the board and the score.
-It also handles keyboardInput.
-endnote
 
 enum Direction {
     'Fields
@@ -42,10 +26,10 @@ enum Direction {
 
 class Player{
     'Fields
-        Color : Color
-        Position : Point
+        - Color : Color
+        - Position : Point
     'Methods
-        move(Action)
+        + move(Action)
     
 }
 
@@ -57,36 +41,100 @@ an action and check
 if it is valid.
 endnote
 
-class Wall{
+class PlayerAction  {
     'Fields
-        Position
-        Orientation : Orientation
+        - playerAction
     'Methods
+        + isActionValid() : bool  
+        + isGameOver() : bool
 }
 
 class Cell{
     'Fields
-        Position : Point
-        Occupied : bool
-        OccupyingPlayer: nullptr if none
+        - Position : Point
+        - Occupied : bool
+        - OccupyingPlayer: nullptr if none
 }
 
 class playerBoard {
     'Fields
-        Cells : Vector of cells   
+        - Cells : Vector of cells   
 } 
 
-class wallBoard {
-    'Fields
-        Corridors : Vectors of corridors
-        placedWalls : vector of Walls
 }
+
+package PlayAction{
+
+class StartGame{
+    'Fields
+        - players : [Player, Player]
+    'Methods
+        + startGame()
+}
+
+
+class EndGame{
+    'Fields
+        - score : [Score, Score]
+        - isPlayerAbandonning : bool
+        - abandonedPlayer : Player
+    'Methods
+        + endGame()
+
+}
+
+class RestartGame{
+    'Fields
+        - isGameOver : bool
+    'Methods
+        + restartGame()
+}
+
+class SaveGame{
+    'Fields
+        - Board : Board
+    'Method
+        + saveGame()
+}
+
+class StartSavedGame{
+    'Fields
+        - Board : Board
+    'Method
+        + startSavedGame()
+}
+
+class JoinGame{
+    'Fields
+        - player : Player
+    'Methods
+        + joinGame()
+}
+}
+
+
+package "Display"{
+
+    
+class MainWindow {
+    'Methods
+        + handleKeypress(key)
+        + display()
+}
+
+note left of MainWindow
+MainWindow contains all 
+visual components, such as 
+the board and the score.
+It also handles keyboardInput.
+endnote
 
 class Board{
     'Fields
-        playerBoard : playerBoard
-        wallBoard : playerAction
+        - playerBoard : playerBoard
+        - wallBoard : playerAction
 }
+
 
 note top of Board
 Board contains both wall
@@ -96,26 +144,129 @@ the two boards to allow
 them to be displayed.
 endnote
 
-class Action  {
+class BoardPrinter{
+'Fields
+    - board : Board
+    - player : Player
+'Methods
+    + printBoard()
+}
+
+note left of BoardPrinter
+Used to print board to terminal
+depending on player. For example,
+player 1 will see board facing them
+and vice versa.
+endnote
+
+BoardPrinter -d- MainWindow
+Board -d- BoardPrinter
+
+}
+
+package Wall{
+    class Wall{
     'Fields
-        playerAction
+        - Position
+        - Orientation : Orientation
     'Methods
-        isActionValid(Action)  
-        isWallPlacementLegal() : bool /' (inside board and on empty space) '/
-        isWallPlacementValid() : bool /' (all players can still get to other side)'/
+}
+    class wallBoard {
+    'Fields
+        - Corridors : Vectors of corridors
+        - placedWalls : vector of Walls
+    }
+    class WallAction {
+    'Fields
+        - wallAction
+    'Methods
+        + isWallPlacementLegal() : bool /' (inside board and on empty space) '/
+        + isWallPlacementValid() : bool /' (all players can still get to other side)'/
+}
+
+
+note top of Wall
+Each player has 10 walls
+that they can place
+on the wall board.
+endnote
 
 }
 
 
-Board -d- MainWindow
-playerBoard -l- Board
-wallBoard -r- Board
-Cell -l- playerBoard
-Wall - wallBoard
-' Player - Action
-Player -d- playerBoard
+package Extra{
+class Chat{
+    'Fields
+        - message: string
+    'Methods
+        + write()
+        + read()
+}
+
+note top of Chat
+Chat is used to communicate.
+A player can write a message 
+and the chat class will then 
+save it to database. Chat also
+reads from db previous messages.
+endnote
+
+
+class Leaderboard{
+    'Fields
+        - player: Player
+        - score: int
+    'Methods
+        + addPlayer()
+        + getLeaderboard()
+}
+
+note top of Leaderboard
+Uses Elo rating system to
+determine players' rank.
+Displays on main window.
+endnote
+
+class Score{
+    'Fields
+        - player: Player
+        - score: int
+}
+
+note top of Score
+Score holds the 
+current score of 
+the game.
+endnote
+
+
+}
+
+
+
+' class EloCalculator {
+'     'Fields
+'         - opponentsElo : vectors of int
+'         - userWon : bool
+'     'Methods 
+'         +  << constructor >> EloCalculator(opponentsElo : vectors of int, userWon : bool)
+'         + calculateElo() : int
+' }
+
+
+
+playerBoard -r- Board
+wallBoard -l- Board
+PlayAction -l- MainWindow
+Extra -r- MainWindow
+wallBoard  -l- Wall
+Cell -u- playerBoard
+Player -d- PlayerAction
+Wall -l- WallAction
+Player -l- playerBoard
 Player -r- "1" pawnColors : > uses
-Action -u- "1" Direction : > uses
-Wall -u- "1" Orientation : > uses
+PlayerAction - "1" Direction : > uses
+}
+
 
 @enduml
