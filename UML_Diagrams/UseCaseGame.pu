@@ -1,0 +1,15 @@
+@startuml  UseCaseGame
+left to right direction
+actor Player
+rectangle Game {
+
+Player -- (Play Game)
+
+(Play) .--> (Play Game) : include
+(GiveUp) .--> (Play Game) : extends
+(Pause/Save Game) .--> (Play Game) : extends
+(Play) <|-up- (Move)
+(Play) <|-up- (PlaceWall)
+
+}
+@enduml
