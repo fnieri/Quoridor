@@ -1,67 +1,139 @@
 @startuml UserSideDiagrams
-class Guest {
+title User Side Diagrams
+skinparam ClassAttributeIconSize 0
+skinparam Guillemet false
+left to right direction
+
+
+package MainMenu {
+
+    class User {
+        'Fields
+            - username : string /' (Could also be guest so no username yet) '/
+            - friendsList : vector of strings  /' (Could be empty if no friends. Story of my life :() '/
+            - ELO : int
+            - isLoggedIn : bool
+        'Methods
+            + << constructor >> User()
+            + << constructor >> User(username : string) 
+            + getUsername() : string
+            + getFriendsList() : vector of Users
+            + getElo() : int
+            + setElo()
+            + logIn()
+            + registerAccount()
+            + logOut()
+            + checkLeaderboard()
+            + accesSettings()
+            + addFriend(username : string)
+            + removeFriend(username : string)
+            + connectToChat() 
+            + sendMessage(message : Message)
+            + play(mod : string)
+            + inviteFriendsToMatch()
+            + joinFriendsMatch()
+            + askToPauseMatch()
+            + saveMatch()
+            + loadMatch()
+            + displayUser()
+            
+            
+
+    }
+
+        class ChatBox {
+            'Fields
+            - usersConnected : vector of Users
+            - messagesLog : FILE    
+        'Methods
+            + receiveMessage(Message : message)
+    }
+
+
+    class Leaderboard {
+        'Fields
+            - listOfUsers : vector of Users
+        'Methods
+            + getUsers() : vector of Users
+            + sortBy()
+            + filterBy()
+    }
+
+
+}
+note left of User
+    default Constructor is for 
+    guest access, Constructor only
+    needs user to recognize him, as
+    his data will be looked up in database.
+    User class has no knowledge of his password
+end note
+
+package userAuth {
+
+
+    class loginHandler {
+        'Fields
+            - username : string
+            - password : string
+        'Methods
+            + processlogin() : bool
+    }
+
+    class registerHandler {
+        'Fields
+            - email : string
+            - username : string
+            - password : string
+        'Methods
+            + processRegister() : bool
+    }
+
+    class passwordEncrypter {
+        'Fields
+            - passwordToEncrypt : string
+            - finalPassword : string
+        'Methods
+            +  << constructor >> passwordEncrypter(passwordToEncrypt : string)
+            + hashingAlgorithm(password : string) : string 
+
+    }
+
+
+}
+
+class Message <<struct>> {
     'Fields
-    isLoggedIn : bool
-    userAccount : User
-    'Methods
-        logIn()
-        register()        
-}
+        - timeSent : Date
+        - sender : User
+        - receiver : User
+        - sentMessage : string 
+    }
 
-class User {
+
+class Date <<struct>>{
     'Fields
-        username : string /' (Could also be guest so no username yet) '/
-        profilePicture : img
-        friendsList : vector of strings  /' (Could be empty if no friends. Story of my life :() '/
-        ELO : int
+        +hour : int
+        +minute : int
+        +second : int
+        +year : int
+        +month : int
+        +day : int
 }
 
-class passwordEncrypter {
-    'Fields
-        passwordToEncrypt : string
-        finalPassword : string
-    'Methods
-        hashingAlgorithm(password) : string
+note top of Leaderboard
+    Leaderboard can be sorted for all
+    users or just friends
+end note
 
-}
+ChatBox ---* "0..*" Message 
+ChatBox "0..1" --- "1..*" User   : > contains
+Leaderboard --- "*" User : > contains 
+loginHandler --- passwordEncrypter : > uses
+User -- loginHandler : > logs in via
+User -- registerHandler : > registers via
+User --r-- Message : > can send
+registerHandler --- passwordEncrypter : > uses
+Message -- Date : > uses
 
-
-class passwordStocker{
-    'Fields
-        passwordToStock : string
-        usernameToStock : string
-        passwordFile : string /'(File to store passwords to) '/
-        passwordEncrypter : passwordEncrypter
-    'Methods
-        stockPassword(password)
-        checkPasswordAlreadyExists(password)
-}
-
-class userVerifier {
-    'Fields
-        username : string
-        password : string
-        passwordEncrypter : passwordEncrypter
-    'Methods
-        lookupUsernamePassword(username, password)
-}
-
-class Leaderboard {
-    'Fields
-        topPlayers /' (Glicko rating + W/L ratio or something like that. Glicko probably takes that into account) '/
-    'Methods
-        sortBy()
-        filterBy()
-}
-class Message {
-    'Fields
-        timeSent
-        Sender : User
-        Receiver : User
-        sentMessage : string or image    
-}
-
-class chatBox {
-    usersConnected : vector of usernames strings  
-}
 @enduml
