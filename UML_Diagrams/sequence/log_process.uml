@@ -22,9 +22,11 @@ loop infinity
     end
     I -> L : attemptLogIn(username, password)
     activate L
-    L -> E : getHash(password)
+    L -> E : getHash(username, password)
     activate E
-    E --> L : hashedPassword
+    E -> D : getSaltKey(username)
+    D --> E : saltKey
+    E --> L : hashedPassword with key
     destroy E
     L -> D : exist(username, hashedPassword)
     activate D

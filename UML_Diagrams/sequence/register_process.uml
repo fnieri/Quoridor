@@ -45,12 +45,13 @@ else there is a match
         R --> I : registring failed
         I -> U : notify user
     else both email and username are unique
-        R -> E : getHash(password)
+        R -> E : getHashAndKey(username, password)
         activate E
-        E --> R : hashedPassword
+        E -> E : generateSaltKey()
+        E --> R : hashedPassword with key and saltKey
         destroy E
         critical beware multiple users trying to register with the exact same username and email at the same time
-            R -> D : add(email, username, hashedPassword)
+            R -> D : add(email, username, hashedPassword, saltKey)
             note left
                 By default, added users
                 are not confirmed (email
