@@ -1,0 +1,46 @@
+@startuml Login
+
+/' skinparam responseMessageBelowArrow true '/
+
+title "Precise LogIn Process"
+
+actor User as U
+participant Interface as I
+participant Logger as L
+participant Encrypter as E
+database Database as D
+
+
+loop infinity
+    autonumber
+    group input
+        I -> U : getUsername()
+        U --> I : username
+
+        I -> U : getPassword()
+        U --> I : password
+    end
+    I -> L : attemptLogIn(username, password)
+    activate L
+    L -> E : getHash(username, password)
+    activate E
+    E -> D : getSaltKey(username)
+    D --> E : saltKey
+    E --> L : hashedPassword with key
+    destroy E
+    L -> D : exist(username, hashedPassword)
+    activate D
+    D --> L : state of existence and confirmation
+    deactivate D
+    alt pair exists and is confirmed (email)
+        L --> I : access granted
+        I -> U : notify user
+    else pair doesn't exist or is not confirmed
+        L --> I : access denied (failure message)
+        I -> U : notify user
+        destroy L
+    end
+
+end
+
+@enduml

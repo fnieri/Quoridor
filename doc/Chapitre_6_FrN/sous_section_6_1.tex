@@ -1,0 +1,116 @@
+\documentclass[11pt,a4paper,titlepage]{article}
+
+% Language
+\usepackage{polyglossia}
+%\setdefaultlanguage[frenchpart=false, frenchfootnote=true, frenchitemlabels=true]{french}
+\usepackage{numprint}
+
+% Fonts
+\usepackage{fontspec}
+\setmainfont{Linux Libertine O}
+\setsansfont{Linux Biolinum O}
+
+\usepackage{mathtools}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{listings}
+\usepackage{hyperref}
+\usepackage{attachfile2}
+
+\usepackage{fullpage}
+\usepackage[parfill]{parskip}
+
+\usepackage{xcolor}
+
+%-----------------------------------------------------------
+
+\newcommand{\up}[1]{\textsuperscript{#1}}
+\newcommand{\down}[1]{\textsubscript{#1}}
+
+\newcommand{\addcode}[3]{
+    \begin{figure}[H]
+        \centering
+        \lstinputlisting[language=#2, caption=\textattachfile{#1}{#1}, label=#3]{#1}
+    \end{figure}
+}
+
+\newcommand{\addimg}[4]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{#4}
+    \end{figure}
+}
+
+%-----------------------------------------------------------
+
+\definecolor{base}{RGB}{250,245,237}
+\definecolor{subtle}{RGB}{110,107,135}
+\definecolor{red}{RGB}{181,99,122}
+\definecolor{gold}{RGB}{235,158,51}
+\definecolor{rose}{RGB}{214,130,125}
+\definecolor{pine}{RGB}{41,105,130}
+\definecolor{foam}{RGB}{87,148,158}
+\definecolor{iris}{RGB}{143,122,168}
+
+\hypersetup{
+    colorlinks=true,
+        allcolors=iris
+}
+\attachfilesetup{color=iris}
+
+%-----------------------------------------------------------
+
+\lstset{
+    % backgroundcolor=\color{white},        % background color
+        basicstyle=\ttfamily,                   % regular style
+        breakatwhitespace=true,                 % sets if automatic breaks should only happen at whitespace
+        breaklines=true,                        % sets automatic line breaking
+        captionpos=t,                           % caption-position
+        commentstyle=\itshape\color{subtle},    % comment style
+        % deletekeywords={...},                 % delete keywords from the given language
+        escapeinside={{\%*}{*}},                 % if you want to add LaTeX within your code
+        firstnumber=1,                          % start line enumeration with line 1
+        frame=tb,                               % adds a frame around the code
+        keepspaces=true,                        % keeps spaces in text
+        keywordstyle=\color{pine},              % keyword style
+        language=C++,                           % language of the code
+        % morekeywords={*,...},                 % add more keywords to the set
+        numbers=left,                           % position of line-numbers; possible values are (none, left, right)
+        numbersep=15pt,                         % distance between line-numbers and the code
+        numberstyle=\scriptsize\ttfamily\color{subtle}, % style used for line-numbers
+        % rulecolor=\color{black},              % if not set, the frame-color may be changed on line-breaks within not-black text (e.g. comments (green here))
+        showspaces=false,                       % show spaces everywhere
+        showstringspaces=false,                 % underline spaces within strings only
+        showtabs=false,                         % show tabs within strings
+        stepnumber=1,                           % step between two line-numbers
+        stringstyle=\color{red},               % string literal style
+        tabsize=4,	                          % default tabsize
+        % title=\lstname                        % show the filename
+}
+\begin{document}
+    \subsection{Design du système}
+        Le système se dècoupe essentiellement en 3 parties:
+        \begin{itemize}
+            \item[-] Coté utilisateur
+            \item[-] Coté jeu
+            \item[-] Coté Server   
+        \end{itemize}
+        \subsubsection{Coté utilisateur}
+            \makebox[\textwidth]{\includegraphics[width=\textwidth]{UserSideDiagrams.eps}}
+            L'utilisateur entre dans le jeu comme une sorte de "Guest",
+            ne pouvant pas utiliser l'interface
+            Pour pouvoir utiliser les fonctionnalités de Quoridor, l'utilisateur doit se connecter
+            à son compte ou en créer un s'il n'en a pas. Les deux evenements passeront à travers des "handlers", qui
+            géreront les requetes en passant à travers un database et le Server. Après s'etre connecté.e, l'utilisateur aura accès à toutes les fonctionnalités
+            que offre le logiciel (cfr. Sections 2 et 4).
+        \subsubsection{Coté jeu}
+            \makebox[\textwidth]{\includegraphics[width=\textwidth]{GameDiagrams.eps}} 
+        \subsubsection{Coté Server}
+            TBD
+
+            
+\end{document}
