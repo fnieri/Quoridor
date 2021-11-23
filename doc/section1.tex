@@ -1,0 +1,32 @@
+
+\section{Besoins Utilisateur: Fonctionnels}
+
+\subsection{Connexion}
+    Avant de pouvoir jouer, l'utilisateur doit se connecter. Si l'utilisateur ne possède pas de compte, il doit s'en créer un. Pour cela, il choisit un pseudonyme et un mot de passe à retenir. 
+
+\subsection{Menu principal}
+\addimg{img/usecasegame.eps}{width=\linewidth}{Use Case Menu}{usecasemenu}
+
+\subsubsection{Gérer une liste d'amis}
+    Chaque utilisateur dispose d'une liste d'amis. Quand il ajoute ou supprime un ami, les modifications se verront sur cette liste que l'utilisateur peut consulter. Pour ajouter un ami, il suffit de connaître son pseudonyme et d'attendre qu'il accepte sa requête. 
+    
+\subsubsection{Chat}
+    Pour discuter avec ses amis, il choisit des amis dans sa liste d'amis et écrit son message. Ainsi, un joueur peut discuter avec ses amis même lors d'une partie. L'utilisateur peut également quitter une discussion. 
+    
+\subsubsection{Consulter le classement}
+    Un score est attribué à chaque joueur. Tous les utilisateurs existants sont recensés et classés selon leurs performances de jeu. Il est possible de consulter ce classement.
+
+\subsubsection{Lancement d'une partie}
+    L'utilisateur a le choix de démarrer une nouvelle partie, d'en rejoindre une ou de reprendre une partie sauvegardée. Lors de la création d'une nouvelle partie, l'utilisateur configure les paramètres, c'est-à-dire précise le mode de jeu et le nombre de joueurs. Il a la possibilité d'inviter des amis s'il le souhaite.
+
+
+
+\subsection{Au cours d'une partie}
+\addimg{img/usecasemenu.eps}{width=\linewidth}{Use Case Game}{usecasegame}
+    \subsubsection{Faire un mouvement}
+    Quand c'est au tour de l'utilisateur de jouer, il va devoir soit placer un mur, soit déplacer son pion sur l'une des quatre cases voisines. 
+    \subsubsection{Sauvegarder}
+    Les joueurs peuvent mettre en pause et sauvegarder la partie actuelle en demandant l'accord aux autres joueurs.
+    \subsubsection{Abandonner}
+    Pendant une partie, l'utilisateur peut également la quitter. Ainsi, il sera perdant.
+
