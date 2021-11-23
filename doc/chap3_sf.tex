@@ -1,0 +1,237 @@
+\section{Besoins système fonctionnels}
+\subsection{Connexion}
+
+L'accès au fonctionnalités du système ne doit être accordé
+qu'aux utilisateurs ayant fourni un nom d'utilisateur (ou
+\emph{username}) et un mot de passe (ou \emph{password})
+corrects. Ceux-ci sont corrects s'ils correspondent
+ à une entrée dans la base de données.
+
+Le système doit donc pouvoir confirmer les identifiants
+grâce à une requête au serveur depuis
+la machine de l'utilisateur.
+Si la partie client ne parvient pas à établir une connexion
+avec la partie serveur,
+le système doit pouvoir en informer
+l'utilisateur et refuser toute tentative de connexion.
+% Tous deux doivent être composés de caractères
+% alphanumériques.
+
+Le système doit pouvoir donner l'occasion à l'utilisateur d'entrer
+ses informations grâce à un formulaire ou une demande
+séquentielle. Si les informations entrées ne sont pas
+correctes, le système doit pouvoir communiquer à
+l'utilisateur un message d'erreur utile et lui laisser la
+possibilité d'essayer à nouveau.
+
+% Si l'utilisateur ne se souvient plus de son nom
+% d'utilisateur ou de son mot de passe, le
+% système doit pouvoir lui fournir un moyen de regagner accès
+% à son compte.
+
+% \subsubsection{Regain d'accès au compte utilisateur}
+
+% Un courriel de récupération contenant le nom d'utilisateur et un
+% hyperlien renvoyant vers une page permettant le changement
+% du mot de passe doit pouvoir être envoyé
+% dans le cas d'un
+% oubli d'identifiants.
+
+% Le mot de passe étant chiffré par un processus irréversible dans la base
+% de données, seul un nouveau mot de passe permet un regain
+% d'accès.
+
+% Le processus de changement de mot de passe doit rendre
+% l'ancien mot de passe invalide et rendre le nouveau mot de
+% passe l'unique clé d'accès au compte associé.
+
+\subsection{Gestion des comptes}
+
+Un compte doit être identifié grâce à une adresse courriel
+et un nom d'utilisateur. Chaque compte doit être unique
+et par conséquent, deux comptes différents ne peuvent pas avoir
+les mêmes identifiants. Le système doit pouvoir accéder aux
+identifiants séparément ou en lot.
+
+Le mot de passe, bien qu'essentiel au compte, ne doit pas
+faire
+partie de son identité. Deux comptes différents
+peuvent avoir le même mot de passe.
+
+Les informations relatives aux comptes des utilisateurs
+doivent être stockées dans une base de données centrale et
+accessibles depuis chaque client \emph{via} Internet.
+
+\subsubsection{Création de compte}
+
+Si un visiteur du système ne possède pas de compte
+utilisateur, le système doit pouvoir lui donner la
+possibilité d'en créer un.
+
+Durant ce processus, le système doit pouvoir demander au
+visiteur~: une adresse courriel, un nom d'utilisateur et un
+mot de passe. Le système doit s'assurer que les deux
+premiers champs n'existent pas déjà dans la base de données.
+Si c'est le cas, le système doit refuser la demande
+d'inscription et en informer le visiteur.
+
+% Si les identifiants sont tous deux uniques, le système doit
+% pouvoir envoyer un courriel de confirmation à l'adresse
+% courriel fournie. Le compte ainsi créé ne sera actif qu'à
+% partir de la confirmation de l'adresse courriel par le
+% visiteur et deviendra dès lors un utilisateur.
+
+\subsubsection{Suppression de compte}
+
+Le système doit donner l'opportunité à tout utilisateur de
+supprimer son compte. Ce processus de suppression se solde
+par une suppression définitive et irrévocable du compte
+associé dans la base de données.
+Les identifiants qui étaient utilisés par ce
+dernier doivent être de nouveau disponibles pour de
+nouvelles inscriptions.
+
+Le système ne doit supprimer en aucun cas un compte
+utilisateur sans la confirmation de son titulaire.
+
+\subsection{Menu principal}
+
+Le menu principal du système doit pouvoir donner accès aux
+actions suivantes à tout utilisateur authentifié~:
+
+\begin{itemize}
+    \item jouer~;
+    \item consulter les classements~;
+    \item discuter avec ses amis~;
+    \item modifier ses informations personnelles.
+\end{itemize}
+
+\subsection{Interactions entre utilisateurs}
+
+Le système doit donner la possibilité à chaque utilisateur
+authentifié de gérer une liste d'amis. L'utilisateur doit
+pouvoir ajouter des amis et en supprimer. L'ajout se
+fait au moyen de demandes d'ami que tout utilisateur peut
+envoyer à tout autre utilisateur à condition qu'il connaisse
+son nom d'utilisateur.
+
+Ces listes d'amis sont stockées dans la base de données et
+propres à chaque utilisateur, personne d'autre que
+l'utilisateur authentifié ne devrait y avoir accès.
+
+\subsubsection{Discuter avec ses amis}
+
+
+Le système doit donner la possibilité à tout utilisateur
+authentifié de discuter avec ses amis par messages écrits
+dans des fils de discussion privés.
+
+% Le système doit
+% également offrir la possibilité aux utilisateurs de créer
+% des groupes de discussion où plusieurs utilisateurs
+% peuvent participer. Les participants doivent pouvoir être
+% ajoutés soit lors de la création du groupe, soit après
+% celle-ci par tout participant du groupe grâce à un système
+% d'invitations.
+
+Tout message envoyé sur ces fils de discussion doit être
+sauvegardé dans la base de données dès son envoi,
+visible par tous les
+participants et supprimable par son auteur. Les messages
+doivent être persistants d'une session à l'autre.
+
+Pour pouvoir supprimer les messages individuellement, ces
+derniers doivent posséder un identificateur unique composé
+notamment de l'heure d'envoi et de l'expéditeur.
+
+\subsection{Consulter les classements}
+
+Tout utilisateur doit avoir un score qui indique son niveau
+au jeu. Ce score est modifié à l'issue de chaque partie
+par le système d'évaluation \emph{ELO}.
+
+Le système doit pouvoir, grâce à ce score, constituer
+un classement des meilleurs utilisateurs. Ce classement doit
+pouvoir être visible par tout utilisateur authentifié du système.
+
+Ce classement doit être cherchable et filtrable.
+L'utilisateur doit avoir la possibilité d'afficher
+soit totalité des utilisateurs, soit uniquement les utilisateurs
+amis.
+
+\subsection{Modifier ses informations personnelles}
+
+Le système doit fournir la possibilité à tout utilisateur de
+modifier ses informations personnelles. Cela inclut
+l'adresse courriel, le nom d'utilisateur et le mot de passe.
+La modification de chacune de ces informations doit être
+définitive et la nouvelle valeur doit être
+sauvegardée dans la base de données.
+
+\subsection{Jouer}
+
+Pour jouer, l'utilisateur doit initialiser une recherche
+d'adversaire pour le mode de
+jeu qu'il a choisi. Cette étape est ce qu'on appelle le
+\emph{matchmaking}. Le système doit s'assurer que les
+utilisateurs choisis pour une partie aient choisi le même
+mode de jeu.
+% Le système doit s'assurer que lorqu'un
+% match est prêt à être lancé, les deux utilisateurs choisis soient
+% toujours connectés.
+
+\subsubsection{Matchmaking}
+
+Lorqu'un joueur entre dans le matchmaking, il doit être
+placé dans une file d'attente à priorité.
+La priorité de chaque joueur est définie selon la durée
+écoulée
+depuis son entrée dans le matchmaking. Cette durée est dite \emph{temps d'attente}.
+Pour séparer les modes de jeu, le système doit gérer une
+file d'attente distincte pour chaque mode de jeu.
+
+Le choix d'un adversaire adéquat doit ainsi dépendre de son temps
+d'attente mais aussi, et surtout, de son \emph{ELO}.
+À l'issue d'une situation optimale, les deux utilisateurs doivent
+avoir un \emph{ELO} similaire et avoir eu un temps d'attente presque
+nul.
+
+Chaque utilisateur doit avoir la possibilité de voir le nombre d'utilisateurs
+dans la file d'attente ainsi que son temps d'attente. Le
+système doit lui donner la possibilité de quitter le
+matchmaking.
+
+Un utilisateur dans le matchmaking doit y être est enlevé
+dès qu'il y a trouvé un adversaire, que sa connexion au
+serveur n'est plus valide ou qu'il a quitté la file
+d'attente de son plein gré.
+
+\subsubsection{Partie de Quoridor}
+
+Lors d'une partie, le système doit faire une distinction
+entre les actions disponibles aux participants en tant que
+\emph{joueurs}, et
+celles disponibles en tant qu'\emph{utilisateurs}.
+
+Un joueur est celui qui fait des actions sur le
+plateau de jeu, alors qu'un utilisateur fait des
+actions en-dehors du plateau de jeu. Le joueur ne peut agir
+que lorsque c'est son tour de jouer alors que l'utilisateur, au
+contraire, peut agir tout le temps.
+
+Le système doit permettre aux participants de jouer,
+chacun à leur tour, jusqu'à une victoire potentielle
+de l'un
+
+Lors d'une fin de partie, le système doit en informer les
+participants, mettre à jour l'\emph{ELO} de chaque
+utilisateur et renvoyer les utilisateurs vers le menu principal.
+
+
+% Création d'une partie, matchmaking
+% Gestion d'une partie, gestion murs, gestion pions, gestion
+% score, gestion vainqueur
+% Mise à jour du classement
+
+
+
