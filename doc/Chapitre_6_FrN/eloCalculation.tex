@@ -1,0 +1,132 @@
+\documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}	% Para caracteres en español
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage{lastpage}
+\usepackage{enumitem}
+\usepackage{fancyhdr}
+\usepackage{mathrsfs}
+\usepackage{wrapfig}
+\usepackage{url}
+\usepackage{setspace}
+\usepackage{calc}
+\usepackage{diagbox}
+\usepackage{multicol}
+\usepackage{cancel}
+\usepackage[retainorgcmds]{IEEEtrantools}
+\usepackage[margin=3cm]{geometry}
+\usepackage{amsmath}
+\newlength{\tabcont}
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+\usepackage{empheq}
+\usepackage{framed}
+\usepackage[most]{tcolorbox}
+\usepackage{xcolor}
+\colorlet{shadecolor}{orange!15}
+\parindent 0in
+\parskip 12pt
+\geometry{margin=1in, headsep=0.25in}
+\theoremstyle{definition}
+\newtheorem{defn}{Definition}
+\newtheorem{reg}{Rule}
+\newtheorem{exer}{Exercise}
+\newtheorem{note}{Note}
+\usepackage{cfr-lm}
+\begin{document}
+\section{Calculer l'ELO après une partie de Quoridor}
+    Supposons deux joueurs de ELO: 
+    \begin{center}
+        r(1) = 1500 et r(2) = 1753
+    \end{center}
+    Nous allons devoir calculer le "transformed score" R(n) comme suit:
+        
+    \begin{equation}
+        \begin{split}
+            & R(1) = 10^{\frac{r(1)}{400}} = 5623,413 \\
+            & R(2) = 10^{\frac{r(2)}{400}} = 24126,815 \\
+        \end{split}
+    \end{equation}
+
+    On va calculer le "expected score" E(n) pour les joueurs:
+    \begin{equation}
+        \begin{split}
+            & E(1) = R(1) / ( R(1) + R(2)) = 5623,413 / (5623,413 + 24126,815) = 0,189 \\
+            & E(2) = R(2) / ( R(1) + R(2)) = 24126,815 / (5623,413 + 24126,815) = 0,8109 \\
+        \end{split}
+    \end{equation}
+
+    On va definir le actual score pour les 2 joueurs:
+    \begin{center}
+        S(1) = 1 s'il gagne / 0 s'il perd et viceversa pour le joueur 2
+    \end{center}
+    
+    Calculons l'ELO final r'(n):
+    Pour cela nous devons definir K:
+    This is called the K-factor and basically a measure of how strong a match will impact the players’ ratings.
+    If you set K too low the ratings will hardly be impacted by the matches and very stable ratings (too stable) will occur.
+    On the other hand, if you set it too high, the ratings will fluctuate wildly according to the current performance.
+     Different organizations use different K-factors, there’s no universally accepted value. In chess the ICC uses a value of K = 32. \\
+    Ici, on suppose que le joueur 1 ait gagné
+    \begin{equation}
+        \begin{split}
+           & r'(1) = r(1) + K \cdot (S(1) - E(1)) = 1500 + 32 \cdot (1 - 0,189) = 1525,952 \\
+           & r'(2) = r(2) + K \cdot (S(2) - E(2)) = 1753 + 32 \cdot (0-0,8109) = 1727,0512 \\
+        \end{split}
+    \end{equation}
+
+    Les ELO finaux des deux joueurs seront : \\
+
+        r(1) = 1526, +26 \ r(2) = 1727, -26
+    \newpage
+    Supposons maintenant la partie se dèroule sentre 4 joueurs:
+    r(1) = 1700, r(2) = 1900, r(3) = 1500, r(4) = 1600
+    On va calculer les R(n):
+        \begin{equation}
+            \begin{split}
+                & R(1) = 10 ^{\frac{1700}{400}} = 17782,794 \\
+                & R(2) = 10^{\frac{1900}{400}} = 56243,1325 \\
+                & R(3) = 10^{\frac{1500}{400}} = 5623, 413  \\
+                & R(4) = 10^{\frac{1600}{400}} = 10000 \\
+            \end{split}
+        \end{equation}
+        Pour le "expected score" E(n) pour chaque joueur, on va prendre la moyenne ponderée des R(m) des autres joueurs.
+        On va proceder comme suit: \\
+        Pour deux joueurs n et m: \\
+        $\varepsilon = $ r(n) - r(m) 
+            $$ \omega_{n, m} =
+            \begin{cases}
+                1 + \varepsilon \cdot 10^{-3}, & \text{si $\varepsilon \le -100$} \\
+                1 - \varepsilon \cdot 10^{-3}, & \text{si $\varepsilon \ge 100$} \\
+                1, & \text{si $-100 < \varepsilon < 100$ }\\
+            \end{cases} $$
+        E(1) sera alors avec J le nombre de joueurs adversaires (3): 
+        \begin{equation}
+            \begin{split}
+                & E(1) = R(1) / [R(1) + (\dfrac{R(2) \cdot \omega_{1, 2} + R(3) \cdot \omega_{1, 3} + R(4) \cdot \omega_{1, 4}}{J})] = 0,394 \\
+            \end{split}
+        \end{equation}
+        E(2), E(3) et E(4) se calculeront comme suit:
+        \begin{equation}
+            \begin{split}
+                & E(2) = R(2) / [R(2) + (\dfrac{R(1) \cdot \omega_{2, 1} + R(3) \cdot \omega_{2, 3} + R(4) \cdot \omega_{2,4} }{J})] = 0,872 \\
+                & E(3) = R(3) / [R(3) + (\dfrac{R(1) \cdot \omega_{3, 1} + R(2) \cdot \omega_{3, 2} + R(4) \cdot \omega_{3,4} }{J})] = 0,131 \\
+                & E(4) = R(4) / [R(4) + (\dfrac{R(1) \cdot \omega_{4, 1} + R(2) \cdot \omega_{4, 2} + R(3) \cdot \omega_{4,3} }{J})] = 0,232 \\
+            \end{split}
+        \end{equation}
+        S(n) sera comme defini : 1 si le joueur a gagné, 0 s'il a perdu. \\
+        
+        r'(n) se calculera toujours de la meme manière:
+        \begin{equation}
+            \begin{split}
+                & r'(1) = r(1) + K \cdot (S(1) - E(1)) = 1719 \\
+                & r'(2) = r(2) + K \cdot (S(2) - E(2)) = 1872 \\
+                & r'(3) = r(3) + K \cdot (S(3) - E(3)) = 1495 \\
+                & r'(4) = r(4) + K \cdot (S(4) - E(4)) = 1592 \\
+            \end{split}
+        \end{equation}
+
+        L'ELO final pour chaque joueur correspondra alors à r'(n)
+
+            Source: \url{https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/}
+
+\end{document}

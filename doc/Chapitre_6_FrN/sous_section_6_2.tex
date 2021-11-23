@@ -1,0 +1,111 @@
+    \subsection{Fonctionnement du système}
+        \subsubsection{Inscription}
+        \addimg{Reg.eps}{width=\linewidth}{Register process}{regSeq}
+        \subsubsection{Connexion}
+        \addimg{Login.eps}{width=\linewidth}{Login process}{loginSeq}
+        \subsubsection{Chat}
+        \addimg{ChatSequence.eps}{width=\linewidth}{Chat process}{chatSeq}
+        \subsubsection{Calcul du ELO}
+        Pour comprendre comment fonctionnera le matchmaking, nous devons comprendre comment fonctionne le systeme de classement ELO, en une phrase:
+        \textit{"Le classement Elo est un système d’évaluation comparatif du niveau de jeu des joueurs d’échecs, de go ou d’autres jeux en un contre un."}\footnote{Wikipedia, Classement ELO} \\
+        L'ELO est different de modalité en modalité. \\
+        Pour le calculer, nous n'allons pas clairement inventer un nouveau algorithme, mais nous nous baserons sur ce qui a été déjà proposé\footnote{\href{https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/}{Metin's Media and Math, How To Calculate the Elo-Rating }}
+        Bien que le jeu Quoridor peut etre joué par quatre joueur, nous allons adapter le calcul pour que le calcul reste équilibré. \\
+        Supposons alors une prèmiere sitiuation pour une partie 1v1, avec deux joueurs 1 et 2 de ELO respectifs: 
+    \begin{center}
+        r(1) = 1500 et r(2) = 1753
+    \end{center}
+    Nous allons devoir calculer le "transformed score" R(n) comme suit:
+    \begin{equation}
+        \begin{split}
+            & R(1) = 10^{\frac{r(1)}{400}} = 5623,413 \\
+            & R(2) = 10^{\frac{r(2)}{400}} = 24126,815 \\
+        \end{split}
+    \end{equation}
+
+    Calculons ensuite le "expected score" E(n):
+    \begin{equation}
+        \begin{split}
+            & E(1) = R(1) / ( R(1) + R(2)) = 5623,413 / (5623,413 + 24126,815) = 0,189 \\
+            & E(2) = R(2) / ( R(1) + R(2)) = 24126,815 / (5623,413 + 24126,815) = 0,8109 \\
+        \end{split}
+    \end{equation}
+
+    Definissons le "actual score" pour les 2 joueurs:
+    \begin{center}
+        S(n) = 1 s'il gagne / 0 s'il perd
+    \end{center}
+    
+    Calculons l'ELO final r'(n):
+    Pour cela nous devons definir K: \\
+    \textit{"This is called the K-factor and basically a measure of how strong a match will impact the players’ ratings.
+    If you set K too low the ratings will hardly be impacted by the matches and very stable ratings (too stable) will occur.
+    On the other hand, if you set it too high, the ratings will fluctuate wildly according to the current performance.
+     Different organizations use different K-factors, there’s no universally accepted value. In chess the ICC uses a value of K = 32".}\footnote{\footnote{\href{https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/}{Metin's Media and Math, How To Calculate the Elo-Rating }}} \\
+    Ici, nous supposons que le joueur 1 ait gagné
+    \begin{equation}
+        \begin{split}
+           & r'(1) = r(1) + K \cdot (S(1) - E(1)) = 1500 + 32 \cdot (1 - 0,189) = 1525,952 \\
+           & r'(2) = r(2) + K \cdot (S(2) - E(2)) = 1753 + 32 \cdot (0-0,8109) = 1727,0512 \\
+        \end{split}
+    \end{equation}
+
+    Les ELO finaux des deux joueurs seront : \\
+
+        r(1) = 1526, +26 \ r(2) = 1727, -26
+    
+    Supposons maintenant la partie se dèroule entre 4 joueurs, 1, 2, 3 et 4:
+    \begin{center}
+        r(1) = 1700, r(2) = 1900, r(3) = 1500, r(4) = 1600
+    \end{center}
+    Comme avant, calculons les "Transformed scores":
+        \begin{equation}
+            \begin{split}
+                & R(1) = 10^{\frac{1700}{400}} = 17782,794 \\
+                & R(2) = 10^{\frac{1900}{400}} = 56243,1325 \\
+                & R(3) = 10^{\frac{1500}{400}} = 5623, 413  \\
+                & R(4) = 10^{\frac{1600}{400}} = 10000 \\
+            \end{split}
+        \end{equation}
+        Pour les "expected scores" E(n) pour chaque joueur, nous considererons la moyenne ponderée des "Transformed scores" R(m) des autres joueurs. 
+        Nous voulons que la moyenne soit ponderée pour tenir compte de la difference entre les ELO des joueurs, une disparité plus grande affectera 
+        de manière differente l'ELO final dans les cas d'une victoire ou d'une dèfaite.  \\
+        Nous procéderons comme suit: \\
+        Pour deux joueurs n et m: $\varepsilon = $ r(n) - r(m)  \\
+        Nous considerons $< -100 \text{ et } > 100$ comme un ècart significatif
+            $$ \omega_{n, m} =
+            \begin{cases}
+                1 + \varepsilon \cdot 10^{-3}, & \text{si $\varepsilon \le -100$} \\
+                1 - \varepsilon \cdot 10^{-3}, & \text{si $\varepsilon \ge 100$} \\
+                1, & \text{si $-100 < \varepsilon < 100$ }\\
+            \end{cases} $$
+        
+        E(1) sera alors, avec J le nombre de joueurs adversaires (3): 
+        \begin{equation}
+            \begin{split}
+                & E(1) = R(1) / [R(1) + (\dfrac{R(2) \cdot \omega_{1, 2} + R(3) \cdot \omega_{1, 3} + R(4) \cdot \omega_{1, 4}}{J})] = 0,394 \\
+            \end{split}
+        \end{equation}
+        E(2), E(3) et E(4) se calculeront comme suit:
+        \begin{equation}
+            \begin{split}
+                & E(2) = R(2) / [R(2) + (\dfrac{R(1) \cdot \omega_{2, 1} + R(3) \cdot \omega_{2, 3} + R(4) \cdot \omega_{2,4} }{J})] = 0,872 \\
+                & E(3) = R(3) / [R(3) + (\dfrac{R(1) \cdot \omega_{3, 1} + R(2) \cdot \omega_{3, 2} + R(4) \cdot \omega_{3,4} }{J})] = 0,131 \\
+                & E(4) = R(4) / [R(4) + (\dfrac{R(1) \cdot \omega_{4, 1} + R(2) \cdot \omega_{4, 2} + R(3) \cdot \omega_{4,3} }{J})] = 0,232 \\
+            \end{split}
+        \end{equation}
+        S(n) sera defini comme avant : 1 si le joueur a gagné, 0 s'il a perdu. \\
+        
+        Le calcul du ELO final r'(n) s'effectue de la meme manière:
+        \begin{equation}
+            \begin{split}
+                & r'(1) = r(1) + K \cdot (S(1) - E(1)) = 1719 \\
+                & r'(2) = r(2) + K \cdot (S(2) - E(2)) = 1872 \\
+                & r'(3) = r(3) + K \cdot (S(3) - E(3)) = 1495 \\
+                & r'(4) = r(4) + K \cdot (S(4) - E(4)) = 1592 \\
+            \end{split}
+        \end{equation}
+
+        L'ELO final pour chaque joueur correspondra alors à r'(n). \\
+        Nous pouvons constater que les ELO finaux sont raisonnables si mis en rapport avec la disparité de ELO initiale. Les joueurs 3 et
+        4 ne voient pas leur ELO diminuer beaucoup, par contre le joueur 2 qui avait l'ELO le plus haut, constate une diminution de 28.
