@@ -1,0 +1,130 @@
+\documentclass[utf8]{article}
+
+\usepackage[utf8]{inputenc}
+
+\usepackage[parfill]{parskip}
+
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsfonts}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{algorithm}
+\usepackage{algorithmicx}
+\usepackage{algpseudocode}
+\usepackage{fullpage}
+\usepackage{hyperref}
+
+
+
+%-----------------------------------------------------------
+
+\newcommand{\up}[1]{\textsuperscript{#1}}
+\newcommand{\down}[1]{\textsubscript{#1}}
+
+\newcommand{\addcode}[3]{
+    \begin{figure}[H]
+        \centering
+        \lstinputlisting[language=#2, caption=\textattachfile{#1}{#1}, label=#3]{#1}
+    \end{figure}
+}
+
+\newcommand{\addimg}[4]{
+    \begin{figure}[H]
+        \centering
+        \includegraphics[#2]{#1}
+    \caption{#3}
+    \label{#4}
+    \end{figure}
+}
+
+%------------------------------------------------------
+% -----------------------------------------------------
+
+\begin{document}
+
+\tableofcontents
+
+\newpage
+
+% -----------------------------------------------------
+
+\section{Notre jolie game diagramme (prend moi ça Boris)}
+
+Le jeu est divisé en deux plateaux. Le plateau mur (Wall board) contient les murs. Alors que le plateau joueur contient les pions des
+joueurs. Chaque pion a une couleur différente afin de permettre aux joueurs de se différencier l'un de l'autre. La classe board combine
+chaque plateau, qui sera ensuite afficher par BoardPrinter dans MainWindow. 
+
+Le PlayerBoard est divisé en cases. Chaque case peut accueillir au maximum un pion définit par la classe Player. Chaque Player peut
+se déplacer sur le PlayerBoard en faisant appel à la classe PlayerAction, qui vérifie si le coup est valide.
+
+Le WallBoard est quant à lui est divisé en couloir. Chaque couloir peut contenir un Wall. Un couloir a une largeur de 2 cells. L'utilisateur
+peut placer un wall en faisant appel à WallAction qui va d'abord vérifier si l'action est valide.
+
+\section{Partie 5: Besoin système non fonctionnels}
+\subsection{Système d'exploitation}
+Le programme doit être capable de tourner sous Linux, plus précisément avec la distribution Ubuntu 20.04 même s'il devrait savoir tourner
+sur n'importe quelle autre distribution.
+Ce serait potentiellement justifié de créer une version Windows et MacOS, mais ce n'est pas une priorité.
+
+\subsection{Réseau}
+Le programme va faire l'utilisation de socket pour permettre la communication entre le serveur et le client. 
+Le client devra éventuellement faire des requêtes vers des APIs externes.
+
+\subsection{Disponibilité}
+Afin que le programme fonctionne correctement, il est primordial que le serveur soit disponible, c'est à dire existant et accessible. 
+
+\subsection{Performance}
+Étant donné que le programme ne nécessite pas une grande performance graphique et que les calculs de jeu sont effectués sur un serveur, le
+programme est propice à avoir une bonne performance. Il faut s'assurer que les calculs exécutés sur le serveur soit effectués le plus
+rapidement possible afin de renvoyé une réponse au client le plus rapidement possible. Le jeu doit pouvoir être joué rapidement, il faut
+donc réduire au maximum le temps d'attente entre chaque coup.
+Il faut aussi que le programme utilise 2 threads, un pour l'affichage graphique et un pour les requêtes asynchrones, afin d'éviter que le
+programme ne sache plus réagir aux input du client.
+
+\subsection{Capacité}
+Le client doit avoir la capacité de lire des données du serveur et de les afficher à l'utilisateur. Il doit aussi être capable de gérer les
+entrées de l'utilisateur et d'en faire part au serveur.
+
+Le serveur doit avoir la capacité de gérer chaque calcul lié au jeu, par exemple vérifié qu'un coup est valide. Il doit aussi être capable
+de manipuler dans une base de données le chat, les données en rapport au jeu, tel que l'état de la partie en cas de sauvegarde, et les 
+données utilisateurs.
+
+\subsection{Sécurité}
+Afin d'être correctement sécurisé, le programme va encrypter les mots de passe avant des les enregistrer dans la base de données avec un
+algorithme de hashing, tel que SHA-256. Une salt key sera aussi utilisée lors de l'encryption pour amélioré la sécurité.
+
+Il peut aussi s'avérer utile d'établir une socket sécurisé à l'aide d'un certificat SSL. Cela permettrait entre autre de communiquer par HTTPS au
+lieu que par HTTP.
+
+\subsection{Robustesse}
+Le client doit être capable de résister à tout input de l'utilisateur sans cracher.
+Le serveur doit savoir gérer n'importe quel type de requêtes sans crash. Il doit aussi être capable de limiter ses actions au bon utilisateur.
+
+\section{Partie 6: Design et fonctionnement du système}
+\subsection{fonctionnement du système}
+\subsubsection{Boucle du jeu: Client}
+\begin{itemize}
+    \item Flow of a game (use activity diagram made by Boris)
+
+        À chaque tour, le client va envoyer une requête au serveur. Si le jeu est terminé, le serveur renverra un message au client pour que
+        celui-ci puisse arrêter la boucle de jeu.
+    \item Chat
+
+        Le chat se met à jour à chaque fois que le serveur envoie un message au client. Et un player écris un message qui est envoyé au serveur.
+\end{itemize}
+\subsubsection{Boucle du jeu: Serveur}
+\begin{itemize}
+    \item Jeu
+
+        Lorsque le client joue un coup, le serveur va vérifier que ce coup est valide et que la partie n'est pas fini. Il informera ensuite
+        le client.
+
+    \item Chat
+    
+        Le serveur doit informer les clients lorsque un message a été envoyé dans le chat.
+
+
+\end{itemize}
+
+\end{document}
