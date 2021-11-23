@@ -1,6 +1,6 @@
 @startuml
 
-title "Flow of a game of Corridor\n"
+title "Flow of a game of Quorridor\n"
 
 start
 :Configure game;
