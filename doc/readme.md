@@ -1,5 +1,10 @@
 # Formatage du SRD
 
+## Commits
+
+**Attention**, chaque commit doit inclure une
+entrée dans le fichier `tex/1_historique.tex` !
+
 ## Documents
 
 - documents dans le dossier `tex/`
@@ -27,6 +32,8 @@ tous nos composants soient les mêmes.
 \addimg{img/image.eps}{width=\linewidth}{Caption}{label}
 \addcode{code/code.cpp}{Caption}{C++}{label}
 ```
+
+## Compilation
 
 Pour le rendu PDF, compilez `main.tex` avec `xelatex main.tex` en faisant bien
 attention à ajouter au `main.tex` un `\input{tex/fichier.tex}` si vous avez
