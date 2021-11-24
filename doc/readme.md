@@ -23,11 +23,10 @@ PR.
 Utilisez les commandes `\addimg{}` et `\addcode{}` pour que
 tous nos composants soient les mêmes.
 
-> Exemples:
->
-> `\addimg{img/image.eps}{width=\linewidth}{Caption}{label}`
->
-> `\addcode{code/code.cpp}{Caption}{C++}{label}`
+```latex
+\addimg{img/image.eps}{width=\linewidth}{Caption}{label}
+\addcode{code/code.cpp}{Caption}{C++}{label}
+```
 
 Pour le rendu PDF, compilez `main.tex` avec `xelatex main.tex` en faisant bien
 attention à ajouter au `main.tex` un `\input{tex/fichier.tex}` si vous avez
