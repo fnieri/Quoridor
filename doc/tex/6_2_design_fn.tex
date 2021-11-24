@@ -1,10 +1,10 @@
     \subsection{Fonctionnement du système}
         \subsubsection{Inscription}
-        \addimg{Reg.eps}{width=\linewidth}{Register process}{regSeq}
+        \addimg{img/6_Reg.eps}{width=\linewidth}{Register process}{regSeq}
         \subsubsection{Connexion}
-        \addimg{Login.eps}{width=\linewidth}{Login process}{loginSeq}
+        \addimg{img/6_Login.eps}{width=\linewidth}{Login process}{loginSeq}
         \subsubsection{Chat}
-        \addimg{ChatSequence.eps}{width=\linewidth}{Chat process}{chatSeq}
+        \addimg{img/6_ChatSequence.eps}{width=\linewidth}{Chat process}{chatSeq}
         \subsubsection{Calcul du ELO}
         Pour comprendre comment fonctionnera le matchmaking, nous devons comprendre comment fonctionne le systeme de classement ELO, en une phrase:
         \textit{"Le classement Elo est un système d’évaluation comparatif du niveau de jeu des joueurs d’échecs, de go ou d’autres jeux en un contre un."}\footnote{Wikipedia, Classement ELO} \\
@@ -50,9 +50,10 @@
         \end{split}
     \end{equation}
 
-    Les ELO finaux des deux joueurs seront : \\
-
+    Les ELO finaux des deux joueurs seront :
+    \begin{center}
         r(1) = 1526, +26 \ r(2) = 1727, -26
+    \end{center}
     
     Supposons maintenant la partie se dèroule entre 4 joueurs, 1, 2, 3 et 4:
     \begin{center}
@@ -94,7 +95,7 @@
                 & E(4) = R(4) / [R(4) + (\dfrac{R(1) \cdot \omega_{4, 1} + R(2) \cdot \omega_{4, 2} + R(3) \cdot \omega_{4,3} }{J})] = 0,232 \\
             \end{split}
         \end{equation}
-        S(n) sera defini comme avant : 1 si le joueur a gagné, 0 s'il a perdu. \\
+        S(n) sera defini comme avant : 1 si le joueur a gagné, 0 s'il a perdu.
         
         Le calcul du ELO final r'(n) s'effectue de la meme manière:
         \begin{equation}
