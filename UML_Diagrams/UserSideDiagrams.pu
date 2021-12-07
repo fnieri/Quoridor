@@ -19,7 +19,6 @@ package MainMenu {
             + getUsername() : string
             + getFriendsList() : vector of Users
             + getElo() : int
-            + setElo()
             + logIn()
             + registerAccount()
             + logOut()
@@ -47,6 +46,8 @@ package MainMenu {
             - messagesLog : FILE    
         'Methods
             + receiveMessage(Message : message)
+            + display(Message : message)
+
     }
 
 
@@ -64,11 +65,11 @@ package MainMenu {
 note left of User
     default Constructor is for 
     guest access, Constructor only
-    needs user to recognize him, as
-    his data will be looked up in database.
-    User class has no knowledge of his password
+    needs username to recognize him, as
+    his data will be looked up in database on login.
+    User class has no knowledge of his password.
 end note
-
+/'
 package userAuth {
 
 
@@ -101,16 +102,17 @@ package userAuth {
 
 
 }
+'/
 
 class Message <<struct>> {
     'Fields
         - timeSent : Date
         - sender : User
-        - receiver : User
         - sentMessage : string 
+        - messageLenght : int
     }
 
-
+/'
 class Date <<struct>>{
     'Fields
         +hour : int
@@ -120,6 +122,7 @@ class Date <<struct>>{
         +month : int
         +day : int
 }
+'/
 
 note top of Leaderboard
     Leaderboard can be sorted for all
@@ -127,13 +130,13 @@ note top of Leaderboard
 end note
 
 ChatBox ---* "0..*" Message 
-ChatBox "0..1" --- "1..*" User   : > contains
+ChatBox "0..1" --- "2..*" User   : > contains
 Leaderboard --- "*" User : > contains 
-loginHandler --- passwordEncrypter : > uses
+/'loginHandler --- passwordEncrypter : > uses
 User -- loginHandler : > logs in via
 User -- registerHandler : > registers via
-User --r-- Message : > can send
 registerHandler --- passwordEncrypter : > uses
-Message -- Date : > uses
+'/
+User --r-- Message : > can send
 
 @enduml
