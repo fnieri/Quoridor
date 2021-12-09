@@ -1,0 +1,116 @@
+@startuml ServerSideDiagram
+title Server Side Diagram
+skinparam ClassAttributeIconSize 0
+skinparam Guillemet false
+
+
+
+/'
+class Server{
+    'Fields
+        - socket
+    'Methods
+        
+}
+'/
+
+Package Database <<Database>>{
+
+}
+
+
+package userAuth {
+    class loginHandler {
+    'Fields
+        - username : string
+        - password : string
+    'Methods
+        + processlogin() : bool
+    }
+
+    class registerHandler {
+        'Fields
+            - email : string
+            - username : string
+            - password : string
+        'Methods
+            + processRegister() : bool
+    }
+
+    class passwordEncrypter {
+        'Fields
+            - passwordToEncrypt : string
+            - finalPassword : string
+        'Methods
+            +  << constructor >> passwordEncrypter(passwordToEncrypt : string)
+            + hashingAlgorithm(password : string) : string 
+
+    }
+}
+
+
+package Game {
+    class Move{
+        'Fields
+            - move: Action
+        'Methods
+            + isActionValid(): bool
+            + isGameOver(): bool
+    }
+    class Player{
+        'Fields
+            -color: Color
+            -position: Position
+        'Methods
+            + move(Action)
+    }
+}
+
+note top of Game
+seul un utilisateur 
+à la fois peut
+effectuer une action
+end note
+
+
+Package Chat{
+    class Message{
+        'Fields
+        - timeSent: Date
+        - sender: User
+        - receiver: User
+        -sentMessage: string
+        'Methods
+        +read()
+        +send()
+            
+        
+    }
+    class Date <<struct>>{
+    'Fields
+        +hour : int
+        +minute : int
+        +second : int
+        +year : int
+        +month : int
+        +day : int
+    }
+}
+
+
+Class Client{
+
+}
+
+Database --u-- Game
+Database --u-- Chat
+Database --u-- userAuth
+loginHandler --u-- passwordEncrypter : > uses
+Client --u-- loginHandler : > logs in via
+Client --u-- registerHandler : > registers via
+registerHandler --u-- passwordEncrypter : > uses
+Client --up-- Message : > can send
+Game -- Client
+Client --down-- Message : > can receive 
+
+@enduml
