@@ -1,0 +1,15 @@
+\subsection{Coté Serveur}
+
+\addimg{img/6_ServerSideDiagram.eps}{width=\linewidth}{Diagramme du cote serveur}{serverside}
+
+Le serveur gère la connexion ou l'enregistrement d'un client. 
+Le gestionnaire de connexion vérifie la validité du nom d'utilisateur et
+du mot de passe en vérifiant dans la base de donnée qu'il existe bien un utilisateur avec ce mot de passe. Il en informe ensuite le client.
+Le gestionnaire d'enregistrement lui va vérifier la validité de l'adresse mail et de la disponibilité du nom d'utilisateur. Si cela est valide, il crypte le mot de passe et enregistre les identifiants du client dans la base de donnée. Le serveur informe le client si l'enregistrement a bien eu lieu.
+
+Le client peut envoyer et recevoir des messages.
+Un message contient une chaîne de caractère entrée par l' utilisateur, les informations du receveur, de l'envoyeur ainsi que l'horodatage de l'envoie du message. Ce message sera enregistré dans la base de donnée. Le serveur informe les clients a chaque fois qu'un message est envoyé dans le chat.
+
+Le serveur gère les actions du client sur le plateau.
+Chaque client peut envoyer une action, le serveur vérifie la validité du coup et vérifie également si une partie est fini. Le serveur enregistre la partie dans la base de donnée.
+
