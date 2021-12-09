@@ -1,0 +1,23 @@
+@startuml  UseCaseMenu
+left to right direction
+actor User
+rectangle Menu {
+
+User -left- (Log In)
+rtGame)
+User -- (Manage List Of Friends)
+User -- (Chat With Friends)
+User -- (Check ELO Ranking)
+
+(StartGame) <|-right- (ResumeGame)
+(StartGame) <|-left- (JoinGame)
+(StartGame) <|-down- (NewGame)
+
+(Invite Friends) .-up-> (NewGame) : extends
+(Configure) .-up-> (NewGame) : include
+
+(Validate User) .-up-> (Log In) : include
+(Register) .-up-> (Log In) : extends
+
+}
+@enduml
