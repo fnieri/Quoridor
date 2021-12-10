@@ -1,0 +1,38 @@
+@startuml
+
+title "Flow of a turn\n"
+
+start
+while(Action valid) is (no)
+    note right
+        Non valid action → cell or interspace:
+        - doesn't exist (out of the board);
+        - is not legal;
+            - cell is not accessible;
+                - cell is occupied;
+                - cell is too far;
+            - wall blocks at least one player;
+            - wall goes through a cell;
+            - wall is longer than two cells wide;
+    end note
+    note left
+        Input format:
+        - __move__ (in pawnBoard):
+            **m:src>dest**
+        - __put__ (in wallBoard):
+            **p:from>to**
+    end note
+    :Get input;
+    :Analyze input;
+endwhile (yes)
+#lightgreen:Do action;
+if (Type of action) is (move) then
+    :Move pawn;
+    stop
+else (put)
+    :Put wall;
+    stop
+endif
+
+@enduml
+
