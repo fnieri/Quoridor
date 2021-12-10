@@ -32,7 +32,7 @@ loop infinity
     activate D
     D --> L : state of existence and confirmation
     deactivate D
-    alt pair exists and is confirmed (email)
+    alt pair exists
         L --> I : access granted
         I -> U : notify user
     else pair doesn't exist or is not confirmed
