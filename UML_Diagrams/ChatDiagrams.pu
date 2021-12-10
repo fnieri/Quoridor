@@ -1,0 +1,54 @@
+@startuml ChatSequence
+title Chat Sequence Diagram
+
+Actor User
+Participant Server
+Entity Chat
+Database Database as D
+Actor AlreadyConnectedUsers as OU
+
+activate User
+    activate Server
+        activate Chat
+            opt accessing chat
+                User -> Chat : accessChat()
+                alt User is connected 
+                    Chat -> Chat : Add user to chat users list
+                else user isn't in the list of connected users
+                    Server -> Server :  timeout user for x seconds
+                    alt user didn't reconnect in x seconds
+
+                        Server -> Server ++ : remove User from user list
+                        Server -> User-- : disconnect User
+                        
+                end
+            end
+        end
+
+    opt SendingMessage
+        User -> Server : sendMessage(message) 
+        alt User is connected
+            
+        Server -> Server : Add message to message Queue
+        Server -> Chat : Send message to display
+
+        activate D
+        Chat -> D : update message log
+        deactivate D
+        activate OU
+            loop for each connected User
+                critical 
+                Chat -> OU : Send new message
+                OU -> OU : Display incoming message
+                
+                User -> User : Display message
+                end
+        deactivate OU
+            end
+        end
+    deactivate Server  
+        deactivate Chat
+
+    end
+deactivate User
+@enduml
