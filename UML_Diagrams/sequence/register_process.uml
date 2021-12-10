@@ -6,14 +6,14 @@ participant Interface as I
 participant Registrer as R
 database Database as D
 participant Encrypter as E
-participant MailServer as MS
+/' participant MailServer as MS '/
 
 
 autonumber
 
 group input
-    I -> U : getEmail()
-    U --> I : email
+    /' I -> U : getEmail() '/
+    /' U --> I : email '/
 
     I -> U : getUsername()
     U --> I : username
@@ -34,50 +34,55 @@ opt password and password confirmation do not match
 else there is a match
 
 
-    I -> R : attemptRegister(email, username, password)
+    /' I -> R : attemptRegister(email, username, password) '/
+    I -> R : attemptRegister(username, password)
     activate R
-    R -> D : emailExist(email)
+    /' R -> D : emailExist(email) '/
+    /' D --> R : state of existence '/
     activate D
-    D --> R : state of existence
     R -> D : usernameExist(username)
     D --> R : state of existence
-    alt one at least is not unique
+    /' alt one at least is not unique '/
+    alt username is not unique
         R --> I : registring failed
         I -> U : notify user
-    else both email and username are unique
+    /' else both email and username are unique '/
+    else username is unique
         R -> E : getHashAndKey(username, password)
         activate E
         E -> E : generateSaltKey()
         E --> R : hashedPassword with key and saltKey
         destroy E
-        critical beware multiple users trying to register with the exact same username and email at the same time
-            R -> D : add(email, username, hashedPassword, saltKey)
+        /' critical beware multiple users trying to register with the exact same username and email at the same time '/
+        critical beware multiple users trying to register with the exact same username at the same time
+            /' R -> D : add(email, username, hashedPassword, saltKey) '/
+            R -> D : add(username, hashedPassword, saltKey)
             note left
                 By default, added users
                 are not confirmed (email
                 not confirmed).
             end note
         end
-        R -> MS : sendConfirmation(email)
-        activate MS
-        MS -> U : send email
-        ...Wait for user to confirm...
-        U --> MS : link clicked
-        MS -> D : confirm(email)
+        /' R -> MS : sendConfirmation(email) '/
+        /' activate MS '/
+        /' MS -> U : send email '/
+        /' ...Wait for user to confirm... '/
+        /' U --> MS : link clicked '/
+        /' MS -> D : confirm(email) '/
         deactivate D
-        MS -> R : emailConfirmed(email)
-        deactivate MS
-        note right
-            This message is sent to all
-            active Registers, in case
-            multiple Users are trying
-            to register at the same time.
-        end note
-        opt confirmed email is the same as the register's email
+        /' MS -> R : emailConfirmed(email) '/
+        /' deactivate MS '/
+        /' note right '/
+        /'     This message is sent to all '/
+        /'     active Registers, in case '/
+        /'     multiple Users are trying '/
+        /'     to register at the same time. '/
+        /' end note '/
+        /' opt confirmed email is the same as the register's email '/
             R --> I : registring succeeded
             destroy R
             I -> U : notify user
-        end
+        /' end '/
 
 
     end
