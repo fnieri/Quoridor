@@ -16,7 +16,7 @@ User -- (Check ELO Ranking)
 (Invite Friends) .-up-> (NewGame) : extends
 (Configure) .-up-> (NewGame) : include
 
-(Valide User) .-up-> (Log In) : include
+(Validate User) .-up-> (Log In) : include
 (Register) .-up-> (Log In) : extends
 
 }
