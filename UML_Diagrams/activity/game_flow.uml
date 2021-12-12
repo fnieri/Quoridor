@@ -1,0 +1,36 @@
+@startuml
+
+title "Flow of a game of Quoridor\n"
+
+start
+:Configure game;
+note left
+    This can be the number of players,
+    the mode, etc.
+end note
+:Init game (player board and wall board);
+note right
+    Should be the same initial state
+    every game, although, maybe
+    material for a specific mode.
+end note
+
+while (There is a winner) is (no)
+    note left
+        A player has won when
+        he has reached the opposite side
+        of the board.
+    end note
+    note right
+        Each turn a player can either
+        move one of its pawns of put
+        a wall on the board.
+    end note
+    :Next turn;
+    backward :Evaluate game;
+endwhile (yes)
+#lightgreen:Congratulate winner;
+stop
+
+@enduml
+

@@ -1,0 +1,50 @@
+@startuml
+title "Logging process\n"
+
+start
+:User arrives at
+home page;
+note right
+    Or __any__ page, the Log In
+    button should be accessible
+    from everywhere.
+end note
+:Clicks Log In button;
+if (Has account) then (yes)
+    :Fills credentials;
+    note left
+        Usually a username
+        and a password.
+    end note
+else (no)
+    :New account process;
+    note right
+        User may need to go
+        through this logging
+        process again once
+        the account is created.
+    end note
+    stop
+endif 
+if (Credentials correct) then (yes)
+    #palegreen:Access granted;
+    stop
+else (no)
+    #pink:Access denied;
+endif
+:Password recovering process;
+note left
+    Maybe via an sent
+    and a link clicked.
+end note
+if (Success) then (yes)
+    #palegreen:Access granted;
+    stop
+else (no)
+    #pink:Access denied;
+    stop
+endif
+
+
+@enduml
+

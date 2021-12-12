@@ -69,9 +69,9 @@ utilisateur, le système doit pouvoir lui donner la
 possibilité d'en créer un.
 
 Durant ce processus, le système doit pouvoir demander au
-visiteur~: une adresse courriel, un nom d'utilisateur et un
-mot de passe. Le système doit s'assurer que les deux
-premiers champs n'existent pas déjà dans la base de données.
+visiteur~: un nom d'utilisateur et un
+mot de passe. Le système doit s'assurer que le
+premier champ n'existe pas déjà dans la base de données.
 Si c'est le cas, le système doit refuser la demande
 d'inscription et en informer le visiteur.
 
@@ -162,8 +162,8 @@ amis.
 \subsection{Modifier ses informations personnelles}
 
 Le système doit fournir la possibilité à tout utilisateur de
-modifier ses informations personnelles. Cela inclut
-l'adresse courriel, le nom d'utilisateur et le mot de passe.
+modifier ses informations personnelles. Cela inclut 
+le nom d'utilisateur et le mot de passe.
 La modification de chacune de ces informations doit être
 définitive et la nouvelle valeur doit être
 sauvegardée dans la base de données.
@@ -219,14 +219,30 @@ actions en-dehors du plateau de jeu. Le joueur ne peut agir
 que lorsque c'est son tour de jouer alors que l'utilisateur, au
 contraire, peut agir tout le temps.
 
+Les actions du joueur seraient de déplacer un pion
+et de placer un mur alors que celles de l'utilisateur
+seraient de discuter avec des amis, déclarer forfait,
+etc.
+
 Le système doit permettre aux participants de jouer,
 chacun à leur tour, jusqu'à une victoire potentielle
-de l'un
+de l'un des deux. Les règles du jeu étant telles que
+des parties nulles sont impossibles.
 
 Lors d'une fin de partie, le système doit en informer les
 participants, mettre à jour l'\emph{ELO} de chaque
 utilisateur et renvoyer les utilisateurs vers le menu principal.
 
+Il est à noter que plusieurs parties en parallèle doivent être
+possibles sur le serveur, chacune ayant lieu indépendamment des
+autres et n'ayant aucune connaissance de celles-ci.
+
+\subsubsection{Gestion d'une partie de Quoridor}
+
+Le système doit pouvoir gérer deux plateaux distincts.
+Celui des pions et celui des murs. Les plateaux
+doivent être gérés par un contrôleur commun puisqu'ils
+sont dépendants l'un de l'autre.
 
 % Création d'une partie, matchmaking
 % Gestion d'une partie, gestion murs, gestion pions, gestion
