@@ -6,17 +6,17 @@
 #include"PlayerEnum.h"
 
 
-class PlayerAction
-{
-private:
+class PlayerAction {
     std::string playerAction;
 public:
     PlayerAction(/* args */);
+
     ~PlayerAction();
+
     bool isActionValid();
+
     bool isGameOver();
 };
-
 
 
 #endif //PLAYER_ACTION

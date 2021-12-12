@@ -7,7 +7,7 @@
 #include <chrono>
 #include "user.h"
 
-
+// struct use for message info
 struct Message {
         time_t timeSent;
         User sender;

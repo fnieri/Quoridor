@@ -3,7 +3,7 @@
 #include"Point.h"
 #include"Player.h"
 
-
+// contains the information of a cell
 class Cell
 {
 private:
