@@ -14,8 +14,7 @@ class loginHandler {
         * Username is in database
         * Hashed password with salt key matches the one in database
         * Login process is tied to server and needs to lookup database
-        *   
-        *   
+        */ 
 };
 
 #endif
