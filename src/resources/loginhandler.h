@@ -8,7 +8,13 @@ class loginHandler {
         std::string username;
         std::string password;
     public:
+
         bool processLogin();
+        /* Login process checks if:
+        * Username is in database
+        * Hashed password with salt key matches the one in database
+        * Login process is tied to server and needs to lookup database
+        */ 
 };
 
 #endif
