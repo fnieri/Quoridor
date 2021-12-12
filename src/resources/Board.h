@@ -7,7 +7,8 @@
 class Board
 {
 private:
-    PlayerBoard playerboard;
+    // board contains wall and player board, which will then be displayed
+    PlayerBoard playerBoard;
     PlayerAction wallBoard;
 
 public:

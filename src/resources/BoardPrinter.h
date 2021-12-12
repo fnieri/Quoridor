@@ -3,6 +3,7 @@
 #include"Board.h"
 #include"Player.h"
 
+// Prints the board to the console
 class BoardPrinter
 {
 private:
