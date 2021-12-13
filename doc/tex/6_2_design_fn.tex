@@ -41,7 +41,7 @@
     \textit{"This is called the K-factor and basically a measure of how strong a match will impact the players’ ratings.
     If you set K too low the ratings will hardly be impacted by the matches and very stable ratings (too stable) will occur.
     On the other hand, if you set it too high, the ratings will fluctuate wildly according to the current performance.
-     Different organizations use different K-factors, there’s no universally accepted value. In chess the ICC uses a value of K = 32".}\footnote{\footnote{\href{https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/}{Metin's Media and Math, How To Calculate the Elo-Rating }}} \\
+     Different organizations use different K-factors, there’s no universally accepted value. In chess the ICC uses a value of K = 32".}\footnote{\href{https://metinmediamath.wordpress.com/2013/11/27/how-to-calculate-the-elo-rating-including-example/}{Metin's Media and Math, How To Calculate the Elo-Rating }} \\
     Ici, nous supposons que le joueur 1 ait gagné.
     \begin{equation}
         \begin{split}
@@ -80,16 +80,11 @@
                 1 - \varepsilon \cdot 10^{-3}, & \text{si $\varepsilon \ge 100$} \\
                 1, & \text{si $-100 < \varepsilon < 100$ }\\
             \end{cases} $$
-
-        E(1) sera alors, avec J le nombre de joueurs adversaires (3):
+        
+        E(1), E(2), E(3) et E(4) se calculeront comme suit, avec J le nombre de joueurs adversaires (3):
         \begin{equation}
             \begin{split}
                 & E(1) = R(1) / [R(1) + (\dfrac{R(2) \cdot \omega_{1, 2} + R(3) \cdot \omega_{1, 3} + R(4) \cdot \omega_{1, 4}}{J})] = 0,394 \\
-            \end{split}
-        \end{equation}
-        E(2), E(3) et E(4) se calculeront comme suit:
-        \begin{equation}
-            \begin{split}
                 & E(2) = R(2) / [R(2) + (\dfrac{R(1) \cdot \omega_{2, 1} + R(3) \cdot \omega_{2, 3} + R(4) \cdot \omega_{2,4} }{J})] = 0,872 \\
                 & E(3) = R(3) / [R(3) + (\dfrac{R(1) \cdot \omega_{3, 1} + R(2) \cdot \omega_{3, 2} + R(4) \cdot \omega_{3,4} }{J})] = 0,131 \\
                 & E(4) = R(4) / [R(4) + (\dfrac{R(1) \cdot \omega_{4, 1} + R(2) \cdot \omega_{4, 2} + R(3) \cdot \omega_{4,3} }{J})] = 0,232 \\
