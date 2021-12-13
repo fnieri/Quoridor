@@ -35,17 +35,17 @@ Il peut aussi s'avérer utile d'établir une socket sécurisé à l'aide d'un ce
 lieu que par HTTP.
 
 \subsection{Robustesse}
-Le client doit être capable de résister à tout input de l'utilisateur sans cracher.
+Le client doit être capable de résister à tout input de l'utilisateur sans crasher.
 Le serveur doit savoir gérer n'importe quel type de requêtes sans crash. Il doit aussi être capable de limiter ses actions au bon utilisateur.
 
 \section{Partie 6: Design et fonctionnement du système}
-\subsection{fonctionnement du système}
+\subsection{Fonctionnement du système}
 \subsubsection{Boucle du jeu: Client}
 
 \addimg{img/6_GameFlow.eps}{width=\linewidth}{Diagramme d'activité sur le déroulement d'une partie}{act_game}
 
 \begin{itemize}
-    \item Flow of a game (use activity diagram made by Boris)
+    \item Flow of a game
 
         À chaque tour, le client va envoyer une requête au serveur. Si le jeu est terminé, le serveur renverra un message au client pour que
         celui-ci puisse arrêter la boucle de jeu.
