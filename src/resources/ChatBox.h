@@ -7,7 +7,7 @@
 #include <string>
 #include <stdio.h>
 #include <vector>
-#include "user.h"
+#include "User.h"
 
 class ChatBox {
     private:

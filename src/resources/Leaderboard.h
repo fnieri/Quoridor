@@ -2,7 +2,8 @@
 #define __LEADERBOARD_H
 
 #include <vector>
-#include "user.h"
+#include "User.h"
+
 class Leaderboard {
     private:
         std::vector<User> listOfUsers;

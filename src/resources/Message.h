@@ -5,7 +5,7 @@
 #include <memory>
 #include <string>
 #include <chrono>
-#include "user.h"
+#include "User.h"
 
 // struct use for message info
 struct Message {
