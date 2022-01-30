@@ -1,5 +1,5 @@
-#ifndef RESTART_GAME
-#define RESTART_GAME
+#pragma once
+
 
 class RestartGame
 {
@@ -11,5 +11,3 @@ public:
     ~RestartGame();
 };
 
-
-#endif  //RESTART_GAME

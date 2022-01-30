@@ -1,5 +1,5 @@
-#ifndef __CHATBOX_H
-#define __CHATBOX_H
+#pragma once
+
 
 
 #include <memory>
@@ -16,5 +16,3 @@ class ChatBox {
     public:
         void receiveMessage(Message);
 };
-
-#endif 

@@ -1,5 +1,5 @@
-#ifndef CELL
-#define CELL
+#pragma once
+
 #include"Point.h"
 #include"Player.h"
 
@@ -16,5 +16,3 @@ public:
     ~Cell();
 };
 
-
-#endif  // CELL

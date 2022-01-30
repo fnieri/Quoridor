@@ -1,5 +1,5 @@
-#ifndef PLAYER_ACTION
-#define PLAYER_ACTION
+#pragma once
+
 
 
 #include<string>
@@ -18,5 +18,3 @@ public:
     bool isGameOver();
 };
 
-
-#endif //PLAYER_ACTION

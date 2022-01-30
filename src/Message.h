@@ -1,5 +1,5 @@
-#ifndef __MESSAGE_H
-#define __MESSAGE_H
+#pragma once
+
 
 #include <vector>
 #include <memory>
@@ -16,5 +16,3 @@ struct Message {
 };
 
 
-
-#endif

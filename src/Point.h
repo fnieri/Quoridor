@@ -1,9 +1,7 @@
-#ifndef POINT
-#define POINT
+#pragma once
+
 
 struct Point
 {
     int x, y;
 };
-
-#endif  // POINT

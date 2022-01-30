@@ -1,5 +1,5 @@
-#ifndef __LEADERBOARD_H
-#define __LEADERBOARD_H
+#pragma once
+
 
 #include <vector>
 #include "User.h"
@@ -13,5 +13,3 @@ class Leaderboard {
         void sortBy();
         void filterBy();
 };
-
-#endif

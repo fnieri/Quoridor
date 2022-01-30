@@ -1,5 +1,5 @@
-#ifndef SCORE
-#define SCORE
+#pragma once
+
 
 #include"Player.h"
 
@@ -14,5 +14,3 @@ public:
     ~Score();
 };
 
-
-#endif  //SCORE

@@ -1,5 +1,5 @@
-#ifndef WALL_ACTION
-#define WALL_ACTION
+#pragma once
+
 #include<string>
 
 
@@ -14,5 +14,3 @@ public:
     ~WallAction();
 };
 
-
-#endif  //WALL_ACTION

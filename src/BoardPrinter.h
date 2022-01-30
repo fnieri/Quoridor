@@ -1,5 +1,5 @@
-#ifndef BOARD_PRINTER
-#define BOARD_PRINTER
+#pragma once
+
 #include"Board.h"
 #include"Player.h"
 
@@ -15,5 +15,3 @@ public:
     void printBoard();
 };
 
-
-#endif  // BOARDPRINTER

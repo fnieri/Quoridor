@@ -1,5 +1,5 @@
-#ifndef __REGISTERHANDLER_H
-#define __REGISTERHANDLER_H
+#pragma once
+
 
 #include <string>
 
@@ -16,5 +16,3 @@ class registerHandler {
         */
 };
 
-
-#endif

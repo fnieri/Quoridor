@@ -1,5 +1,5 @@
-#ifndef WALL_BOARD
-#define WALL_BOARD
+#pragma once
+
 #include<vector>
 #include"Wall.h"
 
@@ -13,5 +13,3 @@ public:
     ~WallBoard();
 };
 
-
-#endif //WALL_BOARD

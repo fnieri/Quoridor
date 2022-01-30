@@ -1,5 +1,5 @@
-#ifndef PLAYER_BOARD
-#define PLAYER_BOARD
+#pragma once
+
 #include<vector>
 #include"Cell.h"
 
@@ -13,5 +13,3 @@ public:
     ~PlayerBoard();
 };
 
-
-#endif  //PLAYER_BOARD

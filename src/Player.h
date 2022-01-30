@@ -1,5 +1,5 @@
-#ifndef PLAYER
-#define PLAYER
+#pragma once
+
 
 #include<string>
 #include"PlayerEnum.h"
@@ -17,5 +17,3 @@ public:
     ~Player();
 };
 
-
-#endif  //PLAYER

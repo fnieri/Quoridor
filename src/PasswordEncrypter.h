@@ -1,5 +1,5 @@
-#ifndef __PASSWORDENCRYPTER_H
-#define __PASSWORDENCRYPTER_H
+#pragma once
+
 
 #include <string>
 
@@ -19,4 +19,3 @@ class PasswordEncrypter {
         //Generates random salt key to use to encrypt password
         int saltKeyGenerator();
 };
-#endif

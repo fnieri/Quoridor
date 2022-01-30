@@ -1,5 +1,5 @@
-#ifndef BOARD
-#define BOARD
+#pragma once
+
 #include"PlayerBoard.h"
 #include"PlayerAction.h"
 
@@ -15,6 +15,3 @@ public:
     Board(/* args */);
     ~Board();
 };
-
-
-#endif //BOARD

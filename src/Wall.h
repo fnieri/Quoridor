@@ -1,5 +1,5 @@
-#ifndef WALL
-#define WALL
+#pragma once
+
 #include<tuple>
 #include"Point.h"
 
@@ -13,5 +13,3 @@ public:
     ~Wall();
 };
 
-
-#endif  //WALL

@@ -1,5 +1,5 @@
-#ifndef __USER_H
-#define __USER_H
+#pragma once
+
 
 #include <string>
 #include <memory>
@@ -57,5 +57,3 @@ class User {
         void displayUser();
 
 };
-
-#endif

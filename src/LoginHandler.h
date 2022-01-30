@@ -1,5 +1,5 @@
-#ifndef __LOGINHANDLER_H
-#define __LOGINHANDLER_H
+#pragma once
+
 
 #include <string>
 
@@ -16,5 +16,3 @@ class loginHandler {
         * Login process is tied to server and needs to lookup database
         */ 
 };
-
-#endif
