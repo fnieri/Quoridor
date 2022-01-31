@@ -1,21 +1,44 @@
 #pragma once
 
 
+#include "include/cryptopp/cryptlib.h"
+#include "include/cryptopp/sha.h"
+#include "include/cryptopp/osrng.h"
+#include "include/cryptopp/pwdbased.h"
+#include "include/cryptopp/hex.h"
+
+#include <chrono>
 #include <string>
+
+#include <iostream>
 
 class PasswordEncrypter {
     private:
         std::string passwordToEncrypt;
-        std::string finalPassword;
-        int saltKey;
+        std::string saltKey;
+        /**
+         * @brief Generate saltKey given Unix epoch time
+         * 
+         */
+        void generateSaltKey();
+        /**
+         * @brief Hash password given a saltkey
+         * 
+         */
+        std::string createDigest();
     public:
         
         //Encrypter hashes given password
+        //Constructor for encrypting
         PasswordEncrypter(std::string passwordToEncrypt);
         
-        //Hashing algorithm can use SHA1, SHA2, SHA3, SHA256
-        std::string hashingAlgorithm(std::string);
+        //Constructor for decrypting given a salt key and a password to encrypt
+        PasswordEncrypter(std::string passwordToEncrypt, std::string saltKey);
         
-        //Generates random salt key to use to encrypt password
-        int saltKeyGenerator();
+        //Hash saltKey + password
+        std::string hashPassword();
+        
+        //Getters
+        std::string getSaltKey();
+
 };
