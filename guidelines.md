@@ -28,7 +28,31 @@ Veillez aussi à ne mettre aucun `using namespace ...` dans les headers, seuleme
 
 Veillez à ne mettre que les includes absolument nécessaires dans les headers. Si
 une simple déclaration suffit, préférez cela et déplacez l'include en question dans
-le fichier cpp. Cela peut grandement améliorer les temps de compilation.
+le fichier cpp. Cela peut grandement améliorer les temps de compilation en plus de réduire les
+dépendances entre fichiers (moins de couplage!).
+
+Par exemple :
+```cpp
+// w.h
+class Widget {
+...
+};
+
+//a.h
+class Widget; // au lieu de #include "w.h"
+auto f(Widget &) -> void;
+
+//a.cpp
+#include "w.h"
+...
+
+//b.h
+#include "a.h" // w.h n'est pas copié ici
+...
+
+// Si w.h change, seul a.cpp va être recompilé et non tous les fichiers qui incluent a.h.
+
+```
 
 Et bien évidemment, aucune implémentation dans les headers. À la limite les getters et les setters.
 
