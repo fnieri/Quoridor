@@ -7,5 +7,5 @@ project(Quoridor
 
 add_executable(quoridor
     main.cpp
-    # Point.cpp
+    Point.cpp
 )
