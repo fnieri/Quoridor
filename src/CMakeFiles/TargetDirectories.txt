@@ -1,0 +1,3 @@
+/home/frann/Scrivania/PA2/202122_INFOF209_5/src/CMakeFiles/quoridor.dir
+/home/frann/Scrivania/PA2/202122_INFOF209_5/src/CMakeFiles/edit_cache.dir
+/home/frann/Scrivania/PA2/202122_INFOF209_5/src/CMakeFiles/rebuild_cache.dir

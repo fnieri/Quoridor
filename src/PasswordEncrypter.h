@@ -1,16 +1,7 @@
 #pragma once
 
 
-#include "include/cryptopp/cryptlib.h"
-#include "include/cryptopp/sha.h"
-#include "include/cryptopp/osrng.h"
-#include "include/cryptopp/pwdbased.h"
-#include "include/cryptopp/hex.h"
-
-#include <chrono>
 #include <string>
-
-#include <iostream>
 
 class PasswordEncrypter {
     private:
@@ -25,7 +16,7 @@ class PasswordEncrypter {
          * @brief Hash password given a saltkey
          * 
          */
-        std::string createDigest();
+        std::string createDigest(std::string saltedPassword);
     public:
         
         //Encrypter hashes given password
@@ -41,4 +32,6 @@ class PasswordEncrypter {
         //Getters
         std::string getSaltKey();
 
+        //Setters
+        void setSaltKey(std::string newSaltKey);
 };
