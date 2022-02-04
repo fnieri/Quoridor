@@ -1,10 +1,10 @@
 #include "PasswordEncrypter.h"
 
+#include <cryptopp/cryptlib.h>
 #include <cryptopp/hex.h>
 #include <cryptopp/osrng.h>
-#include <cryptopp/sha.h>
 #include <cryptopp/pwdbased.h>
-#include <cryptopp/cryptlib.h>
+#include <cryptopp/sha.h>
 
 #include <chrono>
 #include <iostream>
@@ -24,11 +24,11 @@ PasswordEncrypter::PasswordEncrypter(std::string passwordToEncrypt, std::string 
 void PasswordEncrypter::generateSaltKey()
 {
     // https://stackoverflow.com/questions/6012663/get-unix-timestamp-with-c
-    // Salt key is unix time stamp as it is unique
+    // Salt key is unix time stamp as it is unique EVERY NEW SECOND
     // https://stackoverflow.com/questions/36955261/accepted-method-to-generate-salt-for-a-password-hash-function-c
-    
-    int64_t timestamp{ std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count() };
-    saltKey = std::to_string(timestamp) ;
+
+    int64_t timestamp {std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()};
+    saltKey = std::to_string(timestamp);
 }
 
 std::string PasswordEncrypter::createDigest(std::string saltedPassword)
@@ -59,7 +59,7 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 std::string PasswordEncrypter::hashPassword()
 {
     std::string saltedPassword = saltKey + passwordToEncrypt;
-    
+
     return createDigest(saltedPassword);
 }
 
@@ -68,6 +68,7 @@ std::string PasswordEncrypter::getSaltKey()
     return saltKey;
 }
 
-void PasswordEncrypter::setSaltKey(std::string newSaltKey) {
-    
+void PasswordEncrypter::setSaltKey(std::string newSaltKey)
+{
+    saltKey = newSaltKey;
 }
