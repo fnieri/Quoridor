@@ -1,7 +1,18 @@
-include(CTest)
 find_package(Catch2 REQUIRED)
-enable_testing()
-add_executable(quoridor_tests main.cpp ../src/PasswordEncrypter.cpp)
-add_test(quoridor_tests Test_PasswordEncrypter.cpp COMMAND outputTest)
 
-target_link_libraries(quoridor_tests PRIVATE cryptopp-shared Catch2::Catch2WithMain src)
+set(quoridor_test_suites
+    # quoridor_client_tests
+    # quoridor_server_tests
+    quoridor_common_tests
+)
+
+# Names of the test files without the extention
+set(quoridor_common_tests
+    Test_PasswordEncrypter
+)
+
+foreach(test_suite IN LISTS quoridor_test_suites)
+    add_executable(${test_suite} ${${test_suite}})
+    add_test(NAME ${test_suite} COMMAND ${test_suite})
+    target_link_libraries(${test_suite} PRIVATE Catch2::Catch2WithMain src)
+endforeach()

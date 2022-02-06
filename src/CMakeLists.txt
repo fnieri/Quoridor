@@ -1,10 +1,20 @@
-add_library(src INTERFACE)
-
-add_executable(quoridor
-                main.cpp
-                PasswordEncrypter.cpp
+# Library of the project, can be linked to the tests
+add_library(src
+    PasswordEncrypter.cpp
+    # Point.cpp
 )
+
+target_link_libraries(src
+    PRIVATE
+        cryptopp-shared
+)
+
+add_executable(quoridor-client
+    main.cpp
+)
+
 # Link the project libraries to the executable
-target_link_libraries(quoridor PRIVATE
-       cryptopp-shared 
+target_link_libraries(quoridor-client
+    PRIVATE
+        src
 )
