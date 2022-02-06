@@ -56,6 +56,8 @@ if(${CRYPTOPP}_POPULATED)
     set(BUILD_SHARED ${BUILD_SHARED_CRYPTOPP_OLD} CACHE BOOL "Type of libraries to build" FORCE)
 endif()
 
+target_include_directories(cryptopp-shared PUBLIC ${${CRYPTOPP}_SOURCE_DIR})
+
 ###############################################################
 # Fetch Catch2
 #############################################################à
