@@ -7,10 +7,8 @@
 Pour compiler, exécutez ces commandes depuis la racine du repo git:
 
 ```bash
-mkdir build
-cd build
-cmake ../src
-cmake --build .
+make setup
+make
 ```
 
 # Contributions

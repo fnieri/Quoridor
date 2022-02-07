@@ -1,10 +1,10 @@
 # Library of the project, can be linked to the tests
-add_library(quoridor_client
+add_library(${PREFIX}_client
     Point.cpp
     Stringable.cpp
 )
 
-target_include_directories(quoridor_client
+target_include_directories(${PREFIX}_client
     PUBLIC
         ${CMAKE_SOURCE_DIR}
 )
@@ -16,5 +16,5 @@ add_executable(client
 # Link the project libraries to the executable
 target_link_libraries(client
     PRIVATE
-        quoridor_client
+        ${PREFIX}_client
 )
