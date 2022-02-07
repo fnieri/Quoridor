@@ -1,6 +1,7 @@
 # Library of the project, can be linked to the tests
 add_library(quoridor_client
     Point.cpp
+    Stringable.cpp
 )
 
 target_include_directories(quoridor_client
