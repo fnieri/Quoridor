@@ -1,29 +1,24 @@
 //
-// Created by louis on 07/02/2022.
+// Created by louis on 08/02/2022.
 //
 
-#include <bsoncxx/builder/stream/array.hpp>
-#include <bsoncxx/builder/stream/document.hpp>
-#include <bsoncxx/builder/stream/helpers.hpp>
-#include <bsoncxx/json.hpp>
-#include <cstdint>
-#include <iostream>
-#include <mongocxx/client.hpp>
-#include <mongocxx/instance.hpp>
-#include <mongocxx/stdx.hpp>
-#include <mongocxx/uri.hpp>
-#include <vector>
-//...
-int main()
+#include "Database.h"
+
+mongocxx::instance inst {}; // Initialize MongoDB C++ driver
+
+DatabaseHandler::DatabaseHandler()
+    : uri(mongocxx::uri(database::kMongoDbUri))
+    , client(mongocxx::client(uri))
+    , db(client[database::kDatabaseName])
 {
-    printf("Hello, World!\n");
-    mongocxx::instance inst {};
-    const auto uri = mongocxx::uri {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-    mongocxx::client conn {uri};
-    mongocxx::database db = conn["test"];
+}
 
-    mongocxx::collection coll = db["okok"];
+void DatabaseHandler::quickTest()
+{
+    // just a quick test to see if the database is working
+    std::cout << "Sending test data" << std::endl;
 
+    mongocxx::collection coll = db[database::kCollectionName];
     auto builder = bsoncxx::builder::stream::document {};
     bsoncxx::document::value doc_value = builder << "name"
                                                  << "MongoDB"
@@ -36,5 +31,5 @@ int main()
 
     bsoncxx::stdx::optional<mongocxx::result::insert_one> result = coll.insert_one(view);
 
-    return 0;
+    std::cout << "Data sent" << std::endl;
 }
