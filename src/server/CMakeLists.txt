@@ -13,12 +13,12 @@ target_include_directories(${PREFIX}_server
         ${CMAKE_SOURCE_DIR}
 )
 
-add_executable(server.out
+add_executable(server
     main.cpp
 )
 
 # Link the project libraries to the executable
-target_link_libraries(server.out
+target_link_libraries(server
     PRIVATE
         ${PREFIX}_server
 )
