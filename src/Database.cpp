@@ -15,6 +15,7 @@ DatabaseHandler::DatabaseHandler()
 
 void DatabaseHandler::quickTest()
 {
+    // just ignore this unless you want to test the database
     // just a quick test to see if the database is working
     std::cout << "Sending test data" << std::endl;
 
@@ -32,4 +33,59 @@ void DatabaseHandler::quickTest()
     bsoncxx::stdx::optional<mongocxx::result::insert_one> result = coll.insert_one(view);
 
     std::cout << "Data sent" << std::endl;
+}
+
+bool DatabaseHandler::createAccount(std::string username, std::string password)
+{
+    // check if username already exists
+    if (doesUsernameExist(username)) {
+        std::cout << "Username already exists" << std::endl;
+        return false;
+    }
+    // if not, create account
+    // get user collection
+    mongocxx::collection userColl = db[database::kUserCollectionName];
+
+    // create document
+    auto builder = document {} << "username" << username << "password" << password << finalize; // still need to encrypt password. this is just a test.
+
+    // insert username+password into user collection
+    userColl.insert_one(builder.view());
+
+    // return true to indicate success in creating account
+    std::cout << "Account created" << std::endl;
+    return true;
+}
+
+bool DatabaseHandler::doesUsernameExist(const std::string &username)
+{
+    // get user collection
+    mongocxx::collection userColl = db[database::kUserCollectionName];
+
+    // check if username is contained in the collection
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybe_result = userColl.find_one(document {} << "username" << username << finalize);
+    if (maybe_result)
+        return true;
+    return false;
+}
+
+bool DatabaseHandler::checkLogin(std::string username, std::string password)
+{
+    // get user collection
+    mongocxx::collection userColl = db[database::kUserCollectionName];
+
+    // check if username is contained in the collection
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybe_result = userColl.find_one(document {} << "username" << username << finalize);
+    if (maybe_result) {
+        // get password from user collection
+        bsoncxx::document::view view = maybe_result->view();
+        std::string dbPassword = view["password"].get_utf8().value.to_string();
+        // compare password
+        if (password == dbPassword) {
+            std::cout << "Login successful" << std::endl;
+            return true;
+        }
+    }
+    std::cout << "Login failed" << std::endl;
+    return false;
 }
