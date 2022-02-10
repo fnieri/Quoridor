@@ -1,9 +1,6 @@
 //
 // Created by louis on 08/02/2022.
 //
-
-#ifndef QUORIDOR_DATABASE_H
-#define QUORIDOR_DATABASE_H
 #pragma once
 
 #include <bsoncxx/builder/stream/array.hpp>
@@ -49,5 +46,3 @@ public:
     void addFriend(std::string username, std::string friendUsername);
     void removeFriend(std::string username, std::string friendUsername);
 };
-
-#endif // QUORIDOR_DATABASE_H
