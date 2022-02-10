@@ -39,7 +39,7 @@ script:
 
 ```bash
 chmod +x setup_mongocxx
-./setup_mongocxx
+sudo ./setup_mongocxx
 ```
 
 Now wait a bit. Go make yourself some coffee or something.
