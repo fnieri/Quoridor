@@ -1,0 +1,1 @@
+/usr/bin/c++  -g  -rdynamic CMakeFiles/quoridor.dir/main.cpp.o CMakeFiles/quoridor.dir/Point.cpp.o CMakeFiles/quoridor.dir/Observer.cpp.o CMakeFiles/quoridor.dir/Database.cpp.o  -o quoridor  -Wl,-rpath,/usr/local/lib /usr/local/lib/libmongocxx.so /usr/local/lib/libbsoncxx.so /usr/local/lib/libbsoncxx.so 

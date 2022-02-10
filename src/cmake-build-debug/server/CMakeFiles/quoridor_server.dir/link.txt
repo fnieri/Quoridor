@@ -1,0 +1,2 @@
+/usr/bin/ar qc libquoridor_server.a  CMakeFiles/quoridor_server.dir/PasswordEncrypter.o
+/usr/bin/ranlib libquoridor_server.a

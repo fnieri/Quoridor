@@ -1,0 +1,11 @@
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles/edit_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/CMakeFiles/edit_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/CMakeFiles/server.out.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/client.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/edit_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/quoridor_client.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/common/CMakeFiles/rebuild_cache.dir
+/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/common/CMakeFiles/edit_cache.dir

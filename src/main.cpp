@@ -1,4 +1,4 @@
-#include "Database.h"
+#include "server/Database.h"
 
 void testLogin(DatabaseHandler *db)
 {
@@ -14,9 +14,9 @@ void testLogin(DatabaseHandler *db)
     db->checkLogin(username, password);
 }
 
-void testCreateAcoount(DatabaseHandler *db)
+void testCreateAccount(DatabaseHandler *db)
 {
-    // test login
+    // test account creation
     std::string username;
     std::cout << "Enter a username: ";
     std::getline(std::cin, username);
@@ -30,14 +30,14 @@ void testCreateAcoount(DatabaseHandler *db)
 
 int main(int argc, char *argv[])
 {
-    DatabaseHandler db;
+    auto &db = DatabaseHandler::get();
 
     std::cout << "Test account creation(1) or login(2): ";
     std::string choice;
     std::getline(std::cin, choice);
     int choiceInt = std::stoi(choice);
     if (choiceInt == 1) {
-        testCreateAcoount(&db);
+        testCreateAccount(&db);
     } else if (choiceInt == 2) {
         testLogin(&db);
     } else {
