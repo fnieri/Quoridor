@@ -111,19 +111,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named server.out
-
-# Build rule for target.
-server.out: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 server.out
-.PHONY : server.out
-
-# fast build rule for target.
-server.out/fast:
-	$(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/build
-.PHONY : server.out/fast
-
-#=============================================================================
 # Target rules for targets named client
 
 # Build rule for target.
@@ -157,7 +144,6 @@ help:
 	@echo "... depend"
 	@echo "... rebuild_cache"
 	@echo "... edit_cache"
-	@echo "... server.out"
 	@echo "... client"
 	@echo "... quoridor_client"
 .PHONY : help

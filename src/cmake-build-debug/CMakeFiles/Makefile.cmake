@@ -54,7 +54,6 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "server/CMakeFiles/server.out.dir/DependInfo.cmake"
   "client/CMakeFiles/client.dir/DependInfo.cmake"
   "client/CMakeFiles/quoridor_client.dir/DependInfo.cmake"
   )

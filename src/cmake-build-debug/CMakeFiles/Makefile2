@@ -115,7 +115,7 @@ common/clean:
 # Directory level rules for directory server
 
 # Recursive "all" directory target.
-server/all: server/CMakeFiles/server.out.dir/all
+server/all:
 
 .PHONY : server/all
 
@@ -125,36 +125,9 @@ server/preinstall:
 .PHONY : server/preinstall
 
 # Recursive "clean" directory target.
-server/clean: server/CMakeFiles/server.out.dir/clean
+server/clean:
 
 .PHONY : server/clean
-
-#=============================================================================
-# Target rules for target server/CMakeFiles/server.out.dir
-
-# All Build rule for target.
-server/CMakeFiles/server.out.dir/all:
-	$(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/depend
-	$(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=6,7 "Built target server.out"
-.PHONY : server/CMakeFiles/server.out.dir/all
-
-# Build rule for subdir invocation for target.
-server/CMakeFiles/server.out.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/server.out.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 0
-.PHONY : server/CMakeFiles/server.out.dir/rule
-
-# Convenience name for target.
-server.out: server/CMakeFiles/server.out.dir/rule
-
-.PHONY : server.out
-
-# clean rule for target.
-server/CMakeFiles/server.out.dir/clean:
-	$(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/clean
-.PHONY : server/CMakeFiles/server.out.dir/clean
 
 #=============================================================================
 # Target rules for target client/CMakeFiles/client.dir

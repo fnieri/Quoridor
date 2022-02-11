@@ -29,7 +29,7 @@ constexpr char kUserCollectionName[]{"UserCollection"};
 
 class DatabaseHandler
 {
-    static unique_ptr<DatabaseHandler> singleton;
+    static std::unique_ptr<DatabaseHandler> singleton;
     mongocxx::uri uri;
     mongocxx::client client;
     mongocxx::database db;

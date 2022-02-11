@@ -8,15 +8,16 @@
 #        cryptopp-shared
 #)
 
+
 #target_include_directories(quoridor_server
 #    PUBLIC
 #        ${CMAKE_SOURCE_DIR}
 #)
-
-add_executable(server.out
-    main.cpp
-)
-
+#
+#add_executable(server.out
+#    main.cpp
+#)
+#
 ## Link the project libraries to the executable
 #target_link_libraries(server.out
 #    PRIVATE
