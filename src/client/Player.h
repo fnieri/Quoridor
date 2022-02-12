@@ -2,18 +2,16 @@
 
 #include "PlayerEnum.h"
 #include "Point.h"
-#include <string>
 
 // defines a player in the game
 class Player
 {
-    pawnColors color;
+    PawnColors color;
     Point position;
+    int nwalls; // how
 
 public:
-    Player(/* args */);
-
-    void move(std::string action);
+    Player(const PawnColors &color, Point &position, int &nwalls); // Const or not ?
 
     ~Player();
 };

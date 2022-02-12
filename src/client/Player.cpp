@@ -1,6 +1,8 @@
 #include "Player.h"
 
-Player::Player(/* args */)
+Player::Player(const PawnColors &color, Point &position, int &nwalls)
+    : color {color}
+    , position {position}
 {
 }
 
@@ -8,6 +10,3 @@ Player::~Player()
 {
 }
 
-void Player::move(std::string action)
-{
-}

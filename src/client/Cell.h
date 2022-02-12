@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Player.h"
-#include "Point.h"
+
+#include <memory>
 
 // contains the information of a cell
-class Cell
+class Cell : public BoardComponent
 {
 private:
-    Point position;
-    bool occupied;
-    Player *player;
+    std::shared_ptr<Player> player;
 
 public:
-    Cell(/* args */);
+    Cell(std::shared_ptr<Player> player = nullptr);
+    // Maybe getter needed
     ~Cell();
 };
