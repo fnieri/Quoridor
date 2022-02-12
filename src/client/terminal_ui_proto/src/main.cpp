@@ -9,6 +9,15 @@
 #include "ftxui/dom/elements.hpp"  // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
 #include "ftxui/screen/color.hpp"  // for Color
 
+
+//Try
+#include "ftxui/component/component_options.hpp"  // for ButtonOption
+#include "ftxui/component/event.hpp"  
+#include "ftxui/component/mouse.hpp"
+#include "ftxui/screen/box.hpp"
+#include "ftxui/util/ref.hpp"
+//
+
 using namespace ftxui;
 
 class MyScreen {
@@ -28,9 +37,30 @@ public:
 
 //        auto buttons = Container::Horizontal({Button(".", [&] { value--; }, &button_option)});
 
-        auto board = Renderer([] { return text("Board") | center; });
+        //ACTION TOGGLE
+        std::vector<std::string> toggle_1_entries = {
+                "Move",
+                "Wall",
+        };
+
+        int toggle_1_selected = 0;
+        Component toggle_1 = Toggle(&toggle_1_entries, &toggle_1_selected);
+        auto move_switch = Container::Vertical({
+                toggle_1,
+        });
+
+        //
+
+        auto board = Renderer([] {
+                return vbox({
+                                text("Board") ,
+                                // toggle_1->Render(),
+                        }) |
+                         center;
+                });
+
         auto chat = Renderer(component, [&inputChatMessage] {
-            return vbox({
+                return vbox({
                                 text("Boris: My favorite book is Mein Kampf"),
                                 text("Francesco: I love the book too !"),
                                 text("Louis: Eyo wtf"),
@@ -58,6 +88,7 @@ public:
         auto container = Container::Vertical({
                                                      tab_toggle,
                                                      tab_container,
+                                                     move_switch,
                                              });
 
         auto renderer = Renderer(container, [&] {
@@ -65,6 +96,7 @@ public:
                                 tab_toggle->Render(),
                                 separator(),
                                 tab_container->Render(),
+                                hbox(text("Choose your move : "), move_switch->Render()),
                         }) |
                    border;
         });
