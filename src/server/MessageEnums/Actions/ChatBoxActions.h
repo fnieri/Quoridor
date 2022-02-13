@@ -1,13 +1,20 @@
-enum class ClientChatInteraction { SEND_MESSAGE, JOIN, LEAVE };
+enum class ChatInteraction {
+    USER_SEND_MESSAGE,
+    SERVER_RELAY_MESSAGE,
+    JOIN,
+    LEAVE,
+};
 
-inline const char *toJsonString(ClientChatInteraction a)
+inline const char *toJsonString(ChatInteraction a)
 {
     switch (a) {
-    case ClientChatInteraction::SEND_MESSAGE:
+    case ChatInteraction::USER_SEND_MESSAGE:
         return "user_send_message";
-    case ClientChatInteraction::JOIN:
+    case ChatInteraction::SERVER_RELAY_MESSAGE:
+        return "server_relay_message";
+    case ChatInteraction::JOIN:
         return "user_join_chatbox";
-    case ClientChatInteraction::LEAVE:
+    case ChatInteraction::LEAVE:
         return "user_leave_chatbox";
     }
 }
