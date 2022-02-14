@@ -3,10 +3,10 @@ add_library(${PREFIX}_server
     PasswordEncrypter.cpp
 )
 
-target_link_libraries(${PREFIX}_server
-    PRIVATE
-        cryptopp
-)
+#target_link_libraries(${PREFIX}_server
+#    PRIVATE
+#        cryptopp
+#)
 
 target_include_directories(${PREFIX}_server
     PUBLIC
