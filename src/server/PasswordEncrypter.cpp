@@ -1,10 +1,10 @@
 #include "PasswordEncrypter.h"
 
-#include <cryptlib.h>
-#include <hex.h>
-#include <osrng.h>
-#include <pwdbased.h>
-#include <sha.h>
+//#include <cryptlib.h>
+//#include <hex.h>
+//#include <osrng.h>
+//#include <pwdbased.h>
+//#include <sha.h>
 
 #include <chrono>
 #include <iostream>
@@ -37,6 +37,7 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 
     // http://www.cplusplus.com/forum/beginner/60604/
     // Thanks to Texan40 for help on how to hash a password
+/*
     CryptoPP::byte digest[CryptoPP::SHA256::DIGESTSIZE];
     CryptoPP::SHA256 hashAlgorithm;
 
@@ -48,6 +49,7 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
     encoder.Attach(stringSink);
     encoder.Put(digest, sizeof(digest));
     encoder.MessageEnd();
+*/
 
     // Crypto++ handles deletion of stringSink in smartptr.h, so no need for deletion
     // Smart pointers don't work as they will get deleted twice, but cryptlib uses

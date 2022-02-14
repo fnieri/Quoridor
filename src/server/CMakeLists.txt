@@ -3,10 +3,10 @@ add_library(quoridor_server
     PasswordEncrypter.cpp
 )
 
-target_link_libraries(quoridor_server
-    PRIVATE
-        cryptopp-shared
-)
+#target_link_libraries(quoridor_server
+#    PRIVATE
+#        cryptopp-shared
+#)
 
 target_include_directories(quoridor_server
     PUBLIC
