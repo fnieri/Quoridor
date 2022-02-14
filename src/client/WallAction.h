@@ -22,5 +22,5 @@ public:
 
     bool isWallPlacementValid();
 
-    void executeAction();
+    bool executeAction();
 };
