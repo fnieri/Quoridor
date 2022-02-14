@@ -1,4 +1,5 @@
 #include "Corridor.h"
+#include "WallEnum.h"
 
 Corridor::Corridor(const WallOrientation &orientation)
     : orientation {orientation}

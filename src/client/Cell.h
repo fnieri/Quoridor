@@ -1,5 +1,6 @@
 #pragma once
 
+#include "BoardComponent.h"
 #include "Player.h"
 
 #include <memory>

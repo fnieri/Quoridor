@@ -1,4 +1,6 @@
 #include "WallAction.h"
+#include "Board.h"
+#include "Player.h"
 
 #include <memory>
 

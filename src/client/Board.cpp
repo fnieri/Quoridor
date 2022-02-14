@@ -1,4 +1,6 @@
 #include "Board.h"
+#include "Player.h"
+#include "Point.h"
 
 #include <memory>
 

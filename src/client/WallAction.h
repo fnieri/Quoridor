@@ -1,5 +1,7 @@
 #pragma once
 
+#include <Player.h>
+
 #include <memory>
 
 // Place a wall somewhere

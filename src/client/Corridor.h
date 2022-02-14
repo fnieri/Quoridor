@@ -1,5 +1,7 @@
 #pragma once
 
+#include "BoardComponent.h"
+
 class Corridor : public BoardComponent
 {
 private:

@@ -1,7 +1,10 @@
 #pragma once
 
+#include "Board.h"
+#include "Player.h"
 #include "PlayerEnum.h"
 #include "Point.h"
+
 #include <memory>
 #include <string>
 

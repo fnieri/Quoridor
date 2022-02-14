@@ -1,8 +1,10 @@
 #pragma once
 
+#include "BoardComponent.h"
 #include "WallEnum.h"
 
 #include <memory>
+#include <vector>
 
 class Board
 {
