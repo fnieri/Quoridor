@@ -1,24 +1,27 @@
- Library of the project, can be linked to the tests
- add_library(src
-     PasswordEncrypter.cpp
-     # Point.cpp
- )
+#Library of the project, can be linked to the tests
+add_library(src
+        ../server/PasswordEncrypter.cpp
+        # Point.cpp
+        )
 
- target_link_libraries(src
-     PRIVATE
-         cryptopp-shared
- )
+target_link_libraries(src
+        PRIVATE
+        cryptopp-shared
+        )
 
- add_executable(quoridor-client
-     main.cpp
- )
+add_executable(quoridor-client
+        ../client/main.cpp
+        )
 
- # Link the project libraries to the executable
- target_link_libraries(quoridor-client
-     PRIVATE
-         src
- )
+# Link the project libraries to the executable
+target_link_libraries(quoridor-client
+        PRIVATE
+        src
+        PRIVATE ftxui::screen
+        PRIVATE ftxui::dom
+        PRIVATE ftxui::component # Not needed for this example.
+        )
 
- add_subdirectory(server)
- add_subdirectory(client)
- add_subdirectory(common)
+include_directories(../server)
+include_directories(../client)
+include_directories(../common)

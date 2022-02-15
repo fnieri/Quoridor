@@ -12,10 +12,6 @@ CMake Warning (dev) in CMakeLists.txt:
   line.
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Error at common/CMakeLists.txt:1:
-  Parse error.  Expected "(", got identifier with text "of".
-
-
 CMake Warning (dev) in CMakeLists.txt:
   No cmake_minimum_required command is present.  A line of code such as
 
@@ -26,5 +22,9 @@ CMake Warning (dev) in CMakeLists.txt:
   information run "cmake --help-policy CMP0000".
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
--- Configuring incomplete, errors occurred!
-See also "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles/CMakeOutput.log".
+-- Configuring done
+CMake Error at client/CMakeLists.txt:25 (add_library):
+  No SOURCES given to target: quoridor_tui
+
+
+CMake Generate step failed.  Build files cannot be regenerated correctly.

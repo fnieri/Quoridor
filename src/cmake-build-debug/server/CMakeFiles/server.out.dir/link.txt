@@ -1,1 +1,1 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/server.out.dir/main.o  -o server.out 
+/usr/bin/c++  -g  -rdynamic CMakeFiles/server.out.dir/main.o  -o server.out   -L/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server  libquoridor_server.a -lcryptopp-shared 

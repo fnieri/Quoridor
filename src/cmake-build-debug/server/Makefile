@@ -56,6 +56,63 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target package_source
+package_source:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackSourceConfig.cmake /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CPackSourceConfig.cmake
+.PHONY : package_source
+
+# Special rule for the target package_source
+package_source/fast: package_source
+
+.PHONY : package_source/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -66,6 +123,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+
+.PHONY : package/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -110,14 +178,88 @@ depend:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(CMAKE_COMMAND) -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR) --check-build-system CMakeFiles/Makefile.cmake 1
 .PHONY : depend
 
+# Convenience name for target.
+server/CMakeFiles/server.out.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/server.out.dir/rule
+.PHONY : server/CMakeFiles/server.out.dir/rule
+
+# Convenience name for target.
+server.out: server/CMakeFiles/server.out.dir/rule
+
+.PHONY : server.out
+
+# fast build rule for target.
+server.out/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/build
+.PHONY : server.out/fast
+
+# Convenience name for target.
+server/CMakeFiles/quoridor_server.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/quoridor_server.dir/rule
+.PHONY : server/CMakeFiles/quoridor_server.dir/rule
+
+# Convenience name for target.
+quoridor_server: server/CMakeFiles/quoridor_server.dir/rule
+
+.PHONY : quoridor_server
+
+# fast build rule for target.
+quoridor_server/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/build
+.PHONY : quoridor_server/fast
+
+# target to build an object file
+PasswordEncrypter.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.o
+.PHONY : PasswordEncrypter.o
+
+# target to preprocess a source file
+PasswordEncrypter.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.i
+.PHONY : PasswordEncrypter.i
+
+# target to generate assembly for a file
+PasswordEncrypter.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.s
+.PHONY : PasswordEncrypter.s
+
+# target to build an object file
+main.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.o
+.PHONY : main.o
+
+# target to preprocess a source file
+main.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.i
+.PHONY : main.i
+
+# target to generate assembly for a file
+main.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.s
+.PHONY : main.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/strip"
+	@echo "... install/local"
+	@echo "... package_source"
+	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... package"
+	@echo "... server.out"
 	@echo "... edit_cache"
+	@echo "... quoridor_server"
+	@echo "... PasswordEncrypter.o"
+	@echo "... PasswordEncrypter.i"
+	@echo "... PasswordEncrypter.s"
+	@echo "... main.o"
+	@echo "... main.i"
+	@echo "... main.s"
 .PHONY : help
 
 

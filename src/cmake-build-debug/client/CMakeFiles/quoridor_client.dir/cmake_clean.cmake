@@ -1,6 +1,6 @@
 file(REMOVE_RECURSE
-  "CMakeFiles/quoridor_client.dir/Point.o"
-  "CMakeFiles/quoridor_client.dir/Stringable.o"
+  "CMakeFiles/quoridor_client.dir/Point.cpp.o"
+  "CMakeFiles/quoridor_client.dir/Stringable.cpp.o"
   "libquoridor_client.a"
   "libquoridor_client.pdb"
 )

@@ -57,42 +57,42 @@ include client/CMakeFiles/quoridor_client.dir/progress.make
 # Include the compile flags for this target's objects.
 include client/CMakeFiles/quoridor_client.dir/flags.make
 
-client/CMakeFiles/quoridor_client.dir/Point.o: client/CMakeFiles/quoridor_client.dir/flags.make
-client/CMakeFiles/quoridor_client.dir/Point.o: ../client/Point.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object client/CMakeFiles/quoridor_client.dir/Point.o"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/quoridor_client.dir/Point.o -c /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp
+client/CMakeFiles/quoridor_client.dir/Point.cpp.o: client/CMakeFiles/quoridor_client.dir/flags.make
+client/CMakeFiles/quoridor_client.dir/Point.cpp.o: ../client/Point.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_1) "Building CXX object client/CMakeFiles/quoridor_client.dir/Point.cpp.o"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/quoridor_client.dir/Point.cpp.o -c /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp
 
-client/CMakeFiles/quoridor_client.dir/Point.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/quoridor_client.dir/Point.i"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp > CMakeFiles/quoridor_client.dir/Point.i
+client/CMakeFiles/quoridor_client.dir/Point.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/quoridor_client.dir/Point.cpp.i"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp > CMakeFiles/quoridor_client.dir/Point.cpp.i
 
-client/CMakeFiles/quoridor_client.dir/Point.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/quoridor_client.dir/Point.s"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp -o CMakeFiles/quoridor_client.dir/Point.s
+client/CMakeFiles/quoridor_client.dir/Point.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/quoridor_client.dir/Point.cpp.s"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Point.cpp -o CMakeFiles/quoridor_client.dir/Point.cpp.s
 
-client/CMakeFiles/quoridor_client.dir/Stringable.o: client/CMakeFiles/quoridor_client.dir/flags.make
-client/CMakeFiles/quoridor_client.dir/Stringable.o: ../client/Stringable.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object client/CMakeFiles/quoridor_client.dir/Stringable.o"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/quoridor_client.dir/Stringable.o -c /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp
+client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o: client/CMakeFiles/quoridor_client.dir/flags.make
+client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o: ../client/Stringable.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/quoridor_client.dir/Stringable.cpp.o -c /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp
 
-client/CMakeFiles/quoridor_client.dir/Stringable.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/quoridor_client.dir/Stringable.i"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp > CMakeFiles/quoridor_client.dir/Stringable.i
+client/CMakeFiles/quoridor_client.dir/Stringable.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/quoridor_client.dir/Stringable.cpp.i"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp > CMakeFiles/quoridor_client.dir/Stringable.cpp.i
 
-client/CMakeFiles/quoridor_client.dir/Stringable.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/quoridor_client.dir/Stringable.s"
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp -o CMakeFiles/quoridor_client.dir/Stringable.s
+client/CMakeFiles/quoridor_client.dir/Stringable.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/quoridor_client.dir/Stringable.cpp.s"
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && /usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Stringable.cpp -o CMakeFiles/quoridor_client.dir/Stringable.cpp.s
 
 # Object files for target quoridor_client
 quoridor_client_OBJECTS = \
-"CMakeFiles/quoridor_client.dir/Point.o" \
-"CMakeFiles/quoridor_client.dir/Stringable.o"
+"CMakeFiles/quoridor_client.dir/Point.cpp.o" \
+"CMakeFiles/quoridor_client.dir/Stringable.cpp.o"
 
 # External object files for target quoridor_client
 quoridor_client_EXTERNAL_OBJECTS =
 
-client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/Point.o
-client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/Stringable.o
+client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/Point.cpp.o
+client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o
 client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/build.make
 client/libquoridor_client.a: client/CMakeFiles/quoridor_client.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libquoridor_client.a"

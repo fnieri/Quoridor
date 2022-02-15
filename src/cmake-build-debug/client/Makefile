@@ -56,6 +56,63 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target package_source
+package_source:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackSourceConfig.cmake /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CPackSourceConfig.cmake
+.PHONY : package_source
+
+# Special rule for the target package_source
+package_source/fast: package_source
+
+.PHONY : package_source/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+
+.PHONY : list_install_components/fast
+
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -66,6 +123,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target package
+package: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackConfig.cmake
+.PHONY : package
+
+# Special rule for the target package
+package/fast: package
+
+.PHONY : package/fast
 
 # Special rule for the target edit_cache
 edit_cache:
@@ -111,6 +179,21 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
+client/CMakeFiles/quoridor_client.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/quoridor_client.dir/rule
+.PHONY : client/CMakeFiles/quoridor_client.dir/rule
+
+# Convenience name for target.
+quoridor_client: client/CMakeFiles/quoridor_client.dir/rule
+
+.PHONY : quoridor_client
+
+# fast build rule for target.
+quoridor_client/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/build
+.PHONY : quoridor_client/fast
+
+# Convenience name for target.
 client/CMakeFiles/client.dir/rule:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/client.dir/rule
 .PHONY : client/CMakeFiles/client.dir/rule
@@ -126,64 +209,127 @@ client/fast:
 .PHONY : client/fast
 
 # Convenience name for target.
-client/CMakeFiles/quoridor_client.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/quoridor_client.dir/rule
-.PHONY : client/CMakeFiles/quoridor_client.dir/rule
+client/CMakeFiles/quoridor_tui.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/quoridor_tui.dir/rule
+.PHONY : client/CMakeFiles/quoridor_tui.dir/rule
 
 # Convenience name for target.
-quoridor_client: client/CMakeFiles/quoridor_client.dir/rule
+quoridor_tui: client/CMakeFiles/quoridor_tui.dir/rule
 
-.PHONY : quoridor_client
+.PHONY : quoridor_tui
 
 # fast build rule for target.
-quoridor_client/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/build
-.PHONY : quoridor_client/fast
+quoridor_tui/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/build
+.PHONY : quoridor_tui/fast
 
-# target to build an object file
-Point.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.o
+Point.o: Point.cpp.o
+
 .PHONY : Point.o
 
-# target to preprocess a source file
-Point.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.i
+# target to build an object file
+Point.cpp.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.o
+.PHONY : Point.cpp.o
+
+Point.i: Point.cpp.i
+
 .PHONY : Point.i
 
-# target to generate assembly for a file
-Point.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.s
+# target to preprocess a source file
+Point.cpp.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.i
+.PHONY : Point.cpp.i
+
+Point.s: Point.cpp.s
+
 .PHONY : Point.s
 
-# target to build an object file
-Stringable.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.o
+# target to generate assembly for a file
+Point.cpp.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.s
+.PHONY : Point.cpp.s
+
+Stringable.o: Stringable.cpp.o
+
 .PHONY : Stringable.o
 
-# target to preprocess a source file
-Stringable.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.i
+# target to build an object file
+Stringable.cpp.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o
+.PHONY : Stringable.cpp.o
+
+Stringable.i: Stringable.cpp.i
+
 .PHONY : Stringable.i
 
-# target to generate assembly for a file
-Stringable.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.s
+# target to preprocess a source file
+Stringable.cpp.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.i
+.PHONY : Stringable.cpp.i
+
+Stringable.s: Stringable.cpp.s
+
 .PHONY : Stringable.s
 
+# target to generate assembly for a file
+Stringable.cpp.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.s
+.PHONY : Stringable.cpp.s
+
+TerminalVue.o: TerminalVue.cpp.o
+
+.PHONY : TerminalVue.o
+
 # target to build an object file
-main.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.o
-.PHONY : main.o
+TerminalVue.cpp.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.o
+.PHONY : TerminalVue.cpp.o
+
+TerminalVue.i: TerminalVue.cpp.i
+
+.PHONY : TerminalVue.i
 
 # target to preprocess a source file
-main.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.i
-.PHONY : main.i
+TerminalVue.cpp.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.i
+.PHONY : TerminalVue.cpp.i
+
+TerminalVue.s: TerminalVue.cpp.s
+
+.PHONY : TerminalVue.s
 
 # target to generate assembly for a file
-main.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.s
+TerminalVue.cpp.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.s
+.PHONY : TerminalVue.cpp.s
+
+main.o: main.cpp.o
+
+.PHONY : main.o
+
+# target to build an object file
+main.cpp.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.o
+.PHONY : main.cpp.o
+
+main.i: main.cpp.i
+
+.PHONY : main.i
+
+# target to preprocess a source file
+main.cpp.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.i
+.PHONY : main.cpp.i
+
+main.s: main.cpp.s
+
 .PHONY : main.s
+
+# target to generate assembly for a file
+main.cpp.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.s
+.PHONY : main.cpp.s
 
 # Help Target
 help:
@@ -191,16 +337,26 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
+	@echo "... install/strip"
+	@echo "... install/local"
+	@echo "... package_source"
+	@echo "... install"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... client"
+	@echo "... package"
 	@echo "... edit_cache"
 	@echo "... quoridor_client"
+	@echo "... client"
+	@echo "... quoridor_tui"
 	@echo "... Point.o"
 	@echo "... Point.i"
 	@echo "... Point.s"
 	@echo "... Stringable.o"
 	@echo "... Stringable.i"
 	@echo "... Stringable.s"
+	@echo "... TerminalVue.o"
+	@echo "... TerminalVue.i"
+	@echo "... TerminalVue.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

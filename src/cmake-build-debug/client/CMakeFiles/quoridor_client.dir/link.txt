@@ -1,2 +1,2 @@
-/usr/bin/ar qc libquoridor_client.a  CMakeFiles/quoridor_client.dir/Point.o CMakeFiles/quoridor_client.dir/Stringable.o
+/usr/bin/ar qc libquoridor_client.a  CMakeFiles/quoridor_client.dir/Point.cpp.o CMakeFiles/quoridor_client.dir/Stringable.cpp.o
 /usr/bin/ranlib libquoridor_client.a
