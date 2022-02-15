@@ -11,6 +11,17 @@ make setup
 make
 ```
 
+# Exécution
+
+Les fichiers compilés se trouvent dans le folder ```build/bin```
+
+
+```bash
+# client
+./build/bin/client
+```
+
+
 # Contributions
 
 ## Formatage
@@ -26,7 +37,6 @@ ln hooks/pre-commit .git/hooks
 
 ## Workflow
 
-<<<<<<< HEAD
 Lorsque vous finissez de travailler sur la fonctionnalité de votre branche, ouvrez **toujours** un PR. Ça va nous éviter
 d'avoir trop de branches qui partent dans tous les sens et de devoir tout merge d'un coup.
 
