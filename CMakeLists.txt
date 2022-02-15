@@ -4,9 +4,16 @@ project(Quoridor
     VERSION 0.1
     LANGUAGES CXX  # CPP
 )
-
 enable_testing()
 
-add_subdirectory(include)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(PREFIX qrd)
+
+# Dependencies
+include(cmake/CPM.cmake)
+include(cmake/AddCatch2.cmake)
+include(cmake/AddSockpp.cmake)
+
 add_subdirectory(src)
 add_subdirectory(tests)
+

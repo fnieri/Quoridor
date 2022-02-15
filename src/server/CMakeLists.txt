@@ -1,14 +1,14 @@
 # Library of the project, can be linked to the tests
-add_library(quoridor_server
+add_library(${PREFIX}_server
     PasswordEncrypter.cpp
 )
 
-target_link_libraries(quoridor_server
+target_link_libraries(${PREFIX}_server
     PRIVATE
-        cryptopp-shared
+        cryptopp
 )
 
-target_include_directories(quoridor_server
+target_include_directories(${PREFIX}_server
     PUBLIC
         ${CMAKE_SOURCE_DIR}
 )
@@ -20,5 +20,5 @@ add_executable(server.out
 # Link the project libraries to the executable
 target_link_libraries(server.out
     PRIVATE
-        quoridor_server
+        ${PREFIX}_server
 )
