@@ -1,6 +1,8 @@
 #pragma once
 
-#include <Player.h>
+#include "Board.h"
+#include "Player.h"
+#include "WallEnum.h"
 
 #include <memory>
 
@@ -10,7 +12,7 @@ class WallAction
 private:
     std::shared_ptr<Board> board;
     std::shared_ptr<Player> player;
-    Point destCell; // Position of the cell in the matrix
+    Point destCell; // Position of the cell from the view of the player
     WallOrientation orientation;
 
 public:
