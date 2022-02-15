@@ -23,3 +23,8 @@ void Board::placeWall(const Point &cell, const WallOrientation &direction)
 {
     // cell -> is a position in the matrix
 }
+
+int Board::getCellSize()
+{
+    return CELL_SIZE;
+}

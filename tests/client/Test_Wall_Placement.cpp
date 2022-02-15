@@ -75,18 +75,36 @@ SCENARIO("Valid wall placements")
         REQUIRE(!action_v.executeAction());
     }
 
-    // On board now: a, e, x, y, z, u
-}
+    std::shared_ptr<Player> p3(new Player {PawnColors::Green, Point {0, 0}, 10});
+    std::shared_ptr<Board> b2(new Board {});
 
-SCENARIO("Out of bounds wall placements")
-{
-    std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 10});
-    std::shared_ptr<Board> b(new Board {});
+    WallAction action_o1 {b2, p3, Point {-1, 0}, WallOrientation::Horizontal};
+    WallAction action_o2 {b2, p3, Point {0, -1}, WallOrientation::Vertical};
+    WallAction action_o3 {b2, p3, Point {b2->getCellSize() - 1, 0}, WallOrientation::Horizontal};
+    WallAction action_o4 {b2, p3, Point {0, b2->getCellSize() - 1}, WallOrientation::Vertical};
+    WallAction action_o5 {b2, p3, Point {0, b2->getCellSize() - 1}, WallOrientation::Horizontal};
+    WallAction action_o6 {b2, p3, Point {b2->getCellSize() - 1, 0}, WallOrientation::Vertical};
+    WallAction action_o7 {b2, p3, Point {0, b2->getCellSize() - 2}, WallOrientation::Horizontal};
+    WallAction action_o8 {b2, p3, Point {b2->getCellSize() - 2, 0}, WallOrientation::Vertical};
 
-    /*
-    TODO:
-    Test in x or y=-1
-    Test for x or y = SIZE-1
-    Test for x or y >= SIZE
-    */
+    // Reminder: since the walls are 2-long, the last row / column cannot have walls (o5 & o6)
+    GIVEN("Out of bounds wall placements")
+    {
+        REQUIRE(!action_o1.isWallPlacementValid());
+        REQUIRE(!action_o1.executeAction());
+        REQUIRE(!action_o2.isWallPlacementValid());
+        REQUIRE(!action_o2.executeAction());
+        REQUIRE(!action_o3.isWallPlacementValid());
+        REQUIRE(!action_o3.executeAction());
+        REQUIRE(!action_o4.isWallPlacementValid());
+        REQUIRE(!action_o4.executeAction());
+        REQUIRE(!action_o5.isWallPlacementValid());
+        REQUIRE(!action_o5.executeAction());
+        REQUIRE(!action_o6.isWallPlacementValid());
+        REQUIRE(!action_o6.executeAction());
+        REQUIRE(action_o7.isWallPlacementValid());
+        REQUIRE(action_o7.executeAction());
+        REQUIRE(action_o8.isWallPlacementValid());
+        REQUIRE(action_o8.executeAction());
+    }
 }
