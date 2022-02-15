@@ -22,6 +22,19 @@ add_executable(quoridor
 target_link_libraries(quoridor ${LIBMONGOCXX_LIBRARIES})
 target_link_libraries(quoridor ${LIBBSONCXX_LIBRARIES})
 
-add_subdirectory(include)
+enable_testing()
+
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(PREFIX qrd)
+
+# Dependencies
+include(cmake/CPM.cmake)
+include(cmake/AddCatch2.cmake)
+include(cmake/AddSockpp.cmake)
+include(cmake/AddFTXUI.cmake)
+
+option(FTXUI_BUILD_EXAMPLES OFF)
+
 add_subdirectory(src)
-add_subdirectory(tests)
+
+#add_subdirectory(tests)

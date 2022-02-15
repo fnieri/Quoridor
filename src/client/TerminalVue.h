@@ -32,7 +32,7 @@ using namespace ftxui;
 
 class TerminalVue
 {
-    std::string message;
+    std::string message, username, password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
@@ -42,6 +42,8 @@ class TerminalVue
     };
     std::vector<std::string> mainTabValues {
         "Game",
+        "Login",
+        "Register",
         "Friends",
         "Settings",
     };
@@ -66,6 +68,10 @@ class TerminalVue
     auto createSettingsRenderer();
 
     auto createMainTabContainer();
+
+    auto createLoginRenderer();
+
+    auto createRegisterRenderer();
 
     auto createMainRenderer();
 

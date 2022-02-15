@@ -81,6 +81,26 @@ auto TerminalVue::createSettingsRenderer()
 {
     return Renderer([] { return text("Settings") | center; });
 }
+auto TerminalVue::createLoginRenderer()
+{
+    auto usernameInput = Input(&username, "Username");
+    auto passwordInput = Input(&password, "Password");
+    auto loginButton = Button(
+        "Login", [] {}, &buttonOption);
+    auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
+    return Renderer(loginFieldsContainer, [loginFieldsContainer] { return vbox({loginFieldsContainer->Render() | center}); });
+}
+
+auto TerminalVue::createRegisterRenderer()
+{
+    auto usernameInput = Input(&registerUsername, "Username");
+    auto passwordInput = Input(&registerPassword, "Password");
+    auto repeatPasswordInput = Input(&registerRepeatPassword, "Repeat password");
+    auto registerButton = Button(
+        "Register", [] {}, &buttonOption);
+    auto registerFieldsContainer = Container::Vertical({usernameInput, passwordInput, repeatPasswordInput, registerButton});
+    return Renderer(registerFieldsContainer, [registerFieldsContainer] { return vbox({registerFieldsContainer->Render() | center}); });
+}
 
 auto TerminalVue::createMainTabContainer()
 {
@@ -89,11 +109,15 @@ auto TerminalVue::createMainTabContainer()
     auto resizeContainer = boardTab;
     resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
 
+    auto login = createLoginRenderer();
+    auto createAccount = createRegisterRenderer();
     auto friends = createFriendsRenderer();
     auto settings = createSettingsRenderer();
     auto tabContainer = Container::Tab(
         {
             resizeContainer,
+            login,
+            createAccount,
             friends,
             settings,
         },
