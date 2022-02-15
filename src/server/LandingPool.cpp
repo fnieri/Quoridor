@@ -6,22 +6,22 @@
 
 #include <iostream>
 
-LandingPool::LandingPool(in_port_t port, LoginHub &loginHub)
+LandingPool::LandingPool(in_port_t port, UserHub &userHub)
     : m_acceptor {port}
-    , m_loginHub {loginHub}
+    , m_userHub {userHub}
 {
 }
 
 int LandingPool::openToConnections()
 {
     while (true) {
-        sockpp::tcp_socket new_client {m_acceptor.accept()};
+        sockpp::tcp_socket newClient {m_acceptor.accept()};
 
-        if (!new_client) {
-            std::cerr << "Error while accepting new connection: " << new_client.last_error_str() << std::endl;
+        if (!newClient) {
+            std::cerr << "Error while accepting new connection: " << newClient.last_error_str() << std::endl;
 
         } else {
-            m_loginHub.addClient(std::move(newClient));
+            m_userHub.add(std::move(newClient));
         }
     }
 

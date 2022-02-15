@@ -18,6 +18,14 @@
 class RequestHandler : public SocketUser
 {
 public:
+    using SocketUser::SocketUser;
+
+    RequestHandler(const RequestHandler &) = delete;
+    RequestHandler(RequestHandler &&) = default;
+
+    RequestHandler &operator=(const RequestHandler &) = delete;
+    RequestHandler &operator=(RequestHandler &&) = default;
+
     virtual void startHandling();
     virtual ~RequestHandler() noexcept;
 

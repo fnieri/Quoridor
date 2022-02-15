@@ -1,11 +1,19 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
+    LandingPool.cpp
+    RequestHandler.cpp
+    UserHandler.cpp
 )
 
 target_link_libraries(${PREFIX}_server
+    PUBLIC
+        sockpp
+        nlohmann_json
+        ${PREFIX}_common
     PRIVATE
         cryptopp
+        pthread
 )
 
 target_include_directories(${PREFIX}_server

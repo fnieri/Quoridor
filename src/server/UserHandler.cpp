@@ -4,7 +4,9 @@
 
 #include "UserHandler.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
+
+#include <thread>
 
 using json = nlohmann::json;
 
@@ -12,35 +14,54 @@ using json = nlohmann::json;
  * UserHandler
  */
 
-UserHandler::UserHandler(Socket &&socket, const std::string &username)
-    : RequestHandler {std::move(socket)}
-    , m_userHandled {std::make_shared<User>(username)}
+UserHandler::UserHandler(Socket &&user)
+    : RequestHandler {std::move(user)}
 {
 }
 
 void UserHandler::handleRequests()
 {
-    while (m_connected) {
-        auto req {json::parse(receive())};
+    // TODO finish this
+    while (!m_isFinished) {
+        auto request {json::parse(receive())};
 
-        // TODO handle request
+        if (request["Type"] == "LogIn") {
+            std::cout << "Loggin in";
+
+        } else if (request["Type"] == "Register") {
+            std::cout << "Registring";
+        }
     }
+
+    notifyObservers();
 }
 
 /**
  * UserHub
  */
 
-void UserHub::eraseDisconnected()
+void UserHub::eraseFinished()
 {
-    m_connectedUsers.erase(std::remove_if(m_connectedUsers.begin(), m_connectedUsers.end(), [](auto &h) { return h.isConnected(); }), m_connectedUsers.end());
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](auto &h) { return h.isFinished(); }), m_handlers.end());
 }
 
-void UserHub::addUser(Socket &&client, const std::string &username)
+void UserHub::add(Socket &&user)
 {
     // Start handling
-    UserHandler userHandler {std::move(client), username};
+    UserHandler userHandler {std::move(user)};
+    userHandler.registerObserver(this);
     userHandler.startHandling();
 
-    m_connectedUsers.push_back(std::move(userHandler));
+    m_handlers.push_back(std::move(userHandler));
+}
+
+void UserHub::update(Event e)
+{
+    switch (e) {
+    case Event::Modified:
+        eraseFinished();
+        break;
+    default:
+        break;
+    }
 }

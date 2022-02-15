@@ -1,49 +1,59 @@
 /**
+ * @author Francesco Nieri
  * @author Boris Petrov
  */
 
 #pragma once
 
 #include "RequestHandler.h"
-#include "src/common/SocketUser.h"
+#include "src/common/Observer.h"
 
-#include <memory>
+#include <atomic>
+#include <string>
 
-/* #include "GameHandler.h" */
-/* #include "User.h" */
-
-struct User {
-    std::string username;
-};
-
-class GameHandler;
-
-class UserHandler : public RequestHandler
+/**
+ * Login process checks if:
+ * - Username is in database
+ * - Hashed password with salt key matches the one in database
+ *
+ * The UserHandler takes care of this process by receiving the
+ * requests of the client (effectively ignoring everything not
+ * related to log in).
+ */
+class UserHandler : public RequestHandler, public Subject
 {
 private:
-    bool m_connected {true};
-    std::shared_ptr<User> m_userHandled;
-    std::shared_ptr<GameHandler> m_game {}; // nullptr
+    bool m_isFinished {true};
 
+protected:
     void handleRequests() override;
 
 public:
-    UserHandler(Socket &&, const std::string &);
+    explicit UserHandler(Socket &&);
 
-    bool isConnected() const
+    UserHandler(const UserHandler &) = delete;
+    UserHandler(UserHandler &&) = default;
+
+    UserHandler &operator=(const UserHandler &) = delete;
+    UserHandler &operator=(UserHandler &&) = default;
+
+    bool isFinished() const
     {
-        return m_connected;
+        return m_isFinished;
     }
 };
 
-// TODO: maybe make a superclass Hub ?
-class UserHub
+class UserHub : public Observer
 {
 private:
-    std::vector<std::shared_ptr<UserHandler>> m_connectedUsers;
+    std::vector<UserHandler> m_handlers;
+    void eraseFinished();
 
 public:
-    UserHub();
+    UserHub()
+    {
+    }
 
-    void addUser(Socket &&, const std::string &);
+    void add(Socket &&);
+    void update(Event) override;
 };

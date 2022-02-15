@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "LoginHandler.h"
+#include "UserHandler.h"
 
 #include <sockpp/tcp_acceptor.h>
 
@@ -15,11 +15,11 @@
 class LandingPool
 {
 public:
-    LandingPool(in_port_t, LoginHub &);
+    LandingPool(in_port_t, UserHub &);
 
     int openToConnections();
 
 private:
     sockpp::tcp_acceptor m_acceptor;
-    LoginHub &m_loginHub;
+    UserHub &m_userHub;
 };
