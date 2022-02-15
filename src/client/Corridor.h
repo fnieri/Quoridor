@@ -9,6 +9,7 @@ private:
 
 public:
     Corridor(const WallOrientation &orientation);
+    void placeWall();
     ~Corridor();
     WallOrientation getOrientation();
 };

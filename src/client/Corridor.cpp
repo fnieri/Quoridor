@@ -6,6 +6,12 @@ Corridor::Corridor(const WallOrientation &orientation)
 {
 }
 
+void Corridor::placeWall() 
+{
+    occupied = true;
+
+}
+
 Corridor::~Corridor()
 {
 }

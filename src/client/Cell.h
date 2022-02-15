@@ -13,6 +13,7 @@ private:
 
 public:
     Cell(std::shared_ptr<Player> player = nullptr);
-    // Maybe getter needed
+    void placePlayer(std::shared_ptr<Player> newPlayer);
+    void removePlayer();
     ~Cell();
 };

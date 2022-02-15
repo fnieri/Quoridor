@@ -2,7 +2,7 @@
 
 class BoardComponent
 {
-private:
+protected:
     bool occupied = false;
 
 public:
