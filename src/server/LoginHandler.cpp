@@ -4,28 +4,27 @@
 
 #include "LoginHandler.h"
 
-#include <json/core.h> // TODO: maybe not the whole thing !?
+#include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
 
 #include <thread>
+
+using json = nlohmann::json;
 
 /**
  * LoginHandler
  */
 
 LoginHandler::LoginHandler(Socket &&client)
-    : SocketUser {client}
+    : RequestHandler {std::move(client)}
 {
-    std::thread th {processLogin};
-    th.detach();
 }
 
-void LoginHandler::processLogin()
+void LoginHandler::handleRequests()
 {
-    bool loggedIn {false};
     std::string username {};
 
     // TODO finish this
-    while (!loggedIn) {
+    while (m_isLogging) {
         auto request {json::parse(receive())};
 
         if (request["Type"] == "LogIn") {
@@ -37,6 +36,7 @@ void LoginHandler::processLogin()
     }
 
     m_isLogging = false;
+    notifyObservers();
 }
 
 /**
@@ -45,16 +45,30 @@ void LoginHandler::processLogin()
 
 void LoginHub::eraseFinishedHandlers()
 {
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](auto h) { return h.isLogging(); }), m_handlers.end());
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](auto &h) { return h.isLogging(); }), m_handlers.end());
 }
 
 void LoginHub::addClient(Socket &&client)
 {
-    m_handlers.emplace_back(client);
+    // Start handling
+    LoginHandler clientHandler {std::move(client)};
+    clientHandler.registerObserver(this);
+    clientHandler.startHandling();
+
+    m_handlers.push_back(std::move(clientHandler));
 }
 
 void LoginHub::clientWasLoggedInWith(Socket &&client, const std::string &username)
 {
-    m_userHub.addUser(client, username);
+    m_userHub.addUser(std::move(client), username);
     eraseFinishedHandlers();
+}
+
+void LoginHub::update(Event e)
+{
+    switch (e) {
+        break;
+    case Event::Modified:
+        eraseFinishedHandlers();
+    }
 }

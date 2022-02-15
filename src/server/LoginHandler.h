@@ -5,7 +5,9 @@
 
 #pragma once
 
-#include "src/common/SocketUser.h"
+#include "RequestHandler.h"
+#include "UserHandler.h"
+#include "src/common/Observer.h"
 
 #include <atomic>
 #include <string>
@@ -19,31 +21,46 @@
  * requests of the client (effectively ignoring everything not
  * related to log in).
  */
-class LoginHandler : public SocketUser
+class LoginHandler : public RequestHandler, public Subject
 {
 private:
-    std::atomic<bool> m_isLogging {true};
+    bool m_isLogging {true};
+
     bool doesUsernameExist(const std::string &);
     bool isPasswordCorrectFor(const std::string &, const std::string &);
+    void processLogin();
+
+protected:
+    void handleRequests() override;
 
 public:
-    LoginHandler(Socket &&);
+    explicit LoginHandler(Socket &&);
 
-    void processLogin();
+    LoginHandler(const LoginHandler &) = delete;
+    LoginHandler(LoginHandler &&) = default;
+
+    LoginHandler &operator=(const LoginHandler &) = delete;
+    LoginHandler &operator=(LoginHandler &&) = default;
+
     bool isLogging() const;
 };
 
-class LoginHub
+class LoginHub : public Observer
 {
 private:
+    UserHub &m_userHub;
+
     std::vector<LoginHandler> m_handlers;
     void eraseFinishedHandlers();
 
 public:
-    LoginHub()
+    LoginHub(UserHub &userHub)
+        : m_userHub {userHub}
     {
     }
 
     void addClient(Socket &&);
     void clientWasLoggedInWith(Socket &&, const std::string &);
+
+    void update(Event) override;
 };

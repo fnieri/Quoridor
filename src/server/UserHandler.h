@@ -4,22 +4,39 @@
 
 #pragma once
 
-#include "User.h"
-
+#include "RequestHandler.h"
 #include "src/common/SocketUser.h"
 
-class UserHandler : public SocketUser
+#include <memory>
+
+/* #include "GameHandler.h" */
+/* #include "User.h" */
+
+struct User {
+    std::string username;
+};
+
+class GameHandler;
+
+class UserHandler : public RequestHandler
 {
 private:
+    bool m_connected {true};
     std::shared_ptr<User> m_userHandled;
     std::shared_ptr<GameHandler> m_game {}; // nullptr
+
+    void handleRequests() override;
 
 public:
     UserHandler(Socket &&, const std::string &);
 
-    void handleInteractions();
+    bool isConnected() const
+    {
+        return m_connected;
+    }
 };
 
+// TODO: maybe make a superclass Hub ?
 class UserHub
 {
 private:
