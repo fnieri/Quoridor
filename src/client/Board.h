@@ -22,6 +22,8 @@ private:
     bool areNeighbours(const Point &first, const Point &second) const;
     bool isWayFree(const Point &first, const Point &second) const;
     Point getIndexCorridor(const Point &first, const Point &second) const;
+    std::vector<std::vector<int>> allComponents();
+    void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
 
 public:
     Board(/* args */);
