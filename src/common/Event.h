@@ -1,5 +1,3 @@
 #pragma once
 
-enum class Event {
-    Modified
-};
+enum class Event { Modified };

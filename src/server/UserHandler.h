@@ -9,23 +9,20 @@
 #include "src/common/Observer.h"
 
 #include <atomic>
+#include <memory>
 #include <string>
 
+class ServerUser;
+
 /**
- * Login process checks if:
- * - Username is in database
- * - Hashed password with salt key matches the one in database
- *
- * The UserHandler takes care of this process by receiving the
- * requests of the client (effectively ignoring everything not
- * related to log in).
+ * The UserHandler takes care of every request coming
+ * from a client.
  */
 class UserHandler : public RequestHandler, public Subject
 {
-private:
-    bool m_isFinished {true};
-
 protected:
+    std::shared_ptr<ServerUser> m_userHandled;
+    bool m_isFinished {true};
     void handleRequests() override;
 
 public:
@@ -41,6 +38,8 @@ public:
     {
         return m_isFinished;
     }
+
+    std::string getUsername() const;
 };
 
 class UserHub : public Observer
@@ -56,4 +55,6 @@ public:
 
     void add(Socket &&);
     void update(Event) override;
+
+    void sendTo(const std::string &, const std::string &);
 };

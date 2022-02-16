@@ -2,10 +2,10 @@
 
 #include <exception>
 
-class UnableToSend : public exception
+class UnableToSend : public std::exception
 {
 };
 
-class UnableToRead : public exception
+class UnableToRead : public std::exception
 {
 };

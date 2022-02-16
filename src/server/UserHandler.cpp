@@ -4,6 +4,8 @@
 
 #include "UserHandler.h"
 
+#include "ServerUser.h"
+
 #include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
 
 #include <thread>
@@ -36,13 +38,18 @@ void UserHandler::handleRequests()
     notifyObservers();
 }
 
+std::string UserHandler::getUsername() const
+{
+    return m_userHandled->getUsername();
+}
+
 /**
  * UserHub
  */
 
 void UserHub::eraseFinished()
 {
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](auto &h) { return h.isFinished(); }), m_handlers.end());
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end());
 }
 
 void UserHub::add(Socket &&user)
@@ -64,4 +71,10 @@ void UserHub::update(Event e)
     default:
         break;
     }
+}
+
+void UserHub::sendTo(const std::string &username, const std::string &message)
+{
+    auto receiver {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h.getUsername() == username; })};
+    receiver->send(message);
 }

@@ -9,6 +9,12 @@ class SocketUser
 public:
     SocketUser(Socket &&);
 
+    SocketUser(const SocketUser &) = delete;
+    SocketUser(SocketUser &&) = default;
+
+    SocketUser &operator=(const SocketUser &) = delete;
+    SocketUser &operator=(SocketUser &&) = default;
+
     void send(const std::string &);
     std::string receive();
 

@@ -3,7 +3,7 @@
 #include "Exceptions.h"
 
 SocketUser::SocketUser(Socket &&socket)
-    : m_socket {socket}
+    : m_socket {std::move(socket)}
 {
 }
 
@@ -14,7 +14,7 @@ void SocketUser::send(const std::string &msg)
     if (m_socket.write_n(&sz, sizeof(sz)) == -1)
         throw UnableToSend {};
 
-    if (m_socket.write_n(sz, msg.c_str()) == -1)
+    if (m_socket.write_n(msg.c_str(), sz) == -1)
         throw UnableToSend {};
 }
 
