@@ -2,7 +2,6 @@
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
     LandingPool.cpp
-    RequestHandler.cpp
     UserHandler.cpp
     ServerUser.cpp
 )

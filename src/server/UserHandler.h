@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include "RequestHandler.h"
 #include "src/common/Observer.h"
+#include "src/common/RequestHandler.h"
 
 #include <atomic>
 #include <memory>

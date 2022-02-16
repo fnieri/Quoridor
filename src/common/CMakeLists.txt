@@ -4,6 +4,7 @@ add_library(${PREFIX}_common
     Point.cpp
     SocketUser.cpp
     Observer.cpp
+    RequestHandler.cpp
 )
 
 target_include_directories(${PREFIX}_common
