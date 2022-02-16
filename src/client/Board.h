@@ -25,10 +25,10 @@ private:
     std::vector<std::vector<int>> allComponents();
     void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
     void placeWallPieces(const Point &firstHalf, const Point &secondHalf);
+    bool isFree(const Point &position) const;
 
 public:
     Board(/* args */);
-    bool isFree(const Point &position) const;
     void movePlayer(std::shared_ptr<Player> player, const Point &to);
     void placeWall(const Point &cell, const WallOrientation &direction);
 

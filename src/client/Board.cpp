@@ -47,7 +47,8 @@ bool Board::isCell(const Point &position) const
 bool Board::isCorridor(const Point &position) const
 {
     // Is this a corridor emplacement ?
-    return isEven(position.x()) || isEven(position.y());
+    // Here != serves as a xor, since indices where both are even are cells and where both are odd are empty
+    return isEven(position.x()) != isEven(position.y());
 }
 
 bool Board::isFree(const Point &position) const
@@ -97,14 +98,14 @@ Point Board::getIndexCorridor(const Point &first, const Point &second) const
 
 void Board::movePlayer(std::shared_ptr<Player> player, const Point &to)
 {
-    // We suppose here that the move is valide
+    // We suppose here that the move is valid
     std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
     std::dynamic_pointer_cast<Cell>(matrix[to.x()][to.y()])->placePlayer(player);
 }
 
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
-    // We suppose here that the the placement of the wall is valide
+    // We suppose here that the the placement of the wall is valid
     // We suppose here that firstHalf and secondHalf have already been converted into matrix indexes
     // Downcasting
     std::dynamic_pointer_cast<Corridor>(matrix[firstHalf.x()][firstHalf.y()])->placeWall();
