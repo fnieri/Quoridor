@@ -3,6 +3,7 @@
 build/
 cmake-build-debug/
 Testing/
+.vscode/
 
 # Prerequisites
 *.d
