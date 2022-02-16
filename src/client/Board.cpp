@@ -125,7 +125,21 @@ void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 
 void Board::placeWall(const Point &cell, const WallOrientation &direction)
 {
-    // cell -> is a position in the matrix
+    // cell -> is a position from the the view of the player, must be converted to matrix index first
+    // Wall placement is assumed to be valid, but index checks are still done for security
+
+    if (cell.x() < 0 || cell.y() < 0 || cell.x() >= CELL_SIZE - 1 || cell.y() >= CELL_SIZE - 1)
+        // Here CELL_SIZE-1 is used since you can't place walls on the last row/column
+        return;
+
+    int x = cell.x() * 2;
+    int y = cell.y() * 2;
+
+    if (direction == WallOrientation::Vertical) {
+        placeWallPieces(Point {x + 1, y}, Point {x + 1, y + 2});
+    } else {
+        placeWallPieces(Point {x, y + 1}, Point {x + 2, y + 1});
+    }
 }
 
 std::vector<std::vector<int>> Board::allComponents() 

@@ -5,21 +5,19 @@
 Cell::Cell(std::shared_ptr<Player> player)
     : player {player}
 {
-    if (player) 
-    {
+    if (player) {
         occupied = true;
-    }
-    else 
+    } else
         occupied = false;
 }
 
-void Cell::placePlayer(std::shared_ptr<Player> newPlayer) 
+void Cell::placePlayer(std::shared_ptr<Player> newPlayer)
 {
     player = newPlayer;
     occupied = true;
 }
 
-void Cell::removePlayer() 
+void Cell::removePlayer()
 {
     player = nullptr;
     occupied = false;
