@@ -53,7 +53,7 @@ inline const char *toJsonString(ClientAuthAction a)
     }
 }
 
-inline const char *toJsonString(ServerAuthReturn s)
+inline const char *toOutputSing(ServerAuthReturn s)
 {
     switch (s) {
     case ServerAuthReturn::CORRECT:

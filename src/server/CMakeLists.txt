@@ -1,11 +1,11 @@
 # Library of the project, can be linked to the tests
 add_library(quoridor_server
-    PasswordEncrypter.cpp
+    PasswordEncrypter.cpp   
 )
 
 target_link_libraries(quoridor_server
     PRIVATE
-        cryptopp-shared
+        cryptopp
 )
 
 target_include_directories(quoridor_server

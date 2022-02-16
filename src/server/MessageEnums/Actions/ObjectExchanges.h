@@ -9,6 +9,7 @@ inline const char *toJsonString(Answer a)
         return "object_answer";
     }
 }
+
 enum class Request {
     OBJECT_REQUEST,
 };

@@ -1,10 +1,10 @@
 #include "PasswordEncrypter.h"
 
-#include <cryptlib.h>
-#include <hex.h>
-#include <osrng.h>
-#include <pwdbased.h>
-#include <sha.h>
+#include "../include/cryptopp/cryptlib.h"
+#include "../include/cryptopp/hex.h"
+#include "../include/cryptopp/osrng.h"
+#include "../include/cryptopp/pwdbased.h"
+#include "../include/cryptopp/sha.h"
 
 #include <chrono>
 #include <iostream>
@@ -37,10 +37,12 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 
     // http://www.cplusplus.com/forum/beginner/60604/
     // Thanks to Texan40 for help on how to hash a password
-    CryptoPP::byte digest[CryptoPP::SHA256::DIGESTSIZE];
+
+    // IMPORTANT NOTE: This should be CryptoPP::byte but it doesn't compile for me (If you see unsigned char in any emcrypting file IT IS CRYPTOPP::BYTE!!!)
+    unsigned char digest[CryptoPP::SHA256::DIGESTSIZE];
     CryptoPP::SHA256 hashAlgorithm;
 
-    hashAlgorithm.CalculateDigest(digest, (const CryptoPP::byte *)saltedPassword.c_str(), saltedPassword.size());
+    hashAlgorithm.CalculateDigest(digest, (unsigned char *)saltedPassword.c_str(), saltedPassword.size());
 
     CryptoPP::HexEncoder encoder;
     CryptoPP::StringSink *stringSink = new CryptoPP::StringSink(output);
