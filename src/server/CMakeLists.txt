@@ -1,4 +1,5 @@
 # Library of the project, can be linked to the tests
+
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
 )
