@@ -5,6 +5,7 @@ add_library(${PREFIX}_server
     UserHandler.cpp
     ServerUser.cpp
     GameHandler.cpp
+    ChatBox.cpp
 )
 
 target_link_libraries(${PREFIX}_server
