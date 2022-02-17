@@ -22,6 +22,16 @@ void Player::setPosition(const Point &newPosition)
     position = newPosition;
 }
 
+int Player::nWalls() const
+{
+    return nwalls;
+}
+
+void Player::takeAwayWall()
+{
+    nwalls--;
+}
+
 Player::~Player()
 {
 }

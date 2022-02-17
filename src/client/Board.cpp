@@ -106,10 +106,18 @@ void Board::movePlayer(std::shared_ptr<Player> player, const Point &to)
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
     // We suppose here that the the placement of the wall is valid
-    // We suppose here that firstHalf and secondHalf have already been converted into matrix indexes
+    // We suppose here that the given indices have already been converted into matrix indexes
     // Downcasting
     std::dynamic_pointer_cast<Corridor>(matrix[firstHalf.x()][firstHalf.y()])->placeWall();
     std::dynamic_pointer_cast<Corridor>(matrix[secondHalf.x()][secondHalf.y()])->placeWall();
+}
+
+void Board::placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation)
+{
+    // Place the "middle piece" of the wall, on the empty spot in the board
+    auto mid = std::make_shared<Corridor>(orientation);
+    mid->placeWall();
+    matrix[middlePiece.x()][middlePiece.y()] = mid;
 }
 
 void Board::placeWall(const Point &cell, const WallOrientation &direction)
@@ -124,11 +132,13 @@ void Board::placeWall(const Point &cell, const WallOrientation &direction)
     int x = cell.x() * 2;
     int y = cell.y() * 2;
 
+    // Place the wall pieces, either vertically or horizontally, then the middle piece
     if (direction == WallOrientation::Vertical) {
         placeWallPieces(Point {x + 1, y}, Point {x + 1, y + 2});
     } else {
         placeWallPieces(Point {x, y + 1}, Point {x + 2, y + 1});
     }
+    placeWallMiddlePiece(Point {x + 1, y + 1}, direction);
 }
 
 std::vector<std::vector<int>> Board::allComponents()
