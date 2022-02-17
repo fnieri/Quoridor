@@ -1,14 +1,16 @@
-#include "ChatBoxSerializableMessageFactory.h"
-#include <iostream>
 
-Json::Value ChatBoxSerializableMessageFactory::serializeUserChatBoxRequest(
+#include "ChatBoxSerializableMessageFactory.h"
+
+#include <string>
+
+using json = nlohmann::json;
+
+json ChatBoxSerializableMessageFactory::serializeUserChatBoxRequest(
     ChatInteraction interaction, int chatboxId, std::string username, std::string message, int timestamp)
 {
-    Json::Value returnJson;
-    returnJson["action"] = toJsonString(interaction);
-    returnJson["chatbox_id"] = chatboxId;
-    returnJson["username"] = username;
-    returnJson["message"] = (interaction == ChatInteraction::USER_SEND_MESSAGE) ? message : "";
-    returnJson["timestamp"] = timestamp;
-    return returnJson;
+    std::string actualMessage = (interaction == ChatInteraction::USER_SEND_MESSAGE) ? message : "";
+    json ChatBoxRequestJson
+        = {{"action", toJsonString(interaction)}, {"chatbox_id", chatboxId}, {"username", username}, {"message", actualMessage}, {"timestamp", timestamp}};
+
+    return ChatBoxRequestJson;
 }
