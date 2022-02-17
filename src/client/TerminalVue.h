@@ -20,8 +20,7 @@
 #include "ftxui/component/screen_interactive.hpp" // for ScreenInteractive
 #include "ftxui/dom/elements.hpp" // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
 #include "ftxui/screen/color.hpp" // for Color
-
-// Try
+#include "ftxui/dom/canvas.hpp"  // for Canvas
 #include "ftxui/component/component_options.hpp" // for ButtonOption
 #include "ftxui/component/event.hpp"
 #include "ftxui/component/mouse.hpp"
@@ -34,6 +33,9 @@ class TerminalVue
 {
     std::string message, username, password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
+    int mouse_x = 0;
+    int mouse_y = 0;
+    bool mousePressed = false;
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
     std::vector<std::string> actionToggleEntries {
@@ -52,6 +54,12 @@ class TerminalVue
     int rightSize = 40;
 
     auto createBoardButtonsContainer(int size);
+
+    auto createCanvas();
+
+    bool mouseInCell(int x, int y);
+
+    void handleButtonClick(int x, int y);
 
     auto createChatInput();
 

@@ -39,9 +39,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/cmake_install.cmake")
   include("/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/cmake_install.cmake")
-  include("/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/common/cmake_install.cmake")
 
 endif()
 

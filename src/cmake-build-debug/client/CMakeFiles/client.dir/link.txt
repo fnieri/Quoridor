@@ -1,1 +1,1 @@
-/usr/bin/c++  -g   CMakeFiles/client.dir/main.cpp.o  -o client  ../_deps/ftxui-build/ftxui-screen.a ../_deps/ftxui-build/ftxui-dom.a ../_deps/ftxui-build/ftxui-component.a libquoridor_client.a ../_deps/ftxui-build/ftxui-dom.a ../_deps/ftxui-build/ftxui-screen.a -lpthread 
+/usr/bin/c++  -g   CMakeFiles/client.dir/main.cpp.o  -o client  lib_client.a lib_client.a -lftxui::screen -lftxui::dom -lftxui::component 

@@ -10,16 +10,12 @@ set(CMAKE_CXX_COMPILER_ID "GNU")
 
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
-  "_deps/ftxui-src/include"
   "../"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/_deps/ftxui-build/CMakeFiles/screen.dir/DependInfo.cmake"
-  "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/_deps/ftxui-build/CMakeFiles/dom.dir/DependInfo.cmake"
-  "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/_deps/ftxui-build/CMakeFiles/component.dir/DependInfo.cmake"
-  "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/quoridor_client.dir/DependInfo.cmake"
+  "/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/CMakeFiles/_client.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

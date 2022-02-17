@@ -15,7 +15,7 @@ auto TerminalVue::createBoardButtonsContainer(int size)
         std::vector<Component> row_components;
         for (int j = 0; j < size; j++) {
             row_components.push_back(Button(
-                "o ", [i, j, this] { std::cout << "Clicked " << i << " " << j << std::endl; }, &buttonOption));
+                "\u25A1", [i, j, this] { handleButtonClick(i, j); }, &buttonOption));
         }
         auto buttonsRow = Container::Horizontal(row_components);
         buttonsGrid.push_back(buttonsRow);
@@ -25,6 +25,68 @@ auto TerminalVue::createBoardButtonsContainer(int size)
         buttonsGrid,
     });
     return buttonsContainer;
+}
+
+bool TerminalVue::mouseInCell(int x, int y)
+{
+    return abs(x - mouse_x) <= 1 && abs(y - mouse_y) <= 2;
+}
+
+auto TerminalVue::createCanvas()
+{
+    return Renderer([&] {
+        std::vector<std::vector<int>> canvasGrid {
+            {0, 0, 1, 0, -2, 0, 1, 0, 1}, {0, 0, 1, 0, -2, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}};
+        auto c = Canvas(100, 100);
+        //        for (auto &row : canvasGrid) {
+        //            for (auto &cell : row) {
+        //                if (cell == 1) {
+        //                    c.DrawText("\u25A1", , mouse_y);
+        //                }
+        //            }
+        //        }
+        int dy = 5;
+        for (int i = 0; i < canvasGrid.size(); i++) {
+            int dx = 5;
+            for (int j = 0; j < canvasGrid[i].size(); j++) {
+                if (canvasGrid[i][j] == 0) {
+                    if (mouseInCell(dx, dy) && mousePressed) {
+                        c.DrawText(dx, dy, "\u25A1");
+                    } else {
+                        c.DrawText(dx, dy, "\u25A0");
+                    }
+                }
+                else if (canvasGrid[i][j] == -2) {
+                    c.DrawPointLine(dx, dy, dx, dy + 2);
+                } else {
+                    c.DrawText(dx, dy, "\u25A0", Color::Red);
+                }
+                dx += 5;
+            }
+            dy += 5;
+        }
+
+        //        if (mouseInCell(20, 20) && mousePressed) {
+        //            c.DrawText(20, 20, "\u25A0", Color::White);
+        //        } else {
+        //            c.DrawPointLine(0, 0, 20, 0, [](Pixel &p) {
+        //                p.character = "-";
+        //                p.foreground_color = Color::White;
+        //                p.bold = true;
+        //            });
+        //            c.DrawText(20, 20, "\u25A1");
+        //        }
+        //        c.DrawText(20, 20, "\u25A1", Color::White);
+
+        //        c.DrawBlock(mouse_x, mouse_y, true, Color::Red);
+
+        return canvas(std::move(c));
+    });
+}
+
+void TerminalVue::handleButtonClick(int x, int y)
+{
+    return;
 }
 
 auto TerminalVue::createChatInput()
@@ -48,13 +110,17 @@ auto TerminalVue::createMainTab()
 auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
+    auto boardCanvas = createCanvas();
     auto buttonsContainer = createBoardButtonsContainer(9);
     auto boardContainer = Container::Vertical({
         actionToggle,
         buttonsContainer,
+        boardCanvas,
     });
-    return Renderer(boardContainer, [buttonsContainer, actionToggle] {
-        return vbox({border(buttonsContainer->Render() | center), actionToggle->Render() | center});
+
+    return Renderer(boardContainer, [buttonsContainer, actionToggle, boardCanvas] {
+        //        return vbox({border(buttonsContainer->Render() | center), actionToggle->Render() | center});
+        return vbox({border(boardCanvas->Render() | center), actionToggle->Render() | center});
     });
 }
 
@@ -131,7 +197,24 @@ auto TerminalVue::createMainRenderer()
 
     auto tabContainer = createMainTabContainer();
 
+    auto tabWithMouse = CatchEvent(tabContainer, [&](Event e) {
+        if (e.is_mouse()) {
+            mouse_x = (e.mouse().x - 2) * 2;
+            mouse_y = (e.mouse().y - 4) * 4;
+            if (e.mouse().button == Mouse::Left) {
+                if (e.mouse().motion == Mouse::Pressed) {
+                    mousePressed = true;
+                } else if (e.mouse().motion == Mouse::Released) {
+                    mousePressed = false;
+                }
+            }
+            //            mousePressed = e.mouse().motion.Pressed == 1;
+        }
+        return false;
+    });
+
     auto mainContainer = Container::Vertical({
+        tabWithMouse,
         tabToggle,
         tabContainer,
     });

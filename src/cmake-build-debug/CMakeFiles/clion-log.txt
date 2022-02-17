@@ -23,8 +23,41 @@ CMake Warning (dev) in CMakeLists.txt:
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
 -- Configuring done
-CMake Error at client/CMakeLists.txt:25 (add_library):
-  No SOURCES given to target: quoridor_tui
+CMake Error at client/CMakeLists.txt:12 (add_library):
+  Target "_client" links to target "ftxui::screen" but the target was not
+  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
+  an ALIAS target is missing?
 
 
+CMake Error at client/CMakeLists.txt:12 (add_library):
+  Target "_client" links to target "ftxui::dom" but the target was not found.
+  Perhaps a find_package() call is missing for an IMPORTED target, or an
+  ALIAS target is missing?
+
+
+CMake Error at client/CMakeLists.txt:12 (add_library):
+  Target "_client" links to target "ftxui::component" but the target was not
+  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
+  an ALIAS target is missing?
+
+
+CMake Error at client/CMakeLists.txt:5 (add_executable):
+  Target "client" links to target "ftxui::screen" but the target was not
+  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
+  an ALIAS target is missing?
+
+
+CMake Error at client/CMakeLists.txt:5 (add_executable):
+  Target "client" links to target "ftxui::dom" but the target was not found.
+  Perhaps a find_package() call is missing for an IMPORTED target, or an
+  ALIAS target is missing?
+
+
+CMake Error at client/CMakeLists.txt:5 (add_executable):
+  Target "client" links to target "ftxui::component" but the target was not
+  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
+  an ALIAS target is missing?
+
+
+-- Generating done
 CMake Generate step failed.  Build files cannot be regenerated correctly.

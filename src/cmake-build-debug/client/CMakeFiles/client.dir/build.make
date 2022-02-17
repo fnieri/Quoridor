@@ -79,12 +79,8 @@ client_EXTERNAL_OBJECTS =
 
 client/client: client/CMakeFiles/client.dir/main.cpp.o
 client/client: client/CMakeFiles/client.dir/build.make
-client/client: _deps/ftxui-build/ftxui-screen.a
-client/client: _deps/ftxui-build/ftxui-dom.a
-client/client: _deps/ftxui-build/ftxui-component.a
-client/client: client/libquoridor_client.a
-client/client: _deps/ftxui-build/ftxui-dom.a
-client/client: _deps/ftxui-build/ftxui-screen.a
+client/client: client/lib_client.a
+client/client: client/lib_client.a
 client/client: client/CMakeFiles/client.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable client"
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client && $(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/client.dir/link.txt --verbose=$(VERBOSE)

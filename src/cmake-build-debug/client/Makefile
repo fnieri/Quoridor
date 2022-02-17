@@ -56,29 +56,16 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+.PHONY : edit_cache/fast
 
 # Special rule for the target package_source
 package_source:
@@ -90,28 +77,6 @@ package_source:
 package_source/fast: package_source
 
 .PHONY : package_source/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -134,17 +99,6 @@ package: preinstall
 package/fast: package
 
 .PHONY : package/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -179,19 +133,19 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-client/CMakeFiles/quoridor_client.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/quoridor_client.dir/rule
-.PHONY : client/CMakeFiles/quoridor_client.dir/rule
+client/CMakeFiles/_client.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/_client.dir/rule
+.PHONY : client/CMakeFiles/_client.dir/rule
 
 # Convenience name for target.
-quoridor_client: client/CMakeFiles/quoridor_client.dir/rule
+_client: client/CMakeFiles/_client.dir/rule
 
-.PHONY : quoridor_client
+.PHONY : _client
 
 # fast build rule for target.
-quoridor_client/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/build
-.PHONY : quoridor_client/fast
+_client/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
+.PHONY : _client/fast
 
 # Convenience name for target.
 client/CMakeFiles/client.dir/rule:
@@ -208,28 +162,13 @@ client/fast:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/build
 .PHONY : client/fast
 
-# Convenience name for target.
-client/CMakeFiles/quoridor_tui.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/quoridor_tui.dir/rule
-.PHONY : client/CMakeFiles/quoridor_tui.dir/rule
-
-# Convenience name for target.
-quoridor_tui: client/CMakeFiles/quoridor_tui.dir/rule
-
-.PHONY : quoridor_tui
-
-# fast build rule for target.
-quoridor_tui/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/build
-.PHONY : quoridor_tui/fast
-
 Point.o: Point.cpp.o
 
 .PHONY : Point.o
 
 # target to build an object file
 Point.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.o
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.o
 .PHONY : Point.cpp.o
 
 Point.i: Point.cpp.i
@@ -238,7 +177,7 @@ Point.i: Point.cpp.i
 
 # target to preprocess a source file
 Point.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.i
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.i
 .PHONY : Point.cpp.i
 
 Point.s: Point.cpp.s
@@ -247,7 +186,7 @@ Point.s: Point.cpp.s
 
 # target to generate assembly for a file
 Point.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Point.cpp.s
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.s
 .PHONY : Point.cpp.s
 
 Stringable.o: Stringable.cpp.o
@@ -256,7 +195,7 @@ Stringable.o: Stringable.cpp.o
 
 # target to build an object file
 Stringable.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.o
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.o
 .PHONY : Stringable.cpp.o
 
 Stringable.i: Stringable.cpp.i
@@ -265,7 +204,7 @@ Stringable.i: Stringable.cpp.i
 
 # target to preprocess a source file
 Stringable.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.i
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.i
 .PHONY : Stringable.cpp.i
 
 Stringable.s: Stringable.cpp.s
@@ -274,7 +213,7 @@ Stringable.s: Stringable.cpp.s
 
 # target to generate assembly for a file
 Stringable.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_client.dir/build.make client/CMakeFiles/quoridor_client.dir/Stringable.cpp.s
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.s
 .PHONY : Stringable.cpp.s
 
 TerminalVue.o: TerminalVue.cpp.o
@@ -283,7 +222,7 @@ TerminalVue.o: TerminalVue.cpp.o
 
 # target to build an object file
 TerminalVue.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.o
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.o
 .PHONY : TerminalVue.cpp.o
 
 TerminalVue.i: TerminalVue.cpp.i
@@ -292,7 +231,7 @@ TerminalVue.i: TerminalVue.cpp.i
 
 # target to preprocess a source file
 TerminalVue.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.i
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.i
 .PHONY : TerminalVue.cpp.i
 
 TerminalVue.s: TerminalVue.cpp.s
@@ -301,7 +240,7 @@ TerminalVue.s: TerminalVue.cpp.s
 
 # target to generate assembly for a file
 TerminalVue.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/quoridor_tui.dir/build.make client/CMakeFiles/quoridor_tui.dir/TerminalVue.cpp.s
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.s
 .PHONY : TerminalVue.cpp.s
 
 main.o: main.cpp.o
@@ -337,17 +276,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
-	@echo "... install/local"
+	@echo "... edit_cache"
 	@echo "... package_source"
-	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
 	@echo "... package"
-	@echo "... edit_cache"
-	@echo "... quoridor_client"
+	@echo "... _client"
 	@echo "... client"
-	@echo "... quoridor_tui"
 	@echo "... Point.o"
 	@echo "... Point.i"
 	@echo "... Point.s"

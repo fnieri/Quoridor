@@ -33,8 +33,6 @@ include(cmake/AddCatch2.cmake)
 include(cmake/AddSockpp.cmake)
 include(cmake/AddFTXUI.cmake)
 
-option(FTXUI_BUILD_EXAMPLES OFF)
-
 add_subdirectory(src)
 
 #add_subdirectory(tests)
