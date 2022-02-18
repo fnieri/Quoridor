@@ -32,6 +32,21 @@ void Player::takeAwayWall()
     nwalls--;
 }
 
+Point Player::getPosition()
+{
+  return position;
+}
+
+PawnColors Player::getColor()
+{
+  return color;
+}
+
+void Player::setColor(PawnColors newColor)
+{
+  color = newColor;
+}
+
 Player::~Player()
 {
 }

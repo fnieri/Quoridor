@@ -1,3 +1,4 @@
+
 cmake_minimum_required(VERSION 3.2)
 
 project(Quoridor
@@ -13,7 +14,7 @@ set(PREFIX qrd)
 include(cmake/CPM.cmake)
 include(cmake/AddCatch2.cmake)
 include(cmake/AddSockpp.cmake)
+include(cmake/Addjson.cmake)
 
 add_subdirectory(src)
-add_subdirectory(tests)
-
+#add_subdirectory(tests)

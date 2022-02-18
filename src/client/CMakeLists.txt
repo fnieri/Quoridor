@@ -8,6 +8,12 @@ add_library(${PREFIX}_client
     Cell.cpp
     Corridor.cpp
     BoardComponent.cpp
+    PlayerAction.cpp
+    )
+    
+target_link_libraries(${PREFIX}_client
+    PUBLIC
+        nlohmann_json
 )
 
 target_include_directories(${PREFIX}_client
@@ -16,11 +22,10 @@ target_include_directories(${PREFIX}_client
 )
 
 add_executable(client
-    main.cpp
-)
+    main.cpp)
 
 # Link the project libraries to the executable
 target_link_libraries(client
-    PRIVATE
+    PRIVATE   
         ${PREFIX}_client
 )

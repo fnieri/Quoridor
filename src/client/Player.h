@@ -21,4 +21,7 @@ public:
     void takeAwayWall();
 
     ~Player();
+    Point getPosition();
+    PawnColors getColor();
+    void setColor(PawnColors newColor);
 };

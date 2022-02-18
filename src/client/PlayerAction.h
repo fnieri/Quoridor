@@ -5,6 +5,8 @@
 #include "PlayerEnum.h"
 #include "Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <memory>
 #include <string>
 
@@ -25,4 +27,6 @@ public:
     bool isGameOver();
 
     bool executeAction();
+
+    nlohmann::json serialized();
 };

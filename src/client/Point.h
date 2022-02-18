@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Stringable.h"
-
+#include <nlohmann/json.hpp>
 /**
  * Coordinate in the plan
  *
@@ -44,7 +44,7 @@ public:
     Point operator/(const int &) const;
 
     bool operator==(const Point &) const noexcept;
-
+    nlohmann::json serialized() const;
 protected:
     int m_x;
     int m_y;

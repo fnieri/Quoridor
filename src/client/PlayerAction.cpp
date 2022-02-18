@@ -1,8 +1,12 @@
 #include "PlayerAction.h"
 
+#include "PlayerEnum.h"
+
 #include <memory>
+#include <iostream>
 
 using namespace std;
+using json = nlohmann::json;
 
 PlayerAction::PlayerAction(shared_ptr<Board> board, shared_ptr<Player> player, const Point &destination)
     : board {board}
@@ -29,6 +33,21 @@ bool PlayerAction::executeAction()
     // board->movePlayer()
 }
 
+json PlayerAction::serialized()
+{
+    Point initialPosition = player->getPosition();
+
+    int playerID = (int) player->getColor();
+    
+    json actionJson = {
+        {"initial_position", initialPosition.serialized()},
+        {"end_position", destination.serialized()},
+        {"player_id", playerID}
+    };
+    return actionJson;
+}
+
 PlayerAction::~PlayerAction()
 {
 }
+
