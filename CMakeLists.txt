@@ -17,4 +17,4 @@ include(cmake/AddSockpp.cmake)
 include(cmake/Addjson.cmake)
 
 add_subdirectory(src)
-#add_subdirectory(tests)
+add_subdirectory(tests)
