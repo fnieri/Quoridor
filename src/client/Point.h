@@ -45,6 +45,7 @@ public:
 
     bool operator==(const Point &) const noexcept;
     nlohmann::json serialized() const;
+
 protected:
     int m_x;
     int m_y;

@@ -5,6 +5,7 @@
 #include <memory>
 
 using namespace std;
+using json = nlohmann::json;
 
 WallAction::WallAction(shared_ptr<Board> board, shared_ptr<Player> player, const Point &destCell, const WallOrientation &orientation)
     : board {board}
@@ -62,4 +63,16 @@ bool WallAction::executeAction()
     }
 
     return false;
+}
+
+// We'll surely have to change this to play Quotetris
+json WallAction::serialized()
+{
+    int playerID = (int) player->getColor();
+    json wallJson = {
+        {"wall_cell", destCell.serialized()},
+        {"wall_orientation" , toJsonOutput(orientation)},
+        {"player_id", playerID}
+    };
+    return wallJson;
 }

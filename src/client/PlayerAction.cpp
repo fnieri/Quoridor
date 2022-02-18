@@ -2,8 +2,8 @@
 
 #include "PlayerEnum.h"
 
-#include <memory>
 #include <iostream>
+#include <memory>
 
 using namespace std;
 using json = nlohmann::json;
@@ -37,17 +37,12 @@ json PlayerAction::serialized()
 {
     Point initialPosition = player->getPosition();
 
-    int playerID = (int) player->getColor();
-    
-    json actionJson = {
-        {"initial_position", initialPosition.serialized()},
-        {"end_position", destination.serialized()},
-        {"player_id", playerID}
-    };
+    int playerID = (int)player->getColor();
+
+    json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
 }
 
 PlayerAction::~PlayerAction()
 {
 }
-

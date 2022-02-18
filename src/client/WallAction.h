@@ -4,7 +4,10 @@
 #include "Player.h"
 #include "WallEnum.h"
 
+#include <nlohmann/json.hpp>
+
 #include <memory>
+
 
 // Place a wall somewhere
 class WallAction
@@ -25,4 +28,6 @@ public:
     bool isWallPlacementValid();
 
     bool executeAction();
+    
+    nlohmann::json serialized();
 };

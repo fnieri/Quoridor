@@ -34,17 +34,17 @@ void Player::takeAwayWall()
 
 Point Player::getPosition()
 {
-  return position;
+    return position;
 }
 
 PawnColors Player::getColor()
 {
-  return color;
+    return color;
 }
 
 void Player::setColor(PawnColors newColor)
 {
-  color = newColor;
+    color = newColor;
 }
 
 Player::~Player()
