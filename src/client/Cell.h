@@ -5,15 +5,31 @@
 
 #include <memory>
 
-// contains the information of a cell
+/**
+ * Subclass of BoardComponent and used to indicate the presence of a player in the Board.
+ */
 class Cell : public BoardComponent
 {
 private:
+    /**
+     * The Player currently occupying the cell.
+     * Is set to nullptr if unoccupied.
+     */
     std::shared_ptr<Player> player;
 
 public:
     Cell(std::shared_ptr<Player> player = nullptr);
-    void placePlayer(std::shared_ptr<Player> newPlayer);
-    void removePlayer();
     ~Cell();
+
+    /**
+     * Sets the new Player occupying the cell.
+     *
+     * @param newPlayer the new Player to occupy the cell
+     */
+    void placePlayer(std::shared_ptr<Player> newPlayer);
+
+    /**
+     * Removes the Player currently occupying the cell.
+     */
+    void removePlayer();
 };

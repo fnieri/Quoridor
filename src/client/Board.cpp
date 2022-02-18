@@ -104,11 +104,12 @@ Point Board::getIndexCorridor(const Point &first, const Point &second) const
     return position;
 }
 
-void Board::movePlayer(std::shared_ptr<Player> player, const Point &to)
+void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
 {
     // We suppose here that the move is valid
-    std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
-    std::dynamic_pointer_cast<Cell>(matrix[to.x()][to.y()])->placePlayer(player);
+    // std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
+    // std::dynamic_pointer_cast<Cell>(matrix[to.x()][to.y()])->placePlayer(player);
+    // TODO: Needs fixing
 }
 
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
