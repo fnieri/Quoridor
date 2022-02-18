@@ -2,6 +2,12 @@
 add_library(${PREFIX}_client
     Point.cpp
     Stringable.cpp
+    Board.cpp
+    Player.cpp
+    WallAction.cpp
+    Cell.cpp
+    Corridor.cpp
+    BoardComponent.cpp
 )
 
 target_include_directories(${PREFIX}_client

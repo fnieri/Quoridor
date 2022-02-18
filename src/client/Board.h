@@ -35,5 +35,7 @@ public:
 
     int getCellSize();
 
+    void debugPrint();
+
     ~Board();
 };

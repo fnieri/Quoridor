@@ -1,6 +1,7 @@
 #pragma once
 
 #include "BoardComponent.h"
+#include "WallEnum.h"
 
 class Corridor : public BoardComponent
 {

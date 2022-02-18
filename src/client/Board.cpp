@@ -1,9 +1,11 @@
 #include "Board.h"
+#include "BoardComponent.h"
 #include "Cell.h"
 #include "Corridor.h"
 #include "Player.h"
 #include "Point.h"
 
+#include <iostream>
 #include <memory>
 
 Board::Board(/* args */)
@@ -15,9 +17,9 @@ Board::Board(/* args */)
                 matrix[x].push_back(std::make_shared<Cell>());
             } else if (isCorridor({x, y})) {
                 if (isEven(x)) {
-                    matrix[x].push_back(std::make_shared<Corridor>(WallOrientation::Vertical));
-                } else
                     matrix[x].push_back(std::make_shared<Corridor>(WallOrientation::Horizontal));
+                } else
+                    matrix[x].push_back(std::make_shared<Corridor>(WallOrientation::Vertical));
             } else
                 matrix[x].push_back(nullptr);
         }
@@ -53,7 +55,11 @@ bool Board::isCorridor(const Point &position) const
 
 bool Board::isFree(const Point &position) const
 {
-    return !matrix[position.x()][position.y()]->isOccupied();
+    auto component = matrix.at(position.x()).at(position.y());
+    if (component) {
+        return !component->isOccupied();
+    }
+    return true;
 }
 
 bool Board::areNeighbours(const Point &first, const Point &second) const
@@ -73,6 +79,8 @@ bool Board::isWayFree(const Point &first, const Point &second) const
     if (matrix[position.x()][position.y()] && isPositionValid(position)) {
         return !matrix[position.x()][position.y()]->isOccupied();
     }
+
+    return false;
 }
 
 Point Board::getIndexCorridor(const Point &first, const Point &second) const
@@ -176,4 +184,20 @@ void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x,
 int Board::getCellSize()
 {
     return CELL_SIZE;
+}
+
+void Board::debugPrint()
+{
+    for (int y = 0; y < MATRIX_SIZE; y++) {
+        for (int x = 0; x < MATRIX_SIZE; x++) {
+            if (isCell({x, y})) {
+                std::cout << "■";
+            } else if (matrix[x][y] && matrix[x][y]->isOccupied()) {
+                auto orientation = std::dynamic_pointer_cast<Corridor>(matrix[x][y])->getOrientation();
+                std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");
+            } else
+                std::cout << " ";
+        }
+        std::cout << std::endl;
+    }
 }

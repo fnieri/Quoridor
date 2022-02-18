@@ -21,7 +21,7 @@ WallAction::~WallAction()
 bool WallAction::isWallPlacementLegal()
 {
     // Check if the placement doesn't block the other players
-    return false;
+    return true;
 }
 
 bool WallAction::isWallPlacementValid()
@@ -46,7 +46,7 @@ bool WallAction::isWallPlacementValid()
     // Check that both wall pieces don't interesect, for vertical walls and horizontal walls
     if (orientation == WallOrientation::Vertical && board->isFree(Point {x + 1, y}) && board->isFree(Point {x + 1, y + 2})) {
         return true;
-    } else if (board->isFree(Point {x, y + 1}) && board->isFree(Point {x + 2, y + 1})) {
+    } else if (orientation == WallOrientation::Horizontal && board->isFree(Point {x, y + 1}) && board->isFree(Point {x + 2, y + 1})) {
         return true;
     }
 
@@ -58,7 +58,8 @@ bool WallAction::executeAction()
     if (isWallPlacementValid() && isWallPlacementLegal()) {
         board->placeWall(destCell, orientation);
         player->takeAwayWall();
-    } else {
-        return false;
+        return true;
     }
+
+    return false;
 }
