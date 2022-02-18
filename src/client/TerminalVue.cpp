@@ -36,7 +36,7 @@ auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
         std::vector<std::vector<int>> canvasGrid {
-            {0, 0, 1, 0, -2, 0, 1, 0, 1}, {0, 0, 1, 0, -2, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}, {0, 0, 1, 0, 0, 0, 1, 0, 1}};
+            {0, 0, 1, 0, -2, 0, 1, 0, 1}};
         auto c = Canvas(100, 100);
         //        for (auto &row : canvasGrid) {
         //            for (auto &cell : row) {
@@ -45,26 +45,27 @@ auto TerminalVue::createCanvas()
         //                }
         //            }
         //        }
-        int dy = 5;
-        for (int i = 0; i < canvasGrid.size(); i++) {
-            int dx = 5;
-            for (int j = 0; j < canvasGrid[i].size(); j++) {
-                if (canvasGrid[i][j] == 0) {
-                    if (mouseInCell(dx, dy) && mousePressed) {
-                        c.DrawText(dx, dy, "\u25A1");
-                    } else {
-                        c.DrawText(dx, dy, "\u25A0");
+
+                int dy = 5;
+                for (int i = 0; i < canvasGrid.size(); i++) {
+                    int dx = 5;
+                    for (int j = 0; j < canvasGrid[i].size(); j++) {
+                        if (canvasGrid[i][j] == 0) {
+                            if (mouseInCell(dx, dy) && mousePressed) {
+                                c.DrawText(dx, dy, "\u25A0");
+                            } else {
+                                c.DrawText(dx, dy, "\u25A1");
+                            }
+                        }
+                        else if (canvasGrid[i][j] == -2) {
+                            c.DrawPointLine(dx, dy, dx, dy + 2);
+                        } else {
+                            c.DrawText(dx, dy, "\u25A0", Color::Red);
+                        }
+                        dx += 5;
                     }
+                    dy += 5;
                 }
-                else if (canvasGrid[i][j] == -2) {
-                    c.DrawPointLine(dx, dy, dx, dy + 2);
-                } else {
-                    c.DrawText(dx, dy, "\u25A0", Color::Red);
-                }
-                dx += 5;
-            }
-            dy += 5;
-        }
 
         //        if (mouseInCell(20, 20) && mousePressed) {
         //            c.DrawText(20, 20, "\u25A0", Color::White);
@@ -111,15 +112,12 @@ auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
     auto boardCanvas = createCanvas();
-    auto buttonsContainer = createBoardButtonsContainer(9);
     auto boardContainer = Container::Vertical({
         actionToggle,
-        buttonsContainer,
         boardCanvas,
     });
 
-    return Renderer(boardContainer, [buttonsContainer, actionToggle, boardCanvas] {
-        //        return vbox({border(buttonsContainer->Render() | center), actionToggle->Render() | center});
+    return Renderer(boardContainer, [actionToggle, boardCanvas] {
         return vbox({border(boardCanvas->Render() | center), actionToggle->Render() | center});
     });
 }
@@ -152,7 +150,7 @@ auto TerminalVue::createLoginRenderer()
     auto usernameInput = Input(&username, "Username");
     auto passwordInput = Input(&password, "Password");
     auto loginButton = Button(
-        "Login", [] {}, &buttonOption);
+        "Login", [this] {loginUser();}, &buttonOption);
     auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
     return Renderer(loginFieldsContainer, [loginFieldsContainer] { return vbox({loginFieldsContainer->Render() | center}); });
 }
@@ -174,20 +172,9 @@ auto TerminalVue::createMainTabContainer()
     auto boardTab = createBoardRenderer();
     auto resizeContainer = boardTab;
     resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
-
-    auto login = createLoginRenderer();
-    auto createAccount = createRegisterRenderer();
     auto friends = createFriendsRenderer();
     auto settings = createSettingsRenderer();
-    auto tabContainer = Container::Tab(
-        {
-            resizeContainer,
-            login,
-            createAccount,
-            friends,
-            settings,
-        },
-        &mainTabSelect);
+    auto tabContainer = Container::Tab({resizeContainer, friends, settings}, &mainTabSelect);
     return tabContainer;
 }
 
@@ -213,26 +200,47 @@ auto TerminalVue::createMainRenderer()
         return false;
     });
 
+    auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
+    auto loginContainer = Container::Tab(
+        {
+            createLoginRenderer(),
+            createRegisterRenderer(),
+        },
+        &loginTabSelect);
     auto mainContainer = Container::Vertical({
         tabWithMouse,
         tabToggle,
         tabContainer,
+        loginToggle,
+        loginContainer,
     });
-    return Renderer(mainContainer, [tabContainer, tabToggle] {
-        return vbox({
-                   tabToggle->Render(),
-                   separator(),
-                   tabContainer->Render(),
-               })
-            | border;
-        ;
+
+    return Renderer(mainContainer, [this, tabContainer, tabToggle, loginToggle, loginContainer] {
+        if (!this->isLoggedIn) {
+            return vbox({
+                loginToggle->Render(),
+                separator(),
+                loginContainer->Render(),
+            }) | border;
+        }
+        return vbox({tabToggle->Render(), separator(), tabContainer->Render()}) | border;
     });
 };
+
+void TerminalVue::loginUser()
+{
+    if (username.empty() || password.empty()) {
+        return;
+    }
+    // interact with server
+    isLoggedIn = true;
+}
 
 void TerminalVue::run()
 {
     auto mainRenderer = createMainRenderer();
     auto screen = ScreenInteractive::TerminalOutput();
+//    loginUser();
     screen.Loop(mainRenderer);
 }
 

@@ -17,14 +17,14 @@
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Renderer, Vertical
 #include "ftxui/component/component_base.hpp" // for ComponentBase
-#include "ftxui/component/screen_interactive.hpp" // for ScreenInteractive
-#include "ftxui/dom/elements.hpp" // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
-#include "ftxui/screen/color.hpp" // for Color
-#include "ftxui/dom/canvas.hpp"  // for Canvas
 #include "ftxui/component/component_options.hpp" // for ButtonOption
 #include "ftxui/component/event.hpp"
 #include "ftxui/component/mouse.hpp"
+#include "ftxui/component/screen_interactive.hpp" // for ScreenInteractive
+#include "ftxui/dom/canvas.hpp" // for Canvas
+#include "ftxui/dom/elements.hpp" // for separator, operator|, Element, size, text, vbox, xflex, bgcolor, hbox, GREATER_THAN, WIDTH, border, HEIGHT, LESS_THAN
 #include "ftxui/screen/box.hpp"
+#include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
 using namespace ftxui;
@@ -44,14 +44,18 @@ class TerminalVue
     };
     std::vector<std::string> mainTabValues {
         "Game",
-        "Login",
-        "Register",
         "Friends",
         "Settings",
     };
+    std::vector<std::string> loginTabValues {
+        "Login",
+        "Register",
+    };
+    std::vector<Component> mainTabComponents;
     std::vector<std::vector<std::string>> chatMessages;
-    int mainTabSelect = 0;
+    int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
+    bool isLoggedIn = false;
 
     auto createBoardButtonsContainer(int size);
 
@@ -82,6 +86,8 @@ class TerminalVue
     auto createRegisterRenderer();
 
     auto createMainRenderer();
+
+    void loginUser();
 
 public:
     void run();
