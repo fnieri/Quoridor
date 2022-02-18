@@ -4,6 +4,7 @@ set(test_suite ${PREFIX}_client_tests)
 set(${test_suite}
     Test_Point
     Test_Wall_Placement
+    Test_Player_Moves
 )
 
 add_executable(${test_suite} ${${test_suite}})
