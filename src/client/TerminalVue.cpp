@@ -4,29 +4,6 @@
 
 #include "TerminalVue.h"
 
-auto TerminalVue::createBoardButtonsContainer(int size)
-{
-    // https://github.com/ArthurSonzogni/FTXUI/blob/master/examples/component/checkbox_in_frame.cpp
-    // maybe better with Container_>Add ?
-
-    buttonOption.border = false;
-    std::vector<Component> buttonsGrid;
-    for (int i = 0; i < size; i++) {
-        std::vector<Component> row_components;
-        for (int j = 0; j < size; j++) {
-            row_components.push_back(Button(
-                "\u25A1", [i, j, this] { handleButtonClick(i, j); }, &buttonOption));
-        }
-        auto buttonsRow = Container::Horizontal(row_components);
-        buttonsGrid.push_back(buttonsRow);
-    }
-
-    auto buttonsContainer = Container::Vertical({
-        buttonsGrid,
-    });
-    return buttonsContainer;
-}
-
 bool TerminalVue::mouseInCell(int x, int y)
 {
     return abs(x - mouse_x) <= 1 && abs(y - mouse_y) <= 2;

@@ -55,7 +55,7 @@ class TerminalVue
     std::vector<std::vector<std::string>> chatMessages;
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
-    bool isLoggedIn = false;
+    bool isLoggedIn = true; // change this to true to stay logged in
 
     auto createBoardButtonsContainer(int size);
 
