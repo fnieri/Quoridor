@@ -4,6 +4,7 @@ add_library(${PREFIX}_server
     LandingPool.cpp
     UserHandler.cpp
     ServerUser.cpp
+    GameHandler.cpp
 )
 
 target_link_libraries(${PREFIX}_server
