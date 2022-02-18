@@ -37,6 +37,14 @@ TEST_CASE("Valid wall placements")
             REQUIRE(!action_v3.isWallPlacementValid());
             REQUIRE(!action_v3.executeAction());
         }
+
+        SECTION("Crossing walls")
+        {
+            WallAction action_v2 {b, p, Point {1, 1}, WallOrientation::Horizontal};
+
+            REQUIRE(!action_v2.isWallPlacementValid());
+            REQUIRE(!action_v2.executeAction());
+        }
     }
 
     SECTION("Horizontal walls")
@@ -62,6 +70,14 @@ TEST_CASE("Valid wall placements")
             REQUIRE(!action_h3.isWallPlacementValid());
             REQUIRE(!action_h3.executeAction());
         }
+
+        SECTION("Crossing walls")
+        {
+            WallAction action_v2 {b, p, Point {1, 1}, WallOrientation::Vertical};
+
+            REQUIRE(!action_v2.isWallPlacementValid());
+            REQUIRE(!action_v2.executeAction());
+        }
     }
 
     SECTION("Touching walls")
@@ -79,6 +95,8 @@ TEST_CASE("Valid wall placements")
         REQUIRE(action_y.executeAction());
         REQUIRE(action_z.isWallPlacementValid());
         REQUIRE(action_z.executeAction());
+
+        b->debugPrint();
     }
 
     // Reminder: since the walls are 2-long, the last row / column cannot have walls (o5 & o6)
