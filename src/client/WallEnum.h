@@ -10,4 +10,5 @@ inline const char *toJsonOutput(WallOrientation w)
     case WallOrientation::Horizontal:
         return "wall_horizontal";
     }
+    return "";
 }

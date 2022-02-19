@@ -2,7 +2,7 @@ set(test_suite ${PREFIX}_server_tests)
 
 # Names of the test files without the extention
 set(${test_suite}
-    test_elo
+    Test_PasswordEncrypter.cpp
 )
 
 add_executable(${test_suite} ${${test_suite}})
