@@ -1,5 +1,6 @@
-// Written by Francesco Nieri
+#pragma once
 
+// Written by Francesco Nieri
 enum class ClientAuthAction { LOGIN, REGISTRATION };
 
 // https://stackoverflow.com/questions/5093460/how-to-convert-an-enum-type-variable-to-a-string
@@ -63,7 +64,6 @@ inline const char *toOutputSing(ServerAuthReturn s)
     case ServerAuthReturn::LOGIN_INCORRECT_PASSWORD:
         return "Password doesn't match username";
     case ServerAuthReturn::REGISTER_PASSWORD_TOO_SHORT:
-
         return "Password is too short, it must be x characters long...";
     case ServerAuthReturn::REGISTER_PASSWORD_TOO_LONG:
         return "Password is too long, it must be x characters long...";

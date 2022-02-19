@@ -1,3 +1,5 @@
+#pragma once
+
 enum class Answer {
     OBJECT_ANSWER,
 };

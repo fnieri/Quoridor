@@ -1,3 +1,5 @@
+#pragma once
+
 enum class ChatInteraction {
     USER_SEND_MESSAGE,
     SERVER_RELAY_MESSAGE,
