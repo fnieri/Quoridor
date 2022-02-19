@@ -4,6 +4,8 @@
 
 #include "LandingPool.h"
 #include "UserHandler.h"
+#include "ServerUser.h"
+#include "Database.h"
 
 int main(int argc, char *argv[])
 {

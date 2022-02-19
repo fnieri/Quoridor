@@ -26,10 +26,10 @@ public:
     std::string getUsername() const noexcept;
     void bindToUsername(const std::string &);
 
-    int getELO() const noexcept;
+    int getELO() noexcept;
     void setELO(int);
 
-    std::vector<std::string> getFriends() const noexcept;
+    std::vector<std::string> getFriends() noexcept;
     void addFriend(const std::string &);
     void removeFriend(const std::string &);
 
