@@ -18,7 +18,6 @@
 
 namespace database
 {
-// this will need to be changed to env variables
 const char kUsername[] {"louis"};
 constexpr char kPassword[] {"randompass456"};
 // need to actually use username and password
