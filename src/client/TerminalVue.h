@@ -38,6 +38,8 @@ class TerminalVue
     bool mousePressed = false;
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
+    int chatSelected = 0;
+    std::vector<std::string> chatElements;
     std::vector<std::string> actionToggleEntries {
         "Move",
         "Wall",
@@ -52,7 +54,6 @@ class TerminalVue
         "Register",
     };
     std::vector<Component> mainTabComponents;
-    std::vector<std::vector<std::string>> chatMessages;
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
     bool isLoggedIn = true; // change this to true to stay logged in

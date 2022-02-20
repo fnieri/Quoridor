@@ -12,8 +12,7 @@ bool TerminalVue::mouseInCell(int x, int y)
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        std::vector<std::vector<int>> canvasGrid {
-            {0, 0, 1, 0, -2, 0, 1, 0, 1}};
+        std::vector<std::vector<int>> canvasGrid {{0, 0, 1, 0, -2, 0, 1, 0, 1}};
         auto c = Canvas(100, 100);
         //        for (auto &row : canvasGrid) {
         //            for (auto &cell : row) {
@@ -23,26 +22,25 @@ auto TerminalVue::createCanvas()
         //            }
         //        }
 
-                int dy = 5;
-                for (int i = 0; i < canvasGrid.size(); i++) {
-                    int dx = 5;
-                    for (int j = 0; j < canvasGrid[i].size(); j++) {
-                        if (canvasGrid[i][j] == 0) {
-                            if (mouseInCell(dx, dy) && mousePressed) {
-                                c.DrawText(dx, dy, "\u25A0");
-                            } else {
-                                c.DrawText(dx, dy, "\u25A1");
-                            }
-                        }
-                        else if (canvasGrid[i][j] == -2) {
-                            c.DrawPointLine(dx, dy, dx, dy + 2);
-                        } else {
-                            c.DrawText(dx, dy, "\u25A0", Color::Red);
-                        }
-                        dx += 5;
+        int dy = 5;
+        for (int i = 0; i < canvasGrid.size(); i++) {
+            int dx = 5;
+            for (int j = 0; j < canvasGrid[i].size(); j++) {
+                if (canvasGrid[i][j] == 0) {
+                    if (mouseInCell(dx, dy) && mousePressed) {
+                        c.DrawText(dx, dy, "\u25A0");
+                    } else {
+                        c.DrawText(dx, dy, "\u25A1");
                     }
-                    dy += 5;
+                } else if (canvasGrid[i][j] == -2) {
+                    c.DrawPointLine(dx, dy, dx, dy + 2);
+                } else {
+                    c.DrawText(dx, dy, "\u25A0", Color::Red);
                 }
+                dx += 5;
+            }
+            dy += 5;
+        }
 
         //        if (mouseInCell(20, 20) && mousePressed) {
         //            c.DrawText(20, 20, "\u25A0", Color::White);
@@ -94,22 +92,22 @@ auto TerminalVue::createBoardRenderer()
         boardCanvas,
     });
 
-    return Renderer(boardContainer, [actionToggle, boardCanvas] {
-        return vbox({border(boardCanvas->Render() | center), actionToggle->Render() | center});
-    });
+    return Renderer(boardContainer, [actionToggle, boardCanvas] { return vbox({border(boardCanvas->Render() | center), actionToggle->Render() | center}); });
 }
 
 auto TerminalVue::createChatRenderer()
 {
+    //    std::vector<std::string> chats;
+
     auto chatInput = createChatInput();
-    chatMessages.push_back({"Louis", "Hello"});
-    return Renderer(chatInput, [&, chatInput] {
-        std::vector<Element> chatElements;
-        for (auto mess : chatMessages) {
-            chatElements.push_back(text(mess[0] + ": " + mess[1]));
-        }
-        auto chatVbox = vbox(chatElements);
-        return vbox({chatVbox | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), hbox({text(">"), chatInput->Render()})});
+
+    auto chatMenu = Menu(&chatElements, &chatSelected);
+    auto chatContainer = Container::Vertical({
+        chatMenu,
+        chatInput,
+    });
+    return Renderer(chatContainer, [&, chatInput, chatMenu] {
+        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), hbox({text(">"), chatInput->Render()})});
     });
 }
 
@@ -127,7 +125,7 @@ auto TerminalVue::createLoginRenderer()
     auto usernameInput = Input(&username, "Username");
     auto passwordInput = Input(&password, "Password");
     auto loginButton = Button(
-        "Login", [this] {loginUser();}, &buttonOption);
+        "Login", [this] { loginUser(); }, &buttonOption);
     auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
     return Renderer(loginFieldsContainer, [loginFieldsContainer] { return vbox({loginFieldsContainer->Render() | center}); });
 }
@@ -195,10 +193,11 @@ auto TerminalVue::createMainRenderer()
     return Renderer(mainContainer, [this, tabContainer, tabToggle, loginToggle, loginContainer] {
         if (!this->isLoggedIn) {
             return vbox({
-                loginToggle->Render(),
-                separator(),
-                loginContainer->Render(),
-            }) | border;
+                       loginToggle->Render(),
+                       separator(),
+                       loginContainer->Render(),
+                   })
+                | border;
         }
         return vbox({tabToggle->Render(), separator(), tabContainer->Render()}) | border;
     });
@@ -217,11 +216,11 @@ void TerminalVue::run()
 {
     auto mainRenderer = createMainRenderer();
     auto screen = ScreenInteractive::TerminalOutput();
-//    loginUser();
+    //    loginUser();
     screen.Loop(mainRenderer);
 }
 
 void TerminalVue::addChatMessage(std::string username, std::string message)
 {
-    chatMessages.push_back({username, message});
+    chatElements.push_back(std::string(username + ": " + message));
 }
