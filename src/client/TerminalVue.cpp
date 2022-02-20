@@ -12,49 +12,61 @@ bool TerminalVue::mouseInCell(int x, int y)
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        std::vector<std::vector<int>> canvasGrid {{0, 0, 1, 0, -2, 0, 1, 0, 1}};
+        const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+                  occupiedHorizontalQuoridor = 7;
         auto c = Canvas(100, 100);
-        //        for (auto &row : canvasGrid) {
-        //            for (auto &cell : row) {
-        //                if (cell == 1) {
-        //                    c.DrawText("\u25A1", , mouse_y);
-        //                }
-        //            }
-        //        }
+        std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
+        std::vector<std::vector<int>> quoridorDirection {{0, 2}, {2, 0}}; // 0 = vertical, 1 = horizontal
+
+        // dx and dy represent the distance between cells
 
         int dy = 5;
-        for (int i = 0; i < canvasGrid.size(); i++) {
+        for (int i = 0; i < testCanvasGrid.size(); i++) {
             int dx = 5;
-            for (int j = 0; j < canvasGrid[i].size(); j++) {
-                if (canvasGrid[i][j] == 0) {
+            for (int j = 0; j < testCanvasGrid[i].size(); j++) {
+                int gridValue = testCanvasGrid[i][j];
+                switch (gridValue) {
+                case freeCell:
+                    // draw a free cell
+                    // TODO: check if click is possible (gotta wait for merge with model and controller)
                     if (mouseInCell(dx, dy) && mousePressed) {
+                        // if mouse is pressed on this cell/quoridor
                         c.DrawText(dx, dy, "\u25A0");
+                        // TODO: handle mouse click with controller
                     } else {
                         c.DrawText(dx, dy, "\u25A1");
                     }
-                } else if (canvasGrid[i][j] == -2) {
-                    c.DrawPointLine(dx, dy, dx, dy + 2);
-                } else {
-                    c.DrawText(dx, dy, "\u25A0", Color::Red);
+                    break;
+
+                case emptyQuoridor:
+                    if (mouseInCell(dx, dy) && mousePressed) {
+                        // TODO sacha: if mouse is pressed on empty quoridor then draw a quoridor and also handle wallOrientation
+                    }
+                    // don't draw anything otherwise
+                    break;
+
+                case occupiedVerticalQuoridor:
+                case occupiedHorizontalQuoridor: {
+                    std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
+                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                    break;
+                }
+
+                case playerOne:
+                case playerTwo:
+                case playerThree:
+                case playerFour:
+                    // draw a player one cell
+                    c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
+                    break;
+
+                default:
+                    break;
                 }
                 dx += 5;
             }
             dy += 5;
         }
-
-        //        if (mouseInCell(20, 20) && mousePressed) {
-        //            c.DrawText(20, 20, "\u25A0", Color::White);
-        //        } else {
-        //            c.DrawPointLine(0, 0, 20, 0, [](Pixel &p) {
-        //                p.character = "-";
-        //                p.foreground_color = Color::White;
-        //                p.bold = true;
-        //            });
-        //            c.DrawText(20, 20, "\u25A1");
-        //        }
-        //        c.DrawText(20, 20, "\u25A1", Color::White);
-
-        //        c.DrawBlock(mouse_x, mouse_y, true, Color::Red);
 
         return canvas(std::move(c));
     });
@@ -97,17 +109,20 @@ auto TerminalVue::createBoardRenderer()
 
 auto TerminalVue::createChatRenderer()
 {
-    //    std::vector<std::string> chats;
-
+    buttonOption.border = false;
     auto chatInput = createChatInput();
 
     auto chatMenu = Menu(&chatElements, &chatSelected);
-    auto chatContainer = Container::Vertical({
-        chatMenu,
-        chatInput,
-    });
-    return Renderer(chatContainer, [&, chatInput, chatMenu] {
-        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), hbox({text(">"), chatInput->Render()})});
+    auto sendButton = Button("Send", [&] {
+        if (!message.empty()) {
+            // TODO: actually send message to server
+            addChatMessage(username, message);
+        }
+    }, buttonOption);
+    auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
+    return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
+        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+            hbox({text(">"), chatInput->Render(), sendButton->Render()})});
     });
 }
 

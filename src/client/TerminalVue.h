@@ -31,11 +31,15 @@ using namespace ftxui;
 
 class TerminalVue
 {
-    std::string message, username, password, registerUsername, registerPassword, registerRepeatPassword;
+    std::string message, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
     int mouse_y = 0;
     bool mousePressed = false;
+    int wallOrientation = 0;
+    std::vector<std::vector<int>> testCanvasGrid {
+        {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 5, 5, 5, 5, 5, 5, 5}};
+
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
     int chatSelected = 0;
