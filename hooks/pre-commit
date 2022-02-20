@@ -8,7 +8,7 @@ readonly output=$(git clang-format -v --diff)
 [[ "$output" == *"clang-format did not modify any files"* ]] && exit 0
 
 echo "Les fichiers ne sont pas bien formatés, par conséquent le commit est rejeté."
-echo -e "Formatez avec :\n\tgit clang-format -v -f"
+echo -e "Formatez avec :\n\tgit clang-format -v"
 exit 1
 
 

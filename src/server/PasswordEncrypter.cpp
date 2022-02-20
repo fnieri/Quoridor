@@ -1,5 +1,3 @@
-// Written by Francesco Nieri
-
 #include "PasswordEncrypter.h"
 
 #include <cryptopp/cryptlib.h>
@@ -39,8 +37,6 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 
     // http://www.cplusplus.com/forum/beginner/60604/
     // Thanks to Texan40 for help on how to hash a password
-
-    // IMPORTANT NOTE: This should be CryptoPP::byte but it doesn't compile for me (If you see unsigned char in any emcrypting file IT IS CRYPTOPP::BYTE!!!)
 
     unsigned char digest[CryptoPP::SHA256::DIGESTSIZE];
     CryptoPP::SHA256 hashAlgorithm;

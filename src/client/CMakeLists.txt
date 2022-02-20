@@ -1,16 +1,14 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_client
-    Board.cpp
-    BoardComponent.cpp
-    Cell.cpp
-    Corridor.cpp
     Point.cpp
     Stringable.cpp
+    Board.cpp
     Player.cpp
-    PlayerAction.cpp
     WallAction.cpp
-    WallEnum.h
-    PlayerAction.h
+    Cell.cpp
+    Corridor.cpp
+    BoardComponent.cpp
+    PlayerAction.cpp
     )
 
 target_link_libraries(${PREFIX}_client
