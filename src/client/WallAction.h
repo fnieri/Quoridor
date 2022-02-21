@@ -28,5 +28,18 @@ public:
 
     bool executeAction();
 
+    /**
+     * @brief Return serialized json of a WallAction as such
+     * 
+     * {
+     *  wall_cell : {
+     *    x : 0,
+     *    y : 0
+     *    }
+     *  wall_orientation
+     * }
+     * 
+     * @return nlohmann::json 
+     */
     nlohmann::json serialized();
 };

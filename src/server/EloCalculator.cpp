@@ -92,3 +92,8 @@ void EloCalculator::calculateFinalELOs()
         finalELOs.push_back(currentFinalELO);
     }
 }
+
+std::vector<float> EloCalculator::getFinalELOs()
+{
+    return finalELOs;
+}

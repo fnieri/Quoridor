@@ -7,22 +7,16 @@
 
 using json = nlohmann::json;
 
-json BoardActionsSerializableMessageFactory::serializePawnAction(JsonPlayerAction playerAction, PlayerAction pawnAction) 
-{   
+json BoardActionsSerializableMessageFactory::serializePawnAction(JsonPlayerAction playerAction, PlayerAction pawnAction)
+{
     assert(playerAction == JsonPlayerAction::MOVE_PAWN);
-    json actionJson = {
-        {"action", toJsonOutput(playerAction)},
-        {"move", pawnAction.serialized()}
-    };
+    json actionJson = {{"action", toJsonOutput(playerAction)}, {"move", pawnAction.serialized()}};
     return actionJson;
 }
 
-json BoardActionsSerializableMessageFactory::serializeWallAction(JsonPlayerAction playerAction, WallAction wallAction) {
+json BoardActionsSerializableMessageFactory::serializeWallAction(JsonPlayerAction playerAction, WallAction wallAction)
+{
     assert(playerAction == JsonPlayerAction::PLACE_WALL);
-    json actionJson = {
-        {"action", toJsonOutput(playerAction)},
-        {"move", wallAction.serialized()}
-    };
+    json actionJson = {{"action", toJsonOutput(playerAction)}, {"move", wallAction.serialized()}};
     return actionJson;
 }
-
