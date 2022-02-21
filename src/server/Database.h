@@ -46,11 +46,14 @@ public:
     static void quickTest();
     static bool createAccount(const std::string &username, const std::string &password);
     static bool checkLogin(const std::string &username, const std::string &password);
-
-    // TODO
     static std::vector<std::string> getFriends(const std::string &username);
+    static std::vector<std::string>  getSentFriendRequests(const std::string &username);
+    static std::vector<std::string>  getReceivedFriendRequests(const std::string &username);
     static void addFriend(const std::string &username, const std::string &friendUsername);
     static void removeFriend(const std::string &username, const std::string &friendUsername);
+    static void sendFriendRequest(const std::string &username, const std::string &friendUsername);
+    static void removeFriendRequest(const std::string &username, const std::string &friendUsername);
+    static void acceptFriendRequest(const std::string &username, const std::string &friendUsername);
     static int getELO(const std::string &username);
     static void setELO(const std::string &username, const int &elo);
 };
