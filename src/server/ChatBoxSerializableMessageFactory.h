@@ -1,10 +1,9 @@
 /**
- * @file ChatBoxSerializableMessageFactory.cpp
+ * @file ChatBoxSerializableMessageFactory.h
  * @author Francesco
  * @brief Factory methods for chatbox serialized messages
  * @version 0.1
  * @date 2022-02-17
- *
  *
  */
 
@@ -19,14 +18,14 @@ class ChatBoxSerializableMessageFactory : public SerializableMessageFactory
 {
 public:
     /**
-     * @brief 
-     * 
+     * @brief
+     *
      * @param interaction User interaction with chatbox
      * @param chatboxId Id of chatbox in database (Is it necessary for temp ones? Idk)
      * @param username Username of sender
      * @param message Message of sender
      * @param timestamp Time since epoch of message
-     * @return nlohmann::json 
+     * @return nlohmann::json
      */
     nlohmann::json serializeUserChatBoxRequest(ChatInteraction interaction, int chatboxId, std::string username, std::string message, int timestamp);
 };

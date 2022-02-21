@@ -45,11 +45,11 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
     CryptoPP::SHA256 hashAlgorithm; // Using SHA256 as encryption algorithm
 
     hashAlgorithm.CalculateDigest(digest, (const unsigned char *)saltedPassword.c_str(), saltedPassword.size());
-    
+
     CryptoPP::HexEncoder encoder;
     CryptoPP::StringSink *stringSink = new CryptoPP::StringSink(output);
-    //This method is describer in the cryptopp wiki 
-    //Attach stringSink to Encoder to decode byte digest output
+    // This method is describer in the cryptopp wiki
+    // Attach stringSink to Encoder to decode byte digest output
     encoder.Attach(stringSink);
     encoder.Put(digest, sizeof(digest));
     encoder.MessageEnd();

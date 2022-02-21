@@ -3,7 +3,7 @@
  * @author Francesco Nieri
  * @brief Message Factory for Authentification Serializable Requests
  * @date 20/02/2022
-*/
+ */
 
 #include "AuthSerializableMessageFactory.h"
 
