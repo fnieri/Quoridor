@@ -6,7 +6,7 @@
 
 bool TerminalVue::mouseInCell(int x, int y)
 {
-    return abs(x - mouse_x) <= 1 && abs(y - mouse_y) <= 2;
+    return abs(x - mouse_x) <= 1 && abs(y - mouse_y) <= 3;
 }
 
 auto TerminalVue::createCanvas()
@@ -20,6 +20,8 @@ auto TerminalVue::createCanvas()
 
         // dx and dy represent the distance between cells
 
+        c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
+        //        c.DrawText(10, 50, "Height: , Width: " , Color::White);
         int dy = 5;
         for (int i = 0; i < testCanvasGrid.size(); i++) {
             int dx = 5;
@@ -99,12 +101,28 @@ auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
     auto boardCanvas = createCanvas();
+    auto tabWithMouse = CatchEvent(boardCanvas, [&](Event e) {
+        if (e.is_mouse()) {
+            mouse_x = (e.mouse().x - 1) * 2;
+            mouse_y = (e.mouse().y - 2) * 4;
+            if (e.mouse().button == Mouse::Left) {
+                if (e.mouse().motion == Mouse::Pressed) {
+                    mousePressed = true;
+                } else if (e.mouse().motion == Mouse::Released) {
+                    mousePressed = false;
+                }
+            }
+        }
+        return false;
+    });
     auto boardContainer = Container::Vertical({
+        tabWithMouse,
         actionToggle,
         boardCanvas,
     });
 
-    return Renderer(boardContainer, [actionToggle, boardCanvas] { return vbox({border(boardCanvas->Render() | center), actionToggle->Render() | center}); });
+    return Renderer(boardContainer, [actionToggle, boardCanvas] { return vbox(boardCanvas->Render(), separator(), actionToggle->Render() | center );
+});
 }
 
 auto TerminalVue::createChatRenderer()
@@ -113,12 +131,15 @@ auto TerminalVue::createChatRenderer()
     auto chatInput = createChatInput();
 
     auto chatMenu = Menu(&chatElements, &chatSelected);
-    auto sendButton = Button("Send", [&] {
-        if (!message.empty()) {
-            // TODO: actually send message to server
-            addChatMessage(username, message);
-        }
-    }, buttonOption);
+    auto sendButton = Button(
+        "Send",
+        [&] {
+            if (!message.empty()) {
+                // TODO: actually send message to server
+                addChatMessage(username, message);
+            }
+        },
+        buttonOption);
     auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
     return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
         return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
@@ -174,22 +195,6 @@ auto TerminalVue::createMainRenderer()
 
     auto tabContainer = createMainTabContainer();
 
-    auto tabWithMouse = CatchEvent(tabContainer, [&](Event e) {
-        if (e.is_mouse()) {
-            mouse_x = (e.mouse().x - 2) * 2;
-            mouse_y = (e.mouse().y - 4) * 4;
-            if (e.mouse().button == Mouse::Left) {
-                if (e.mouse().motion == Mouse::Pressed) {
-                    mousePressed = true;
-                } else if (e.mouse().motion == Mouse::Released) {
-                    mousePressed = false;
-                }
-            }
-            //            mousePressed = e.mouse().motion.Pressed == 1;
-        }
-        return false;
-    });
-
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginContainer = Container::Tab(
         {
@@ -198,7 +203,7 @@ auto TerminalVue::createMainRenderer()
         },
         &loginTabSelect);
     auto mainContainer = Container::Vertical({
-        tabWithMouse,
+        //        tabWithMouse,
         tabToggle,
         tabContainer,
         loginToggle,
