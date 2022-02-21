@@ -17,8 +17,7 @@ enum class UserAttr {
 };
 
 /**
- * This is only a sort of intermediate interface between the
- * database and the UserHandler.
+ * Interface bewteen DB and UserHandler
  */
 class ServerUser
 {
@@ -27,18 +26,23 @@ public:
     {
     }
 
+    /**
+     * Whether the user is bound to a username from the DB
+     */
     bool isLoggedIn() const noexcept;
 
     std::string getUsername() const noexcept;
     void bindToUsername(const std::string &);
 
     /**
-     * This is to be called when a modification
+     * Sync cached data with the DB
+     *
+     * @note This is to be called when a modification
      * was done to the DB.
      */
     void syncWithDB(UserAttr);
 
-    // Getters
+    // Getters of mutable data available on the DB
     int getELO() const noexcept;
     UserList getFriendList() const noexcept;
     UserList getFriendRequestsSent() const noexcept;
@@ -57,6 +61,9 @@ private:
     bool m_isLoggedIn {false};
     std::string m_username;
 
+    // Instead of always fetching data from the DB,
+    // the data is stored locally and updated only
+    // when the DB itself is modified.
     int m_cachedELO;
     UserList m_cachedFriends;
     UserList m_cachedRequestsSent;

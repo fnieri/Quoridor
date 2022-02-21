@@ -38,6 +38,11 @@ void UserHandler::handleRequests()
     notifyObservers();
 }
 
+bool UserHandler::isFinished() const
+{
+    return m_isFinished;
+}
+
 std::string UserHandler::getUsername() const
 {
     return m_userHandled->getUsername();
@@ -55,7 +60,7 @@ void UserHandler::relayMessage(const std::string &serMessage)
 
 void UserHub::eraseFinished()
 {
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end());
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end()); // <3 c++
 }
 
 void UserHub::add(Socket &&user)
