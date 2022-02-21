@@ -1,11 +1,10 @@
 #include "PasswordEncrypter.h"
 
-#include "../include/cryptopp/cryptlib.h"
-#include "../include/cryptopp/hex.h"
-#include "../include/cryptopp/osrng.h"
-#include "../include/cryptopp/pwdbased.h"
-#include "../include/cryptopp/sha.h"
-
+#include <cryptopp/cryptlib.h>
+#include <cryptopp/hex.h>
+#include <cryptopp/osrng.h>
+#include <cryptopp/pwdbased.h>
+#include <cryptopp/sha.h>
 #include <chrono>
 #include <iostream>
 
