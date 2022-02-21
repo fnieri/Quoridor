@@ -7,12 +7,18 @@
 #include <string>
 #include <vector>
 
+using UserList = std::vector<std::string>;
+
+enum class UserAttr {
+    ELO,
+    FriendList,
+    FriendRequestsSent,
+    FriendRequestsReceived,
+};
+
 /**
- * The setters here should also update the entries
- * related in the database.
- *
- * For instance, setting the elo should modify the cached
- * value but also the one in the database.
+ * This is only a sort of intermediate interface between the
+ * database and the UserHandler.
  */
 class ServerUser
 {
@@ -26,16 +32,33 @@ public:
     std::string getUsername() const noexcept;
     void bindToUsername(const std::string &);
 
-    int getELO() const noexcept;
-    void setELO(int);
+    /**
+     * This is to be called when a modification
+     * was done to the DB.
+     */
+    void syncWithDB(UserAttr);
 
-    std::vector<std::string> getFriends() const noexcept;
-    void addFriend(const std::string &);
-    void removeFriend(const std::string &);
+    // Getters
+    int getELO() const noexcept;
+    UserList getFriendList() const noexcept;
+    UserList getFriendRequestsSent() const noexcept;
+    UserList getFriendRequestsReceived() const noexcept;
+
+    /**
+     * Usually this is a json serialized message
+     * that is of the following three types:
+     *  - send friend request;
+     *  - accept friend request;
+     *  - remove friend.
+     */
+    /* void updateFriendRelations(const std::string &); */
 
 private:
     bool m_isLoggedIn {false};
     std::string m_username;
+
     int m_cachedELO;
-    std::vector<std::string> m_cachedFriends;
+    UserList m_cachedFriends;
+    UserList m_cachedRequestsSent;
+    UserList m_cachedRequestsReceived;
 };

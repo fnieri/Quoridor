@@ -7,6 +7,8 @@
 #include <algorithm>
 
 // TODO: make it work with db
+//
+// The setters here should all update the db.
 
 bool ServerUser::isLoggedIn() const noexcept
 {
@@ -24,27 +26,27 @@ void ServerUser::bindToUsername(const std::string &username)
     m_isLoggedIn = true;
 }
 
+void ServerUser::syncWithDB(UserAttr)
+{
+    // TODO ... the sync with the server
+}
+
 int ServerUser::getELO() const noexcept
 {
     return m_cachedELO;
 }
 
-void ServerUser::setELO(int newELO)
-{
-    m_cachedELO = newELO;
-}
-
-std::vector<std::string> ServerUser::getFriends() const noexcept
+UserList ServerUser::getFriendList() const noexcept
 {
     return m_cachedFriends;
 }
 
-void ServerUser::addFriend(const std::string &newFriend)
+UserList ServerUser::getFriendRequestsSent() const noexcept
 {
-    m_cachedFriends.push_back(newFriend);
+    return m_cachedRequestsSent;
 }
 
-void ServerUser::removeFriend(const std::string &oldFriend)
+UserList ServerUser::getFriendRequestsReceived() const noexcept
 {
-    m_cachedFriends.erase(std::find(m_cachedFriends.begin(), m_cachedFriends.end(), oldFriend)); // into oblivion
+    return m_cachedRequestsReceived;
 }
