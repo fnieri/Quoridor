@@ -1,3 +1,4 @@
+
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_client
     Point.cpp
@@ -25,8 +26,3 @@ add_executable(client
     main.cpp
 )
 
-# Link the project libraries to the executable
-target_link_libraries(client
-    PRIVATE
-        ${PREFIX}_client
-)

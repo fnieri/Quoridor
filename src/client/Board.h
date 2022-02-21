@@ -25,14 +25,19 @@ private:
 
     /// Size of the matrix, computed from CELL_SIZE.
     const int MATRIX_SIZE = (CELL_SIZE * 2) - 1;
+    const int CELL = 2;
+    const int CORRIDOR = 1;
 
     bool isEven(const int &i) const;
     bool isPositionValid(const Point &position) const;
     bool isCell(const Point &position) const;
     bool isCorridor(const Point &position) const;
     bool areNeighbours(const Point &first, const Point &second) const;
+    bool areDiagoNeighbours(const Point &first, const Point &second) const;
     bool isWayFree(const Point &first, const Point &second) const;
-    Point getIndexCorridor(const Point &first, const Point &second) const;
+    bool isWayValid(const Point &current, const Point &overtaken, const Point &destination) const;
+    Point getMiddleBoardComponent(const Point &first, const Point &second, const int &shift) const;
+    Point getDistance(const Point &first, const Point &second) const;
     std::vector<std::vector<int>> allComponents();
     void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
 
@@ -91,6 +96,10 @@ public:
      * - if orienation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
      */
     void placeWall(const Point &cell, const WallOrientation &direction);
+
+    bool isBasicMove(const Point &current, const Point &destination) const;
+    bool isJumpMove(const Point &current, const Point &destination) const;
+    bool isDiagonalMove(const Point &current, const Point &destination) const;
 
     int getCellSize();
 

@@ -50,7 +50,6 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
     encoder.Put(digest, sizeof(digest));
     encoder.MessageEnd();
 
-
     // Crypto++ handles deletion of stringSink in smartptr.h, so no need for deletion
     // Smart pointers don't work as they will get deleted twice, but cryptlib uses
     // Their own smart pointers
