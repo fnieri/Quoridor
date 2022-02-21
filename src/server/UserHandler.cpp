@@ -43,6 +43,12 @@ std::string UserHandler::getUsername() const
     return m_userHandled->getUsername();
 }
 
+void UserHandler::relayMessage(const std::string &serMessage)
+{
+    // TODO: verification for user updates on certain specific messages
+    send(serMessage);
+}
+
 /**
  * UserHub
  */
@@ -73,8 +79,8 @@ void UserHub::update(Event e)
     }
 }
 
-void UserHub::sendTo(const std::string &username, const std::string &message)
+void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
     auto receiver {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h.getUsername() == username; })};
-    receiver->send(message);
+    receiver->relayMessage(message);
 }

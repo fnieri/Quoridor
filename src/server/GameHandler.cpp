@@ -31,7 +31,7 @@ void GameHandler::processMessage(const std::string &sender, const std::string &s
     // Messages relayed to one another: temp chat, actions, etc.
     for (auto &p : m_players)
         if (p != sender)
-            m_userHub->sendTo(p, serMessage);
+            m_userHub->relayMessageTo(p, serMessage);
 }
 
 /**

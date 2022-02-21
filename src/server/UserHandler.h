@@ -40,6 +40,16 @@ public:
     }
 
     std::string getUsername() const;
+
+    /**
+     * Meant to send messages passing first by the UserHandler
+     * and not directly sending a string.
+     *
+     * This can be for instance useful for friend requests where
+     * the message should both update the server and send the
+     * message to the client.
+     */
+    void relayMessage(const std::string &);
 };
 
 class UserHub : public Observer
@@ -56,5 +66,9 @@ public:
     void add(Socket &&);
     void update(Event) override;
 
-    void sendTo(const std::string &, const std::string &);
+    /**
+     * @param username destinary of the message
+     * @param message ditto (serialized in json)
+     */
+    void relayMessageTo(const std::string &, const std::string &);
 };
