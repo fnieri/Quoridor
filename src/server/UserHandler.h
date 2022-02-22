@@ -15,6 +15,7 @@
 // TODO: replace observer with a reference
 
 class ServerUser;
+class UserHub;
 
 /**
  * Take care of exchanges with a client
@@ -38,9 +39,10 @@ class ServerUser;
  *
  * @see UserHandler
  */
-class UserHandler : public RequestHandler, public Subject
+class UserHandler : public RequestHandler
 {
 protected:
+    UserHub *m_userHub;
     std::shared_ptr<ServerUser> m_userHandled;
     bool m_isFinished {true};
     /**
@@ -58,7 +60,7 @@ protected:
     void handleRequests() override;
 
 public:
-    explicit UserHandler(Socket &&);
+    explicit UserHandler(UserHub *, Socket &&);
 
     UserHandler(const UserHandler &) = delete;
     UserHandler(UserHandler &&) = default;
@@ -85,14 +87,13 @@ public:
  * @note To the server, each client is identified by its socket
  * but between clients, they identify themselves by username.
  */
-class UserHub : public Observer
+class UserHub
 {
 private:
     std::vector<UserHandler> m_handlers;
     /**
      * Erase handlers whose connection with the client was lost
      */
-    void eraseFinished();
 
 public:
     UserHub()
@@ -110,7 +111,7 @@ public:
      * @see UserHandler
      */
     void add(Socket &&);
-    void update(Event) override;
+    void eraseFinished();
 
     /**
      * Send message to someone, passing first by the handler
