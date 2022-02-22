@@ -12,7 +12,7 @@ Controller::Controller(std::shared_ptr<Board> board)
 
 void Controller::handleClick(Point p)
 {
-    if (board->isCell(p)) handleClickPlayer(p);         // voir en fonction de la réprésentation visuel faite par
+    if (board->isCell(p)) handleClickPlayer(p);         // voir en fonction de la réprésentation visuel faite par 
     else (board->isCorridor(p)) handleClickWall(p);     // Léo et Sacha car problème de conversion sinon
 }
 
@@ -25,5 +25,8 @@ void Controller::handleClickPlayer(Point p)
 
 void Controller::handleClickWall(Point p) 
 {
-    // Elias
+    //how do we determine the orientation here in order to create an instance of Wallaction? My proposition is to have derive the orientation in Wallaction by 
+    //the coridor that correspond to the point or derive it in handle click by checking whether p.x is even or not
+    WallAction action{board, players[currentPlayerIndex], p,board->isEven(p.x()) ? WallOrientation::Horizontal : WallOrientation::Vertical};
+    if (action.executeAction()) currentPlayerIndex = (currentPlayerIndex+1) % nPlayers;
 }
