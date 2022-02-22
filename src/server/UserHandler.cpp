@@ -78,3 +78,8 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     auto receiver {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h.getUsername() == username; })};
     receiver->relayMessage(message);
 }
+
+int UserHub::connectedUsers() const noexcept
+{
+    return m_handlers.size();
+}

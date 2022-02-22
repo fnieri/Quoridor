@@ -123,4 +123,6 @@ public:
      * the message will simply be ignored
      */
     void relayMessageTo(const std::string &, const std::string &);
+
+    int connectedUsers() const noexcept;
 };
