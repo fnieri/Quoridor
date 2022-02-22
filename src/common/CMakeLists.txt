@@ -1,24 +1,13 @@
-# Library of the project, can be linked to the tests
-# add_library(src
-#     PasswordEncrypter.cpp
-#     # Point.cpp
-# )
+add_library(${PREFIX}_common
+JoinGame.cpp    
+)
 
-# target_link_libraries(src
-#     PRIVATE
-#         cryptopp-shared
-# )
+target_include_directories(${PREFIX}_common
+PUBLIC
+    ${CMAKE_SOURCE_DIR}
+)
 
-# add_executable(quoridor-client
-#     main.cpp
-# )
-
-# # Link the project libraries to the executable
-# target_link_libraries(quoridor-client
-#     PRIVATE
-#         src
-# )
-
-# add_subdirectory(server)
-# add_subdirectory(client)
-# add_subdirectory(common)
+target_link_libraries(${PREFIX}_common
+PRIVATE
+    sockpp
+)

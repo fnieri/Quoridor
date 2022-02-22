@@ -1,7 +1,5 @@
 # Quoridor, for real
 
->J'ai r à dire pour l'instant c juste un test
-
 # Compilation
 
 Pour compiler, exécutez ces commandes depuis la racine du repo git:

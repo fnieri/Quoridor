@@ -1,3 +1,5 @@
+#pragma once
+
 enum class RequestStatus { SUCCESS, FAILURE, CONNECTION_LOST };
 
 inline const char *toJsonString(RequestStatus s)

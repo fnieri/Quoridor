@@ -1,6 +1,6 @@
 #pragma once
 
-#include "User.h"
+#include "../common/User.h"
 #include <iostream>
 #include <memory>
 #include <stdio.h>
@@ -11,8 +11,8 @@ class ChatBox
 {
 private:
     std::vector<User> usersConnected;
-    FILE messagesLog;
+    //  FILE messagesLog;
 
 public:
-    void receiveMessage(Message);
+    // void receiveMessage(Message);
 };
