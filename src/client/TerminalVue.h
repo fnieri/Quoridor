@@ -36,9 +36,12 @@ class TerminalVue
     int mouse_x = 0;
     int mouse_y = 0;
     bool mousePressed = false;
-    int wallOrientation = 0;
-    std::vector<std::vector<int>> testCanvasGrid {
-        {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 5, 5, 5, 5, 5, 5, 5}};
+    int player = 1; // indicate which player the client is
+    int playerTurn = 1; // indicate which player's turn it is
+    int wallOrientation = 0; // indicate the orientation of the wall
+    std::vector<int> remainingWalls {1, 2, -1, -1}; // each index represents a player. if -1, then player is not in game.
+    std::vector<std::vector<int>> testCanvasGrid {{0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0},
+        {5, 5, 5, 5, 5, 5, 5, 5, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}};
 
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
@@ -47,6 +50,10 @@ class TerminalVue
     std::vector<std::string> actionToggleEntries {
         "Move",
         "Wall",
+    };
+    std::vector<std::string> orientationToggleEntries {
+        "Vertical",
+        "Horizontal",
     };
     std::vector<std::string> mainTabValues {
         "Game",
@@ -62,17 +69,29 @@ class TerminalVue
     int rightSize = 40;
     bool isLoggedIn = true; // change this to true to stay logged in
 
-    auto createBoardButtonsContainer(int size);
+    bool isPlayerTurn();
+
+    bool isMoveValid(int x, int y);
+
+    bool isWallPlacementValid(int x, int y);
+
+    bool isClickValid(int x, int y);
 
     auto createCanvas();
 
     bool mouseInCell(int x, int y);
 
-    void handleButtonClick(int x, int y);
+    bool mouseInQuoridor(int x, int y);
+
+    void handleCellClick(int x, int y);
+
+    void handleWallAdd(int x, int y);
 
     auto createChatInput();
 
     auto createActionToggle();
+
+    auto createOrientationToggle();
 
     auto createMainTab();
 

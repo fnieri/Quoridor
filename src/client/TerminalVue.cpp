@@ -6,7 +6,38 @@
 
 bool TerminalVue::mouseInCell(int x, int y)
 {
-    return abs(x - mouse_x) <= 1 && abs(y - mouse_y) <= 3;
+    if (actionToggleSelected != 0)
+        return false;
+    return abs(x - mouse_x) <= 3 && abs(y - mouse_y) <= 3;
+}
+
+bool TerminalVue::mouseInQuoridor(int x, int y)
+{
+    if (actionToggleSelected != 1)
+        return false;
+    return abs(x - mouse_x) <= (wallOrientation == 0 ? 3 : 15) && abs(y - mouse_y) <= (wallOrientation == 0 ? 15 : 3);
+}
+
+bool TerminalVue::isPlayerTurn()
+{
+    return playerTurn == player;
+}
+
+bool TerminalVue::isClickValid(int x, int y)
+{
+    return mouseInCell(x, y) && mousePressed && isPlayerTurn();
+}
+
+bool TerminalVue::isMoveValid(int x, int y)
+{
+    // check if move is actually valid
+    return true;
+}
+
+bool TerminalVue::isWallPlacementValid(int x, int y)
+{
+    // check if wall placement is actually valid
+    return true;
 }
 
 auto TerminalVue::createCanvas()
@@ -14,35 +45,55 @@ auto TerminalVue::createCanvas()
     return Renderer([&] {
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
-        auto c = Canvas(100, 100);
+        auto c = Canvas(200, 200);
         std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
-        std::vector<std::vector<int>> quoridorDirection {{0, 2}, {2, 0}}; // 0 = vertical, 1 = horizontal
-
-        // dx and dy represent the distance between cells
+        std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
 
         c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
-        //        c.DrawText(10, 50, "Height: , Width: " , Color::White);
-        int dy = 5;
+
+        std::string remainingWallsText;
+        for (int player = 0; player < remainingWalls.size(); ++player) {
+            if (remainingWalls[player] > 0) {
+                remainingWallsText += "Player " + std::to_string(player + 1) + ": " + std::to_string(remainingWalls[player]) + ", ";
+            }
+        }
+        c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
+        c.DrawText(0, 190, "Player's turn: " + std::to_string(playerTurn), playerTurn == player ? Color::Green : Color::Red);
+        c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
+
+        // dx and dy represent the distance between cells
+        int dy = 10;
         for (int i = 0; i < testCanvasGrid.size(); i++) {
-            int dx = 5;
+            int dx = 10;
             for (int j = 0; j < testCanvasGrid[i].size(); j++) {
                 int gridValue = testCanvasGrid[i][j];
                 switch (gridValue) {
                 case freeCell:
                     // draw a free cell
                     // TODO: check if click is possible (gotta wait for merge with model and controller)
-                    if (mouseInCell(dx, dy) && mousePressed) {
+                    if (isClickValid(dx, dy)) {
                         // if mouse is pressed on this cell/quoridor
                         c.DrawText(dx, dy, "\u25A0");
                         // TODO: handle mouse click with controller
+                        handleCellClick(i, j);
+                    } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
+                        // if mouse is pressed on this cell/quoridor
+                        c.DrawText(dx, dy, "\u25A0", isMoveValid(i, j) ? Color::Green : Color::Red);
                     } else {
                         c.DrawText(dx, dy, "\u25A1");
                     }
                     break;
 
                 case emptyQuoridor:
-                    if (mouseInCell(dx, dy) && mousePressed) {
+                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(i, j)) {
+                        std::vector<int> direction = quoridorDirection[wallOrientation];
+                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                        handleWallAdd(i, j);
                         // TODO sacha: if mouse is pressed on empty quoridor then draw a quoridor and also handle wallOrientation
+                    }
+                    else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(i, j)) {
+                        std::vector<int> direction = quoridorDirection[wallOrientation];
+                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
                     }
                     // don't draw anything otherwise
                     break;
@@ -65,17 +116,24 @@ auto TerminalVue::createCanvas()
                 default:
                     break;
                 }
-                dx += 5;
+                dx += 10;
             }
-            dy += 5;
+            dy += 10;
         }
 
         return canvas(std::move(c));
     });
 }
 
-void TerminalVue::handleButtonClick(int x, int y)
+void TerminalVue::handleCellClick(int x, int y)
 {
+    // interact with controller
+    return;
+}
+
+void TerminalVue::handleWallAdd(int x, int y)
+{
+    // interact with controller
     return;
 }
 
@@ -92,6 +150,11 @@ auto TerminalVue::createActionToggle()
     return Toggle(&actionToggleEntries, &actionToggleSelected, &actionToggleOption);
 }
 
+auto TerminalVue::createOrientationToggle()
+{
+    return Toggle(&orientationToggleEntries, &wallOrientation, &actionToggleOption);
+}
+
 auto TerminalVue::createMainTab()
 {
     return Toggle(&mainTabValues, &mainTabSelect);
@@ -100,11 +163,12 @@ auto TerminalVue::createMainTab()
 auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
+    auto orientationToggle = createOrientationToggle();
     auto boardCanvas = createCanvas();
     auto tabWithMouse = CatchEvent(boardCanvas, [&](Event e) {
         if (e.is_mouse()) {
             mouse_x = (e.mouse().x - 1) * 2;
-            mouse_y = (e.mouse().y - 2) * 4;
+            mouse_y = (e.mouse().y - 2) * 4 - 2;
             if (e.mouse().button == Mouse::Left) {
                 if (e.mouse().motion == Mouse::Pressed) {
                     mousePressed = true;
@@ -118,11 +182,13 @@ auto TerminalVue::createBoardRenderer()
     auto boardContainer = Container::Vertical({
         tabWithMouse,
         actionToggle,
+        orientationToggle,
         boardCanvas,
     });
 
-    return Renderer(boardContainer, [actionToggle, boardCanvas] { return vbox(boardCanvas->Render(), separator(), actionToggle->Render() | center );
-});
+    return Renderer(boardContainer, [actionToggle, boardCanvas, orientationToggle] {
+        return vbox(boardCanvas->Render(), separator(), hbox(actionToggle->Render(), separator(), orientationToggle->Render()) | center);
+    });
 }
 
 auto TerminalVue::createChatRenderer()
