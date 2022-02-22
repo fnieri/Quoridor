@@ -26,7 +26,7 @@ void ServerUser::bindToUsername(const std::string &username)
     m_isLoggedIn = true;
 }
 
-void ServerUser::syncWithDB(UserAttr)
+void ServerUser::syncWithDB()
 {
     // TODO ... the sync with the server
 }

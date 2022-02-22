@@ -9,13 +9,6 @@
 
 using UserList = std::vector<std::string>;
 
-enum class UserAttr {
-    ELO,
-    FriendList,
-    FriendRequestsSent,
-    FriendRequestsReceived,
-};
-
 /**
  * Interface bewteen DB and UserHandler
  */
@@ -40,7 +33,7 @@ public:
      * @note This is to be called when a modification
      * was done to the DB.
      */
-    void syncWithDB(UserAttr);
+    void syncWithDB();
 
     // Getters of mutable data available on the DB
     int getELO() const noexcept;
