@@ -30,7 +30,7 @@ public:
 
     /**
      * @brief Return serialized json of a WallAction as such
-     * 
+     *
      * {
      *  wall_cell : {
      *    x : 0,
@@ -38,8 +38,8 @@ public:
      *    }
      *  wall_orientation
      * }
-     * 
-     * @return nlohmann::json 
+     *
+     * @return nlohmann::json
      */
     nlohmann::json serialized();
 };

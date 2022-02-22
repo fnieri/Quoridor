@@ -3,21 +3,21 @@
  * @author Francesco Nieri
  * @brief Enumerations representing auth actions used in json communication
  * @date 2022-02-22
- * 
- * 
+ *
+ *
  */
 
 #pragma once
 
 /// Enum representing auth actions that can be done by an user
-enum class ClientAuthAction { 
-    LOGIN, ///< Login 
+enum class ClientAuthAction {
+    LOGIN, ///< Login
     REGISTRATION ///< Registration
 };
 
 /**
  * @brief Output ClientAuthAction to a string used in json communication
- * 
+ *
  * @param a ClientAuthAction
  * @return const char* Json output
  */
@@ -34,7 +34,7 @@ inline const char *toJsonString(ClientAuthAction a)
 
 /**
  * @brief Output ClientAuthAction to a string used in UI output to client
- * 
+ *
  * @param a ClientAuthAction
  * @return const char* string output
  */
@@ -61,7 +61,7 @@ enum class ServerAuthReturn {
 
 /**
  * @brief Output ServerAuthReturn to a string used in json communication
- * 
+ *
  * @param a ServerAuthReturn
  * @return const char* Json output
  */
@@ -85,10 +85,9 @@ inline const char *toJsonString(ServerAuthReturn a)
     }
 }
 
-
 /**
  * @brief Output ServerAuthReturn to a string used in UI output to client
- * 
+ *
  * @param a ServerAuthReturn
  * @return const char* string output
  */

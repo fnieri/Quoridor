@@ -13,7 +13,7 @@ target_link_libraries(${PREFIX}_server
         sockpp
         ${PREFIX}_common
         PRIVATE
-        cryptopp
+        cryptopp-shared
         pthread
 )
 

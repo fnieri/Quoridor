@@ -10,7 +10,8 @@ json ObjectexchangesSerializableMessageFactory::serializeRequestExchange(Seriali
 
 json ObjectExchangesSerializableMessageFactory::serializeAnswerExchange(DataType dataType, Serializable serializableData) const
 {
-    json answerJson = {{"action", toJsonString(Exchange::OBJECT_ANSWER)}, {"data_type", toJsonString(dataType)}, {"serialized_data", serializableData.serialized()}};
+    json answerJson
+        = {{"action", toJsonString(Exchange::OBJECT_ANSWER)}, {"data_type", toJsonString(dataType)}, {"serialized_data", serializableData.serialized()}};
     return answerJson;
 }
 

@@ -7,7 +7,7 @@
 #pragma once
 /**
  * @brief Enum representing data types which can be requested by an user
- * 
+ *
  */
 enum class DataType {
     GAME_ACTION,
@@ -16,7 +16,6 @@ enum class DataType {
     GAME_CONFIG,
 }
 
-    
 inline const char *
 toJsonString(DataType d)
 {

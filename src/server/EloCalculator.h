@@ -69,7 +69,7 @@ class EloCalculator
 public:
     /**
      * @brief Construct a new Elo Calculator object, this may be changed as Users is not that relevant in a game
-     * 
+     *
      * @param users Vector of Users that participated in a game
      * @param hasWon Vector of bool with true or false indicating wether the user at index i has won
      * @throw Assertion error when users and hasWon is != 2 || 4 and when they're not equal in size
@@ -78,13 +78,13 @@ public:
 
     /**
      * @brief Calculate ELO for all players involved in a Game
-     * 
+     *
      */
     void calculateELO();
     /**
-     * @brief Return the finalELOs of the players involved in a game 
+     * @brief Return the finalELOs of the players involved in a game
      * @warning This must be called after calculateELO(), otherwise the behaviour might be undefined
-     * @return std::vector<float> 
+     * @return std::vector<float>
      */
     std::vector<float> getFinalELOs();
 };
