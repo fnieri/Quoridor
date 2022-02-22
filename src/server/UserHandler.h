@@ -90,7 +90,7 @@ public:
 class UserHub
 {
 private:
-    std::vector<UserHandler> m_handlers;
+    std::vector<std::shared_ptr<UserHandler>> m_handlers;
     /**
      * Erase handlers whose connection with the client was lost
      */

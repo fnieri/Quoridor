@@ -61,21 +61,22 @@ void UserHandler::relayMessage(const std::string &serMessage)
 
 void UserHub::eraseFinished()
 {
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end()); // <3 c++
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h->isFinished(); }), m_handlers.end()); // <3 c++
 }
 
 void UserHub::add(Socket &&user)
 {
     // Start handling
-    UserHandler userHandler {this, std::move(user)};
-    userHandler.startHandling();
+    std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(this, std::move(user))};
+    userHandler->startHandling();
 
     m_handlers.push_back(std::move(userHandler));
 }
 
 void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
-    auto receiver {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h.getUsername() == username; })};
+    auto receiverIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
+    auto &receiver {*receiverIt};
     receiver->relayMessage(message);
 }
 
