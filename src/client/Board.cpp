@@ -64,18 +64,26 @@ bool Board::isFree(const Point &position) const
 
 bool Board::areNeighbours(const Point &first, const Point &second) const
 {
-    // This wroks with up down left right. Ask myself : does this works with diagonal ? i think yes
-    // For diagonal to work distX == 2 && distY == 2
-    int distX = abs(first.x() - second.x());
-    int distY = abs(first.y() - second.y());
-    return ((distX == 2 || distX == 0) && (distY == 2 || distY == 0));
+
+    Point distance = getDistance(first, second);
+    int x = distance.x();
+    int y = distance.y();
+    return ((x == 2 || x == 0) && (y == 2 || y == 0) && !(x == 2 && y == 2));
+}
+
+bool Board::areDiagoNeighbours(const Point &first, const Point &second) const
+{
+
+    Point distance = getDistance(first, second);
+    return distance.x() == 2 && distance.y() == 2;
 }
 
 bool Board::isWayFree(const Point &first, const Point &second) const
 {
 
     // Check if two cells are separated by a wall
-    Point position = getIndexCorridor(first, second);
+    // Point position = getIndexCorridor(first, second);
+    Point position = getMiddleBoardComponent(first, second, CORRIDOR);
     if (matrix[position.x()][position.y()] && isPositionValid(position)) {
         return !matrix[position.x()][position.y()]->isOccupied();
     }
@@ -83,23 +91,73 @@ bool Board::isWayFree(const Point &first, const Point &second) const
     return false;
 }
 
-Point Board::getIndexCorridor(const Point &first, const Point &second) const
+bool Board::isWayValid(const Point &current, const Point &overtaken, const Point &destination) const
 {
-    // Give the position in the matrix of a Corridor between two Cells
+
+    // Check if it is possible to pass a player
+    return !isFree(overtaken) && isFree(destination) && isWayFree(current, overtaken) && isWayFree(overtaken, destination);
+}
+
+bool Board::isBasicMove(const Point &current, const Point &destination) const
+{
+
+    // Check if the player is playing a basic move by verifiying the conditions of this type of move
+    return isPositionValid(destination) && isCell(destination) && areNeighbours(current, destination) && isFree(destination) && isWayFree(current, destination);
+}
+
+bool Board::isJumpMove(const Point &current, const Point &destination) const
+{
+
+    // Check if the player is jumping over a player by verifiying the conditions of this type of move
+    Point distance = getDistance(current, destination);
+    int x = distance.x();
+    int y = distance.y();
+    Point JumpOver = getMiddleBoardComponent(current, destination, CELL);
+    return isPositionValid(destination) && isCell(destination) && ((x == 4 || x == 0) && (y == 4 || y == 0) && !(x == 4 && y == 4))
+        && isWayValid(current, JumpOver, destination);
+}
+
+bool Board::isDiagonalMove(const Point &current, const Point &destination) const
+{
+
+    // Check if the player is moving diagonally by verifiying the conditions of this type of move
+    if (isPositionValid(destination) && isCell(destination) && areDiagoNeighbours(current, destination)) {
+
+        Point vNeighbor {current.x(), destination.y()};
+        Point hNeighbor {destination.x(), current.y()};
+
+        return (isPositionValid(vNeighbor) && isWayValid(current, vNeighbor, destination))
+            || (isPositionValid(hNeighbor) && isWayValid(current, hNeighbor, destination));
+    }
+
+    return false;
+}
+
+Point Board::getDistance(const Point &first, const Point &second) const
+{
+
+    int x = abs(first.x() - second.x());
+    int y = abs(first.y() - second.y());
+    Point d {x, y};
+    return d;
+}
+
+Point Board::getMiddleBoardComponent(const Point &first, const Point &second, const int &shift) const
+{
+
+    // Get the position in the matrix of the cell or the corridor between two cells
     int x;
     int y;
     // Cells are on the same row
-    if (first.x() == second.x()) {
-        x = first.x();
-        y = std::max(first.y(), second.y()) - 1;
-
-    }
-    // Cells are on the same column
-    else if (first.y() == second.y()) {
-        x = std::max(first.x(), second.x()) - 1;
+    if (first.y() == second.y()) {
+        x = std::max(first.x(), second.x()) - shift;
         y = first.y();
     }
-
+    // Cells are on the same column
+    else if (first.x() == second.x()) {
+        x = first.x();
+        y = std::max(first.y(), second.y()) - shift;
+    }
     Point position {x, y};
     return position;
 }
@@ -107,9 +165,8 @@ Point Board::getIndexCorridor(const Point &first, const Point &second) const
 void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
 {
     // We suppose here that the move is valid
-    // std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
-    // std::dynamic_pointer_cast<Cell>(matrix[to.x()][to.y()])->placePlayer(player);
-    // TODO: Needs fixing
+    std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
+    std::dynamic_pointer_cast<Cell>(matrix[cell.x()][cell.y()])->placePlayer(player);
 }
 
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)

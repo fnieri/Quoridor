@@ -18,7 +18,7 @@ class PlayerAction
     Point destination;
 
 public:
-    PlayerAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &destination); // Question ? pointer or reference
+    PlayerAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &_destination);
 
     ~PlayerAction();
 
