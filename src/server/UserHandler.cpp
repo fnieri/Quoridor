@@ -16,8 +16,9 @@ using json = nlohmann::json;
  * UserHandler
  */
 
-UserHandler::UserHandler(Socket &&user)
+UserHandler::UserHandler(UserHub *userHub, Socket &&user)
     : RequestHandler {std::move(user)}
+    , m_userHub {userHub}
 {
 }
 
@@ -35,12 +36,23 @@ void UserHandler::handleRequests()
         }
     }
 
-    notifyObservers();
+    m_userHub->eraseFinished();
+}
+
+bool UserHandler::isFinished() const
+{
+    return m_isFinished;
 }
 
 std::string UserHandler::getUsername() const
 {
     return m_userHandled->getUsername();
+}
+
+void UserHandler::relayMessage(const std::string &serMessage)
+{
+    // TODO: verification for user updates on certain specific messages
+    send(serMessage);
 }
 
 /**
@@ -49,32 +61,20 @@ std::string UserHandler::getUsername() const
 
 void UserHub::eraseFinished()
 {
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end());
+    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h.isFinished(); }), m_handlers.end()); // <3 c++
 }
 
 void UserHub::add(Socket &&user)
 {
     // Start handling
-    UserHandler userHandler {std::move(user)};
-    userHandler.registerObserver(this);
+    UserHandler userHandler {this, std::move(user)};
     userHandler.startHandling();
 
     m_handlers.push_back(std::move(userHandler));
 }
 
-void UserHub::update(Event e)
-{
-    switch (e) {
-    case Event::Modified:
-        eraseFinished();
-        break;
-    default:
-        break;
-    }
-}
-
-void UserHub::sendTo(const std::string &username, const std::string &message)
+void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
     auto receiver {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h.getUsername() == username; })};
-    receiver->send(message);
+    receiver->relayMessage(message);
 }

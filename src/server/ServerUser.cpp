@@ -23,36 +23,41 @@ void ServerUser::bindToUsername(const std::string &username)
     m_isLoggedIn = true;
 }
 
-int ServerUser::getELO() noexcept
+void ServerUser::syncWithDB()
 {
-    m_cachedELO = DatabaseHandler::getELO(m_username);
+      m_cachedELO = DatabaseHandler::getELO(m_username);
+      m_cachedFriends = DatabaseHandler::getFriends(m_username);
+      //m_cachedRequestsSent = DatabaseHandler::getFriendRequestsSent(m_username);
+      //m_cachedRequestsReceived = DatabaseHandler::getFriendsRequestsReceived(m_username);
+
+  // TODO: rest of cached data
+}
+
+int ServerUser::getELO() const noexcept
+{
     return m_cachedELO;
 }
 
-void ServerUser::setELO(int newELO)
+UserList ServerUser::getFriendList() const noexcept
 {
-    DatabaseHandler::setELO(m_username, newELO);
-    m_cachedELO = newELO;
-}
-
-std::vector<std::string> ServerUser::getFriends() noexcept
-{
-    m_cachedFriends = DatabaseHandler::getFriends(m_username);
     return m_cachedFriends;
 }
 
-void ServerUser::addFriend(const std::string &newFriend)
+UserList ServerUser::getFriendRequestsSent() const noexcept
 {
-    DatabaseHandler::addFriend(m_username, newFriend);
-    m_cachedFriends.push_back(newFriend);
+    return m_cachedRequestsSent;
 }
 
-void ServerUser::removeFriend(const std::string &oldFriend)
+UserList ServerUser::getFriendRequestsReceived() const noexcept
 {
-    DatabaseHandler::removeFriend(m_username, oldFriend);
-    try {
-        m_cachedFriends.erase(std::find(m_cachedFriends.begin(), m_cachedFriends.end(), oldFriend)); // into oblivion
-    } catch (std::exception &e) {
-        // in case m_cachedFriends is empty
-    }
+
+    return m_cachedRequestsReceived;
+
+    // DatabaseHandler::removeFriend(m_username, oldFriend);
+    //try {
+    //    m_cachedFriends.erase(std::find(m_cachedFriends.begin(), m_cachedFriends.end(), oldFriend)); // into oblivion
+    //} catch (std::exception &e) {
+    //    // in case m_cachedFriends is empty
+    //}
+
 }

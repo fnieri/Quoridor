@@ -5,7 +5,9 @@ add_library(${PREFIX}_server
     LandingPool.cpp
     UserHandler.cpp
     ServerUser.cpp
-        Database.cpp
+    GameHandler.cpp
+    ChatBox.cpp
+    Database.cpp
 )
 
 find_package(mongocxx REQUIRED)
@@ -14,9 +16,6 @@ include_directories(${LIBMONGOCXX_INCLUDE_DIR})
 include_directories(${LIBBSONCXX_INCLUDE_DIR})
 include_directories("/usr/local/include/mongocxx/v_noabi")
 include_directories("/usr/local/include/bsoncxx/v_noabi")
-#include_directories("/usr/local/include/libmongoc-1.0")
-#include_directories("/usr/local/include/libbson-1.0")
-#include_directories("/usr/local/lib")
 
 target_link_libraries(${PREFIX}_server
     PUBLIC
