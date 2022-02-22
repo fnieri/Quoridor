@@ -1,4 +1,4 @@
 #!/usr/bin/bash
 
-$(doxygen Doxyfile)
-$(firefox html/index.html)
+$(doxygen Doxyfile &> doxygen.log)
+$(firefox docs/html/index.html)
