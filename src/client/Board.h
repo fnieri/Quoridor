@@ -75,6 +75,8 @@ public:
 
     /**
      * Moves a given Player to a new position on the board.
+     * DO NOT CALL THIS FUNCTION DIRECTLY!
+     * Create a PlayerAction and call PlayerAction::executeAction() instead.
      *
      * @param player the player to move
      * @param cell the new destination of the player
@@ -85,6 +87,8 @@ public:
 
     /**
      * Sets a full wall into the board.
+     * DO NOT CALL THIS FUNCTION DIRECTLY!
+     * Create a WallAction and call WallAction::executeAction() instead.
      *
      * @param cell the upper-left corner destination of the wall
      * @param direction the orientation of the new wall
