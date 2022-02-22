@@ -9,6 +9,7 @@
  * used to verify if the login was successful and to append an user with his password
  * and saltKey to the database
  */
+
 #include <string>
 
 class PasswordEncrypter

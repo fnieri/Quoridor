@@ -5,14 +5,14 @@ using json = nlohmann::json;
 json GameActionsSerializableMessageFactory::serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::shared_ptr<User> user)
 {
     json requestJson
-        = {{"action", toJsonOutput(queueAction)}, {"game_mode", toJsonOutput(gameMode)}, {"username", user->getUsername()}, {"ELO", user->getELO()}};
+        = {{"action", toJsonString(queueAction)}, {"game_mode", toJsonString(gameMode)}, {"username", user->getUsername()}, {"ELO", user->getELO()}};
     return requestJson;
 }
 
 json GameActionsSerializableMessageFactory::serializeInGameRequest(GameAction gameAction, std::shared_ptr<User> user)
 {
     json requestJson = {
-        {"action", toJsonOutput(gameAction)},
+        {"action", toJsonString(gameAction)},
         {"username", user->getUsername()},
     };
     return requestJson;

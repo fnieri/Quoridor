@@ -2,7 +2,7 @@
 
 enum class JsonPlayerAction { PLACE_WALL, MOVE_PAWN };
 
-inline const char *toJsonOutput(JsonPlayerAction p)
+inline const char *toJsonString(JsonPlayerAction p)
 {
     switch (p) {
     case JsonPlayerAction::PLACE_WALL:

@@ -3,8 +3,8 @@
  * @author Francesco Nieri
  * @brief MessageFactory for Player userActions
  * @date 2022-02-19
- * 
- * 
+ *
+ *
  */
 
 #pragma once
@@ -23,9 +23,9 @@ class BoardActionsSerializableMessageFactory : public SerializableMessageFactory
 public:
     /**
      * @brief Serialize a pawn action on the board
-     * 
-     * @param playerAction JsonPlayerAction::MOVE_PAWN 
-     * @param pawnAction the non-serialized action done by a player, 
+     *
+     * @param pawnAction the non-serialized action done by a player,
+     * @param playerID the ID corresponding to the color of the player's pawn
      * @return nlohmann::json Return a json as such
      * {
      * "action" : "move_pawn",
@@ -40,12 +40,12 @@ public:
      * "player_id" : 0
      * }
      */
-    nlohmann::json serializePawnAction(JsonPlayerAction playerAction, PlayerAction pawnAction);
+    nlohmann::json serializePawnAction(PlayerAction pawnAction, int playerID);
     /**
      * @brief Serialize a wall action the board
-     * 
-     * @param playerAction JsonPlayerAction::PLACE_WALL
+     *
      * @param wallAction the non-serialized wall action done by a player.
+     * @param playerID the ID corresponding to the color of the player's pawn
      * @return nlohmann::json Return a json as such
      * {
      *  "action" : "place_wall",
@@ -58,5 +58,5 @@ public:
      *  "player_id" : 1
      * }
      */
-    nlohmann::json serializeWallAction(JsonPlayerAction playerAction, WallAction wallAction);
+    nlohmann::json serializeWallAction(WallAction wallAction, int playerID);
 };

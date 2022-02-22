@@ -2,7 +2,7 @@
 
 enum class GameMode { CLASSIC, TIMER, QUOTETRIS, FOG_OF_WAR };
 
-inline const char *toJsonOutput(GameMode g)
+inline const char *toJsonString(GameMode g)
 {
     switch (g) {
     case GameMode::CLASSIC:

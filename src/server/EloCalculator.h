@@ -4,7 +4,8 @@
  * @file EloCalculator.h
  * @author Francesco Nieri
  * @brief Calculate ELO at the end of a match
- * @version 0.1
+ * @note Look in SRD for precise step by step procedure of ELO calculation
+ * Otherwise the source code might seem unreadable
  * @date 2022-02-20
  *
  *
@@ -12,8 +13,6 @@
 
 #include "../common/User.h"
 #include <vector>
-
-// Look in SRD for precise step by step procedure of ELO calculation
 
 class EloCalculator
 {
@@ -31,13 +30,13 @@ class EloCalculator
      */
     void calculateTransformedScore();
     /**
-     * @brief calculate expected socres for 2 players game
+     * @brief calculate expected scores for 2 players game
      * push_back result to expectedScores
      *
      */
     void calculateTwoPlayersExpectedScore();
     /**
-     * @brief Calculate expected scores for 4 players game
+     * @brief Calculate expected scores for a 4 players game
      * push_back result to expectedScores
      *
      */
@@ -61,19 +60,31 @@ class EloCalculator
     float calculateOmega(float player1ELO, float player2ELO);
 
     /**
-     * @brief Calculate final ELOs for all involved player
+     * @brief Calculate final ELOs for all involved players
      * push_back to finalELOs vector
      *
      */
     void calculateFinalELOs();
 
 public:
+    /**
+     * @brief Construct a new Elo Calculator object, this may be changed as Users is not that relevant in a game
+     * 
+     * @param users Vector of Users that participated in a game
+     * @param hasWon Vector of bool with true or false indicating wether the user at index i has won
+     * @throw Assertion error when users and hasWon is != 2 || 4 and when they're not equal in size
+     */
     EloCalculator(std::vector<User> users, std::vector<bool> hasWon);
 
-    /** Function that launches all auxiliary functions to calculate
-     * ELO based on the number of players
+    /**
+     * @brief Calculate ELO for all players involved in a Game
+     * 
      */
     void calculateELO();
-
+    /**
+     * @brief Return the finalELOs of the players involved in a game 
+     * @warning This must be called after calculateELO(), otherwise the behaviour might be undefined
+     * @return std::vector<float> 
+     */
     std::vector<float> getFinalELOs();
 };

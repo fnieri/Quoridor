@@ -2,7 +2,7 @@
 
 enum class GameAction { ACTION, SURRENDER, PROPOSE_SAVE, ACCEPT_INVITE };
 
-inline const char *toJsonOutput(GameAction g)
+inline const char *toJsonString(GameAction g)
 {
     switch (g) {
     case GameAction::ACTION:
@@ -19,7 +19,7 @@ inline const char *toJsonOutput(GameAction g)
 
 enum class QueueAction { JOIN_QUEUE, LEAVE_QUEUE };
 
-inline const char *toJsonOutput(QueueAction q)
+inline const char *toJsonString(QueueAction q)
 {
     switch (q) {
     case QueueAction::JOIN_QUEUE:

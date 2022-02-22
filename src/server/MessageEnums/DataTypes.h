@@ -5,7 +5,10 @@
  */
 
 #pragma once
-
+/**
+ * @brief Enum representing data types which can be requested by an user
+ * 
+ */
 enum class DataType {
     GAME_ACTION,
     LEADERBOARD,
@@ -13,8 +16,9 @@ enum class DataType {
     GAME_CONFIG,
 }
 
+    
 inline const char *
-toJsonOutput(DataType d)
+toJsonString(DataType d)
 {
     switch (d) {
     case DataType::GAME_ACTION:

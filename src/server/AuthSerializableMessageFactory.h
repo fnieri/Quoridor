@@ -2,7 +2,6 @@
  * @file AuthSerializableMessageFactory.h
  * @author Francesco
  * @brief Message Factory for authentification messages between client and server
- * @version 0.1
  * @date 2022-02-17
  *
  *
