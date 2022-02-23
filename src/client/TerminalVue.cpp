@@ -142,6 +142,12 @@ auto TerminalVue::createChatInput()
     return Input(&message, "Aa");
 }
 
+auto TerminalVue::createSearchInput()
+{
+    // return Input(&searchField, "Type text...");
+    return Input(&searchField, "Search a friend...");
+}
+
 auto TerminalVue::createActionToggle()
 {
     actionToggleOption.style_selected = color(Color::Blue);
@@ -221,7 +227,7 @@ auto TerminalVue::createFriendsListRenderer()
         friendList,
     });
     return Renderer(friendListContainer, [&, friendList] { return vbox({
-        text("Friends List"),
+        text("Friends List") | center,
         separator(),
         friendList->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15),
     }) /*| center*/; });
@@ -229,16 +235,15 @@ auto TerminalVue::createFriendsListRenderer()
 
 auto TerminalVue::createFriendUtilitaries()
 {
-    auto searchInput = createChatInput();
-
+    auto searchInput = createSearchInput();
     auto addButton = Button(
         "Add",
         [&] {
-            if(!username.empty()){      //Note that methods not implemented yet
+            if(!searchField.empty()){      //Note that methods not implemented yet
                 // addFriend(username);
             }
-        }
-    /*buttonOption*/);
+        },
+    buttonOption);
     auto notifBox = Menu(&notifs, &notif_selected);
     auto utilitariesContainer = Container::Vertical({
         searchInput,
@@ -248,9 +253,11 @@ auto TerminalVue::createFriendUtilitaries()
 
     return Renderer(utilitariesContainer, [&,searchInput, addButton, notifBox] { 
         return vbox({
+            // text("Search a friend") | center,
+            // separator(),
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
-            notifBox->Render(),
+            notifBox->Render() |yflex,
         });
     });
 }
@@ -349,4 +356,13 @@ void TerminalVue::run()
 void TerminalVue::addChatMessage(std::string username, std::string message)
 {
     chatElements.push_back(std::string(username + ": " + message));
+}
+
+void TerminalVue::addFriend(std::string username)
+{
+    // friendsElements.push_back( Component()<-- *items ?
+    //     text(username),
+    //     Button("+", [&] { Invite friend to play;}, &buttonOption), 
+    //     Button("X", [&] { Delete friend at index given by &friend_selected;}, &buttonOption)
+    //     );
 }

@@ -31,7 +31,7 @@ using namespace ftxui;
 
 class TerminalVue
 {
-    std::string message, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
+    std::string message, searchField, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
     int mouse_y = 0;
@@ -45,6 +45,7 @@ class TerminalVue
 
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
+    ButtonOption addButtonOption;
     int chatSelected = 0;
     std::vector<std::string> chatElements;
     int friend_selected = 0;
@@ -55,8 +56,8 @@ class TerminalVue
     //Dummy
     int notif_selected = 0;
     std::vector<std::string> notifs{
-        "User1 wants to add you as a friend!   (A)ccept or (D)eny ?",
-        "UserTest2 wants to add you as a friend!   (A)ccept or (D)eny ?",
+        "User1 wants to add you!   (A)ccept or (D)eny ?",
+        "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
     //Dummy
 
@@ -80,7 +81,7 @@ class TerminalVue
     std::vector<Component> mainTabComponents;
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
-    int rightSizeFriends = 50;
+    int rightSizeFriends = 70;
     bool isLoggedIn = true; // change this to true to stay logged in
 
     bool isPlayerTurn();
@@ -103,6 +104,8 @@ class TerminalVue
 
     auto createChatInput();
 
+    auto createSearchInput();
+
     auto createActionToggle();
 
     auto createOrientationToggle();
@@ -115,7 +118,7 @@ class TerminalVue
 
     auto createFriendsListRenderer();
 
-    auto createFriendUtilitaries(); //NEW
+    auto createFriendUtilitaries();
 
     auto createSettingsRenderer();
 
@@ -133,4 +136,6 @@ public:
     void run();
 
     void addChatMessage(std::string username, std::string message);
+
+    void addFriend(std::string username);
 };
