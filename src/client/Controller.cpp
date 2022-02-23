@@ -16,6 +16,7 @@ Controller::Controller(std::shared_ptr<Board> board)
         // TODO: Change default position of players
         players.push_back(Player {PawnColors(i), Point {0, 0}, 10});
     }
+    //the controller should create the view here
 }
 
 void Controller::handleClick(Point p)

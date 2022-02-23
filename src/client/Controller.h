@@ -19,6 +19,12 @@ public:
     void handleClickPlayer(Point p); 
     void handleClickWall(Point p);
 
+    //sketch of complete controller 
+    void handleHover(Point p);
+
+
+
+
 
     // Social functionalities
     void receiveMessage(std::string mess, std::string username, int gameId);
