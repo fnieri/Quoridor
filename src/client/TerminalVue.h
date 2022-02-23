@@ -47,6 +47,19 @@ class TerminalVue
     ButtonOption buttonOption;
     int chatSelected = 0;
     std::vector<std::string> chatElements;
+    int friend_selected = 0;
+    //Dummy
+    std::vector<std::string> friendsElements {
+        "Friend Name1","Friend Name2","Friend Name3","Friend Name4","Friend Name5","Friend Name6"
+    };
+    //Dummy
+    int notif_selected = 0;
+    std::vector<std::string> notifs{
+        "User1 wants to add you as a friend!   (A)ccept or (D)eny ?",
+        "UserTest2 wants to add you as a friend!   (A)ccept or (D)eny ?",
+    };
+    //Dummy
+
     std::vector<std::string> actionToggleEntries {
         "Move",
         "Wall",
@@ -67,6 +80,7 @@ class TerminalVue
     std::vector<Component> mainTabComponents;
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
+    int rightSizeFriends = 50;
     bool isLoggedIn = true; // change this to true to stay logged in
 
     bool isPlayerTurn();
@@ -99,7 +113,9 @@ class TerminalVue
 
     auto createChatRenderer();
 
-    auto createFriendsRenderer();
+    auto createFriendsListRenderer();
+
+    auto createFriendUtilitaries(); //NEW
 
     auto createSettingsRenderer();
 

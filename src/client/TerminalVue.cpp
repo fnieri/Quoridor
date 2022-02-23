@@ -213,9 +213,46 @@ auto TerminalVue::createChatRenderer()
     });
 }
 
-auto TerminalVue::createFriendsRenderer()
+auto TerminalVue::createFriendsListRenderer()
 {
-    return Renderer([] { return text("Friends") | center; });
+    auto friendList = Menu(&friendsElements, &friend_selected);
+    auto friendListContainer = Container::Vertical({
+        // text("Friends List") | center,
+        friendList,
+    });
+    return Renderer(friendListContainer, [&, friendList] { return vbox({
+        text("Friends List"),
+        separator(),
+        friendList->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15),
+    }) /*| center*/; });
+}
+
+auto TerminalVue::createFriendUtilitaries()
+{
+    auto searchInput = createChatInput();
+
+    auto addButton = Button(
+        "Add",
+        [&] {
+            if(!username.empty()){      //Note that methods not implemented yet
+                // addFriend(username);
+            }
+        }
+    /*buttonOption*/);
+    auto notifBox = Menu(&notifs, &notif_selected);
+    auto utilitariesContainer = Container::Vertical({
+        searchInput,
+        addButton,
+        notifBox,
+    });
+
+    return Renderer(utilitariesContainer, [&,searchInput, addButton, notifBox] { 
+        return vbox({
+            hbox({text(">"), searchInput->Render(), addButton->Render()}),
+            separator(),
+            notifBox->Render(),
+        });
+    });
 }
 
 auto TerminalVue::createSettingsRenderer()
@@ -249,9 +286,12 @@ auto TerminalVue::createMainTabContainer()
     auto boardTab = createBoardRenderer();
     auto resizeContainer = boardTab;
     resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
-    auto friends = createFriendsRenderer();
+    auto friendsList = createFriendsListRenderer();
+    auto friendUtilitaries = createFriendUtilitaries();
+    auto resizeFriendTab = friendsList;
+    resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
     auto settings = createSettingsRenderer();
-    auto tabContainer = Container::Tab({resizeContainer, friends, settings}, &mainTabSelect);
+    auto tabContainer = Container::Tab({resizeContainer, resizeFriendTab, settings}, &mainTabSelect);
     return tabContainer;
 }
 
