@@ -10,6 +10,7 @@
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
 
 // TODO: replace observer with a reference
@@ -44,7 +45,7 @@ class UserHandler : public RequestHandler
 protected:
     UserHub *m_userHub;
     std::shared_ptr<ServerUser> m_userHandled;
-    bool m_isFinished {true};
+    bool m_isFinished {false};
     /**
      * Receive messages from one user
      *
@@ -71,6 +72,8 @@ public:
     bool isFinished() const;
     std::string getUsername() const;
 
+    void terminate();
+
     /**
      * Send message passing first by the handler
      *
@@ -91,6 +94,7 @@ class UserHub
 {
 private:
     std::vector<std::shared_ptr<UserHandler>> m_handlers;
+    std::mutex m_handlersMutex;
     /**
      * Erase handlers whose connection with the client was lost
      */
@@ -99,6 +103,7 @@ public:
     UserHub()
     {
     }
+    ~UserHub();
 
     /**
      * Add client (identified by its socket)

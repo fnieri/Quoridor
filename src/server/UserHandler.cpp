@@ -5,6 +5,7 @@
 #include "UserHandler.h"
 
 #include "ServerUser.h"
+#include "src/common/Exceptions.h"
 
 #include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
 
@@ -26,13 +27,27 @@ void UserHandler::handleRequests()
 {
     // TODO finish this
     while (!m_isFinished) {
-        auto request {json::parse(receive())};
+        try {
+            auto msg {receive()};
 
-        if (request["Type"] == "LogIn") {
-            std::cout << "Loggin in";
+            // Do not continue if the thread was terminated during or after the receive
+            if (m_isFinished)
+                break;
 
-        } else if (request["Type"] == "Register") {
-            std::cout << "Registring";
+            auto request {json::parse(msg)};
+
+            if (request["Type"] == "LogIn") {
+                std::cout << "Loggin in";
+
+            } else if (request["Type"] == "Register") {
+                std::cout << "Registring";
+            }
+
+            // Client was disconnected
+        } catch (UnableToRead &) {
+            m_isFinished = true;
+        } catch (UnableToSend &) {
+            m_isFinished = true;
         }
     }
 
@@ -49,6 +64,11 @@ std::string UserHandler::getUsername() const
     return m_userHandled->getUsername();
 }
 
+void UserHandler::terminate()
+{
+    m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
+}
+
 void UserHandler::relayMessage(const std::string &serMessage)
 {
     // TODO: verification for user updates on certain specific messages
@@ -59,8 +79,17 @@ void UserHandler::relayMessage(const std::string &serMessage)
  * UserHub
  */
 
+UserHub::~UserHub()
+{
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+    for (auto &h : m_handlers)
+        h->terminate();
+}
+
 void UserHub::eraseFinished()
 {
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
     m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h->isFinished(); }), m_handlers.end()); // <3 c++
 }
 
@@ -70,13 +99,13 @@ void UserHub::add(Socket &&user)
     std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(this, std::move(user))};
     userHandler->startHandling();
 
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
     m_handlers.push_back(std::move(userHandler));
 }
 
 void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
-    auto receiverIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
-    auto &receiver {*receiverIt};
+    auto &receiver {*std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
     receiver->relayMessage(message);
 }
 
