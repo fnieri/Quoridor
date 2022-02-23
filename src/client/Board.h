@@ -28,10 +28,7 @@ private:
     const int CELL = 2;
     const int CORRIDOR = 1;
 
-    bool isEven(const int &i) const;
     bool isPositionValid(const Point &position) const;
-    bool isCell(const Point &position) const;
-    bool isCorridor(const Point &position) const;
     bool areNeighbours(const Point &first, const Point &second) const;
     bool areDiagoNeighbours(const Point &first, const Point &second) const;
     bool isWayFree(const Point &first, const Point &second) const;
@@ -63,6 +60,10 @@ private:
 
 public:
     Board(/* args */);
+
+    bool isCell(const Point &position) const;
+    bool isCorridor(const Point &position) const;
+    bool isEven(const int &i) const;
 
     /**
      * Checks whether a given position in the matrix is occupied or not.

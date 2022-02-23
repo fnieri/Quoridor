@@ -12,9 +12,10 @@ private:
     int nPlayers;                                       // number of players
     std::vector<std::shared_ptr<Player>> players;       // either 2 or 4 players
 public:
-    Controller(shared_ptr<Board> board);
+    Controller(std::shared_ptr<Board> board);
 
     // Game functionalities
+    void handleClick(Point p);
     void handleClickPlayer(Point p); 
     void handleClickWall(Point p);
 
