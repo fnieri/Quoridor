@@ -2,6 +2,8 @@
 
 #include <sockpp/tcp_socket.h>
 
+#include <mutex>
+
 using Socket = sockpp::tcp_socket;
 
 class SocketUser
@@ -20,4 +22,5 @@ public:
 
 protected:
     Socket m_socket;
+    std::mutex m_socketMutex;
 };
