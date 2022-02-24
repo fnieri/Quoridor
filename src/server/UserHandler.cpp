@@ -29,20 +29,31 @@ void UserHandler::handleRequests()
     while (!m_isFinished) {
         try {
             if (hasReadActivity(1)) {
-                auto msg {receive()};
+                auto serRequest {receive()};
 
                 // Do not continue if the thread was terminated during or after the receive
                 if (m_isFinished)
                     break;
 
-                auto request {json::parse(msg)};
+                auto request {json::parse(serRequest)};
 
-                if (request["Type"] == "LogIn") {
-                    std::cout << "Loggin in";
+                if (request["action"] == "Login" || request["action"] == "Register") {
 
-                } else if (request["Type"] == "Register") {
-                    std::cout << "Registring";
+                    auto serAnswer {m_authHandler.processRequest(serMessage)};
+                    auto answer {json::parse(serAnswer)};
+
+                    if (answer["status"] == "Success") {
+                        m_serverUser.bindTo(request["username"]);
+                        send(serAnswer);
+                    }
                 }
+
+                /* if (request["Type"] == "LogIn") { */
+                /*     std::cout << "Loggin in"; */
+
+                /* } else if (request["Type"] == "Register") { */
+                /*     std::cout << "Registring"; */
+                /* } */
             } else if (m_isFinished) {
                 break;
             }
