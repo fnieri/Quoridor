@@ -28,19 +28,23 @@ void UserHandler::handleRequests()
     // TODO finish this
     while (!m_isFinished) {
         try {
-            auto msg {receive()};
+            if (hasReadActivity(1)) {
+                auto msg {receive()};
 
-            // Do not continue if the thread was terminated during or after the receive
-            if (m_isFinished)
+                // Do not continue if the thread was terminated during or after the receive
+                if (m_isFinished)
+                    break;
+
+                auto request {json::parse(msg)};
+
+                if (request["Type"] == "LogIn") {
+                    std::cout << "Loggin in";
+
+                } else if (request["Type"] == "Register") {
+                    std::cout << "Registring";
+                }
+            } else if (m_isFinished) {
                 break;
-
-            auto request {json::parse(msg)};
-
-            if (request["Type"] == "LogIn") {
-                std::cout << "Loggin in";
-
-            } else if (request["Type"] == "Register") {
-                std::cout << "Registring";
             }
 
             // Client was disconnected
