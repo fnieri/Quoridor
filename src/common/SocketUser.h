@@ -1,3 +1,10 @@
+/**
+ * @file SocketUser.h
+ * @author Boris Petrov
+ * @brief Facility to send and receive strings
+ * @date 02/25/22
+ */
+
 #pragma once
 
 #include <sockpp/tcp_socket.h>
@@ -6,6 +13,11 @@
 
 using Socket = sockpp::tcp_socket;
 
+/**
+ * Facility to send and receive strings over socket
+ *
+ * @note The class should be thread safe.
+ */
 class SocketUser
 {
 public:
@@ -17,7 +29,17 @@ public:
     SocketUser &operator=(const SocketUser &) = delete;
     SocketUser &operator=(SocketUser &&) = default;
 
+    /**
+     * Write a std::string in the socket
+     *
+     * @param message string to be sent
+     */
     void send(const std::string &);
+    /**
+     * Read a std::string from the socket
+     *
+     * @return message string read
+     */
     std::string receive();
 
     /**

@@ -1,3 +1,10 @@
+/**
+ * @file SocketUser.cpp
+ * @author Boris Petrov
+ * @brief Facility to send and receive strings
+ * @date 02/25/22
+ */
+
 #include "SocketUser.h"
 
 #include "Exceptions.h"
@@ -32,10 +39,12 @@ void SocketUser::send(const std::string &msg)
 {
     std::lock_guard<std::mutex> guard {m_socketMutex};
 
+    // Firt send the size of the data to be sent
     auto sz {msg.size()};
     if (m_socket.write_n(&sz, sizeof(sz)) < sizeof(sz))
         throw UnableToSend {};
 
+    // Then the data itself
     if (m_socket.write_n(msg.c_str(), sz) < sz)
         throw UnableToSend {};
 }
@@ -44,10 +53,12 @@ std::string SocketUser::receive()
 {
     std::lock_guard<std::mutex> guard {m_socketMutex};
 
+    // First receive the size of the data to be received
     ssize_t sz {0};
     if (m_socket.read_n(&sz, sizeof(sz)) < sizeof(sz))
         throw UnableToRead {};
 
+    // Then the data itself
     auto buff = new char[sz];
     if (m_socket.read_n(buff, sz) < sz)
         throw UnableToRead {};
