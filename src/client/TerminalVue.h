@@ -2,6 +2,14 @@
 // Created by louis on 10/02/2022.
 //
 
+
+/**
+ * @file TerminalVue.h
+ * @author Louis Vanstappen, [Sacha Testaert]
+ * @brief Regroups all methods needed to Render a terminal interface
+ * @date 2022-02-10
+ */
+
 #pragma once
 
 #include <iostream>
@@ -49,11 +57,19 @@ class TerminalVue
     int chatSelected = 0;
     std::vector<std::string> chatElements;
     int friend_selected = 0;
-    //Dummy
+    int chat_message_selected = 0;
     std::vector<std::string> friendsElements {
         "Friend Name1","Friend Name2","Friend Name3","Friend Name4","Friend Name5","Friend Name6"
     };
-    //Dummy
+    std::vector<std::vector<std::string>> chatEntries {
+        {"Salut", "comment ça va", "utilisateur 0?"},
+        {"Salut", "comment ça va", "utilisateur 1?"},
+        {"Salut", "comment ça va", "utilisateur 2?"},
+        {"Salut", "comment ça va", "utilisateur 3?"},
+        {"Salut", "comment ça va", "utilisateur 4?"},
+        {"Salut", "comment ça va", "utilisateur 5?"}
+    };
+
     int notif_selected = 0;
     std::vector<std::string> notifs{
         "User1 wants to add you!   (A)ccept or (D)eny ?",
@@ -114,11 +130,14 @@ class TerminalVue
 
     auto createBoardRenderer();
 
+    /**
+     * @brief create Renderer of Chat Container
+     */
     auto createChatRenderer();
 
     auto createFriendsListRenderer();
 
-    auto createFriendUtilitaries();
+    auto createFriendUtilitariesRenderer();
 
     auto createSettingsRenderer();
 
@@ -134,8 +153,23 @@ class TerminalVue
 
 public:
     void run();
-
+    /**
+     * @brief Add a message to the chat window
+     * @param username String of the player Sending the messsage
+     * @param message String of user's typing
+     *
+     */
     void addChatMessage(std::string username, std::string message);
-
+    /**
+     * @brief Add a friend to your friends list
+     * @param username String of the user you want to add to your friends
+     *
+     */
     void addFriend(std::string username);
+
+    Component Window(std::string title, Component component) {
+  return Renderer(component, [component, title] {  //
+    return window(text(title), component->Render()) | flex;
+  });
+}
 };
