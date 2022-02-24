@@ -1,5 +1,10 @@
 # Quoridor, for real
 
+# Documentation
+
+[View documentation](https://quoridor-doc.herokuapp.com/docs/html/index.html)
+
+
 # Compilation
 
 Pour compiler, exécutez ces commandes depuis la racine du repo git:
