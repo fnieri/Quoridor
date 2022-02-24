@@ -7,8 +7,9 @@
 
 #include <iostream>
 #include <memory>
+#include <stack>
 
-Board::Board(/* args */)
+Board::Board()
 {
     for (int x = 0; x < MATRIX_SIZE; x++) {
         matrix.push_back({});
@@ -237,6 +238,50 @@ void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x,
             }
         }
     }
+}
+
+bool Board::pathExists(const Point &start, int finishLine) const
+{
+    // This function essentially performs a DFS on the matrix
+
+    Point startMatrix = start * 2;
+
+    // double check the given start position
+    if (!isPositionValid(startMatrix))
+        return false;
+
+    // define the finish line as Horizontal/Vertical + value for y/x
+    bool destinationHorizontal = finishLine == 0 || finishLine == 2;
+    int destinationValue = finishLine == 0 || finishLine == 3 ? 0 : MATRIX_SIZE - 1;
+
+    std::stack<Point> searches;
+    searches.push(startMatrix);
+
+    while (!searches.empty()) {
+        Point p = searches.top();
+        searches.pop();
+
+        int x = p.x();
+        int y = p.y();
+
+        // A border is reached and it's the specific finish line
+        if ((destinationHorizontal && y == destinationValue) || (!destinationHorizontal && x == destinationValue))
+            return true;
+
+        if (x > 0 && !matrix[x - 1][y]->isOccupied())
+            searches.push(Point {x - 2, y});
+
+        if (x < MATRIX_SIZE - 1 && !matrix[x + 1][y]->isOccupied())
+            searches.push(Point {x + 2, y});
+
+        if (y > 0 && !matrix[x][y - 1]->isOccupied())
+            searches.push(Point {x, y - 2});
+
+        if (y < MATRIX_SIZE - 1 && !matrix[x][y + 1]->isOccupied())
+            searches.push(Point {x, y + 2});
+    }
+
+    return false;
 }
 
 int Board::getCellSize()

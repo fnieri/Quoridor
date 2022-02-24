@@ -14,7 +14,7 @@ Controller::Controller(std::shared_ptr<Board> board)
 {
     for (int i = 0; i < nPlayers; i++) {
         // TODO: Change default position of players
-        players.push_back(Player {PawnColors(i), Point {0, 0}, 10});
+        players.push_back(std::make_shared<Player>(PawnColors(i), Point {0, 0}, 10));
     }
     //the controller should create the view here
 }

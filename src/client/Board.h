@@ -59,7 +59,7 @@ private:
     void placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation);
 
 public:
-    Board(/* args */);
+    Board();
 
     bool isCell(const Point &position) const;
     bool isCorridor(const Point &position) const;
@@ -101,6 +101,23 @@ public:
      * - if orienation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
      */
     void placeWall(const Point &cell, const WallOrientation &direction);
+
+    /**
+     * Finds whether a path from a starting point to one of the board borders exists.
+     *
+     * @param start the starting point for the pathfinding
+     * @param finishLine the board border for pathfind to
+     * @return bool
+     *
+     * @warning the position is assumed to be a *player cell position*
+     *
+     * @note The accepted values for finishLine are:
+     * - 0=north
+     * - 1=east
+     * - 2=south
+     * - 3=west
+     */
+    bool pathExists(const Point &start, int finishLine) const;
 
     bool isBasicMove(const Point &current, const Point &destination) const;
     bool isJumpMove(const Point &current, const Point &destination) const;
