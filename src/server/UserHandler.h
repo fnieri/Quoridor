@@ -94,7 +94,7 @@ class UserHub
 {
 private:
     std::vector<std::shared_ptr<UserHandler>> m_handlers;
-    std::mutex m_handlersMutex;
+    mutable std::mutex m_handlersMutex;
     /**
      * Erase handlers whose connection with the client was lost
      */

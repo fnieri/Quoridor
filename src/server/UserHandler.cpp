@@ -94,26 +94,32 @@ UserHub::~UserHub()
 void UserHub::eraseFinished()
 {
     std::lock_guard<std::mutex> guard {m_handlersMutex};
+
     m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h->isFinished(); }), m_handlers.end()); // <3 c++
 }
 
 void UserHub::add(Socket &&user)
 {
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
+
     // Start handling
     std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(this, std::move(user))};
     userHandler->startHandling();
 
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
     m_handlers.push_back(std::move(userHandler));
 }
 
 void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
+    // TODO: fix if user doesn't exist
     auto &receiver {*std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
     receiver->relayMessage(message);
 }
 
 int UserHub::connectedUsers() const noexcept
 {
+    // Do not give size if the size is in the process of changing (add for example)
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
+
     return m_handlers.size();
 }
