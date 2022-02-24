@@ -221,19 +221,34 @@ auto TerminalVue::createChatRenderer()
 
 auto TerminalVue::createFriendsListRenderer()
 {
-    auto friendList = Menu(&friendsElements, &friend_selected);
+    auto friendList = Window("Friends List", Menu(&friendsElements, &friend_selected));
+    auto friendChat = Window("Chat", Menu(&chatEntries[friend_selected], &chat_message_selected)); 
     auto friendListContainer = Container::Vertical({
-        // text("Friends List") | center,
         friendList,
+        friendChat,
     });
-    return Renderer(friendListContainer, [&, friendList] { return vbox({
-        text("Friends List") | center,
-        separator(),
-        friendList->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15),
-    }) /*| center*/; });
+    return Renderer(friendListContainer, [&, friendList, friendChat] { return hbox({
+        vbox({
+            // text("Friends List") | center,
+            // separator(),
+            friendList->Render() /*| vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)*/,
+        }) | xflex,
+        // separator(),
+        vbox({
+            // text("Chat") | center,
+            // separator(),
+            friendChat->Render() /*| vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)*/,
+        }) | xflex,
+        }); 
+    });
 }
 
-auto TerminalVue::createFriendUtilitaries()
+// auto TerminalVue::createFriendChatRenderer()
+// {
+//     return Renderer();
+// }
+
+auto TerminalVue::createFriendUtilitariesRenderer()
 {
     auto searchInput = createSearchInput();
     auto addButton = Button(
@@ -253,14 +268,13 @@ auto TerminalVue::createFriendUtilitaries()
 
     return Renderer(utilitariesContainer, [&,searchInput, addButton, notifBox] { 
         return vbox({
-            // text("Search a friend") | center,
-            // separator(),
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
             notifBox->Render() |yflex,
         });
     });
 }
+
 
 auto TerminalVue::createSettingsRenderer()
 {
@@ -294,7 +308,7 @@ auto TerminalVue::createMainTabContainer()
     auto resizeContainer = boardTab;
     resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
     auto friendsList = createFriendsListRenderer();
-    auto friendUtilitaries = createFriendUtilitaries();
+    auto friendUtilitaries = createFriendUtilitariesRenderer();
     auto resizeFriendTab = friendsList;
     resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
     auto settings = createSettingsRenderer();
