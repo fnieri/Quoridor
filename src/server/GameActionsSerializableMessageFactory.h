@@ -16,17 +16,19 @@ class GameActionsSerializableMessageFactory : public SerializableMessageFactory
      *
      * @param queueAction   Leave/join queue
      * @param gameMode GameMode for which he's joining
-     * @param user User that is joining
+     * @param username User that is joining
      * @return nlohmann::json requestJson
      */
-    nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::shared_ptr<User> user);
+    nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string username, int ELO);
     /**
-     * @brief Serialize a user request when
+     * @brief Serialize a user request when pausing, saving, forfeiting game
      *
      * @param queueAction
      * @param gameMode GameMode for which he's joining
-     * @param user User that is joining
+     * @param username User that is joining
      * @return nlohmann::json requestJson
      */
-    nlohmann::json serializeInGameRequest(GameAction gameAction, std::shared_ptr<User> user);
+    nlohmann::json serializeInGameRequest(GameAction gameAction, std::string username);
+
+  
 };
