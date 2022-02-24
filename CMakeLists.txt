@@ -9,7 +9,6 @@ enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(PREFIX qrd)
-
 # Dependencies
 include(cmake/CPM.cmake)
 include(cmake/AddCatch2.cmake)
