@@ -60,9 +60,9 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
     // user base data
     int elo = 69;
 
-    PasswordEncrypter encrypter {password};
-    std::string saltKey = encrypter.getSaltKey();
-    std::string encryptedPassword = encrypter.hashPassword();
+    std::vector<std::string> encryption = PasswordEncrypter::registerEncryption(password);
+    std::string saltKey = encryption[0];
+    std::string encryptedPassword = encryption[1];
 
     // create document
     auto builder = document {} << "username" << username << "password" << encryptedPassword << "salt_key" << saltKey << "elo" << elo << "friends"
@@ -101,12 +101,8 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
         std::string dbPassword = view["password"].get_utf8().value.to_string();
         std::string saltKey = view["salt_key"].get_utf8().value.to_string();
 
-        PasswordEncrypter encrypter {password};
-        encrypter.setSaltKey(saltKey);
-        std::string encryptedPassword = encrypter.hashPassword();
-        std::cout << "Password: " << encryptedPassword << std::endl;
         // compare password
-        if (encryptedPassword == dbPassword) {
+        if (PasswordEncrypter::compareHash(password, saltKey, dbPassword)) {
             std::cout << "Login successful" << std::endl;
             return true;
         }

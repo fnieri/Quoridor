@@ -23,7 +23,7 @@ target_link_libraries(${PREFIX}_server
         sockpp
         nlohmann_json
         ${PREFIX}_common
-        cryptopp
+        cryptopp-shared
         pthread
         mongo::bsoncxx_shared
         mongo::mongocxx_shared
