@@ -22,5 +22,3 @@ SCENARIO("Creating and login into an account")
         }
     }
 }
-
-

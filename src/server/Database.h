@@ -65,7 +65,7 @@ public:
     /**
      * @brief Check whether or not the given username and password are valid.
      * @param username and raw password string
-     * @return Returns true if the credentials are correct, false otherwise.
+     * @return True if the credentials are correct, false otherwise.
      */
     static bool checkLogin(const std::string &username, const std::string &password);
     /**
