@@ -241,7 +241,22 @@ void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x,
     }
 }
 
-bool Board::pathExists(const Point &start, int finishLine) const
+bool Board::isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const
+{
+    if (!isCell(position))
+        return false;
+
+    // define the finish line as Horizontal/Vertical + value for y/x
+    bool destinationHorizontal = finishLine == FinishLine::North || finishLine == FinishLine::South;
+    int destinationValue = finishLine == FinishLine::North || finishLine == FinishLine::West ? 0 : MATRIX_SIZE - 1;
+
+    // A border is reached and it's the specific finish line
+    if ((destinationHorizontal && position.y() == destinationValue) || (!destinationHorizontal && position.x() == destinationValue))
+        return true;
+    return false;
+}
+
+bool Board::pathExists(const Point &start, FinishLine finishLine) const
 {
     // This function essentially performs a DFS on the matrix
 
@@ -250,10 +265,6 @@ bool Board::pathExists(const Point &start, int finishLine) const
     // double check the given start position
     if (!isPositionValid(startMatrix))
         return false;
-
-    // define the finish line as Horizontal/Vertical + value for y/x
-    bool destinationHorizontal = finishLine == 0 || finishLine == 2;
-    int destinationValue = finishLine == 0 || finishLine == 3 ? 0 : MATRIX_SIZE - 1;
 
     std::stack<Point> searches;
     searches.push(startMatrix);
@@ -265,8 +276,8 @@ bool Board::pathExists(const Point &start, int finishLine) const
         int x = p.x();
         int y = p.y();
 
-        // A border is reached and it's the specific finish line
-        if ((destinationHorizontal && y == destinationValue) || (!destinationHorizontal && x == destinationValue))
+        // We have found a path to the finish line
+        if (isPositionOnFinishLine(Point {x, y}, finishLine))
             return true;
 
         if (x > 0 && !matrix[x - 1][y]->isOccupied())
