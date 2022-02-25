@@ -266,6 +266,7 @@ bool Board::pathExists(const Point &start, FinishLine finishLine) const
     if (!isPositionValid(startMatrix))
         return false;
 
+    std::vector<std::vector<bool>> done(MATRIX_SIZE, std::vector<bool>(MATRIX_SIZE));
     std::stack<Point> searches;
     searches.push(startMatrix);
 
@@ -275,6 +276,10 @@ bool Board::pathExists(const Point &start, FinishLine finishLine) const
 
         int x = p.x();
         int y = p.y();
+
+        if (done[x][y])
+            continue;
+        done[x][y] = true;
 
         // We have found a path to the finish line
         if (isPositionOnFinishLine(Point {x, y}, finishLine))
