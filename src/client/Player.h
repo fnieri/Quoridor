@@ -8,10 +8,11 @@ class Player
 {
     PawnColors color;
     Point position;
-    int nwalls; // how
+    int nwalls;
+    FinishLine finishLine;
 
 public:
-    Player(const PawnColors &color, const Point &position, const int &nwalls); // Const or not ?
+    Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine);
     ~Player();
 
     int x() const;
@@ -22,6 +23,8 @@ public:
 
     void setPosition(const Point &newPosition);
     void setMatrixPosition(const Point &newPosition);
+
+    FinishLine getFinishLine() const;
 
     int nWalls() const;
     void takeAwayWall();

@@ -11,7 +11,7 @@
 
 TEST_CASE("Valid wall placements")
 {
-    std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 99});
+    std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 99, FinishLine::North});
     std::shared_ptr<Board> b(new Board {});
     
     SECTION("Vertical walls")
@@ -132,7 +132,7 @@ TEST_CASE("Valid wall placements")
 
 TEST_CASE("Player out of walls")
 {
-    std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 1});
+    std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 1, FinishLine::North});
     std::shared_ptr<Board> b(new Board {});
 
     WallAction action_u {b, p, Point {0, 0}, WallOrientation::Horizontal};
@@ -142,4 +142,23 @@ TEST_CASE("Player out of walls")
     REQUIRE(action_u.executeAction());
     REQUIRE(!action_v.isWallPlacementValid());
     REQUIRE(!action_v.executeAction());
+}
+
+TEST_CASE("Legal wall placements")
+{
+    std::shared_ptr<Board> b(new Board {});
+
+    // SECTION("Preliminary function tests")
+    // {
+    //     std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 1});
+    //     PlayerAction a {b, Player {PawnColors}, }
+    // }
+
+    // SECTION("No walls")
+    // {
+    //     SECTION("No walls")
+    //     {
+    //         std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 1});
+    //     }
+    // }
 }

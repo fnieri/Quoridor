@@ -1,9 +1,11 @@
 #include "Player.h"
+#include "PlayerEnum.h"
 
-Player::Player(const PawnColors &color, const Point &position, const int &nwalls)
+Player::Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine)
     : color {color}
     , position {position}
     , nwalls {nwalls}
+    , finishLine {finishLine}
 {
 }
 
@@ -35,6 +37,11 @@ Point Player::getPosition() const
 Point Player::getMatrixPosition() const
 {
     return getPosition() * 2;
+}
+
+FinishLine Player::getFinishLine() const
+{
+    return finishLine;
 }
 
 int Player::nWalls() const
