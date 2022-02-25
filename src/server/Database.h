@@ -113,17 +113,17 @@ public:
      * @brief Send a friend request to the given username.
      * @param username string.
      */
-    static void sendFriendRequest(const std::string &sender, const std::string &receiver);
+    static void sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver );
     /**
      * @brief Remove a friend request sent to the given receiver from the given sender.
      * @param sender username string, receiver username string.
      */
-    static void removeFriendRequest(const std::string &receiver, const std::string &sender);
+    static void removeFriendRequest(const std::string &friendRequestReceiver, const std::string &friendRequestSender);
     /**
      * @brief Accept a friend request received from the given sender to the given receiver.
      * @param receiver username string, sender username string.
      */
-    static void acceptFriendRequest(const std::string &receiver, const std::string &sender);
+    static void acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver);
     /**
      * @brief Get a user's elo rating.
      * @param username string.
@@ -141,12 +141,12 @@ public:
      * @brief Send a message from a user to another user
      * @param sender username string, receiver username string, message string.
      */
-    static void sendMessage(const std::string &sender, const std::string &receiver, const std::string &message);
+    static void recordMessage(const std::string &sender, const std::string &receiver, const std::string &message);
     /**
      * @brief Send a message from a user in a game chat.
      * @param sender username string, message string, game id int.
      */
-    static void sendMessage(const std::string &sender, const std::string &message, const int &gameId);
+    static void recordMessage(const std::string &sender, const std::string &message, const int &gameId);
     /**
      * @brief Get a user's messages with another user.
      * @param username string, friend username string.

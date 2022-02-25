@@ -50,7 +50,6 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
 {
     // check if username already exists
     if (Instance()->doesUsernameExist(username)) {
-        std::cout << "Username already exists" << std::endl;
         return false;
     }
     // if not, create account
@@ -66,13 +65,13 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
 
     // create document
     auto builder = document {} << "username" << username << "password" << encryptedPassword << "salt_key" << saltKey << "elo" << elo << "friends"
+                               << bsoncxx::builder::stream::array() << "sentFriendRequests" << bsoncxx::builder::stream::array() << "receivedFriendRequests"
                                << bsoncxx::builder::stream::array() << finalize;
 
     // insert username+password into user collection
     userColl.insert_one(builder.view());
 
     // return true to indicate success in creating account
-    std::cout << "Account created" << std::endl;
     return true;
 }
 
@@ -103,11 +102,9 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
 
         // compare password
         if (PasswordEncrypter::compareHash(password, saltKey, dbPassword)) {
-            std::cout << "Login successful" << std::endl;
             return true;
         }
     }
-    std::cout << "Login failed" << std::endl;
     return false;
 }
 
@@ -194,16 +191,16 @@ std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::s
     return receivedFriendRequests;
 }
 
-void DatabaseHandler::acceptFriendRequest(const std::string &username, const std::string &friendUsername)
+void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
     // verification just in case but this should not be necessary if everything is implemented correctly
-    std::vector<std::string> sentFriendRequests = getSentFriendRequests(username);
-    std::vector<std::string> receivedFriendRequests = getReceivedFriendRequests(friendUsername);
+    std::vector<std::string> sentFriendRequests = getSentFriendRequests(friendRequestSender);
+    std::vector<std::string> receivedFriendRequests = getReceivedFriendRequests(friendRequestReceiver);
     bool valid = false;
     for (auto &sentFriendRequest : sentFriendRequests) {
-        if (sentFriendRequest == friendUsername) {
+        if (sentFriendRequest == friendRequestReceiver) {
             for (auto &receivedFriendRequest : receivedFriendRequests) {
-                if (receivedFriendRequest == username) {
+                if (receivedFriendRequest == friendRequestSender) {
                     valid = true;
                     break;
                 }
@@ -215,50 +212,48 @@ void DatabaseHandler::acceptFriendRequest(const std::string &username, const std
         return;
 
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeReceiverResult = userColl.find_one(document {} << "username" << friendUsername << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << friendRequestSender << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeReceiverResult = userColl.find_one(document {} << "username" << friendRequestReceiver << finalize);
     if (maybeResult && maybeReceiverResult) {
         bsoncxx::document::view view = maybeResult->view();
-        bsoncxx::document::view receiverView = maybeReceiverResult->view();
-        bsoncxx::oid senderId = view["_id"].get_oid().value;
-        bsoncxx::oid receiverId = receiverView["_id"].get_oid().value;
+        bsoncxx::document::view friendRequestReceiverView = maybeReceiverResult->view();
+        bsoncxx::oid friendRequestSenderId = view["_id"].get_oid().value;
+        bsoncxx::oid friendRequestReceiverId = friendRequestReceiverView["_id"].get_oid().value;
 
         // remove receiver from sent friend requests
-        userColl.update_one(document {} << "username" << username << finalize,
-            document {} << "$pull" << open_document << "sentFriendRequests" << receiverId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestSender << finalize,
+            document {} << "$pull" << open_document << "sentFriendRequests" << friendRequestReceiverId << close_document << finalize);
         // remove sender from received friend requests
-        userColl.update_one(document {} << "username" << friendUsername << finalize,
-            document {} << "$pull" << open_document << "receivedFriendRequests" << senderId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
+            document {} << "$pull" << open_document << "receivedFriendRequests" << friendRequestSenderId << close_document << finalize);
         // add receiver to user's friends
-        userColl.update_one(document {} << "username" << username << finalize,
-            document {} << "$push" << open_document << "friends" << receiverId << close_document << finalize);
+        userColl.update_one(
+            document {} << "username" << friendRequestSender << finalize, document {} << "$push" << open_document << "friends" << friendRequestReceiverId << close_document << finalize);
         // add sender to receiver's friends
-        userColl.update_one(document {} << "username" << friendUsername << finalize,
-            document {} << "$push" << open_document << "friends" << senderId << close_document << finalize);
-        std::cout << "Friend request accepted" << std::endl;
+        userColl.update_one(
+            document {} << "username" << friendRequestReceiver << finalize, document {} << "$push" << open_document << "friends" << friendRequestSenderId << close_document << finalize);
     }
 }
 
-void DatabaseHandler::removeFriendRequest(const std::string &username, const std::string &friendUsername)
+void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
     // no need for verification bc if request doesn't exist, nothing will happen
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeReceiverResult = userColl.find_one(document {} << "username" << friendUsername << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << friendRequestSender << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeReceiverResult = userColl.find_one(document {} << "username" << friendRequestReceiver << finalize);
     if (maybeResult && maybeReceiverResult) {
         bsoncxx::document::view view = maybeResult->view();
-        bsoncxx::document::view receiverView = maybeReceiverResult->view();
-        bsoncxx::oid senderId = view["_id"].get_oid().value;
-        bsoncxx::oid receiverId = receiverView["_id"].get_oid().value;
+        bsoncxx::document::view friendRequestReceiverView = maybeReceiverResult->view();
+        bsoncxx::oid friendRequestSenderId = view["_id"].get_oid().value;
+        bsoncxx::oid friendRequestReceiverId = friendRequestReceiverView["_id"].get_oid().value;
 
         // remove receiver from sent friend requests
-        userColl.update_one(document {} << "username" << username << finalize,
-            document {} << "$pull" << open_document << "sentFriendRequests" << receiverId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestSender << finalize,
+            document {} << "$pull" << open_document << "sentFriendRequests" << friendRequestReceiverId << close_document << finalize);
         // remove sender from received friend requests
-        userColl.update_one(document {} << "username" << friendUsername << finalize,
-            document {} << "$pull" << open_document << "receivedFriendRequests" << senderId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
+            document {} << "$pull" << open_document << "receivedFriendRequests" << friendRequestSenderId << close_document << finalize);
 
-        std::cout << "Friend request removed. lonely forever rip" << std::endl;
     }
 }
 
@@ -278,7 +273,6 @@ void DatabaseHandler::addFriend(const std::string &username, const std::string &
         // check if friend is already in friends list
         while (friendsArray.find(i) != friendsArray.end()) {
             if (friendsArray.find(i)->get_oid().value == friendId) {
-                std::cout << "Friend already exists" << std::endl;
                 return;
             }
             i++;
@@ -286,7 +280,6 @@ void DatabaseHandler::addFriend(const std::string &username, const std::string &
         // add friend to friends list
         userColl.update_one(
             document {} << "username" << username << finalize, document {} << "$push" << open_document << "friends" << friendId << close_document << finalize);
-        std::cout << "Friend added" << std::endl;
     }
 }
 
@@ -299,32 +292,35 @@ void DatabaseHandler::removeFriend(const std::string &username, const std::strin
     if (maybeResult && maybeFriendResult) {
         bsoncxx::document::view view = maybeResult->view();
         bsoncxx::document::view friendView = maybeFriendResult->view();
+        bsoncxx::oid id = view["_id"].get_oid().value;
         bsoncxx::oid friendId = friendView["_id"].get_oid().value;
         // remove friend from friends list
         userColl.update_one(
             document {} << "username" << username << finalize, document {} << "$pull" << open_document << "friends" << friendId << close_document << finalize);
-        std::cout << "Friend removed" << std::endl;
+        userColl.update_one(
+            document {} << "username" << friendUsername << finalize, document {} << "$pull" << open_document << "friends" << id << close_document << finalize);
+
     }
 }
 
-void DatabaseHandler::sendFriendRequest(const std::string &username, const std::string &friendUsername)
+void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
     // check that they are not already friends. this verification should not be necessary if everything is implemented correctly
-    std::vector<std::string> senderFriends = getFriends(username);
-    std::vector<std::string> receiverFriends = getFriends(friendUsername);
+    std::vector<std::string> senderFriends = getFriends(friendRequestSender);
+    std::vector<std::string> receiverFriends = getFriends(friendRequestReceiver);
     for (auto &sentFriendRequest : senderFriends) {
-        if (sentFriendRequest == friendUsername) {
+        if (sentFriendRequest == friendRequestReceiver) {
             for (auto &receivedFriendRequest : receiverFriends) {
-                if (receivedFriendRequest == username)
-                    return;
+                if (receivedFriendRequest == friendRequestSender)
+                return;
             }
             return;
         }
     }
 
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
-    bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << friendUsername << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << friendRequestSender << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << friendRequestReceiver << finalize);
     // check if usernames are contained in the collection
     if (maybeResult && maybeFriendResult) {
         bsoncxx::document::view view = maybeResult->view();
@@ -336,18 +332,16 @@ void DatabaseHandler::sendFriendRequest(const std::string &username, const std::
         // check if friend is already in friends request array
         while (sentFriendRequestsArray.find(i) != sentFriendRequestsArray.end()) {
             if (sentFriendRequestsArray.find(i)->get_oid().value == friendId) {
-                std::cout << "Friend request already sent" << std::endl;
                 return;
             }
             i++;
         }
         // add friend to friend requests list
-        userColl.update_one(document {} << "username" << username << finalize,
+        userColl.update_one(document {} << "username" << friendRequestSender << finalize,
             document {} << "$push" << open_document << "sentFriendRequests" << friendId << close_document << finalize);
         // add friend request to friend's received friend requests list
-        userColl.update_one(document {} << "username" << friendUsername << finalize,
+        userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
             document {} << "$push" << open_document << "receivedFriendRequests" << senderId << close_document << finalize);
-        std::cout << "Friend request sent" << std::endl;
     }
 }
 
@@ -391,7 +385,7 @@ std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid recei
     return chatId;
 }
 
-void DatabaseHandler::sendMessage(const std::string &sender, const std::string &receiver, const std::string &message)
+void DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message)
 {
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
@@ -410,8 +404,7 @@ void DatabaseHandler::sendMessage(const std::string &sender, const std::string &
         }
         chatColl.update_one(document {} << "chat_id" << chatId << finalize,
             document {} << "$push" << open_document << "messages" << open_document << sender << message << close_document << close_document << finalize);
-    } else
-        std::cout << "Username not found" << std::endl;
+    }
 }
 
 std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername)
@@ -452,7 +445,7 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::st
     return messages;
 }
 
-void DatabaseHandler::sendMessage(const std::string &sender, const std::string &message, const int &gameId)
+void DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId)
 {
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
@@ -460,10 +453,13 @@ void DatabaseHandler::sendMessage(const std::string &sender, const std::string &
     if (maybeResult) {
         mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
 
+        if (!gameColl.find_one(document {} << "game_id" << gameId << finalize)) {
+            gameColl.insert_one(document {} << "game_id" << gameId << finalize);
+        }
         gameColl.update_one(document {} << "game_id" << gameId << finalize,
             document {} << "$push" << open_document << "messages" << open_document << sender << message << close_document << close_document << finalize);
-    } else
-        std::cout << "Username not found" << std::endl;
+
+    }
 }
 
 std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &gameId)
@@ -499,7 +495,6 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
     // check if gameId is contained in the collection
     if (maybeResult) {
-        std::cout << "GameId already exists" << std::endl;
         return false;
     }
     return true;
