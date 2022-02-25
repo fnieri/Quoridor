@@ -4,6 +4,8 @@
 
 #include "Database.h"
 
+#include "PasswordEncrypter.h"
+
 // avoids having long namespaces
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -57,9 +59,13 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
     // user base data
     int elo = 69;
 
+    PasswordEncrypter encrypter {password};
+    std::string saltKey = encrypter.getSaltKey();
+    std::string encryptedPassword = encrypter.hashPassword();
+
     // create document
-    auto builder = document {} << "username" << username << "password" << password << "elo" << elo << "friends" << bsoncxx::builder::stream::array()
-                               << finalize;
+    auto builder = document {} << "username" << username << "password" << encryptedPassword << "salt_key" << saltKey << "elo" << elo << "friends"
+                               << bsoncxx::builder::stream::array() << finalize;
 
     // insert username+password into user collection
     userColl.insert_one(builder.view());
@@ -92,14 +98,29 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
         // get password from user collection
         bsoncxx::document::view view = maybeResult->view();
         std::string dbPassword = view["password"].get_utf8().value.to_string();
+        std::string saltKey = view["salt_key"].get_utf8().value.to_string();
+
+        PasswordEncrypter encrypter {password};
+        encrypter.setSaltKey(saltKey);
+        std::string encryptedPassword = encrypter.hashPassword();
+        std::cout << "Password: " << encryptedPassword << std::endl;
         // compare password
-        if (password == dbPassword) {
+        if (encryptedPassword == dbPassword) {
             std::cout << "Login successful" << std::endl;
             return true;
         }
     }
     std::cout << "Login failed" << std::endl;
     return false;
+}
+
+void DatabaseHandler::deleteAccount(const std::string &username)
+{
+    // get user collection
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+
+    // delete username from user collection
+    userColl.delete_one(document {} << "username" << username << finalize);
 }
 
 std::vector<std::string> DatabaseHandler::getFriends(const std::string &username)
@@ -297,7 +318,8 @@ void DatabaseHandler::sendFriendRequest(const std::string &username, const std::
     for (auto &sentFriendRequest : senderFriends) {
         if (sentFriendRequest == friendUsername) {
             for (auto &receivedFriendRequest : receiverFriends) {
-                if (receivedFriendRequest == username) return;
+                if (receivedFriendRequest == username)
+                    return;
             }
             return;
         }
