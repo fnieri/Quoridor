@@ -1,6 +1,6 @@
-#include "src/server/PasswordEncrypter.h"
-
 #include <catch2/catch2.hpp>
+
+#include "src/server/PasswordEncrypter.h"
 
 #include <cstdlib>
 #include <unistd.h>
@@ -11,13 +11,13 @@ SCENARIO("Encrypting upon registering")
     {
         std::unique_ptr<PasswordEncrypter> anEncrypter = PasswordEncrypter::Instance();
         
-        std::vector<string> firstRegisterHash = anEncrypter->registerEncrypt("password123");
+        std::vector<std::string> firstRegisterHash = anEncrypter->registerEncrypt("password123");
         sleep(1);
-        std::vector<string> secondRegisterHash = anEncrypter->registerEncrypt("password123");
+        std::vector<std::string> secondRegisterHash = anEncrypter->registerEncrypt("password123");
         
         THEN("Salt keys and digests should be different")
         {
-            REQUIRE_FALSE(firstRegisterHash[0], secondRegisterHash[1]);
+            REQUIRE_FALSE(firstRegisterHash[0], secondRegisterHash[0]);
             REQUIRE_FALSE(firstRegisterHash[1], secondRegisterHash[1]);
         }
     }
@@ -38,11 +38,11 @@ SCENARIO("Encrypting upon login")
         
         THEN("Hashing should return true")
         {
-          REQUIRE(anEncrypter.compareHash("password123", "1234567890", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9");
+          REQUIRE(anEncrypter.compareHash("password123", "1234567890", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9") == true)
         }
-        THEN("By changing salt key, digest should be the same") {
-          REQUIRE(anEncrypter.compareHash("password123", "1234567891", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9");
-      
+        THEN("By changing salt key, digest should be the same")
+        {
+          REQUIRE(anEncrypter.compareHash("password123", "1234567891", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9") == false);
         }
     }
 }
