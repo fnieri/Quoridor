@@ -25,16 +25,87 @@ private:
 
     /// Size of the matrix, computed from CELL_SIZE.
     const int MATRIX_SIZE = (CELL_SIZE * 2) - 1;
+
+    /// Label that represents a cell
     const int CELL = 2;
+
+    /// Label that represents a corridor
     const int CORRIDOR = 1;
 
+    /**
+     * Check if a point exists in the board
+     *
+     * @param position the position of a BoardComponent in the matrix
+     */
     bool isPositionValid(const Point &position) const;
+
+    /**
+     * Check if two points are next to each other in the matrix in a horizontal or vertical direction
+     *
+     * @param first the position of a Cell
+     * @param second the position of a Cell
+     *
+     * @warning Both points are assumed to have *proper matrix indices*
+     */
     bool areNeighbours(const Point &first, const Point &second) const;
+
+    /**
+     * Check if two points are next to each other in the board in a diagonal direction
+     *
+     * @param first the position of a Cell
+     * @param second the position of a Cell
+     *
+     * @warning Both points are assumed to have *proper matrix indices*
+     */
     bool areDiagoNeighbours(const Point &first, const Point &second) const;
+
+    /**
+     * Check if two cells are not separeted by a wall
+     *
+     * @param first the position of a Cell
+     * @param second the position of a Cell
+     *
+     * @warning Both points are assumed to have *proper matrix indices*
+     * @warning points are assumed to be next to each other
+     */
     bool isWayFree(const Point &first, const Point &second) const;
+
+    /**
+     * Check if a path is not blocked by walls
+     *
+     * @note A path in this context means passing a cell to join a cell further away
+     *
+     * @param current the position of a Cell where the path begins
+     * @param overtaken the position of a Cell that is passed
+     * @param destination the ending position of a Cell that is joined
+     *
+     * @warning points are assumed to have *proper matrix indices*
+     * @warning the path is assumed to be three cells long
+     */
     bool isWayValid(const Point &current, const Point &overtaken, const Point &destination) const;
+
+    /**
+     * Give the position of the corridor or the cell that sits between two cells
+     *
+     * @param first the position of a Cell
+     * @param second the position of a Cell
+     * @param shift in function of the value of the shift, returning a cell or a corridor
+     *
+     * @warning points are assumed to have *proper matrix indices*
+     * @warning the two cells are assumed to be just next to each other or separated by only one cell
+     */
     Point getMiddleBoardComponent(const Point &first, const Point &second, const int &shift) const;
+
+    /**
+     * Give a point that representents the distance between two cells
+     *
+     * @param first the position of a Cell
+     * @param second the position of a Cell
+     *
+     * @warning points are assumed to have *proper matrix indices*
+     */
     Point getDistance(const Point &first, const Point &second) const;
+
     std::vector<std::vector<int>> allComponents();
     void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
 
@@ -61,8 +132,29 @@ private:
 public:
     Board();
 
+    /**
+     * Check if a point corresponds to the location of a cell in the matriw
+     *
+     * @param position the position to check
+     *
+     * @warning the position is assumed to have *proper matrix indices*
+     */
     bool isCell(const Point &position) const;
+
+    /**
+     * Check if a point corresponds to the location of a corridor in the matriw
+     *
+     * @param position the position to check
+     *
+     * @warning the position is assumed to have *proper matrix indices*
+     */
     bool isCorridor(const Point &position) const;
+
+    /**
+     * Check if a number is even
+     *
+     * @param i the number to check
+     */
     bool isEven(const int &i) const;
 
     /**
@@ -119,8 +211,40 @@ public:
      */
     bool pathExists(const Point &start, int finishLine) const;
 
+    /**
+     * Check if the move is of basic type
+     *
+     * @note basic type means that the player's move is vertical or horizontal
+     *
+     * @param current the position of the cell where it begins
+     * @param destination the position of the cell where it moves
+     *
+     * @warning the position is assumed to have *proper matrix indices*
+     */
     bool isBasicMove(const Point &current, const Point &destination) const;
+
+    /**
+     * Check if the move is jump type
+     *
+     * @note jump type means that the player jumps over a cell
+     *
+     * @param current the position of the cell where it begins
+     * @param destination the position of the cell where it moves
+     *
+     * @warning the position is assumed to have *proper matrix indices*
+     */
     bool isJumpMove(const Point &current, const Point &destination) const;
+
+    /**
+     * Check if the move is of diagonal type
+     *
+     * @note diagonal type means that the player's move is directed diagonally
+     *
+     * @param current the position of the cell where it begins
+     * @param destination the position of the cell where it moves
+     *
+     * @warning the position is assumed to have *proper matrix indices*
+     */
     bool isDiagonalMove(const Point &current, const Point &destination) const;
 
     int getCellSize();
