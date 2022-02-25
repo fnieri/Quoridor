@@ -14,7 +14,7 @@
 
 #include <nlohmann/json.hpp>
 
-class ChatBoxSerializableMessageFactory : public SerializableMessageFactory
+class ChatBoxSerializableMessageFactory 
 {
 public:
     /**
@@ -34,5 +34,5 @@ public:
      *  "timestamp" : "1236762548123482"  // time since epoch of message
      * }
      */
-    nlohmann::json serializeUserChatBoxRequest(ChatInteraction interaction, int chatboxId, std::string username, std::string message, int timestamp);
+    static nlohmann::json serializeUserChatBoxRequest(ChatInteraction interaction, int chatboxId, std::string username, std::string message, int timestamp);
 };

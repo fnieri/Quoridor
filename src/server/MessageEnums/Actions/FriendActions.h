@@ -5,7 +5,7 @@ enum class FriendAction {
     FRIEND_ACCEPT,
     FRIEND_REMOVE,
     FRIEND_REFUSE
-}
+};
 
 inline const char *
 toJsonString(FriendAction f)
