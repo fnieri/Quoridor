@@ -17,6 +17,11 @@ void Cell::placePlayer(std::shared_ptr<Player> newPlayer)
     occupied = true;
 }
 
+std::shared_ptr<Player> Cell::getPlayer()
+{
+    return player;
+}
+
 void Cell::removePlayer()
 {
     player = nullptr;

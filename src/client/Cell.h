@@ -29,6 +29,13 @@ public:
     void placePlayer(std::shared_ptr<Player> newPlayer);
 
     /**
+     * Returns the Player currently occupying the cell.
+     *
+     * @returns std::shared_ptr<Player>
+     */
+    std::shared_ptr<Player> getPlayer();
+
+    /**
      * Removes the Player currently occupying the cell.
      */
     void removePlayer();

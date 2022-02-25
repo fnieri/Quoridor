@@ -129,6 +129,17 @@ private:
      */
     void placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation);
 
+    /**
+     * Checks whether a given Point is on the given finish line.
+     *
+     * @param position the matrix position to check on
+     * @param finishLine the FinishLine to check for
+     * @returns bool
+     *
+     * @warning the point is assumed to have *proper matrix indices*
+     */
+    bool isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const;
+
 public:
     Board();
 
@@ -171,8 +182,8 @@ public:
      * DO NOT CALL THIS FUNCTION DIRECTLY!
      * Create a PlayerAction and call PlayerAction::executeAction() instead.
      *
-     * @param player the player to move
-     * @param cell the new destination of the player
+     * @param player the Player to move
+     * @param cell the new destination of the Player
      *
      * @warning the position is assumed to be a *player cell position*
      */
@@ -209,7 +220,16 @@ public:
      * - 2=south
      * - 3=west
      */
-    bool pathExists(const Point &start, int finishLine) const;
+    bool pathExists(const Point &start, FinishLine finishLine) const;
+
+    /**
+     * Finds all the players on the board and returns their positions.
+     *
+     * @return std::vector<Point>
+     *
+     * @warning the returned point is a *player cell position*
+     */
+    std::vector<std::shared_ptr<Player>> findPlayers();
 
     /**
      * Check if the move is of basic type
