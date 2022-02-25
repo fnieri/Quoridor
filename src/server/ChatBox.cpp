@@ -1,3 +1,10 @@
+/**
+ * @file ChatBox.cpp
+ * @author Boris Petrov
+ * @brief Handler of chat requests
+ * @date 02/25/22
+ */
+
 #include "ChatBox.h"
 
 #include "UserHandler.h"

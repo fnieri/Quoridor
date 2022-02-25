@@ -1,5 +1,8 @@
 /**
+ * @file ChatBox.h
  * @author Boris Petrov
+ * @brief Handler of chat requests
+ * @date 02/25/22
  */
 
 #pragma once

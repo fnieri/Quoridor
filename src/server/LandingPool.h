@@ -1,5 +1,8 @@
 /**
+ * @file LandingPool.h
  * @author Boris Petrov
+ * @brief Entry door to the server
+ * @date 02/25/22
  */
 
 #pragma once

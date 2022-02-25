@@ -1,3 +1,10 @@
+/**
+ * @file Observer.cpp
+ * @author Boris Petrov
+ * @brief Implementation of the observer pattern
+ * @date 02/25/22
+ */
+
 #include "Observer.h"
 
 #include "Event.h"

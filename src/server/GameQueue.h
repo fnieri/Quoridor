@@ -1,3 +1,10 @@
+/**
+ * @file GameQueue.h
+ * @author Boris Petrov
+ * @brief Queue handling the matchmaking of players
+ * @date 02/25/22
+ */
+
 #pragma once
 
 enum class GameMode { Classic };

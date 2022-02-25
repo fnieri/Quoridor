@@ -1,6 +1,9 @@
 /**
+ * @file UserHandler.cpp
  * @author Francesco Nieri
  * @author Boris Petrov
+ * @brief Handle requests from client and relay them to appropriate handler
+ * @date 02/25/22
  */
 
 #pragma once
@@ -12,8 +15,6 @@
 #include <memory>
 #include <mutex>
 #include <string>
-
-// TODO: replace observer with a reference
 
 class ServerUser;
 class UserHub;

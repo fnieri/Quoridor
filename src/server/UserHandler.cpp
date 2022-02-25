@@ -1,5 +1,8 @@
 /**
+ * @file UserHandler.cpp
  * @author Boris Petrov
+ * @brief Handle requests from client and relay them to appropriate handler
+ * @date 02/25/22
  */
 
 #include "UserHandler.h"

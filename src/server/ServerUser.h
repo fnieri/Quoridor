@@ -1,5 +1,8 @@
 /**
+ * @file ServerUser.h
  * @author Boris Petrov
+ * @brief Representation of User on the server
+ * @date 02/25/22
  */
 
 #pragma once

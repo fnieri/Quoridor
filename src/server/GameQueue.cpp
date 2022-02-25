@@ -1,3 +1,10 @@
+/**
+ * @file GameQueue.cpp
+ * @author Boris Petrov
+ * @brief Queue handling the matchmaking of players
+ * @date 02/25/22
+ */
+
 #include "GameQueue.h"
 
 GameQueue::GameQueue(GameMode mode)

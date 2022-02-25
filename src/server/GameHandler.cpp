@@ -1,5 +1,8 @@
 /**
+ * @file GameHandler.cpp
  * @author Boris Petrov
+ * @brief Handler of requests related to a game
+ * @date 02/25/22
  */
 
 #include "GameHandler.h"

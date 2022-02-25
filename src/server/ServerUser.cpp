@@ -1,5 +1,8 @@
 /**
+ * @file ServerUser.cpp
  * @author Boris Petrov
+ * @brief Representation of User on the server
+ * @date 02/25/22
  */
 
 #include "ServerUser.h"
@@ -7,8 +10,6 @@
 #include <algorithm>
 
 // TODO: make it work with db
-//
-// The setters here should all update the db.
 
 bool ServerUser::isLoggedIn() const noexcept
 {

@@ -1,5 +1,8 @@
 /**
+ * @file RequestHandler.h
  * @author Boris Petrov
+ * @brief Asynchronously read and respond to requests
+ * @date 02/25/22
  */
 
 #pragma once
@@ -34,10 +37,10 @@ public:
      * @see handleRequests
      */
     virtual void startHandling();
-    virtual ~RequestHandler() noexcept;
+    /* virtual ~RequestHandler() noexcept; */
 
 protected:
-    std::thread m_thread;
+    /* std::thread m_thread; */
     /**
      * Method running in its thread
      */
