@@ -20,6 +20,7 @@ class GameActionsSerializableMessageFactory : public SerializableMessageFactory
      * @return nlohmann::json requestJson
      */
     nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string username, int ELO);
+     
     /**
      * @brief Serialize a user request when pausing, saving, forfeiting game
      *
@@ -29,6 +30,4 @@ class GameActionsSerializableMessageFactory : public SerializableMessageFactory
      * @return nlohmann::json requestJson
      */
     nlohmann::json serializeInGameRequest(GameAction gameAction, std::string username);
-
-  
 };

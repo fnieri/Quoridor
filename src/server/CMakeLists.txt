@@ -4,7 +4,8 @@ add_library(${PREFIX}_server
     AuthSerializableMessageFactory.cpp
     BoardActionsSerializableMessageFactory.cpp
     SerializableMessageFactory.cpp
-    GameActionsSerializableMessageFactory.cpp
+    
+    # GameActionsSerializableMessageFactory.cpp
     )
 
 target_link_libraries(${PREFIX}_server
@@ -13,7 +14,7 @@ target_link_libraries(${PREFIX}_server
         sockpp
         ${PREFIX}_common
         PRIVATE
-        cryptopp-shared
+        cryptopp-shared 
         pthread
 )
 
