@@ -7,6 +7,7 @@
 
 #include "UserHandler.h"
 
+#include "AuthHandler.h"
 #include "ServerUser.h"
 #include "src/common/Exceptions.h"
 
@@ -96,6 +97,11 @@ void UserHandler::relayMessage(const std::string &serMessage)
 /**
  * UserHub
  */
+
+UserHub::UserHub()
+    : m_authHandler {*this}
+{
+}
 
 UserHub::~UserHub()
 {

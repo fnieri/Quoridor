@@ -8,6 +8,7 @@
 
 #pragma once
 
+#include "AuthHandler.h"
 #include "src/common/Observer.h"
 #include "src/common/RequestHandler.h"
 
@@ -52,7 +53,7 @@ protected:
      *
      * The message received by the handler is analyzed and
      * transferred to the appropriate specific component (e.g
-     * LoginHangler, GameHandler, etc).
+     * LoginHandler, GameHandler, etc).
      *
      *                       ChatBox
      *                     /
@@ -96,14 +97,11 @@ class UserHub
 private:
     std::vector<std::shared_ptr<UserHandler>> m_handlers;
     mutable std::mutex m_handlersMutex;
-    /**
-     * Erase handlers whose connection with the client was lost
-     */
+
+    AuthHandler m_authHandler;
 
 public:
-    UserHub()
-    {
-    }
+    UserHub();
     ~UserHub();
 
     /**
@@ -117,6 +115,9 @@ public:
      * @see UserHandler
      */
     void add(Socket &&);
+    /**
+     * Erase handlers whose connection with the client was lost
+     */
     void eraseFinished();
 
     /**
