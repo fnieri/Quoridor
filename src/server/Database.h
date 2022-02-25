@@ -19,6 +19,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
+#include <nlohmann/json.hpp>
 
 #include <cstdint>
 #include <iostream>
@@ -32,6 +33,8 @@ constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.
 constexpr char kDatabaseName[] {"testing"};
 constexpr char kCollectionName[] {"TestCollection"};
 constexpr char kUserCollectionName[] {"UserCollection"};
+constexpr char kChatCollectionName[] {"ChatCollection"};
+constexpr char kGameCollectionName[] {"GameCollection"};
 }
 
 class DatabaseHandler
@@ -42,9 +45,10 @@ class DatabaseHandler
     /**
      * @brief Check whether or not a user with the given username exists.
      * @param username string.
-     * @return Returns true if the user exists, false otherwise.
+     * @return True if the user exists, false otherwise.
      */
     static bool doesUsernameExist(const std::string &username);
+    static std::string getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId);
     DatabaseHandler();
     static std::unique_ptr<DatabaseHandler> &Instance()
     {
@@ -59,7 +63,7 @@ public:
     /**
      * @brief Create an account with the given username and password. Encrypts the password and stores salt key.
      * @param username and raw password string.
-     * @return Returns true if the account was successfully created, false otherwise.
+     * @return True if the account was successfully created, false otherwise.
      */
     static bool createAccount(const std::string &username, const std::string &password);
     /**
@@ -133,8 +137,36 @@ public:
      * just not a good idea.
      */
     static void setELO(const std::string &username, const int &elo);
-
-    // TODO
+    /**
+     * @brief Send a message from a user to another user
+     * @param sender username string, receiver username string, message string.
+     */
     static void sendMessage(const std::string &sender, const std::string &receiver, const std::string &message);
-    static std::vector<std::vector<std::string>> getMessages(const std::string &username);
+    /**
+     * @brief Send a message from a user in a game chat.
+     * @param sender username string, message string, game id int.
+     */
+    static void sendMessage(const std::string &sender, const std::string &message, const int &gameId);
+    /**
+     * @brief Get a user's messages with another user.
+     * @param username string, friend username string.
+     * @note The order in which the username parameters are passed is not important. (user1, user2) and (user2, user1) will return the same thing.
+     * @return Vector of vector of strings. The first string is the sender username, the second string is the sender message.
+     */
+    static std::vector<std::vector<std::string>> getMessages(const std::string &username, const std::string &friendUsername);
+    /**
+     * @brief Get a the messages sent in a game chat.
+     * @param game id int.
+     * @return Vector of vector of strings. The first string is the sender username, the second string is the sender message.
+     */
+    static std::vector<std::vector<std::string>> getMessages(const int &gameId);
+    /**
+     * @brief Check whether or not a gameId is already used.
+     * @param game id int.
+     * @return True if the game id is already used, false otherwise.
+     */
+    static bool isGameIdUsed(const int &gameId);
+    // TODO
+//    static void getAllUserMessages(const std::string &username);
+//    static std::vector<std::vector<std::string>> getMessages(const std::string &username);
 };

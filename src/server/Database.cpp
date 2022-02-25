@@ -13,6 +13,7 @@ using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
+using json = nlohmann::json;
 
 mongocxx::instance inst {}; // Initialize MongoDB C++ driver
 
@@ -378,4 +379,132 @@ void DatabaseHandler::setELO(const std::string &username, const int &elo)
         userColl.update_one(
             document {} << "username" << username << finalize, document {} << "$set" << open_document << "elo" << elo << close_document << finalize);
     }
+}
+
+std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId)
+{
+    std::string idStr1, idStr2;
+    if (senderId < receiverId) {
+        idStr1 = senderId.to_string();
+        idStr2 = receiverId.to_string();
+    } else {
+        idStr1 = receiverId.to_string();
+        idStr2 = senderId.to_string();
+    }
+    std::string chatId = idStr1 + idStr2;
+    return chatId;
+}
+
+void DatabaseHandler::sendMessage(const std::string &sender, const std::string &receiver, const std::string &message)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << receiver << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult && maybeFriendResult) {
+        bsoncxx::document::view view = maybeResult->view();
+        bsoncxx::document::view receiverView = maybeFriendResult->view();
+        bsoncxx::oid senderId = view["_id"].get_oid().value;
+        bsoncxx::oid receiverId = receiverView["_id"].get_oid().value;
+        std::string chatId = getChatId(senderId, receiverId);
+        mongocxx::collection chatColl = Instance()->db[database::kChatCollectionName];
+
+        if (!chatColl.find_one(document {} << "chat_id" << chatId << finalize)) {
+            chatColl.insert_one(document {} << "chat_id" << chatId << finalize);
+        }
+        chatColl.update_one(document {} << "chat_id" << chatId << finalize,
+            document {} << "$push" << open_document << "messages" << open_document << sender << message << close_document << close_document << finalize);
+    } else
+        std::cout << "Username not found" << std::endl;
+}
+
+std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername)
+{
+    std::vector<std::vector<std::string>> messages;
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << friendUsername << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult && maybeFriendResult) {
+        bsoncxx::document::view view = maybeResult->view();
+        bsoncxx::document::view friendView = maybeFriendResult->view();
+        bsoncxx::oid senderId = view["_id"].get_oid().value;
+        bsoncxx::oid friendId = friendView["_id"].get_oid().value;
+        std::string chatId = getChatId(senderId, friendId);
+        mongocxx::collection chatColl = Instance()->db[database::kChatCollectionName];
+        bsoncxx::stdx::optional<bsoncxx::document::value> chat = chatColl.find_one(document {} << "chat_id" << chatId << finalize);
+
+        if (chat) {
+            bsoncxx::document::view chatView = chat->view();
+            auto messagesArray = chatView["messages"].get_array().value;
+            int i = 0;
+            // get all received friend requests
+            while (messagesArray.find(i) != messagesArray.end()) {
+                bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
+                auto messageJson = json::parse(bsoncxx::to_json(messageView));
+                for (auto &element : messageJson.items()) {
+                    std::vector<std::string> message;
+                    message.push_back(element.key());
+                    message.push_back(element.value().get<std::string>());
+                    messages.push_back(message);
+                }
+
+                i++;
+            }
+        }
+    }
+    return messages;
+}
+
+void DatabaseHandler::sendMessage(const std::string &sender, const std::string &message, const int &gameId)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+
+        gameColl.update_one(document {} << "game_id" << gameId << finalize,
+            document {} << "$push" << open_document << "messages" << open_document << sender << message << close_document << close_document << finalize);
+    } else
+        std::cout << "Username not found" << std::endl;
+}
+
+std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &gameId)
+{
+    std::vector<std::vector<std::string>> messages;
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
+    // check if gameId is contained in the collection
+    if (maybeResult) {
+        auto gameView = maybeResult->view();
+        auto messagesArray = gameView["messages"].get_array().value;
+        int i = 0;
+        // get all received friend requests
+        while (messagesArray.find(i) != messagesArray.end()) {
+            bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
+            auto messageJson = json::parse(bsoncxx::to_json(messageView));
+            for (auto &element : messageJson.items()) {
+                std::vector<std::string> message;
+                message.push_back(element.key());
+                message.push_back(element.value().get<std::string>());
+                messages.push_back(message);
+            }
+
+            i++;
+        }
+    }
+    return messages;
+}
+
+bool DatabaseHandler::isGameIdUsed(const int &gameId)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
+    // check if gameId is contained in the collection
+    if (maybeResult) {
+        std::cout << "GameId already exists" << std::endl;
+        return false;
+    }
+    return true;
 }
