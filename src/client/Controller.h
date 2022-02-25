@@ -23,9 +23,6 @@ public:
     void handleHover(Point p);
 
 
-
-
-
     // Social functionalities
     void receiveMessage(std::string mess, std::string username, int gameId);
     void addFriend(std::string username, std::string friendUsername);

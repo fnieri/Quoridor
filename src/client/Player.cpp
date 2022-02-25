@@ -22,10 +22,21 @@ void Player::setPosition(const Point &newPosition)
     position = newPosition;
 }
 
+void Player::setMatrixPosition(const Point &newPosition)
+{
+    setPosition(newPosition / 2);
+}
+
 Point Player::getPosition() const
 {
     return position;
 }
+
+Point Player::getMatrixPosition() const
+{
+    return getPosition() * 2;
+}
+
 int Player::nWalls() const
 {
     return nwalls;
@@ -34,11 +45,6 @@ int Player::nWalls() const
 void Player::takeAwayWall()
 {
     nwalls--;
-}
-
-Point Player::getPosition()
-{
-    return position;
 }
 
 PawnColors Player::getColor()

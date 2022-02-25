@@ -166,7 +166,8 @@ Point Board::getMiddleBoardComponent(const Point &first, const Point &second, co
 void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
 {
     // We suppose here that the move is valid
-    std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix[matrixPos.x()][matrixPos.y()])->removePlayer();
     std::dynamic_pointer_cast<Cell>(matrix[cell.x()][cell.y()])->placePlayer(player);
 }
 

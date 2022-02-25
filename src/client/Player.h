@@ -12,16 +12,20 @@ class Player
 
 public:
     Player(const PawnColors &color, const Point &position, const int &nwalls); // Const or not ?
+    ~Player();
+
     int x() const;
     int y() const;
+
     Point getPosition() const;
+    Point getMatrixPosition() const;
+
     void setPosition(const Point &newPosition);
+    void setMatrixPosition(const Point &newPosition);
 
     int nWalls() const;
     void takeAwayWall();
 
-    ~Player();
-    Point getPosition();
     PawnColors getColor();
     void setColor(PawnColors newColor);
 };

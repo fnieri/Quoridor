@@ -18,8 +18,8 @@ PlayerAction::PlayerAction(shared_ptr<Board> board, shared_ptr<Player> player, c
 
 bool PlayerAction::isActionValid()
 {
-    return board->isBasicMove(player->getPosition(), destination) || board->isJumpMove(player->getPosition(), destination)
-        || board->isDiagonalMove(player->getPosition(), destination);
+    return board->isBasicMove(player->getMatrixPosition(), destination) || board->isJumpMove(player->getMatrixPosition(), destination)
+        || board->isDiagonalMove(player->getMatrixPosition(), destination);
 }
 
 bool PlayerAction::isGameOver()
@@ -32,7 +32,7 @@ bool PlayerAction::executeAction()
 
     if (isActionValid()) {
         board->movePlayer(player, destination);
-        player->setPosition(destination);
+        player->setMatrixPosition(destination);
         return true;
     } else
         return false;
