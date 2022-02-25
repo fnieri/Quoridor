@@ -31,7 +31,7 @@ private:
     std::string gameSetup;
 public:
     ViewController();
-    ~ViewController();
+    ~ViewController() = default;
 
     /* Setters */
     void setBoard(std::shared_ptr<Board> aBoard);
@@ -74,6 +74,6 @@ public:
     void sendMessage(std::string receiver, std::string msg);
     void sendMessage(std::string msg, int gameId);
     void receiveMessage(std::string receiver, std::string msg, int gameId);
-    void loadMessages(std::string friendUsername);
+    void loadMessages(std::string username);
     void loadMessages(int gameId);
 };

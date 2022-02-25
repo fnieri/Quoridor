@@ -141,12 +141,11 @@ void ViewController::receiveMessage(std::string receiver, std::string msg, int g
 
 }
 
-void ViewController::loadMessages(std::string friendUsername)
+void ViewController::loadMessages(std::string username)
 {
 
 }
 
 void ViewController::loadMessages(int gameId)
 {
-    
 }
