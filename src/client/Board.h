@@ -79,8 +79,8 @@ public:
      * DO NOT CALL THIS FUNCTION DIRECTLY!
      * Create a PlayerAction and call PlayerAction::executeAction() instead.
      *
-     * @param player the player to move
-     * @param cell the new destination of the player
+     * @param player the Player to move
+     * @param cell the new destination of the Player
      *
      * @warning the position is assumed to be a *player cell position*
      */
@@ -118,6 +118,15 @@ public:
      * - 3=west
      */
     bool pathExists(const Point &start, int finishLine) const;
+
+    /**
+     * Finds all the players on the board and returns their positions.
+     *
+     * @return std::vector<Point>
+     *
+     * @warning the returned point is a *player cell position*
+     */
+    std::vector<std::shared_ptr<Player>> findPlayers();
 
     bool isBasicMove(const Point &current, const Point &destination) const;
     bool isJumpMove(const Point &current, const Point &destination) const;

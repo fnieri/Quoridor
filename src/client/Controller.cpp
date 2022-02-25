@@ -13,10 +13,16 @@ Controller::Controller(std::shared_ptr<Board> board)
     : board {board}
 {
     for (int i = 0; i < nPlayers; i++) {
-        // TODO: Change default position of players
-        players.push_back(std::make_shared<Player>(PawnColors(i), Point {0, 0}, 10));
+        // TODO: Change spawn position of players
+        Point pos {i, i};
+        auto p = std::make_shared<Player>(PawnColors(i), pos, 10);
+
+        players.push_back(p);
+
+        // Temporary way of adding the players to the board
+        PlayerAction spawnPlayer {board, p, pos};
+        spawnPlayer.executeAction();
     }
-    //the controller should create the view here
 }
 
 void Controller::handleClick(Point p)

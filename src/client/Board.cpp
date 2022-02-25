@@ -284,6 +284,21 @@ bool Board::pathExists(const Point &start, int finishLine) const
     return false;
 }
 
+std::vector<std::shared_ptr<Player>> Board::findPlayers()
+{
+    std::vector<std::shared_ptr<Player>> players;
+
+    for (int x = 0; x < MATRIX_SIZE; x += 2) {
+        for (int y = 0; y < MATRIX_SIZE; y += 2) {
+            if (isCell({x, y}) && matrix[x][y] && matrix[x][y]->isOccupied()) {
+                players.push_back(std::dynamic_pointer_cast<Cell>(matrix[x][y])->getPlayer());
+            }
+        }
+    }
+
+    return players;
+}
+
 int Board::getCellSize()
 {
     return CELL_SIZE;
