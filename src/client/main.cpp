@@ -15,9 +15,10 @@
 
 #include <memory>
 #include <vector>
-
+/*
 int main(int nPlayers, std::string gameSetup, std::shared_ptr<ViewController> viewController, std::shared_ptr<ServerController> serverController,)
 {   
+    
     std::shared_ptr<Board> board;
     std::vector<std::shared_ptr<Player>> players;
 
@@ -38,6 +39,12 @@ int main(int nPlayers, std::string gameSetup, std::shared_ptr<ViewController> vi
     viewController->setPlayers(players);
     serverController->setBoard(board);
     serverController->setPlayers(players);
+    
 
+    return 0;
+}
+*/
+
+int main() {
     return 0;
 }

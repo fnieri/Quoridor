@@ -11,9 +11,8 @@ using json = nlohmann::json;
 PlayerAction::PlayerAction(shared_ptr<Board> board, shared_ptr<Player> player, const Point &_destination)
     : board {board}
     , player {player}
-//, destination {destination}
 {
-    destination = {_destination.x() * 2, _destination.y() * 2}; // Position in the matrix
+    destination = _destination * 2;
 }
 
 bool PlayerAction::isActionValid()
@@ -24,7 +23,8 @@ bool PlayerAction::isActionValid()
 
 bool PlayerAction::isGameOver()
 {
-    return false;
+
+    return board->isPositionOnFinishLine(player->getMatrixPosition(), player->getFinishLine());
 }
 
 bool PlayerAction::executeAction()

@@ -201,3 +201,63 @@ TEST_CASE("Player Move not valid")
         }
     }
 }
+
+TEST_CASE("Test isGameOver")
+{
+    std::shared_ptr<Board> b(new Board {});
+    std::shared_ptr<Player> player1(new Player {PawnColors::Yellow, Point {5, 2}, 99, FinishLine::North});
+    std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {3, 6}, 99, FinishLine::South});
+    std::shared_ptr<Player> player3(new Player {PawnColors::Blue, Point {6, 5}, 99, FinishLine::East});
+    std::shared_ptr<Player> player4(new Player {PawnColors::Purple, Point {2, 3}, 99, FinishLine::West});
+
+    PlayerAction a1 {b, player1, {5, 1}};
+    PlayerAction a2 {b, player2, {3, 7}};
+    PlayerAction a3 {b, player3, {7, 5}};
+    PlayerAction a4 {b, player4, {1, 3}};
+    REQUIRE(a1.executeAction());
+    REQUIRE(a2.executeAction());
+    REQUIRE(a3.executeAction());
+    REQUIRE(a4.executeAction());
+
+    SECTION("Game is not over yet")
+
+    {
+        REQUIRE(!a4.isGameOver()); // Players are all just before the finish line
+    }
+
+    SECTION("Game is over : player1 wins")
+    {
+        PlayerAction a5 {b, player1, {5, 0}};
+        REQUIRE(a5.isActionValid());
+        REQUIRE(a5.executeAction());
+
+        REQUIRE(a5.isGameOver());
+    }
+
+    SECTION("Game is over : player2 wins")
+    {
+        PlayerAction a5 {b, player2, {3, 8}};
+        REQUIRE(a5.isActionValid());
+        REQUIRE(a5.executeAction());
+
+        REQUIRE(a5.isGameOver());
+    }
+
+    SECTION("Game is over : player 3 wins")
+    {
+        PlayerAction a5 {b, player3, {8, 5}};
+        REQUIRE(a5.isActionValid());
+        REQUIRE(a5.executeAction());
+
+        REQUIRE(a5.isGameOver());
+    }
+
+    SECTION("Game is over : player 4 wins")
+    {
+        PlayerAction a5 {b, player4, {0, 3}};
+        REQUIRE(a5.isActionValid());
+        REQUIRE(a5.executeAction());
+
+        REQUIRE(a5.isGameOver());
+    }
+}

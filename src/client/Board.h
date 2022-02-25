@@ -129,17 +129,6 @@ private:
      */
     void placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation);
 
-    /**
-     * Checks whether a given Point is on the given finish line.
-     *
-     * @param position the matrix position to check on
-     * @param finishLine the FinishLine to check for
-     * @returns bool
-     *
-     * @warning the point is assumed to have *proper matrix indices*
-     */
-    bool isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const;
-
 public:
     Board();
 
@@ -266,6 +255,17 @@ public:
      * @warning the position is assumed to have *proper matrix indices*
      */
     bool isDiagonalMove(const Point &current, const Point &destination) const;
+
+    /**
+     * Checks whether a given Point is on the given finish line.
+     *
+     * @param position the matrix position to check on
+     * @param finishLine the FinishLine to check for
+     * @returns bool
+     *
+     * @warning the point is assumed to have *proper matrix indices*
+     */
+    bool isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const;
 
     int getCellSize();
 
