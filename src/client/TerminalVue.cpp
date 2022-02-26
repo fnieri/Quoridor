@@ -90,8 +90,7 @@ auto TerminalVue::createCanvas()
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
                         handleWallAdd(i, j);
                         // TODO sacha: if mouse is pressed on empty quoridor then draw a quoridor and also handle wallOrientation
-                    }
-                    else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(i, j)) {
+                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(i, j)) {
                         std::vector<int> direction = quoridorDirection[wallOrientation];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
                     }
@@ -146,6 +145,11 @@ auto TerminalVue::createSearchInput()
 {
     // return Input(&searchField, "Type text...");
     return Input(&searchField, "Search a friend...");
+}
+
+auto TerminalVue::createChatFriendInput()
+{
+    return Input(&messageToFriend, "Type a message...");
 }
 
 auto TerminalVue::createActionToggle()
@@ -214,7 +218,7 @@ auto TerminalVue::createChatRenderer()
         buttonOption);
     auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
     return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
-        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15), separator(),
             hbox({text(">"), chatInput->Render(), sendButton->Render()})});
     });
 }
@@ -222,31 +226,43 @@ auto TerminalVue::createChatRenderer()
 auto TerminalVue::createFriendsListRenderer()
 {
     auto friendList = Window("Friends List", Menu(&friendsElements, &friend_selected));
-    auto friendChat = Window("Chat", Menu(&chatEntries[friend_selected], &chat_message_selected)); 
+    auto friendChat = Menu(&chatEntry, &chat_message_selected);
+    auto chatToFriendInput = createChatFriendInput();
+    auto sendChatToFriendButton = Button(
+        "Send",
+        [&] {
+            if (!messageToFriend.empty()) {
+                addChatFriendMessage(username, messageToFriend);
+            }
+        },
+        buttonOption);
+
     auto friendListContainer = Container::Vertical({
         friendList,
         friendChat,
+        chatToFriendInput,
+        sendChatToFriendButton,
     });
-    return Renderer(friendListContainer, [&, friendList, friendChat] { return hbox({
-        vbox({
-            // text("Friends List") | center,
-            // separator(),
-            friendList->Render() /*| vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)*/,
-        }) | xflex,
-        // separator(),
-        vbox({
-            // text("Chat") | center,
-            // separator(),
-            friendChat->Render() /*| vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15)*/,
-        }) | xflex,
-        }); 
+
+
+    return Renderer(friendListContainer, [&, friendList, friendChat, chatToFriendInput, sendChatToFriendButton] {
+        chatEntry = chatEntries[friend_selected];
+        return hbox({
+            vbox({
+                friendList->Render() | frame | size(HEIGHT, LESS_THAN, 15),
+            }) | xflex,
+            separator(),
+            vbox({
+                text("Chat") | center,
+                separator(),
+                friendChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15) ,
+                text(L"") | focus,
+                separator(),
+                hbox({text(">"), chatToFriendInput->Render(), sendChatToFriendButton->Render()}),
+            }) | yframe | yflex | xflex,
+        });
     });
 }
-
-// auto TerminalVue::createFriendChatRenderer()
-// {
-//     return Renderer();
-// }
 
 auto TerminalVue::createFriendUtilitariesRenderer()
 {
@@ -254,11 +270,11 @@ auto TerminalVue::createFriendUtilitariesRenderer()
     auto addButton = Button(
         "Add",
         [&] {
-            if(!searchField.empty()){      //Note that methods not implemented yet
+            if (!searchField.empty()) { // Note that methods not implemented yet
                 // addFriend(username);
             }
         },
-    buttonOption);
+        buttonOption);
     auto notifBox = Menu(&notifs, &notif_selected);
     auto utilitariesContainer = Container::Vertical({
         searchInput,
@@ -266,15 +282,16 @@ auto TerminalVue::createFriendUtilitariesRenderer()
         notifBox,
     });
 
-    return Renderer(utilitariesContainer, [&,searchInput, addButton, notifBox] { 
+    return Renderer(utilitariesContainer, [&, searchInput, addButton, notifBox] {
         return vbox({
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
-            notifBox->Render() |yflex,
+            // text("Notifications") | center,
+            // separator(),
+            notifBox->Render() | yflex,
         });
     });
 }
-
 
 auto TerminalVue::createSettingsRenderer()
 {
@@ -367,16 +384,23 @@ void TerminalVue::run()
     screen.Loop(mainRenderer);
 }
 
-void TerminalVue::addChatMessage(std::string username, std::string message)
+void TerminalVue::addChatMessage(std::string username, std::string messagetosend)
 {
-    chatElements.push_back(std::string(username + ": " + message));
+    chatElements.push_back(std::string(username + ": " + messagetosend));
+    message.clear();
+}
+
+void TerminalVue::addChatFriendMessage(std::string username, std::string message)
+{
+    chatEntries[friend_selected].push_back(std::string(username + ": " + message));
+    messageToFriend.clear();
 }
 
 void TerminalVue::addFriend(std::string username)
 {
     // friendsElements.push_back( Component()<-- *items ?
     //     text(username),
-    //     Button("+", [&] { Invite friend to play;}, &buttonOption), 
+    //     Button("+", [&] { Invite friend to play;}, &buttonOption),
     //     Button("X", [&] { Delete friend at index given by &friend_selected;}, &buttonOption)
     //     );
 }

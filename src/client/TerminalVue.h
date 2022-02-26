@@ -39,7 +39,7 @@ using namespace ftxui;
 
 class TerminalVue
 {
-    std::string message, searchField, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
+    std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
     int mouse_y = 0;
@@ -58,24 +58,30 @@ class TerminalVue
     std::vector<std::string> chatElements;
     int friend_selected = 0;
     int chat_message_selected = 0;
-    std::vector<std::string> friendsElements {
-        "Friend Name1","Friend Name2","Friend Name3","Friend Name4","Friend Name5","Friend Name6"
-    };
+    std::vector<std::string> friendsElements {"Hector","Lulu","Bernard","Léon","Charlotte","Merlin","Pierre","Fleure","Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
     std::vector<std::vector<std::string>> chatEntries {
-        {"Salut", "comment ça va", "utilisateur 0?"},
-        {"Salut", "comment ça va", "utilisateur 1?"},
-        {"Salut", "comment ça va", "utilisateur 2?"},
+        {"Hello Hector"},
+        {"On se fait", "une partie ?"},
+        {"Salut", "comment ça va", "Bernard?"},
         {"Salut", "comment ça va", "utilisateur 3?"},
         {"Salut", "comment ça va", "utilisateur 4?"},
-        {"Salut", "comment ça va", "utilisateur 5?"}
+        {"Salut", "comment ça va", "utilisateur 5?"},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
+        {""},
     };
-
+    std::vector<std::string> chatEntry;
     int notif_selected = 0;
     std::vector<std::string> notifs{
         "User1 wants to add you!   (A)ccept or (D)eny ?",
         "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
-    //Dummy
 
     std::vector<std::string> actionToggleEntries {
         "Move",
@@ -122,6 +128,8 @@ class TerminalVue
 
     auto createSearchInput();
 
+    auto createChatFriendInput();
+
     auto createActionToggle();
 
     auto createOrientationToggle();
@@ -167,9 +175,12 @@ public:
      */
     void addFriend(std::string username);
 
+    void addChatFriendMessage(std::string username, std::string message);
+
     Component Window(std::string title, Component component) {
-  return Renderer(component, [component, title] {  //
-    return window(text(title), component->Render()) | flex;
-  });
-}
+        return Renderer(component, [component, title] {  //
+            return window(text(title), component->Render()) | flex;
+        });
+    }
+
 };
