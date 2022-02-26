@@ -85,8 +85,8 @@ bool Board::isWayFree(const Point &first, const Point &second) const
     // Check if two cells are separated by a wall
     // Point position = getIndexCorridor(first, second);
     Point position = getMiddleBoardComponent(first, second, CORRIDOR);
-    if (matrix[position.x()][position.y()] && isPositionValid(position)) {
-        return !matrix[position.x()][position.y()]->isOccupied();
+    if (matrix.at(position.x()).at(position.y()) && isPositionValid(position)) {
+        return !matrix.at(position.x()).at(position.y())->isOccupied();
     }
 
     return false;
@@ -167,8 +167,8 @@ void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
 {
     // We suppose here that the move is valid
     auto matrixPos = player->getMatrixPosition();
-    std::dynamic_pointer_cast<Cell>(matrix[matrixPos.x()][matrixPos.y()])->removePlayer();
-    std::dynamic_pointer_cast<Cell>(matrix[cell.x()][cell.y()])->placePlayer(player);
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->removePlayer();
+    std::dynamic_pointer_cast<Cell>(matrix.at(cell.x()).at(cell.y()))->placePlayer(player);
 }
 
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
@@ -176,8 +176,8 @@ void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
     // We suppose here that the the placement of the wall is valid
     // We suppose here that the given indices have already been converted into matrix indexes
     // Downcasting
-    std::dynamic_pointer_cast<Corridor>(matrix[firstHalf.x()][firstHalf.y()])->placeWall();
-    std::dynamic_pointer_cast<Corridor>(matrix[secondHalf.x()][secondHalf.y()])->placeWall();
+    std::dynamic_pointer_cast<Corridor>(matrix.at(firstHalf.x()).at(firstHalf.y()))->placeWall();
+    std::dynamic_pointer_cast<Corridor>(matrix.at(secondHalf.x()).at(secondHalf.y()))->placeWall();
 }
 
 void Board::placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation)
@@ -185,7 +185,7 @@ void Board::placeWallMiddlePiece(const Point &middlePiece, const WallOrientation
     // Place the "middle piece" of the wall, on the empty spot in the board
     auto mid = std::make_shared<Corridor>(orientation);
     mid->placeWall();
-    matrix[middlePiece.x()][middlePiece.y()] = mid;
+    matrix.at(middlePiece.x()).at(middlePiece.y()) = mid;
 }
 
 void Board::placeWall(const Point &cell, const WallOrientation &direction)
@@ -285,16 +285,16 @@ bool Board::pathExists(const Point &start, FinishLine finishLine) const
         if (isPositionOnFinishLine(Point {x, y}, finishLine))
             return true;
 
-        if (x > 0 && !matrix[x - 1][y]->isOccupied())
+        if (x > 0 && !matrix.at(x - 1).at(y)->isOccupied())
             searches.push(Point {x - 2, y});
 
-        if (x < MATRIX_SIZE - 1 && !matrix[x + 1][y]->isOccupied())
+        if (x < MATRIX_SIZE - 1 && !matrix.at(x + 1).at(y)->isOccupied())
             searches.push(Point {x + 2, y});
 
-        if (y > 0 && !matrix[x][y - 1]->isOccupied())
+        if (y > 0 && !matrix.at(x).at(y - 1)->isOccupied())
             searches.push(Point {x, y - 2});
 
-        if (y < MATRIX_SIZE - 1 && !matrix[x][y + 1]->isOccupied())
+        if (y < MATRIX_SIZE - 1 && !matrix.at(x).at(y + 1)->isOccupied())
             searches.push(Point {x, y + 2});
     }
 
@@ -307,8 +307,8 @@ std::vector<std::shared_ptr<Player>> Board::findPlayers()
 
     for (int x = 0; x < MATRIX_SIZE; x += 2) {
         for (int y = 0; y < MATRIX_SIZE; y += 2) {
-            if (isCell({x, y}) && matrix[x][y] && matrix[x][y]->isOccupied()) {
-                players.push_back(std::dynamic_pointer_cast<Cell>(matrix[x][y])->getPlayer());
+            if (isCell({x, y}) && matrix.at(x).at(y) && matrix.at(x).at(y)->isOccupied()) {
+                players.push_back(std::dynamic_pointer_cast<Cell>(matrix.at(x).at(y))->getPlayer());
             }
         }
     }
@@ -327,8 +327,8 @@ void Board::debugPrint()
         for (int x = 0; x < MATRIX_SIZE; x++) {
             if (isCell({x, y})) {
                 std::cout << "■";
-            } else if (matrix[x][y] && matrix[x][y]->isOccupied()) {
-                auto orientation = std::dynamic_pointer_cast<Corridor>(matrix[x][y])->getOrientation();
+            } else if (matrix.at(x).at(y) && matrix.at(x).at(y)->isOccupied()) {
+                auto orientation = std::dynamic_pointer_cast<Corridor>(matrix.at(x).at(y))->getOrientation();
                 std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");
             } else
                 std::cout << " ";
