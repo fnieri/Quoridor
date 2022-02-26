@@ -17,6 +17,9 @@ private:
     Point destCell; // Position of the cell from the view of the player
     WallOrientation orientation;
 
+    Point piece1();
+    Point piece2();
+
 public:
     WallAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &destCell, const WallOrientation &orientation);
 
