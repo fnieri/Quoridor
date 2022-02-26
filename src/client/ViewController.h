@@ -18,6 +18,8 @@
 #include <memory>
 #include <vector>
 
+using json = nlohmann::json;
+
 // View Controller to easily send actions to the different models' controller : Game + Chat + Network
 class ViewController
 {
@@ -71,14 +73,19 @@ public:
     void checkLeaderBoard();
 
     /* To Chat Model (all of these are to send to the ServerController as well) */
-    void sendMessage(std::string receiver, std::string msg); // recoit de Vue vers Server
-    void sendMessage(std::string msg, int gameId);
-    
-    void receiveMessage(std::string receiver, std::string msg, int gameId); // recoit du Server a donner a la vue
+    void sendDirectMessage(std::string sender, std::string receiver, std::string msg);
+    void sendGroupMessage(std::string sender, std::string msg, int gameId);
 
-    void loadMessages(std::string username);
-    void loadMessages(int gameId);
+    // void receiveMessage(std::string receiver, std::string msg, int gameId); // recoit du Server a donner a la vue
+    
+    bool isMessageReceived(bool received=false);
+
+    json receiveGroupMessage(json msg);
+    json receiveDirectMessage(json msg);
+    
+    void loadDirectMessages(std::string username);
+    void loadGroupMessages(int gameId);
 
     /* Noticing the view */
-    bool isGameOver(bool over=false);
+    bool isGameOver(bool over = false);
 };

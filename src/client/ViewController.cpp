@@ -8,9 +8,11 @@
 #include <memory>
 #include <vector>
 
+using json = nlohmann::json;
 
-ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers) : 
-    serverController{serverController}, nPlayers{nPlayers}
+ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers)
+    : serverController {serverController}
+    , nPlayers {nPlayers}
 {
 }
 
@@ -35,10 +37,11 @@ void ViewController::setGameSetup(std::string gameS)
 
 void ViewController::movePlayer(Point p)
 {
-    std::shared_ptr<PlayerAction> action{board, players[currentPlayerIndex], p / 2};
+    std::shared_ptr<PlayerAction> action {board, players[currentPlayerIndex], p / 2};
     if (action->executeAction() && !action->isGameOver())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
-    else if (action->isGameOver()) isGameOver(true);
+    else if (action->isGameOver())
+        isGameOver(true);
 }
 
 void ViewController::placeWall(Point p, WallOrientation orientation)
@@ -46,12 +49,13 @@ void ViewController::placeWall(Point p, WallOrientation orientation)
     std::shared_ptr<WallAction> action {board, players[currentPlayerIndex], p / 2, orientation};
     if (action->executeAction() && !action->isGameOver())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
-    else if (action->isGameOver()) isGameOver(true);
+    else if (action->isGameOver())
+        isGameOver(true);
 }
 
-/* To Network Model */ 
+/* To Network Model */
 
-void ViewController::startGame()                    
+void ViewController::startGame()
 {
     std::shared_ptr<Board> board;
     std::vector<std::shared_ptr<Player>> players;
@@ -69,9 +73,8 @@ void ViewController::startGame()
         // Temporary way of adding the players to the board
         PlayerAction spawnPlayer {board, p, pos};
         spawnPlayer.executeAction();
-    
-        dictPlayer.insert(players[i]->getColor(),  players[i]);
 
+        dictPlayer.insert(players[i]->getColor(), players[i]);
     }
 
     setBoard(board);
@@ -132,32 +135,50 @@ void ViewController::checkLeaderBoard()
 }
 
 /* To Chat Model */
-void ViewController::sendMessage(std::string receiver, std::string msg)
+void sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-
+    serverController->sendDirectMessage(sender, receiver, msg);       
 }
 
-void ViewController::sendMessage(std::string msg, int gameId)
+void sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
-
+    serverController->sendGroupMessage(sender, msg, gameId);       
 }
 
-void ViewController::receiveMessage(std::string receiver, std::string msg, int gameId)
-{
 
+// don't know if this is a good idea to notice the view of a message entry
+bool ViewController::isMessageReceived(bool received)
+{
+    return received;
 }
 
-void ViewController::loadMessages(std::string username)
+// although they are the same the json msg is not formatted the same way
+json ViewController::receiveGroupMessage(json msg)
 {
-
+    isMessageReceived(true);
+    return msg;
 }
 
-void ViewController::loadMessages(int gameId)
+json ViewController::receiveDirectMessage(json msg)
 {
+    isMessageReceived(true);
+    return msg;
 }
 
-bool ViewController::isGameOver(bool over) 
+// the servers gives messages to load ?
+// there is no json formatted messages to ask the server to load all the messages
+void ViewController::loadDirectMessages(std::string username)
+{
+    serverController->loadDirectMessages(username);       
+}
+
+void ViewController::loadGroupMessages(int gameId)
+{
+    serverController->loadGroupMessages(gameId);       
+}
+
+bool ViewController::isGameOver(bool over)
 {
     serverController->isGameOver(true);
-    return over;        // sends to the view
+    return over; // checked by the view
 }
