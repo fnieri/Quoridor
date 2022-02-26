@@ -15,6 +15,8 @@ class PlayerAction
 {
     std::shared_ptr<Board> board;
     std::shared_ptr<Player> player;
+
+    /// Is a position in the board matrix
     Point destination;
 
 public:
@@ -22,10 +24,19 @@ public:
 
     ~PlayerAction();
 
+    /**
+     * Check if the move of the player is valid
+     */
     bool isActionValid();
 
+    /**
+     * Check if we have a winner
+     */
     bool isGameOver();
 
+    /**
+     * Make the move
+     */
     bool executeAction();
 
     nlohmann::json serialized();
