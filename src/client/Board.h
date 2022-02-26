@@ -79,18 +79,6 @@ private:
     bool isWayValid(const Point &current, const Point &overtaken, const Point &destination) const;
 
     /**
-     * Give the position of the corridor or the cell that sits between two cells
-     *
-     * @param first the position of a Cell
-     * @param second the position of a Cell
-     * @param shift in function of the value of the shift, returning a cell or a corridor
-     *
-     * @warning points are assumed to have *proper matrix indices*
-     * @warning the two cells are assumed to be just next to each other or separated by only one cell
-     */
-    Point getMiddleBoardComponent(const Point &first, const Point &second, const int &shift) const;
-
-    /**
      * Give a point that representents the distance between two cells
      *
      * @param first the position of a Cell
@@ -224,7 +212,7 @@ public:
      *
      * @warning the position is assumed to have *proper matrix indices*
      */
-    bool isBasicMove(const Point &current, const Point &destination) const;
+    bool isValidBasicMove(const Point &current, const Point &destination) const;
 
     /**
      * Check if the move is jump type
@@ -236,7 +224,7 @@ public:
      *
      * @warning the position is assumed to have *proper matrix indices*
      */
-    bool isJumpMove(const Point &current, const Point &destination) const;
+    bool isValidJumpMove(const Point &current, const Point &destination) const;
 
     /**
      * Check if the move is of diagonal type
@@ -248,7 +236,7 @@ public:
      *
      * @warning the position is assumed to have *proper matrix indices*
      */
-    bool isDiagonalMove(const Point &current, const Point &destination) const;
+    bool isValidDiagonalMove(const Point &current, const Point &destination) const;
 
     /**
      * Checks whether a given Point is on the given finish line.

@@ -94,7 +94,7 @@ bool Board::isWayFree(const Point &first, const Point &second) const
         return false;
     }
 
-    if (matrix.at(x).at(y) && isPositionValid(position)) {
+    if (matrix.at(x).at(y) && isPositionValid(Point {x, y})) {
         return !matrix.at(x).at(y)->isOccupied();
     }
 
@@ -107,13 +107,13 @@ bool Board::isWayValid(const Point &current, const Point &overtaken, const Point
     return !isFree(overtaken) && isFree(destination) && isWayFree(current, overtaken) && isWayFree(overtaken, destination);
 }
 
-bool Board::isBasicMove(const Point &current, const Point &destination) const
+bool Board::isValidBasicMove(const Point &current, const Point &destination) const
 {
 
     return isPositionValid(destination) && isCell(destination) && areNeighbours(current, destination) && isFree(destination) && isWayFree(current, destination);
 }
 
-bool Board::isJumpMove(const Point &current, const Point &destination) const
+bool Board::isValidJumpMove(const Point &current, const Point &destination) const
 {
 
     Point distance = getDistance(current, destination);
@@ -125,14 +125,14 @@ bool Board::isJumpMove(const Point &current, const Point &destination) const
 
     int x;
     int y;
-    if (first.y() == second.y()) {
+    if (current.y() == destination.y()) {
         // Cells are on the same row
-        x = std::max(first.x(), second.x()) - 2;
-        y = first.y();
-    } else if (first.x() == second.x()) {
+        x = std::max(current.x(), destination.x()) - 2;
+        y = current.y();
+    } else if (current.x() == destination.x()) {
         // Cells are on the same column
-        x = first.x();
-        y = std::max(first.y(), second.y()) - 2;
+        x = current.x();
+        y = std::max(current.y(), destination.y()) - 2;
     } else {
         return false;
     }
@@ -140,7 +140,7 @@ bool Board::isJumpMove(const Point &current, const Point &destination) const
     return isPositionValid(destination) && isCell(destination) && isWayValid(current, Point {x, y}, destination);
 }
 
-bool Board::isDiagonalMove(const Point &current, const Point &destination) const
+bool Board::isValidDiagonalMove(const Point &current, const Point &destination) const
 {
 
     if (isPositionValid(destination) && isCell(destination) && areDiagoNeighbours(current, destination)) {
