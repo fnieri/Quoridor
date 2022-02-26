@@ -26,12 +26,6 @@ private:
     /// Size of the matrix, computed from CELL_SIZE.
     const int MATRIX_SIZE = (CELL_SIZE * 2) - 1;
 
-    /// Label that represents a cell
-    const int CELL = 2;
-
-    /// Label that represents a corridor
-    const int CORRIDOR = 1;
-
     /**
      * Check if a point exists in the board
      *
