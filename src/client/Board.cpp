@@ -206,38 +206,6 @@ void Board::placeWall(const Point &cell, const WallOrientation &direction)
     placeWallMiddlePiece(Point {x + 1, y + 1}, direction);
 }
 
-std::vector<std::vector<int>> Board::allComponents()
-{
-    // Build the matrix of all the connected component
-    int id = 0;
-    std::vector<std::vector<int>> labels(MATRIX_SIZE, std::vector<int>(MATRIX_SIZE, 0));
-    for (int x = 0; x < MATRIX_SIZE; x += 2) {
-        for (int y = 0; y < MATRIX_SIZE; y += 2) {
-            if (labels[x][y] == 0) {
-                id += 1;
-                labelComponent(id, labels, x, y);
-            }
-        }
-    }
-    return labels;
-}
-
-void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y)
-{
-    // Build each connected component
-    labels[x][y] = id;
-    std::vector<Point> shifts = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}}; // UP, DOWN, LEFT, RIGHT
-    for (auto &shift : shifts) {
-        int x_shift = x + shift.x();
-        int y_shift = y + shift.y();
-        if (isPositionValid({x_shift, y_shift})) {
-            if (isWayFree({x, y}, {x_shift, y_shift}) && labels[x_shift][y_shift] == 0) {
-                labelComponent(id, labels, x_shift, y_shift);
-            }
-        }
-    }
-}
-
 bool Board::isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const
 {
     if (!isCell(position))

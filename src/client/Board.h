@@ -88,9 +88,6 @@ private:
      */
     Point getDistance(const Point &first, const Point &second) const;
 
-    std::vector<std::vector<int>> allComponents();
-    void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
-
     /**
      * Places the two main wall pieces of a wall into the matrix.
      *
