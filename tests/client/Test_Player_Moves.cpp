@@ -30,17 +30,17 @@ TEST_CASE("Valid Player Move")
     }
     SECTION("Jump Move with free way")
     {
-        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {3, 2}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North});
 
-        PlayerAction a5 {b, player, {2, 3}};
-        PlayerAction a6 {b, player2, {2, 2}};
+        PlayerAction a5 {b, player, {3, 3}};
+        PlayerAction a6 {b, player2, {3, 2}};
 
-        REQUIRE(a5.isActionValid());
+        REQUIRE(a5.isActionValid()); // normal position = destination
         REQUIRE(a5.executeAction());
         REQUIRE(a6.isActionValid());
         REQUIRE(a6.executeAction());
 
-        PlayerAction a7 {b, player, {2, 1}}; // Jump
+        PlayerAction a7 {b, player, {3, 1}}; // Jump
 
         REQUIRE(a7.isActionValid());
     }
@@ -108,7 +108,7 @@ TEST_CASE("Player Move not valid")
 
         SECTION("Move to an occupied cell")
         {
-            std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {1, 3}, 99, FinishLine::North});
+            std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 3}, 99, FinishLine::North});
             PlayerAction a3 {b, p, {1, 3}};
             PlayerAction a4 {b, player, {1, 3}};
             REQUIRE(a3.isActionValid());
@@ -129,10 +129,10 @@ TEST_CASE("Player Move not valid")
     SECTION("Jump move : invalid")
     {
 
-        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {3, 2}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North});
 
-        PlayerAction a5 {b, player, {2, 3}};
-        PlayerAction a6 {b, player2, {2, 2}};
+        PlayerAction a5 {b, player, {3, 3}}; // Normal position = destination
+        PlayerAction a6 {b, player2, {3, 2}};
 
         REQUIRE(a5.isActionValid());
         REQUIRE(a5.executeAction());
@@ -141,8 +141,8 @@ TEST_CASE("Player Move not valid")
 
         SECTION("BLocked by a first wall")
         {
-            WallAction a7 {b, player, Point {2, 2}, WallOrientation::Horizontal};
-            PlayerAction a8 {b, player, {2, 1}}; // Jump
+            WallAction a7 {b, player, Point {3, 2}, WallOrientation::Horizontal};
+            PlayerAction a8 {b, player, {3, 1}}; // Jump
             REQUIRE(a7.isWallPlacementValid());
             REQUIRE(a7.executeAction());
             REQUIRE(!a8.isActionValid());
@@ -150,24 +150,24 @@ TEST_CASE("Player Move not valid")
 
         SECTION("Blocked by another wall")
         {
-            WallAction a9 {b, player, Point {2, 1}, WallOrientation::Horizontal};
-            PlayerAction a10 {b, player, {2, 1}}; // Jump
+            WallAction a9 {b, player, Point {3, 1}, WallOrientation::Horizontal};
+            PlayerAction a10 {b, player, {3, 1}}; // Jump
             REQUIRE(a9.isWallPlacementValid());
             REQUIRE(a9.executeAction());
             REQUIRE(!a10.isActionValid());
         }
         SECTION("Jump too far")
         {
-            PlayerAction a11 {b, player, {2, 0}};
+            PlayerAction a11 {b, player, {3, 0}};
             REQUIRE(!a11.isActionValid());
         }
         SECTION("Jump into occupied cell")
         {
-            std::shared_ptr<Player> player3(new Player {PawnColors::Green, Point {3, 1}, 99, FinishLine::North});
-            PlayerAction a12 {b, player3, {2, 1}};
+            std::shared_ptr<Player> player3(new Player {PawnColors::Green, Point {4, 1}, 99, FinishLine::North});
+            PlayerAction a12 {b, player3, {3, 1}};
             REQUIRE(a12.isActionValid());
             REQUIRE(a12.executeAction());
-            PlayerAction a13 {b, player, {2, 1}}; // jump
+            PlayerAction a13 {b, player, {3, 1}}; // jump
             REQUIRE(!a13.isActionValid());
         }
     }
