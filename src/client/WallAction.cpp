@@ -3,6 +3,7 @@
 #include "Player.h"
 
 #include <memory>
+#include <vector>
 
 using namespace std;
 using json = nlohmann::json;
@@ -22,6 +23,14 @@ WallAction::~WallAction()
 bool WallAction::isWallPlacementLegal()
 {
     // Check if the placement doesn't block the other players
+
+    std::vector<std::shared_ptr<Player>> players = board->findPlayers();
+
+    for (auto &p : players) {
+        if (!board->pathExists(p->getPosition(), p->getFinishLine()))
+            return false;
+    }
+
     return true;
 }
 
