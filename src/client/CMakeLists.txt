@@ -11,6 +11,8 @@ add_library(${PREFIX}_client
     WallAction.cpp
     WallEnum.h
     PlayerAction.h
+    ServerController.cpp
+    ViewController.cpp
     )
 
 target_link_libraries(${PREFIX}_client

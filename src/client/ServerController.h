@@ -10,9 +10,23 @@
 
 class ServerController
 {
+    std::shared_ptr<Board> board;
+    int nPlayers;
+    std::vector<std::shared_ptr<Player>> players;
+    int currentGameId;
+    std::string gameSetup;
+
+    void makeDictPlayer();
+    map<PawnColors, shared_ptr<Player>> dictPlayer;
+
 public:
     ServerController();
     ~ServerController() = default;
+
+    void setBoard(std::shared_ptr<Board> theBoard) 
+    void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
+    void setDict(std::string dict_player)
+
 
     /* To Game Model */
     // send this to the viewcontroller ? but linking problems ?

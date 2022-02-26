@@ -1,20 +1,92 @@
 #include "ServerController.h"
 
+using json = nlohmann::json;
+
 ServerController::ServerController()
 {
 }
 
 /* Game handler */
-void ServerController::playAction(std::string action)
+
+void ServerController::setBoard(std::shared_ptr<Board> theBoard) 
 {
+    board = theBoard;
 }
+
+void ServerController::setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
+{
+    players = thePlayers;
+}
+
+void ServerController::setDict(map<PawnColors, shared_ptr<Player>> dict_player)
+{
+    dictPlayer = dict_player;
+}
+
+void ServerController::movePlayer(std::string action)
+{
+    json playerAction = json::parse(action);    // String to json 
+
+    int x{playerAction["move"]["end_position"]["x"]};  
+    int y{playerAction["move"]["end_position"]["y"]};
+    Point end_position{x,y};
+    PawnColors playerColor = (PawnColors) playerAction["player_id"]; // Repere playerID
+    
+    std::shared_ptr<PlayerAction> action {board, dictPlayer[playerColor], end_position / 2};   // i need the Player and the Point of the move
+    
+    if (action->executeAction() && !action->isGameOver())
+        currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
+    
+    else if (action->isGameOver()) isGameOver(true);
+}
+
+void ServerController::placeWall(std::string action)
+{
+    json wallAction = json::parse(action);    // String to json 
+
+    int x{wallAction["move"]["wall_cell"]["x"]};  
+    int y{wallAction["move"]["wall_cell"]["y"]};
+    WallOrientation wallOrientation = wallAction["move"]["wall_orientation"].jsonToOrientation;
+    Point wallCell{x,y};
+    PawnColors playerColor = (PawnColors) wallAction["player_id"]; // Repere playerID
+    
+    std::shared_ptr<WallAction> action {board, dictPlayer[playerColor], end_position / 2, wallOrientation};   // i need the Player and the Point of the move
+    
+    if (action->executeAction() && !action->isGameOver())
+        currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
+    
+    else if (action->isGameOver()) isGameOver(true);
+}
+
+// TODO getReceivers() // we need this to send messages to all gamers in the group chat
+
 
 /* Chat handler */
-void ServerController::sendMessage(std::string receiver, std::string msg, int gameId)
+// Two types of messages : those sent in DM and those sent to a game party
+
+// recoit msg de la Vue envoie au sercver
+void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
+    json SerializableMessageFactory::serializeFriendMessage(sedner, receiver, message);
+    
+    send(msg);
 }
 
-void ServerController::receiveMessage(std::string receiver, std::string msg, int gameId)
+void ServerController::sendGroupMessage(std::string sender, std::vector<std::string> receiver, std::string msg, int gameId)
+{
+    // TODO get all receivers
+    json SerializableMessageFactory::serializeInGameMessage(sender, receivers, message, gameID);
+    
+    send(msg);
+}
+
+// msg recu du server quon envoie a la vue
+json ServerController::receiveGroupMessage(std::string msg)
+{
+    return json::parse(msg);
+}
+
+void ServerController::receiveDirectMessage(std::string receiver, std::string msg, int gameId)
 {
 }
 

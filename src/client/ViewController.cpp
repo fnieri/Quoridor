@@ -9,7 +9,8 @@
 #include <vector>
 
 
-ViewController::ViewController()
+ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers) : 
+    serverController{serverController}, nPlayers{nPlayers}
 {
 }
 
@@ -23,7 +24,6 @@ void ViewController::setBoard(std::shared_ptr<Board> theBoard)
 void ViewController::setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
 {
     players = thePlayers;
-    nPlayers = players.size();
 }
 
 void ViewController::setGameSetup(std::string gameS)
@@ -35,10 +35,10 @@ void ViewController::setGameSetup(std::string gameS)
 
 void ViewController::movePlayer(Point p)
 {
-    std::shared_ptr<PlayerAction> action {board, players[currentPlayerIndex], p / 2};
+    std::shared_ptr<PlayerAction> action{board, players[currentPlayerIndex], p / 2};
     if (action->executeAction() && !action->isGameOver())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
-    else if (action->isGameOver()) // SEND THIS TO WHO 
+    else if (action->isGameOver()) isGameOver(true);
 }
 
 void ViewController::placeWall(Point p, WallOrientation orientation)
@@ -46,16 +46,18 @@ void ViewController::placeWall(Point p, WallOrientation orientation)
     std::shared_ptr<WallAction> action {board, players[currentPlayerIndex], p / 2, orientation};
     if (action->executeAction() && !action->isGameOver())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
-    else if (action->isGameOver()) // SEND THIS TO WHO
+    else if (action->isGameOver()) isGameOver(true);
 }
 
 /* To Network Model */ 
 
-void ViewController::startGame() 
+void ViewController::startGame()                    
 {
     std::shared_ptr<Board> board;
     std::vector<std::shared_ptr<Player>> players;
+    map<PawnColors, shared_ptr<Player>> dictPlayer;
 
+    // loop for made by Léo
     for (int i = 0; i < nPlayers; i++) 
     {
         // TODO: Change spawn position of players
@@ -67,12 +69,16 @@ void ViewController::startGame()
         // Temporary way of adding the players to the board
         PlayerAction spawnPlayer {board, p, pos};
         spawnPlayer.executeAction();
+    
+        dictPlayer.insert(players[i]->getColor(),  players[i]);
+
     }
 
     setBoard(board);
     setPlayers(players);
     serverController->setBoard(board);
     serverController->setPlayers(players);
+    serverController->setDict(dictPlayer);
 }
 
 void ViewController::saveGame() 
@@ -92,12 +98,12 @@ void ViewController::registerPlayer(std::string username, std::string password)
 
 void ViewController::logIn(std::string username, std::string password)
 {
-    serverController->registerPlayer(username, password);
+    serverController->logIn(username, password);
 }
 
 void ViewController::logOut()
 {
-    serverController->registerPlayer();
+    serverController->logOut();
 }
 
 void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
@@ -107,7 +113,7 @@ void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
 
 void ViewController::joinGame(int gameId)
 {
-    serverController->joinGame(aFriend, gameSetup);
+    serverController->joinGame(gameId);
 }
 
 void ViewController::askToPause(std::string aFriend)
@@ -148,4 +154,10 @@ void ViewController::loadMessages(std::string username)
 
 void ViewController::loadMessages(int gameId)
 {
+}
+
+bool ViewController::isGameOver(bool over) 
+{
+    serverController->isGameOver(true);
+    return over;        // sends to the view
 }

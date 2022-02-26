@@ -30,7 +30,7 @@ private:
     int currentGameId;
     std::string gameSetup;
 public:
-    ViewController();
+    ViewController(std::shared_ptr<ServerController> serverController);
     ~ViewController() = default;
 
     /* Setters */
@@ -70,10 +70,15 @@ public:
     void sendFriendRequest(std::string receiver);
     void checkLeaderBoard();
 
-    /* To Chat Model (there isn't yet a chat model) */
-    void sendMessage(std::string receiver, std::string msg);
+    /* To Chat Model (all of these are to send to the ServerController as well) */
+    void sendMessage(std::string receiver, std::string msg); // recoit de Vue vers Server
     void sendMessage(std::string msg, int gameId);
-    void receiveMessage(std::string receiver, std::string msg, int gameId);
+    
+    void receiveMessage(std::string receiver, std::string msg, int gameId); // recoit du Server a donner a la vue
+
     void loadMessages(std::string username);
     void loadMessages(int gameId);
+
+    /* Noticing the view */
+    bool isGameOver(bool over=false);
 };

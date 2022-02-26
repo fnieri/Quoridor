@@ -10,6 +10,7 @@ class Player
     Point position;
     int nwalls;
     FinishLine finishLine;
+    std::string username;
 
 public:
     Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine);
@@ -20,6 +21,7 @@ public:
 
     Point getPosition() const;
     Point getMatrixPosition() const;
+    std::string getUsername() const;
 
     void setPosition(const Point &newPosition);
     void setMatrixPosition(const Point &newPosition);
