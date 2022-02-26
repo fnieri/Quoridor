@@ -88,9 +88,6 @@ private:
      */
     Point getDistance(const Point &first, const Point &second) const;
 
-    std::vector<std::vector<int>> allComponents();
-    void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
-
     /**
      * Places the two main wall pieces of a wall into the matrix.
      *
@@ -161,6 +158,13 @@ public:
     void movePlayer(std::shared_ptr<Player> player, const Point &cell);
 
     /**
+     * Adds the given player to the board.
+     *
+     * @param player the Player to spawn
+     */
+    void spawnPlayer(std::shared_ptr<Player> player);
+
+    /**
      * Sets a full wall into the board.
      * DO NOT CALL THIS FUNCTION DIRECTLY!
      * Create a WallAction and call WallAction::executeAction() instead.
@@ -191,7 +195,7 @@ public:
      * - 2=south
      * - 3=west
      */
-    bool pathExists(const Point &start, FinishLine finishLine) const;
+    bool pathExists(const Point &start, FinishLine finishLine, Point newWallPiece1, Point newWallPiece2) const;
 
     /**
      * Finds all the players on the board and returns their positions.
