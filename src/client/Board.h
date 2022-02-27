@@ -185,7 +185,7 @@ public:
      *
      * @param start the starting point for the pathfinding
      * @param finishLine the board border for pathfind to
-     * @return bool
+     * @returns bool
      *
      * @warning the position is assumed to be a *player cell position*
      *
@@ -200,7 +200,7 @@ public:
     /**
      * Finds all the players on the board and returns their positions.
      *
-     * @return std::vector<Point>
+     * @returns std::vector<Point>
      *
      * @warning the returned point is a *player cell position*
      */
@@ -253,8 +253,17 @@ public:
      */
     bool isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const;
 
+    /**
+     * Return the size (width and height) of the Board, in terms of play cells.
+     *
+     * @returns int
+     */
     int getCellSize();
 
+    /**
+     * Print the Board to the console.
+     * Mainly intended for debugging purposes and testing.
+     */
     void debugPrint();
 
     ~Board();
