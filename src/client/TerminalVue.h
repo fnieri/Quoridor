@@ -106,36 +106,106 @@ class TerminalVue
     int rightSizeFriends = 70;
     bool isLoggedIn = true; // change this to true to stay logged in
 
+    /**
+     * @brief Checks if it's someone's turn
+     * 
+     * @return true 
+     * @return false 
+     */
     bool isPlayerTurn();
 
     bool isMoveValid(int x, int y);
 
     bool isWallPlacementValid(int x, int y);
 
+    /**
+     * @brief Checks if the click can be accepted
+     * [@details returns true if  (mouseInCell(x, y) && mousePressed && isPlayerTurn())]
+     * @param x 
+     * @param y 
+     * @return true 
+     * @return false 
+     */
     bool isClickValid(int x, int y);
 
+    /**
+     * @brief Create a Canvas object; when rendered displays the board and game indications
+     * 
+     * @return auto 
+     */
     auto createCanvas();
 
+    /**
+     * @brief Checks if mouse is targeting a player move cell.
+     * 
+     * @param x 
+     * @param y 
+     * @return true 
+     * @return false 
+     */
     bool mouseInCell(int x, int y);
 
+    /**
+     * @brief Checks if mouse is targeting a quoridor
+     * 
+     * @param x 
+     * @param y 
+     * @return true 
+     * @return false 
+     */
     bool mouseInQuoridor(int x, int y);
 
     void handleCellClick(int x, int y);
 
     void handleWallAdd(int x, int y);
 
+    /**
+     * @brief Create a Chat Input object for the game on
+     * 
+     * @return auto 
+     */
     auto createChatInput();
 
+    /**
+     * @brief Create a Search field Input object to find someone to add to your friends list
+     * 
+     * @return auto 
+     */
     auto createSearchInput();
 
+    /**
+     * @brief Create a Chat Input object to talk with a friend
+     * 
+     * @return auto 
+     */
     auto createChatFriendInput();
 
+    /**
+     * @brief Create a Action Toggle object, to chose either to Move or place a Wall
+     * 
+     * @return auto 
+     */
     auto createActionToggle();
 
+    /**
+     * @brief Create a Orientation Toggle object, to chose in which direction you place your wall
+     * 
+     * @return auto 
+     */
     auto createOrientationToggle();
 
+    /**
+     * @brief Create a Main Tab object
+     * 
+     * @return auto 
+     */
     auto createMainTab();
 
+    /**
+     * @brief Create a Board Renderer object
+     * 
+     * @return auto 
+     */
     auto createBoardRenderer();
 
     /**
@@ -143,24 +213,55 @@ class TerminalVue
      */
     auto createChatRenderer();
 
-    auto createFriendsListRenderer();
-
+    /**
+     * @brief create Renderer of the container of notifications and the friend searchbar
+     * 
+     */
     auto createFriendUtilitariesRenderer();
 
+    /**
+     * @brief Create a Settings Renderer object
+     *
+     */
     auto createSettingsRenderer();
 
+    /**
+     * @brief Create a Main Tab Container object containing all windows you can toggle to
+     * 
+     * @return Renderer of container
+     */
     auto createMainTabContainer();
 
+    /**
+     * @brief Create a Login Renderer object in which you can complete a form to login
+     * 
+     * @return Renderer of container
+     */
     auto createLoginRenderer();
 
+    /**
+     * @brief Create a Register Renderer object in which you can complete a form to register
+     * 
+     * @return Renderer of container
+     */
     auto createRegisterRenderer();
 
+    /**
+     * @brief Create a Main container
+     * [@details This container will be permanently refreshed in order to display the interface and any updates]
+     * @return Renderer of container
+     */
     auto createMainRenderer();
 
+    /**
+     * @brief Detects if someone is logged in
+     * 
+     */
     void loginUser();
 
 public:
     void run();
+
     /**
      * @brief Add a message to the chat window
      * @param username String of the player Sending the messsage
@@ -168,6 +269,7 @@ public:
      *
      */
     void addChatMessage(std::string username, std::string message);
+
     /**
      * @brief Add a friend to your friends list
      * @param username String of the user you want to add to your friends
@@ -175,8 +277,21 @@ public:
      */
     void addFriend(std::string username);
 
+    /**
+     * @brief Add a message to the conversation you have with your friend
+     * 
+     * @param username 
+     * @param message 
+     */
     void addChatFriendMessage(std::string username, std::string message);
 
+    /**
+     * @brief Creates Wraper window object that renders a rounded box shape
+     * 
+     * @param title 
+     * @param component 
+     * @return Component 
+     */
     Component Window(std::string title, Component component) {
         return Renderer(component, [component, title] {  //
             return window(text(title), component->Render()) | flex;
