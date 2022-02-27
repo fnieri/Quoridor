@@ -4,12 +4,18 @@
 
 using json = nlohmann::json;
 
-json ChatBoxSerializableMessageFactory::serializeUserChatBoxRequest(
-    ChatInteraction interaction, int chatboxId, std::string username, std::string message, int timestamp)
+json serializeInGameMessage(std::string sender, std::vector<std::string> receivers, std::string message, int gameID) 
 {
-    std::string actualMessage = (interaction == ChatInteraction::USER_SEND_MESSAGE) ? message : "";
-    json ChatBoxRequestJson
-        = {{"action", toJsonString(interaction)}, {"chatbox_id", chatboxId}, {"username", username}, {"message", actualMessage}, {"timestamp", timestamp}};
+    
+    json messageJson = {{"action", toJsonString(ChatInteraction::USER_SEND_MESSAGE)}, {"domain", toJsonString(Domain::CHAT)}, {"game_id", gameID}, {"sender", sender}, {"receivers", j_vec(receivers)}, {"message", message}};
+  return messageJson;
+}
 
-    return ChatBoxRequestJson;
+
+
+json serializeFriendMessage(std::string sender, std::string receiver, std::string message)
+{
+  std::vector<std::string> receivers = {receiver};
+  json messageJson = {{"action", toJsonString(ChatInteraction::USER_SEND_MESSAGE)}, {"domain", toJsonString(Domain::CHAT)}, {"game_id", gameID}, {"sender", sender}, {"receivers", j_vec(receivers)}, {"message", message}};
+  return messageJson;
 }

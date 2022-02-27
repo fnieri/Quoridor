@@ -6,6 +6,7 @@ json FriendActionsSerializableMessageFactory::serializeFriendRequest(FriendActio
 {
     json requestJson = {
       {"action", toJsonString(friendAction)},
+      {"domain", toJsonString(Domain::RELATIONS)},
       {"friend_req_sender", sender},
       {"friend_req_receiver", receiver}
     };
@@ -16,6 +17,7 @@ json FriendActionsSerializableMessageFactory::serializeFriendRemove(std::string 
 {
   json removeJson = {
     {"action", toJsonString(FriendAction::FRIEND_REMOVE)},
+    {"domain", toJsonString(Domain::RELATIONS)},
     {"friend_rm_sender", friendRemoveSender},
     {"friend_rm_receiver", friendRemoveReceiver}
   };

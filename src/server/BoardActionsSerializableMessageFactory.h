@@ -53,7 +53,7 @@ public:
      *      "wall_cell" : {
      *          "x" : 0,
      *          "y" : 0},
-     *      "wall_orientation" : vertical | horizontal
+     *      "wall_orientation" : vwall_ertical | wall_horizontal
      *  },
      *  "player_id" : 1
      * }
