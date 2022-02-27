@@ -27,10 +27,13 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
+#include "GameController.h"
+
 using namespace ftxui;
 
 class TerminalVue
 {
+    GameController* gameController = new GameController{2, 1, 1};
     std::string message, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -42,7 +45,7 @@ class TerminalVue
     std::vector<int> remainingWalls {1, 2, -1, -1}; // each index represents a player. if -1, then player is not in game.
     std::vector<std::vector<int>> testCanvasGrid {{0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0},
         {5, 5, 5, 5, 5, 5, 5, 5, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}};
-
+    std::vector<std::vector<int>> boardIntMatrix;
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
     int chatSelected = 0;

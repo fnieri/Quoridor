@@ -9,7 +9,8 @@
 #include <vector>
 
 
-ViewController::ViewController()
+ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers) :
+    serverController{serverController}, nPlayers{nPlayers}
 {
 }
 

@@ -30,13 +30,12 @@ bool PlayerAction::isGameOver()
 
 bool PlayerAction::executeAction()
 {
-
     if (isActionValid()) {
         board->movePlayer(player, destination);
         player->setMatrixPosition(destination);
         return true;
-    } else
-        return false;
+    }
+    return false;
 }
 
 json PlayerAction::serialized()

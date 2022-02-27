@@ -298,6 +298,12 @@ bool Board::pathExists(const Point &start, FinishLine finishLine) const
     return false;
 }
 
+void Board::spawnPlayer(std::shared_ptr<Player> player)
+{
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
+}
+
 std::vector<std::shared_ptr<Player>> Board::findPlayers()
 {
     std::vector<std::shared_ptr<Player>> players;
@@ -332,4 +338,8 @@ void Board::debugPrint()
         }
         std::cout << std::endl;
     }
+}
+
+std::vector<std::vector<std::shared_ptr<BoardComponent>>> &Board::getBoardMatrix(){
+    return matrix;
 }

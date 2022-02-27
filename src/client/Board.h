@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BoardComponent.h"
-#include "WallEnum.h"
-#include "Point.h"
 #include "Player.h"
+#include "Point.h"
+#include "WallEnum.h"
 
 #include <memory>
 #include <vector>
@@ -194,6 +194,13 @@ public:
     bool pathExists(const Point &start, FinishLine finishLine) const;
 
     /**
+     * Adds the given player to the board.
+     *
+     * @param player the Player to spawn
+     */
+    void spawnPlayer(std::shared_ptr<Player> player);
+
+    /**
      * Finds all the players on the board and returns their positions.
      *
      * @return std::vector<Point>
@@ -250,6 +257,8 @@ public:
     bool isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const;
 
     int getCellSize();
+
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &getBoardMatrix();
 
     void debugPrint();
 

@@ -17,6 +17,8 @@
 
 #include <memory>
 #include <vector>
+#include <iostream>
+#include <string>
 
 // View Controller to easily send actions to the different models' controller : Game + Chat + Network
 class ViewController
@@ -30,7 +32,7 @@ private:
     int currentGameId;
     std::string gameSetup;
 public:
-    ViewController();
+    ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
     ~ViewController() = default;
 
     /* Setters */

@@ -12,6 +12,7 @@ add_library(${PREFIX}_client
         WallEnum.h
         PlayerAction.h
         TerminalVue.cpp
+        GameController.cpp
         )
 
 target_link_libraries(${PREFIX}_client

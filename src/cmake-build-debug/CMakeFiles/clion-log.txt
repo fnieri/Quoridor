@@ -23,90 +23,17 @@ CMake Warning (dev) in CMakeLists.txt:
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
 -- Configuring done
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
+CMake Error at client/CMakeLists.txt:2 (add_library):
+  Cannot find source file:
 
-  Target "client" links to target "ftxui::screen" but the target was not
-  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
-  an ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
+    GameController.cpp
 
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
+  Tried extensions .c .C .c++ .cc .cpp .cxx .cu .m .M .mm .h .hh .h++ .hm
+  .hpp .hxx .in .txx
 
-  Target "client" links to target "ftxui::dom" but the target was not found.
-  Perhaps a find_package() call is missing for an IMPORTED target, or an
-  ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
+CMake Error at client/CMakeLists.txt:2 (add_library):
+  No SOURCES given to target: _client
 
-  Target "client" links to target "ftxui::component" but the target was not
-  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
-  an ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:2 (add_library):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
-
-  Target "_client" links to target "ftxui::screen" but the target was not
-  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
-  an ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
-
-CMake Warning (dev) at client/CMakeLists.txt:2 (add_library):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
-
-  Target "_client" links to target "ftxui::dom" but the target was not found.
-  Perhaps a find_package() call is missing for an IMPORTED target, or an
-  ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
-
-CMake Warning (dev) at client/CMakeLists.txt:2 (add_library):
-  Policy CMP0028 is not set: Double colon in target name means ALIAS or
-  IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
-  Use the cmake_policy command to set the policy and suppress this warning.
-
-  Target "_client" links to target "ftxui::component" but the target was not
-  found.  Perhaps a find_package() call is missing for an IMPORTED target, or
-  an ALIAS target is missing?
-This warning is for project developers.  Use -Wno-dev to suppress it.
-
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
-  Policy CMP0003 should be set before this line.  Add code such as
-
-    if(COMMAND cmake_policy)
-      cmake_policy(SET CMP0003 NEW)
-    endif(COMMAND cmake_policy)
-
-  as early as possible but after the most recent call to
-  cmake_minimum_required or cmake_policy(VERSION).  This warning appears
-  because target "client" links to some libraries for which the linker must
-  search:
-
-    nlohmann_json, ftxui::screen, ftxui::dom, ftxui::component
-
-  and other libraries with known full path:
-
-    /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a
-
-  CMake is adding directories in the second list to the linker search path in
-  case they are needed to find libraries from the first list (for backwards
-  compatibility with CMake 2.4).  Set policy CMP0003 to OLD or NEW to enable
-  or disable this behavior explicitly.  Run "cmake --help-policy CMP0003" for
-  more information.
-This warning is for project developers.  Use -Wno-dev to suppress it.
-
--- Generating done
--- Build files have been written to: /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug
+CMake Generate step failed.  Build files cannot be regenerated correctly.
