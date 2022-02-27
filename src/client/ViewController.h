@@ -8,17 +8,9 @@
 
 #pragma once
 
-
-#include "Board.h"
-#include "Player.h"
-#include "Point.h"
-#include "WallEnum.h"
-#include "ServerController.h"
-
-#include <memory>
-#include <vector>
-
 using json = nlohmann::json;
+
+class ServerController;
 
 // View Controller to easily send actions to the different models' controller : Game + Chat + Network
 class ViewController
@@ -32,7 +24,7 @@ private:
     int currentGameId;
     std::string gameSetup;
 public:
-    ViewController(std::shared_ptr<ServerController> serverController);
+    ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
     ~ViewController() = default;
 
     /* Setters */
@@ -62,8 +54,8 @@ public:
 
     void setGameSetup(std::string gameS);
     void startGame();
-    void saveGame();
-    void pauseGame();
+    void saveGame(std::string username);
+    void pauseGame(std::string username);
 
     void sendInvite(std::string aFriend, std::string gameSetup);
     void joinGame(int gameId);
@@ -77,8 +69,9 @@ public:
     void sendGroupMessage(std::string sender, std::string msg, int gameId);
 
     // void receiveMessage(std::string receiver, std::string msg, int gameId); // recoit du Server a donner a la vue
-    
-    bool isMessageReceived(bool received=false);
+
+    bool isDirectMessageReceived(bool received = false);
+    bool isGroupMessageReceived(bool received = false);
 
     json receiveGroupMessage(json msg);
     json receiveDirectMessage(json msg);

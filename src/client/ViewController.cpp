@@ -1,9 +1,13 @@
+#include "ViewController.h"
 #include "Board.h"
 #include "BoardComponent.h"
 #include "Player.h"
+#include "PlayerAction.h"
+#include "PlayerEnum.h"
 #include "Point.h"
-#include "WallEnum.h"
 #include "ServerController.h"
+#include "WallAction.h"
+#include "WallEnum.h"
 
 #include <memory>
 #include <vector>
@@ -37,7 +41,7 @@ void ViewController::setGameSetup(std::string gameS)
 
 void ViewController::movePlayer(Point p)
 {
-    std::shared_ptr<PlayerAction> action {board, players[currentPlayerIndex], p / 2};
+    std::shared_ptr<PlayerAction> action = std::make_shared<PlayerAction>(board, players[currentPlayerIndex], p / 2);
     if (action->executeAction() && !action->isGameOver())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
     else if (action->isGameOver())
@@ -46,35 +50,31 @@ void ViewController::movePlayer(Point p)
 
 void ViewController::placeWall(Point p, WallOrientation orientation)
 {
-    std::shared_ptr<WallAction> action {board, players[currentPlayerIndex], p / 2, orientation};
-    if (action->executeAction() && !action->isGameOver())
-        currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers; // change turns if the PlayerAction is valid
-    else if (action->isGameOver())
-        isGameOver(true);
+    std::shared_ptr<WallAction> action = std::make_shared<WallAction>(board, players[currentPlayerIndex], p / 2, orientation);
+    if (action->executeAction())
+        currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers;
 }
 
 /* To Network Model */
 
 void ViewController::startGame()
 {
-    std::shared_ptr<Board> board;
+    std::shared_ptr<Board> board = std::make_shared<Board>();
     std::vector<std::shared_ptr<Player>> players;
-    map<PawnColors, shared_ptr<Player>> dictPlayer;
+    std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
 
     // loop for made by Léo
     for (int i = 0; i < nPlayers; i++) 
     {
         // TODO: Change spawn position of players
         Point pos{i, i};
-        auto p = std::make_shared<Player>(PawnColors(i), pos, 10);
+        auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
 
         players.push_back(p);
 
-        // Temporary way of adding the players to the board
-        PlayerAction spawnPlayer {board, p, pos};
-        spawnPlayer.executeAction();
+        board->spawnPlayer(p);
 
-        dictPlayer.insert(players[i]->getColor(), players[i]);
+        // dictPlayer.insert(players[i]->getColor(), players[i]);
     }
 
     setBoard(board);
@@ -84,14 +84,14 @@ void ViewController::startGame()
     serverController->setDict(dictPlayer);
 }
 
-void ViewController::saveGame() 
+void ViewController::saveGame(std::string username)
 {
-    serverController->saveGame();
+    serverController->saveGame(username);
 }
 
-void ViewController::pauseGame() 
+void ViewController::pauseGame(std::string username)
 {
-    serverController->pauseGame();
+    serverController->pauseGame(username);
 }
 
 void ViewController::registerPlayer(std::string username, std::string password)
@@ -135,33 +135,44 @@ void ViewController::checkLeaderBoard()
 }
 
 /* To Chat Model */
-void sendDirectMessage(std::string sender, std::string receiver, std::string msg)
+void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
     serverController->sendDirectMessage(sender, receiver, msg);       
 }
 
-void sendGroupMessage(std::string sender, std::string msg, int gameId)
+void ViewController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
     serverController->sendGroupMessage(sender, msg, gameId);       
 }
 
 
 // don't know if this is a good idea to notice the view of a message entry
-bool ViewController::isMessageReceived(bool received)
+bool ViewController::isGroupMessageReceived(bool received)
 {
-    return received;
+    if (serverController->isGroupMessageReceived())
+        return true;
+    else
+        return received;
+}
+
+bool ViewController::isDirectMessageReceived(bool received)
+{
+    if (serverController->isDirectMessageReceived())
+        return true;
+    else
+        return received;
 }
 
 // although they are the same the json msg is not formatted the same way
 json ViewController::receiveGroupMessage(json msg)
 {
-    isMessageReceived(true);
+    isGroupMessageReceived(true);
     return msg;
 }
 
 json ViewController::receiveDirectMessage(json msg)
 {
-    isMessageReceived(true);
+    isDirectMessageReceived(true);
     return msg;
 }
 
@@ -179,6 +190,6 @@ void ViewController::loadGroupMessages(int gameId)
 
 bool ViewController::isGameOver(bool over)
 {
-    serverController->isGameOver(true);
+    serverController->isGameOver(over);
     return over; // checked by the view
 }

@@ -8,7 +8,10 @@ project(Quoridor
 enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -std=c++1y")
 set(PREFIX qrd)
+
 # Dependencies
 include(cmake/CPM.cmake)
 include(cmake/AddCatch2.cmake)
