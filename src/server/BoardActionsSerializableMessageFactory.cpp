@@ -9,6 +9,8 @@
 
 #include "../client/PlayerAction.h"
 
+#include "MessageEnums/Domain.h"
+
 using json = nlohmann::json;
 
 json BoardActionsSerializableMessageFactory::serializePawnAction(PlayerAction pawnAction, int playerID)
