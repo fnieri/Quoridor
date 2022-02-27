@@ -33,7 +33,7 @@ using namespace ftxui;
 
 class TerminalVue
 {
-    GameController* gameController = new GameController{2, 1, 1};
+    GameController* gameController = new GameController{2, 0, 1};
     std::string message, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;

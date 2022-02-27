@@ -154,6 +154,12 @@
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Corridor.h">
 			<Option target="_client"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/GameController.cpp">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/GameController.h">
+			<Option target="_client"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Player.cpp">
 			<Option target="_client"/>
 		</Unit>

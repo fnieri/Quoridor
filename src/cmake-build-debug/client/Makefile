@@ -201,6 +201,21 @@ Corridor.s:
 .PHONY : Corridor.s
 
 # target to build an object file
+GameController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.o
+.PHONY : GameController.o
+
+# target to preprocess a source file
+GameController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.i
+.PHONY : GameController.i
+
+# target to generate assembly for a file
+GameController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.s
+.PHONY : GameController.s
+
+# target to build an object file
 Player.o:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.o
 .PHONY : Player.o
@@ -327,6 +342,9 @@ help:
 	@echo "... Corridor.o"
 	@echo "... Corridor.i"
 	@echo "... Corridor.s"
+	@echo "... GameController.o"
+	@echo "... GameController.i"
+	@echo "... GameController.s"
 	@echo "... Player.o"
 	@echo "... Player.i"
 	@echo "... Player.s"

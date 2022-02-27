@@ -18,6 +18,11 @@ private:
     std::shared_ptr<Player> player;
 
 public:
+    /**
+     * Construct a new Cell object.
+     *
+     * @param player the player occupying that cell, if any
+     */
     Cell(std::shared_ptr<Player> player = nullptr);
     ~Cell();
 

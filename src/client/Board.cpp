@@ -171,6 +171,12 @@ void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
     std::dynamic_pointer_cast<Cell>(matrix.at(cell.x()).at(cell.y()))->placePlayer(player);
 }
 
+void Board::spawnPlayer(std::shared_ptr<Player> player)
+{
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
+}
+
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
     std::dynamic_pointer_cast<Corridor>(matrix.at(firstHalf.x()).at(firstHalf.y()))->placeWall();
@@ -206,38 +212,6 @@ void Board::placeWall(const Point &cell, const WallOrientation &direction)
     placeWallMiddlePiece(Point {x + 1, y + 1}, direction);
 }
 
-std::vector<std::vector<int>> Board::allComponents()
-{
-    // Build the matrix of all the connected component
-    int id = 0;
-    std::vector<std::vector<int>> labels(MATRIX_SIZE, std::vector<int>(MATRIX_SIZE, 0));
-    for (int x = 0; x < MATRIX_SIZE; x += 2) {
-        for (int y = 0; y < MATRIX_SIZE; y += 2) {
-            if (labels[x][y] == 0) {
-                id += 1;
-                labelComponent(id, labels, x, y);
-            }
-        }
-    }
-    return labels;
-}
-
-void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y)
-{
-    // Build each connected component
-    labels[x][y] = id;
-    std::vector<Point> shifts = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}}; // UP, DOWN, LEFT, RIGHT
-    for (auto &shift : shifts) {
-        int x_shift = x + shift.x();
-        int y_shift = y + shift.y();
-        if (isPositionValid({x_shift, y_shift})) {
-            if (isWayFree({x, y}, {x_shift, y_shift}) && labels[x_shift][y_shift] == 0) {
-                labelComponent(id, labels, x_shift, y_shift);
-            }
-        }
-    }
-}
-
 bool Board::isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const
 {
     if (!isCell(position))
@@ -253,7 +227,7 @@ bool Board::isPositionOnFinishLine(const Point &position, const FinishLine &fini
     return false;
 }
 
-bool Board::pathExists(const Point &start, FinishLine finishLine) const
+bool Board::pathExists(const Point &start, FinishLine finishLine, Point newWallPiece1, Point newWallPiece2) const
 {
     // This function essentially performs a DFS on the matrix
 
@@ -282,26 +256,20 @@ bool Board::pathExists(const Point &start, FinishLine finishLine) const
         if (isPositionOnFinishLine(Point {x, y}, finishLine))
             return true;
 
-        if (x > 0 && !matrix.at(x - 1).at(y)->isOccupied())
+        if (x > 0 && !matrix.at(x - 1).at(y)->isOccupied() && Point {x - 1, y} != newWallPiece1 && Point {x - 1, y} != newWallPiece2)
             searches.push(Point {x - 2, y});
 
-        if (x < MATRIX_SIZE - 1 && !matrix.at(x + 1).at(y)->isOccupied())
+        if (x < MATRIX_SIZE - 1 && !matrix.at(x + 1).at(y)->isOccupied() && Point {x + 1, y} != newWallPiece1 && Point {x + 1, y} != newWallPiece2)
             searches.push(Point {x + 2, y});
 
-        if (y > 0 && !matrix.at(x).at(y - 1)->isOccupied())
+        if (y > 0 && !matrix.at(x).at(y - 1)->isOccupied() && Point {x, y - 1} != newWallPiece1 && Point {x, y - 1} != newWallPiece2)
             searches.push(Point {x, y - 2});
 
-        if (y < MATRIX_SIZE - 1 && !matrix.at(x).at(y + 1)->isOccupied())
+        if (y < MATRIX_SIZE - 1 && !matrix.at(x).at(y + 1)->isOccupied() && Point {x, y + 1} != newWallPiece1 && Point {x, y + 1} != newWallPiece2)
             searches.push(Point {x, y + 2});
     }
 
     return false;
-}
-
-void Board::spawnPlayer(std::shared_ptr<Player> player)
-{
-    auto matrixPos = player->getMatrixPosition();
-    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
 }
 
 std::vector<std::shared_ptr<Player>> Board::findPlayers()

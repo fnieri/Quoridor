@@ -3,7 +3,6 @@
 //
 
 #include "TerminalVue.h"
-#include <time.h>
 
 bool TerminalVue::mouseInCell(int x, int y)
 {
@@ -38,7 +37,7 @@ bool TerminalVue::isMoveValid(int x, int y)
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return true;
+    return gameController->isWallValid(x, y, wallOrientation);
 }
 
 auto TerminalVue::createCanvas()
@@ -73,26 +72,25 @@ auto TerminalVue::createCanvas()
                 switch (gridValue) {
                 case freeCell:
                     // draw a free cell
-                    // TODO: check if click is possible (gotta wait for merge with model and controller)
-                    if (isClickValid(dx, dy)) {
+                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
                         // if mouse is pressed on this cell/quoridor
                         c.DrawText(dx, dy, "\u25A0");
-                        // TODO: handle mouse click with controller
-                        handleCellClick(i, j);
+                        handleCellClick(j, i);
                     } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
                         // if mouse is pressed on this cell/quoridor
                         c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
                     } else {
                         c.DrawText(dx, dy, "\u25A1");
                     }
                     break;
 
                 case emptyQuoridor:
-                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(i, j)) {
+                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
                         std::vector<int> direction = quoridorDirection[wallOrientation];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                        handleWallAdd(i, j);
-                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(i, j)) {
+                        handleWallAdd(j, i);
+                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
                         std::vector<int> direction = quoridorDirection[wallOrientation];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
                     }
@@ -129,13 +127,13 @@ auto TerminalVue::createCanvas()
 void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
-    return;
+    gameController->movePlayer(x, y);
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
-    return;
+    gameController->placeWall(x, y, wallOrientation);
 }
 
 auto TerminalVue::createChatInput()
