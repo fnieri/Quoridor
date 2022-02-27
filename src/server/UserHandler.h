@@ -45,9 +45,15 @@ class UserHub;
 class UserHandler : public RequestHandler
 {
 protected:
+    // A pointer is used to allow the moving of UserHandlers
     UserHub *m_userHub;
-    std::shared_ptr<ServerUser> m_userHandled;
     bool m_isFinished {false};
+    std::shared_ptr<ServerUser> m_userHandled;
+
+    std::shared_ptr<AuthHandler> m_authHandler;
+    std::shared_ptr<RelationsHandler> m_relationsHandler;
+
+    GameHandler *m_activeGame;
     /**
      * Receive messages from one user
      *
@@ -75,6 +81,8 @@ public:
     std::string getUsername() const;
 
     void terminate();
+
+    bool isInGame() const;
 
     /**
      * Send message passing first by the handler
@@ -134,6 +142,8 @@ public:
      */
     void relayMessageTo(const std::string &, const std::string &);
 
+    bool isInGame(const std::string &) const noexcept;
     bool isConnected(const std::string &) const noexcept;
+
     int connectedUsers() const noexcept;
 };

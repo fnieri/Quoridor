@@ -83,6 +83,11 @@ std::string UserHandler::getUsername() const
     return m_userHandled->getUsername();
 }
 
+bool UserHandler::isInGame() const
+{
+    return static_cast<bool>(m_activeGame);
+}
+
 void UserHandler::terminate()
 {
     m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
@@ -149,11 +154,18 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
         receiver->relayMessage(message);
 }
 
-bool UserHub::isConnected(const std::string &)
+bool UserHub::isInGame(const std::string &username) const noexcept
 {
-    auto receiver {getUser(username)};
+    auto userHandle {getUser(username)};
 
-    return static_cast<bool>(receiver);
+    return userHandle->isInGame();
+}
+
+bool UserHub::isConnected(const std::string &username)
+{
+    auto userHandle {getUser(username)};
+
+    return static_cast<bool>(userHandle);
 }
 
 int UserHub::connectedUsers() const noexcept
