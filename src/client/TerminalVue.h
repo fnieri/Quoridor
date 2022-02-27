@@ -37,6 +37,11 @@
 
 using namespace ftxui;
 
+
+/**
+ * @brief TUI of Quoridor using ftxui to display more easily the required components
+ * [@details You can find the documentation of the author of FTXUI at : https://arthursonzogni.github.io/FTXUI/]
+ */
 class TerminalVue
 {
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
@@ -114,6 +119,14 @@ class TerminalVue
      */
     bool isPlayerTurn();
 
+    /**
+     * @brief Checks if move is actually valid
+     * 
+     * @param x 
+     * @param y 
+     * @return true 
+     * @return false 
+     */
     bool isMoveValid(int x, int y);
 
     bool isWallPlacementValid(int x, int y);
@@ -121,8 +134,8 @@ class TerminalVue
     /**
      * @brief Checks if the click can be accepted
      * [@details returns true if  (mouseInCell(x, y) && mousePressed && isPlayerTurn())]
-     * @param x 
-     * @param y 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
      * @return true 
      * @return false 
      */
@@ -131,7 +144,7 @@ class TerminalVue
     /**
      * @brief Create a Canvas object; when rendered displays the board and game indications
      * 
-     * @return auto 
+     * @return Renderer 
      */
     auto createCanvas();
 
@@ -146,7 +159,7 @@ class TerminalVue
     bool mouseInCell(int x, int y);
 
     /**
-     * @brief Checks if mouse is targeting a quoridor
+     * @brief Checks if mouse is targeting a corridor
      * 
      * @param x 
      * @param y 
@@ -155,6 +168,12 @@ class TerminalVue
      */
     bool mouseInQuoridor(int x, int y);
 
+    /**
+     * @brief view method that interacts with controller to handle a Cell click
+     * 
+     * @param x column position of the mouse pointer in the matrix
+     * @param y row position of the mouse pointer in the matrix
+     */
     void handleCellClick(int x, int y);
 
     void handleWallAdd(int x, int y);
@@ -162,66 +181,70 @@ class TerminalVue
     /**
      * @brief Create a Chat Input object for the game on
      * 
-     * @return auto 
+     * @return Input
      */
     auto createChatInput();
 
     /**
      * @brief Create a Search field Input object to find someone to add to your friends list
      * 
-     * @return auto 
+     * @return Input
      */
     auto createSearchInput();
 
     /**
      * @brief Create a Chat Input object to talk with a friend
      * 
-     * @return auto 
+     * @return Input
      */
     auto createChatFriendInput();
 
     /**
      * @brief Create a Action Toggle object, to chose either to Move or place a Wall
      * 
-     * @return auto 
+     * @return Toggle
      */
     auto createActionToggle();
 
     /**
      * @brief Create a Orientation Toggle object, to chose in which direction you place your wall
      * 
-     * @return auto 
+     * @return Toggle
      */
     auto createOrientationToggle();
 
     /**
-     * @brief Create a Main Tab object
+     * @brief Create a Main Tab object containing all of the tabs you can toggle to
      * 
-     * @return auto 
+     * @return Toggle
      */
     auto createMainTab();
 
     /**
-     * @brief Create a Board Renderer object
+     * @brief Create a Board Renderer object that renders all board features
      * 
-     * @return auto 
+     * @return Renderer 
      */
     auto createBoardRenderer();
 
     /**
-     * @brief create Renderer of Chat Container
+     * @brief create Renderer of Chat Container rendering in-game chat functionalities
+     * 
+     * @return Renderer
      */
     auto createChatRenderer();
 
     /**
      * @brief create Renderer of the container of notifications and the friend searchbar
      * 
+     * @return Renderer
      */
     auto createFriendUtilitariesRenderer();
 
     /**
      * @brief Create a Settings Renderer object
-     *
+     * 
+     *[@return text("Settings") for now]
      */
     auto createSettingsRenderer();
 
@@ -235,7 +258,7 @@ class TerminalVue
     /**
      * @brief Create a Login Renderer object in which you can complete a form to login
      * 
-     * @return Renderer of container
+     * @return Renderer
      */
     auto createLoginRenderer();
 
@@ -263,8 +286,8 @@ public:
     void run();
 
     /**
-     * @brief Add a message to the chat window
-     * @param username String of the player Sending the messsage
+     * @brief Add a message to the in-game chat window
+     * @param username String of the sender's username
      * @param message String of user's typing
      *
      */
@@ -280,17 +303,17 @@ public:
     /**
      * @brief Add a message to the conversation you have with your friend
      * 
-     * @param username 
-     * @param message 
+     * @param username String of the sender's username
+     * @param message String of the user's typing
      */
     void addChatFriendMessage(std::string username, std::string message);
 
     /**
-     * @brief Creates Wraper window object that renders a rounded box shape
+     * @brief Creates Wraper window object that renders a rounded box shape with a title
      * 
-     * @param title 
-     * @param component 
-     * @return Component 
+     * @param title Text that will be shown above the rendered window
+     * @param component Component that has to be shown within the window 
+     * @return Renderer
      */
     Component Window(std::string title, Component component) {
         return Renderer(component, [component, title] {  //
