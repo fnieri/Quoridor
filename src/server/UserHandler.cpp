@@ -111,6 +111,18 @@ UserHub::~UserHub()
         h->terminate();
 }
 
+auto UserHub::getUser(const std::string &username) const
+{
+    std::shared_ptr<UserHandler> userHandle;
+
+    auto userHandleIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
+
+    if (userHandleIt != m_handlers.end())
+        userHandler = *userHandleIt;
+
+    return userHandle;
+}
+
 void UserHub::eraseFinished()
 {
     std::lock_guard<std::mutex> guard {m_handlersMutex};
@@ -131,9 +143,17 @@ void UserHub::add(Socket &&user)
 
 void UserHub::relayMessageTo(const std::string &username, const std::string &message)
 {
-    // TODO: fix if user doesn't exist
-    auto &receiver {*std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
-    receiver->relayMessage(message);
+    auto receiver {getUser(username)};
+
+    if (receiver)
+        receiver->relayMessage(message);
+}
+
+bool UserHub::isConnected(const std::string &)
+{
+    auto receiver {getUser(username)};
+
+    return static_cast<bool>(receiver);
 }
 
 int UserHub::connectedUsers() const noexcept

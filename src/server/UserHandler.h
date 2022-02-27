@@ -98,7 +98,10 @@ private:
     std::vector<std::shared_ptr<UserHandler>> m_handlers;
     mutable std::mutex m_handlersMutex;
 
-    AuthHandler m_authHandler;
+    std::shared_ptr<AuthHandler> m_authHandler;
+    std::shared_ptr<RelationsHandler> m_relationsHandler;
+
+    auto getUser(const std::string &) const;
 
 public:
     UserHub();
@@ -131,5 +134,6 @@ public:
      */
     void relayMessageTo(const std::string &, const std::string &);
 
+    bool isConnected(const std::string &) const noexcept;
     int connectedUsers() const noexcept;
 };
