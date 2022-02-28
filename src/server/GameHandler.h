@@ -19,12 +19,9 @@ private:
     GameHub *m_gameHub;
     UserHub *m_userHub;
 
+    std::string m_configuration;
     std::vector<std::string> m_players;
     std::array<bool, 4> m_confirmedPlayers;
-
-    bool areAllPlayersConfirmed() const;
-    bool areAllPlayersConnected() const;
-    bool areAllPlayersNotInGame() const;
 
 public:
     /**
@@ -36,11 +33,19 @@ public:
     int getID() const noexcept;
     bool isFinished() const;
 
+    void setConfiguration(const std::string &);
     void addPlayer(const std::string &);
     void confirmPlayer(const std::string &);
 
-    bool canStart();
+    bool areAllPlayersConfirmed() const;
+    bool areAllPlayersConnected() const;
+    bool areAllPlayersNotInGame() const;
+
     void start();
+    void terminate();
+
+    void deleteFromDB();
+    void saveToDB();
 
     /**
      * In order to relay the message only to those needing it (i.e.
@@ -58,10 +63,18 @@ private:
      * access their handlers.
      */
     UserHub *m_userHub;
+
+    std::mutex m_gamesMutex;
     std::vector<std::shared_ptr<GameHandler>> m_games;
 
     int getUniqueID() const;
     auto getGame(int) const;
+
+    void processGameInvitation(const std::string &);
+    void processGameInvitationAccept(const std::string &);
+    void processGameInvitationRefuse(const std::string &);
+
+    void removeGame(int);
 
 public:
     GameHub(UserHub *);
@@ -69,8 +82,6 @@ public:
     /**
      * Create game with two users' usernames.
      */
-    /* void createGame(std::initializer_list<std::string>); */
-    void createAndRelayGameFromInvite(const std::string &);
     void eraseFinished();
 
     void processRequest(const std::string &);

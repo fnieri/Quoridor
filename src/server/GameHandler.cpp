@@ -30,6 +30,11 @@ int GameHandler::getID() const noexcept
     return m_gameID;
 }
 
+void GameHandler::setConfiguration(const std::string &configuration)
+{
+    m_configuration = configuration;
+}
+
 void GameHandler::addPlayer(const std::string &username)
 {
     m_players.push_back();
@@ -75,11 +80,6 @@ bool GameHandler::areAllPlayersNotInGame() const
         allNotInGame = allNotInGame && m_userHub->isInGame(player);
 
     return allNotInGame;
-}
-
-bool GameHandler::canStart() const
-{
-    return allConfirmed() && allConnected() && allNotInGame();
 }
 
 void GameHandler::start()
@@ -134,20 +134,16 @@ auto GameHub::getGame(int gameID) const
     return gameHandle;
 }
 
-/* void GameHub::createGame(std::initializer_list<std::string> players) */
-/* { */
-/*     GameHandler tmp {m_userHub, std::move(players)}; */
-/*     tmp.registerObserver(this); */
+void GameHub::eraseFinished()
+{
+    m_games.erase(std::remove_if(m_games.begin(), m_games.end(), [](auto &g) { return g.isFinished(); }), m_games.end());
+}
 
-/*     m_games.push_back(std::move(tmp)); */
-/* } */
-
-void GameHub::createAndRelayGameFromInvite(const std::string &serRequest)
+void GameHub::processGameInvitation(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
 
     auto gameID {getUniqueID()};
-
     auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub};
 
     tmp->addPlayer(request["username_sending"]);
@@ -165,27 +161,53 @@ void GameHub::createAndRelayGameFromInvite(const std::string &serRequest)
     m_games.push_back(tmp);
 }
 
-void GameHub::eraseFinished()
+void GameHub::processGameInvitationAccept(const std::string &serRequest)
 {
-    m_games.erase(std::remove_if(m_games.begin(), m_games.end(), [](auto &g) { return g.isFinished(); }), m_games.end());
+    auto request {json::parse(serRequest)};
+    auto targetGame {getGame(requet["game_id"])};
+
+    targetGame->confirmPlayer(request["username"]);
+
+    if (targetGame->areAllPlayersConfirmed()) {
+        if (!targetGame->areAllPlayersConnected() || !targetGame->areAllPlayersNotInGame()) {
+            removeGame(targetGame);
+        } else {
+            targetGame->start();
+        }
+    }
+}
+
+void GameHub::processGameInvitationRefuse(const std::string &serRequest)
+{
+    auto request {json::parse(serRequest)};
+
+    removeGame(request["game_id"]);
+}
+
+void GameHub::removeGame(int gameID)
+{
+    auto targetGame {getGame(gameID)};
+
+    if (targetGame) {
+        targetGame->deleteFromDB();
+        targetGame->terminate();
+    }
 }
 
 void GameHub::processRequest(const std::string &serRequest)
 {
+    // Mutex when operating on game creation
+    std::lock_guard<std::mutex> guard {m_gamesMutex};
+
     auto request {json::parse(serRequest)};
 
     if (request["action"] == toJsonString(GameSetup::GAME_INVITE)) {
-        createAndRelayGameFromInvite(serRequest);
+        processGameInvitation(serRequest);
 
     } else if (request["action"] == toJsonString(GameSetup::GAME_ACCEPT_INVITATION)) {
-        auto targetGame {getGame(requets["game_id"])};
-        targetGame->confirmPlayer(request["username"]);
-        if (targetGame->canStart()) {
-            targetGame->start();
-        }
+        processGameInvitationAccept(serRequest);
 
     } else if (request["action"] == toJsonString(GameSetup::GAME_REFUSE_INVITATION)) {
-        auto targetGame {getGame(requets["game_id"])};
-        targetGame->playerRefused(request["username"]); // TODO
+        processGameInvitationRefuse(serRequest);
     }
 }
