@@ -21,10 +21,10 @@ std::string AuthHandler::tryRegister(const std::string &serRequest)
     auto request {json::parse(serRequest)};
 
     if (DatabaseHandler::createAccount(request["username"], request["password"])) {
-        requestAnswer = AuthSerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
+        requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
     } else {
         requestAnswer
-            = AuthSerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::FAILURE, ServerAuthReturn::USERNAME_IN_USE);
+            = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::FAILURE, ServerAuthReturn::USERNAME_IN_USE);
     }
 
     return requestAnswer.dump();
@@ -36,11 +36,11 @@ std::string AuthHandler::tryLogIn(const std::string &serMessage)
     auto request {json::parse(serRequest)}; //
 
     if (DatabaseHandler::checkLogin(request["username"], request["password"])) {
-        requestAnswer = AuthSerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
+        requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
     } else {
         // TODO: see for two types of login failures
-        requestAnswer = AuthSerializableMessageFactory::serializeServerAnswer(
-            ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME);
+        requestAnswer
+            = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME);
     }
 
     return requestAnswer.dump();

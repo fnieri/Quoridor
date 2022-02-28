@@ -6,7 +6,7 @@
  */
 
 #include "RelationsHandler.h"
-#include "FriendActionsSerializableMessageFactory.h"
+#include "SerializableMessageFactory.h"
 
 #include <nlohmann/json.hpp>
 
