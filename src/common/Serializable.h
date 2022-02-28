@@ -7,5 +7,4 @@ class Serializable
 public:
     virtual nlohmann::json serialized() {};
     virtual ~Serializable()=default;
-
 };
