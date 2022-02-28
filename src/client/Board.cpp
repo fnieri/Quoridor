@@ -307,3 +307,7 @@ void Board::debugPrint()
         std::cout << std::endl;
     }
 }
+
+std::vector<std::vector<std::shared_ptr<BoardComponent>>> &Board::getBoardMatrix(){
+    return matrix;
+}

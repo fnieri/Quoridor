@@ -14,7 +14,7 @@ enum class DataType {
     LEADERBOARD,
     FRIENDS_LIST,
     GAME_CONFIG,
-}
+};
 
 inline const char *
 toJsonString(DataType d)

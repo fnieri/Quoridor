@@ -8,8 +8,7 @@
 #include "Point.h"
 #include "WallAction.h"
 #include "WallEnum.h"
-// To finish the Server Controller we must merge branches to be up to date with the Json Message Serialization
-// #include "../server/SerializableMessageFactory.h"
+#include "../server/SerializableMessageFactory.h"
 
 #include <memory>
 #include <vector>
@@ -78,7 +77,7 @@ void ServerController::placeWall(std::string action)
 
 void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    // json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg);   // make a json formated message
+    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg);   // make a json formated message
     // send(to_send);
 }
 
@@ -113,7 +112,6 @@ json ServerController::receiveDirectMessage(std::string msg)
 
 void ServerController::loadDirectMessages(std::string username)
 {
-    // message format not up to date yet in SerializableMessageFactory
     // json to_send = SerializableMessageFactory::serializeUserChatBoxRequest(ChatInteraction::SERVER_RELAY_MESSAGE, ?);
     // send(to_send);
 }
@@ -126,15 +124,13 @@ void ServerController::loadGroupMessages(int gameId)
 
 void ServerController::sendFriendRequest(std::string receiver)
 {
-    // FriendAction friend_action = ...
-
-    // json to_send = SerializableMessageFactory::serializeFriendRequest(friend_action, sender, receivers);
+    // json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receivers);
     // send(to_send);
 }
 
 void ServerController::checkLeaderBoard()
 {
-    // how to access leaderboard ? send a pointer to it ?
+    // how to access leaderboard .. send a pointer to it
 }
 
 void ServerController::sendInvite(std::string aFriend, std::string gameSetup)
@@ -145,7 +141,7 @@ void ServerController::sendInvite(std::string aFriend, std::string gameSetup)
 
 void ServerController::joinGame(int gameId)
 {
-    // json to_send = SerializableMessageFactory::serializeQueueJoinRequest(friend_action, sender, receivers); // not implemented yet
+    // json to_send = SerializableMessageFactory::serializeQueueJoinRequest(QueueAction::JOIN_QUEUE, GameMode::CLASSIC, username, ELO); // not implemented yet
     // send(to_send);
 }
 
@@ -157,13 +153,13 @@ void ServerController::askToPause(std::string aFriend)
 
 void ServerController::registerPlayer(std::string username, std::string password)
 {
-    // json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTER,username, password);
+    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, username, password);
     // send(to_send);
 }
 
 void ServerController::logIn(std::string username, std::string password)
 {
-    // json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN,username, password);
+    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, username, password);
     // send(to_send);
 }
 
@@ -176,7 +172,7 @@ void ServerController::logOut()
 
 void ServerController::saveGame(std::string username)
 {
-    // json to_send = SerializableMessageFactory::serializeInGameRequest(GameAction::PROPOSE_SAVE, username);
+    json to_send = SerializableMessageFactory::serializeInGameRequest(GameAction::PROPOSE_SAVE, username);
     // send(to_send);
 }
 

@@ -1,6 +1,6 @@
 /**
  * @file ViewController.h
- * @author Kourieh Anne-Marie
+ * @author Kourieh Anne-Marie and Vanstappen Louis 
  * @brief ViewController that gets messages from the View and sends them to the correct Model
  * @date 2022-02-25
  * (every overriden methods are not documented here, but in the Controller class)
@@ -17,16 +17,28 @@ class ViewController : public Controller
 {
 private:
 
-    std::shared_ptr<Board> board;                           // The Game Model
+    std::shared_ptr<Board> board = std::make_shared<Board>();                           // The Game Model
     int nPlayers;                                           // The Number of Players
     std::vector<std::shared_ptr<Player>> players;           // A vector containing pointers to all the Players 
     std::shared_ptr<ServerController> serverController;     // The Server Controller because we need to send messages from the View to the Server
     int currentPlayerIndex = 0;                             // Index of the current player in the vector of Players
     std::string gameSetup;                                  // Json formatted message indicated the setup of the current game
-    
-public:
+    int gameId;
+    const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+            occupiedHorizontalQuoridor = 7;
+
+public: 
     ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
+    ViewController(int nPlayers, int currentPlayerIndex, int gameId);       // Louis' Constructor
     ~ViewController() = default;
+
+    /**
+     * @brief Updating the Int Matrix accordingly to the Board Model
+     * (Louis' method)
+     * @param boardIntMatrix 
+     */
+    void updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix);
+
 
     /* Setters */
     virtual void setBoard(std::shared_ptr<Board> aBoard) override; 
@@ -39,21 +51,40 @@ public:
      */
     void setGameSetup(std::string gameS);
 
+    /* Getters */
+
+    /**
+     * @brief Get the Board object
+     * (Louis' method)
+     * @return std::shared_ptr<Board> the board
+     */
+    std::shared_ptr<Board> getBoard();
+
+    /**
+     * @brief Get the Board As Int Matrix object
+     * (Louis' method)
+     * @return std::vector<std::vector<int>> the matrix
+     */
+    std::vector<std::vector<int>> getBoardAsIntMatrix();
+
+
     /* ---- To Game Model ---- */
     /**
      * @brief Plays a PlayerAction, when the current player moves his pawn
-     *
-     * @param p the position to move the pawn to
+     * (Louis' changes)
+     * @param x in the corresponding matrix
+     * @param y 
      */
-    void movePlayer(Point p);
+    void movePlayer(int x, int y);
 
     /**
      * @brief Plays a WallAction, when the current player places one of his walls on the board
-     *
-     * @param p the corridor in which the wall will be placed
+     * (Louis' changes)
+     * @param x in the corresponding matrix
+     * @param y 
      * @param orientation either a horizontal or a vertical wall
      */
-    void placeWall(Point p, WallOrientation orientation);
+    void placeWall(int x, int y, int orientation);
 
     /* ---- To Network Model ---- */
     virtual void registerPlayer(std::string username, std::string password) override;
@@ -99,4 +130,25 @@ public:
     virtual bool isDirectMessageReceived(bool received = false) override;
     virtual bool isGroupMessageReceived(bool received = false) override;
     virtual bool isGameOver(bool over = false) override;
+
+    /**
+     * @brief Checks wether a playerAction was valid or not
+     * (Louis'method)
+     * @param x the X position in the matrix of move
+     * @param y the Y position in the matrix of move
+     * @return true 
+     * @return false 
+     */
+    bool isMoveValid(int x, int y);
+
+    /**
+     * @brief Checks wether a wallAction was valid or not
+     * (Louis'method)
+     * @param x the X position in the matrix of the wall
+     * @param y the Y position in the matrix of the wall
+     * @param orientation horizontal or vertical
+     * @return true 
+     * @return false 
+     */
+    bool isWallValid(int x, int y, int orientation);
 };

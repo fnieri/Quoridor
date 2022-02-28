@@ -1,22 +1,26 @@
 #include "ObjectExchangesSerializableMessageFactory.h"
 
+#include "MessageEnums/Domain.h"
+
 using json = nlohmann::json;
 
-json ObjectexchangesSerializableMessageFactory::serializeRequestExchange(Serializable dataType) const
+json ObjectexchangesSerializableMessageFactory::serializeRequestExchange(Serializable dataType)
 {
-    json requestJson = {{"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"data_type", dataType.asDataType()}};
+    json requestJson
+        = {{"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"domain", toJsonString(Domain::RESOURCE_REQUEST)}, {"data_type", dataType.asDataType()}};
     return requestJson;
 }
 
-json ObjectExchangesSerializableMessageFactory::serializeAnswerExchange(DataType dataType, Serializable serializableData) const
+json ObjectExchangesSerializableMessageFactory::serializeAnswerExchange(DataType dataType, Serializable serializableData)
 {
-    json answerJson
-        = {{"action", toJsonString(Exchange::OBJECT_ANSWER)}, {"data_type", toJsonString(dataType)}, {"serialized_data", serializableData.serialized()}};
+    json answerJson = {{"action", toJsonString(Exchange::OBJECT_ANSWER)}, {"data_type", toJsonString(dataType)},
+        {"domain", toJsonString(Domain::RESOURCE_REQUEST)}, {"serialized_data", serializableData.serialized()}};
     return answerJson;
 }
 
-json ObjectExchangesSerializableMessageFactory::serializeStatusTransmission(RequestStatus requestStatus) const
+json ObjectExchangesSerializableMessageFactory::serializeStatusTransmission(RequestStatus requestStatus)
 {
-    json transmissionJson = {{"action", toJsonString(Exchange::STATUS_TRANSMISSION)}, {"status", toJsonString(requestStatus)}};
+    json transmissionJson = {
+        {"action", toJsonString(Exchange::STATUS_TRANSMISSION)}, {"domain", toJsonString(Domain::RESOURCE_REQUEST)}, {"status", toJsonString(requestStatus)}};
     return transmissionJson;
 }

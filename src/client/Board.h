@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BoardComponent.h"
-#include "WallEnum.h"
-#include "Point.h"
 #include "Player.h"
+#include "Point.h"
+#include "WallEnum.h"
 
 #include <memory>
 #include <vector>
@@ -261,10 +261,8 @@ public:
      */
     int getCellSize();
 
-    /**
-     * Print the Board to the console.
-     * Mainly intended for debugging purposes and testing.
-     */
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &getBoardMatrix();
+
     void debugPrint();
 
     ~Board();
