@@ -57,7 +57,7 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 bool PasswordEncrypter::compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash)
 {
     std::string saltedPassword = saltKey + passwordToEncrypt;
-    if (createDigest(saltedPassword) == databaseHash) {
+    if (Instance()->createDigest(saltedPassword) == databaseHash) {
         return true;
     }
     return false;
@@ -66,9 +66,9 @@ bool PasswordEncrypter::compareHash(std::string passwordToEncrypt, std::string s
 std::vector<std::string> PasswordEncrypter::registerEncryption(std::string passwordToEncrypt)
 {
 
-    std::string saltKey = generateSaltKey();
+    std::string saltKey = Instance()->generateSaltKey();
     std::string saltedPassword = saltKey + passwordToEncrypt;
-    std::string hashedPassword = createDigest(saltedPassword);
+    std::string hashedPassword = Instance()->createDigest(saltedPassword);
 
     std::vector<std::string> returnVector = {saltKey, hashedPassword};
     return returnVector;
