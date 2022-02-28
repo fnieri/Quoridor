@@ -1,5 +1,8 @@
 /**
+ * @file ServerUser.cpp
  * @author Boris Petrov
+ * @brief Representation of User on the server
+ * @date 02/25/22
  */
 
 #include "ServerUser.h"
@@ -25,12 +28,12 @@ void ServerUser::bindToUsername(const std::string &username)
 
 void ServerUser::syncWithDB()
 {
+      // TODO sync gameids
+
       m_cachedELO = DatabaseHandler::getELO(m_username);
       m_cachedFriends = DatabaseHandler::getFriends(m_username);
-      //m_cachedRequestsSent = DatabaseHandler::getFriendRequestsSent(m_username);
-      //m_cachedRequestsReceived = DatabaseHandler::getFriendsRequestsReceived(m_username);
-
-  // TODO: rest of cached data
+      m_cachedRequestsSent = DatabaseHandler::getFriendRequestsSent(m_username);
+      m_cachedRequestsReceived = DatabaseHandler::getFriendsRequestsReceived(m_username);
 }
 
 int ServerUser::getELO() const noexcept

@@ -1,5 +1,8 @@
 /**
+ * @file GameHandler.h
  * @author Boris Petrov
+ * @brief Handler of requests related to a game
+ * @date 02/25/22
  */
 
 #pragma once
@@ -7,30 +10,52 @@
 #include "UserHandler.h"
 #include "src/common/Observer.h"
 
-class GameHandler : public Subject
+class GameHandler
 {
 private:
-    bool m_isPlaying {false};
+    int m_gameID;
+    bool m_isFinished {false};
+
+    GameHub *m_gameHub;
     UserHub *m_userHub;
+
+    std::string m_configuration;
     std::vector<std::string> m_players;
+    std::array<bool, 4> m_confirmedPlayers;
 
 public:
-    GameHandler(UserHub *, std::initializer_list<std::string>);
+    /**
+     * @param gameId identifier of the game, should be unique
+     * @param userHub user hub used to access the participants
+     */
+    GameHandler(int, GameHub *, UserHub *);
 
-    bool isFinished() const
-    {
-        return m_isPlaying;
-    }
+    int getID() const noexcept;
+    bool isFinished() const;
+
+    void setConfiguration(const std::string &);
+    void addPlayer(const std::string &);
+    void confirmPlayer(const std::string &);
+
+    bool areAllPlayersConfirmed() const;
+    bool areAllPlayersConnected() const;
+    bool areAllPlayersNotInGame() const;
+
+    void start();
+    void terminate();
+
+    void deleteFromDB();
+    void saveToDB();
 
     /**
      * In order to relay the message only to those needing it (i.e.
      * not the sender), the username of the sender is also passed
      * to the method.
      */
-    void processMessage(const std::string &, const std::string &);
+    void processRequest(const std::string &, const std::string &);
 };
 
-class GameHub : public Observer
+class GameHub
 {
 private:
     /**
@@ -38,15 +63,26 @@ private:
      * access their handlers.
      */
     UserHub *m_userHub;
-    std::vector<GameHandler> m_games;
+
+    std::mutex m_gamesMutex;
+    std::vector<std::shared_ptr<GameHandler>> m_games;
+
+    int getUniqueID() const;
+    auto getGame(int) const;
+
+    void processGameInvitation(const std::string &);
+    void processGameInvitationAccept(const std::string &);
+    void processGameInvitationRefuse(const std::string &);
+
+    void removeGame(int);
 
 public:
     GameHub(UserHub *);
 
-    void update(Event) override;
     /**
      * Create game with two users' usernames.
      */
-    void createGame(std::initializer_list<std::string>);
     void eraseFinished();
+
+    void processRequest(const std::string &);
 };

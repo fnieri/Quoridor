@@ -1,18 +1,21 @@
 /**
+ * @file UserHandler.cpp
  * @author Francesco Nieri
  * @author Boris Petrov
+ * @brief Handle requests from client and relay them to appropriate handler
+ * @date 02/25/22
  */
 
 #pragma once
 
+#include "AuthHandler.h"
 #include "src/common/Observer.h"
 #include "src/common/RequestHandler.h"
 
 #include <atomic>
 #include <memory>
+#include <mutex>
 #include <string>
-
-// TODO: replace observer with a reference
 
 class ServerUser;
 class UserHub;
@@ -42,15 +45,23 @@ class UserHub;
 class UserHandler : public RequestHandler
 {
 protected:
+    // A pointer is used to allow the moving of UserHandlers
     UserHub *m_userHub;
+    std::shared_ptr<AuthHandler> m_authHandler;
+    std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<GameHub> m_gameHub;
+
+    bool m_isFinished {false};
+    GameHandler *m_activeGame {nullptr};
+
     std::shared_ptr<ServerUser> m_userHandled;
-    bool m_isFinished {true};
+
     /**
      * Receive messages from one user
      *
      * The message received by the handler is analyzed and
      * transferred to the appropriate specific component (e.g
-     * LoginHangler, GameHandler, etc).
+     * LoginHandler, GameHandler, etc).
      *
      *                       ChatBox
      *                     /
@@ -59,8 +70,15 @@ protected:
      */
     void handleRequests() override;
 
+    void processAuth(const std::string &);
+    void processRelations(const std::string &);
+    void processChatbox(const std::string &);
+    void processResourceRequest(const std::string &);
+    void processGameSetup(const std::string &);
+    void processGameAction(const std::string &);
+
 public:
-    explicit UserHandler(UserHub *, Socket &&);
+    UserHandler(Socket &&, UserHub *, std::shared_ptr<AuthHandler>, std::shared_ptr<RelationsHandler>, std::shared_ptr<GameHub>);
 
     UserHandler(const UserHandler &) = delete;
     UserHandler(UserHandler &&) = default;
@@ -68,8 +86,13 @@ public:
     UserHandler &operator=(const UserHandler &) = delete;
     UserHandler &operator=(UserHandler &&) = default;
 
+    bool isInGame() const noexcept;
     bool isFinished() const;
+
     std::string getUsername() const;
+
+    void terminate();
+
 
     /**
      * Send message passing first by the handler
@@ -90,15 +113,18 @@ public:
 class UserHub
 {
 private:
-    std::vector<UserHandler> m_handlers;
-    /**
-     * Erase handlers whose connection with the client was lost
-     */
+    std::vector<std::shared_ptr<UserHandler>> m_handlers;
+    mutable std::mutex m_handlersMutex;
+
+    std::shared_ptr<AuthHandler> m_authHandler;
+    std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<GameHub> m_gameHub;
+
+    auto getUser(const std::string &) const;
 
 public:
-    UserHub()
-    {
-    }
+    UserHub();
+    ~UserHub();
 
     /**
      * Add client (identified by its socket)
@@ -111,6 +137,9 @@ public:
      * @see UserHandler
      */
     void add(Socket &&);
+    /**
+     * Erase handlers whose connection with the client was lost
+     */
     void eraseFinished();
 
     /**
@@ -123,4 +152,9 @@ public:
      * the message will simply be ignored
      */
     void relayMessageTo(const std::string &, const std::string &);
+
+    bool isInGame(const std::string &) const noexcept;
+    bool isConnected(const std::string &) const noexcept;
+
+    int connectedUsers() const noexcept;
 };

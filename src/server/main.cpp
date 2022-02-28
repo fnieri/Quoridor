@@ -1,5 +1,8 @@
 /**
+ * @file main.cpp
  * @author Boris Petrov
+ * @brief Server's main
+ * @date 02/25/22
  */
 
 #include "LandingPool.h"

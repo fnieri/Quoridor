@@ -1,5 +1,8 @@
 /**
+ * @file ChatBox.h
  * @author Boris Petrov
+ * @brief Handler of chat requests
+ * @date 02/25/22
  */
 
 #pragma once
@@ -40,5 +43,5 @@ public:
      *
      * @param message message to be processed
      */
-    void processMessage(const std::string &);
+    void processRequest(const std::string &);
 };

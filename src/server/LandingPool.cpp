@@ -1,5 +1,8 @@
 /**
+ * @file LandingPool.cpp
  * @author Boris Petrov
+ * @brief Entry door to the server
+ * @date 02/25/22
  */
 
 #include "LandingPool.h"
@@ -14,7 +17,7 @@ LandingPool::LandingPool(in_port_t port, UserHub &userHub)
 
 int LandingPool::openToConnections()
 {
-    while (true) {
+    while (m_isServerOpen) {
         sockpp::tcp_socket newClient {m_acceptor.accept()};
 
         if (!newClient) {
@@ -26,4 +29,9 @@ int LandingPool::openToConnections()
     }
 
     return 0;
+}
+
+void LandingPool::close()
+{
+    m_isServerOpen = false;
 }
