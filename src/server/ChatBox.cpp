@@ -18,23 +18,28 @@ ChatBox::ChatBox(UserHub &userHub)
 {
 }
 
-void ChatBox::processMessage(const std::string &serMessage)
+void ChatBox::processRequest(const std::string &serMessage)
 {
     recordMessage(serMessage);
     relayMessage(serMessage);
 }
 
-void ChatBox::recordMessage(const std::string &serMessage)
+void ChatBox::recordMessage(const std::string &serRequest)
 {
-    auto deserMessage {json::parse(serMessage)};
-    // TODO: link with db
+    auto request {json::parse(serRequest)};
+
+    if (request["action"] == "friend_msg") {
+        DatabaseHandler::recordMessage(request["sender"], request["receiver"], request["message"]);
+
+    } else if (request["action"] == "game_msg") {
+        DatabaseHandler::recordMessage(request["sender"], request["message"], request["game_id"]);
+    }
 }
 
-void ChatBox::relayMessage(const std::string &serMessage)
+void ChatBox::relayMessage(const std::string &serRequest)
 {
-    auto deserMessage {json::parse(serMessage)};
+    auto request {json::parse(serRequest)};
 
-    // Usually sent to one person, but may be many in the future
-    for (auto &r : deserMessage["recipient"])
-        m_userHub.relayMessageTo(r, serMessage);
+    // Works only for one to one conversations
+    m_userHub.relayMessageTo(request["receiver"], serRequest);
 }

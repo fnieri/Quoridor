@@ -43,5 +43,5 @@ public:
      *
      * @param message message to be processed
      */
-    void processMessage(const std::string &);
+    void processRequest(const std::string &);
 };
