@@ -30,6 +30,7 @@ void ServerUser::bindToUsername(const std::string &username)
 void ServerUser::syncWithDB()
 {
     // TODO ... the sync with the server
+    // TODO sync gameids
 }
 
 int ServerUser::getELO() const noexcept

@@ -64,4 +64,6 @@ private:
     UserList m_cachedFriends;
     UserList m_cachedRequestsSent;
     UserList m_cachedRequestsReceived;
+
+    std::vector<int> m_cachedGameIds;
 };
