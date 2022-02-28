@@ -6,10 +6,9 @@
  */
 
 #include "ServerUser.h"
+#include "Database.h"
 
 #include <algorithm>
-
-// TODO: make it work with db
 
 bool ServerUser::isLoggedIn() const noexcept
 {
@@ -29,8 +28,12 @@ void ServerUser::bindToUsername(const std::string &username)
 
 void ServerUser::syncWithDB()
 {
-    // TODO ... the sync with the server
-    // TODO sync gameids
+      // TODO sync gameids
+
+      m_cachedELO = DatabaseHandler::getELO(m_username);
+      m_cachedFriends = DatabaseHandler::getFriends(m_username);
+      m_cachedRequestsSent = DatabaseHandler::getFriendRequestsSent(m_username);
+      m_cachedRequestsReceived = DatabaseHandler::getFriendsRequestsReceived(m_username);
 }
 
 int ServerUser::getELO() const noexcept
@@ -50,5 +53,14 @@ UserList ServerUser::getFriendRequestsSent() const noexcept
 
 UserList ServerUser::getFriendRequestsReceived() const noexcept
 {
+
     return m_cachedRequestsReceived;
+
+    // DatabaseHandler::removeFriend(m_username, oldFriend);
+    //try {
+    //    m_cachedFriends.erase(std::find(m_cachedFriends.begin(), m_cachedFriends.end(), oldFriend)); // into oblivion
+    //} catch (std::exception &e) {
+    //    // in case m_cachedFriends is empty
+    //}
+
 }

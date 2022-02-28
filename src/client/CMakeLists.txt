@@ -14,7 +14,10 @@ add_executable(client
 )
 
 # Link the project libraries to the executable
-# target_link_libraries(client
-    # PRIVATE
-        # ${PREFIX}_client
-# )
+target_link_libraries(client
+    PRIVATE
+        ${PREFIX}_client
+)
+
+target_compile_features(client PRIVATE cxx_std_17)
+
