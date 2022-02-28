@@ -1,3 +1,10 @@
+/**
+ * @file Point.cpp
+ * @author Boris Petrov
+ * @brief A position in a 2 dimentional grid
+ * @date 02/25/22
+ */
+
 #include "Point.h"
 
 #include <stdexcept>

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BoardComponent.h"
-#include "WallEnum.h"
-#include "Point.h"
 #include "Player.h"
+#include "Point.h"
+#include "WallEnum.h"
 
 #include <memory>
 #include <vector>

@@ -15,7 +15,7 @@ add_library(${PREFIX}_client
 
 target_link_libraries(${PREFIX}_client
     PUBLIC
-        nlohmann_json 
+        nlohmann_json
 )
 
 target_include_directories(${PREFIX}_client
@@ -32,3 +32,5 @@ target_link_libraries(client
     PRIVATE
         ${PREFIX}_client
 )
+
+target_compile_features(client PRIVATE cxx_std_17)

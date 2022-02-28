@@ -1,4 +1,3 @@
-
 #include <catch2/catch.hpp>
 
 #include "src/client/PlayerAction.h"
@@ -7,5 +6,4 @@
 
 TEST_CASE("asdasd")
 {
-	
 }
