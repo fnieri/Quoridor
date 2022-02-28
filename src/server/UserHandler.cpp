@@ -21,15 +21,18 @@ using json = nlohmann::json;
  * UserHandler
  */
 
-UserHandler::UserHandler(UserHub *userHub, Socket &&user)
+UserHandler::UserHandler(
+    Socket &&user, UserHub *userHub, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<RelationsHandler> relationsHandler, std::shared)
     : RequestHandler {std::move(user)}
     , m_userHub {userHub}
+    , m_authHandler {authHandler}
+    , m_relationsHandler {relationsHandler}
+    , m_relationsHandler {relationsHandler}
 {
 }
 
 void UserHandler::handleRequests()
 {
-    // TODO finish this
     while (!m_isFinished) {
         try {
             if (hasReadActivity(1)) {
@@ -39,30 +42,9 @@ void UserHandler::handleRequests()
                 if (m_isFinished)
                     break;
 
-                auto request {json::parse(serRequest)};
+                processRequest(serRequest);
 
-                if (request["action"] == "Login" || request["action"] == "Register") {
-
-                    auto serAnswer {m_authHandler.processRequest(serMessage)};
-                    auto answer {json::parse(serAnswer)};
-
-                    if (answer["status"] == "Success") {
-                        m_serverUser.bindTo(request["username"]);
-                        send(serAnswer);
-                    }
-                }
-
-                /* if (request["Type"] == "LogIn") { */
-                /*     std::cout << "Loggin in"; */
-
-                /* } else if (request["Type"] == "Register") { */
-                /*     std::cout << "Registring"; */
-                /* } */
-            } else if (m_isFinished) {
-                break;
-            }
-
-            // Client was disconnected
+                // Client was disconnected
         } catch (UnableToRead &) {
             m_isFinished = true;
         } catch (UnableToSend &) {
@@ -70,108 +52,187 @@ void UserHandler::handleRequests()
         }
     }
 
+    // This may crash the server if the destructor
+    // of the UserHub finishes before the current thread.
+    // FIXME
     m_userHub->eraseFinished();
 }
 
-bool UserHandler::isFinished() const
+void UserHandler::processRequest(const std::string &serRequest)
 {
-    return m_isFinished;
-}
+    auto request {json::parse(serRequest)};
 
-std::string UserHandler::getUsername() const
-{
-    return m_userHandled->getUsername();
-}
+    if (request["domain"] == toJsonString(Domain::AUTH)) {
+        processAuth(serRequest);
 
-bool UserHandler::isInGame() const
-{
-    return static_cast<bool>(m_activeGame);
-}
+    } else if (request["domain"] == toJsonString(Domain::FRIENDS)) {
+        processRelations(serRequest);
 
-void UserHandler::terminate()
-{
-    m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
-}
+    } else if (request["domain"] == toJsonString(Domain::CHATBOX)) {
+        processChatbox(serRequest);
 
-void UserHandler::relayMessage(const std::string &serMessage)
-{
-    // TODO: verification for user updates on certain specific messages
-    send(serMessage);
-}
+    } else if (request["domain"] == toJsonString(Domain::OBJECT_REQUEST)) {
+        processResourceRequest(serRequest);
 
-/**
- * UserHub
- */
+    } else if (request["domain"] == toJsonString(Domain::GAME_ACTION)) {
+        processGameAction(serRequest);
 
-UserHub::UserHub()
-    : m_authHandler {*this}
-{
-}
+    } else if (request["domain"] == toJsonString(Domain::GAME_CREATION)) {
+        processGameSetup(serRequest);
+    }
 
-UserHub::~UserHub()
-{
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
+    void UserHandler::processAuth(const std::string &serRequest)
+    {
+        auto request {json::parse(serRequest)};
 
-    for (auto &h : m_handlers)
-        h->terminate();
-}
+        auto serAnswer {m_authHandler->processRequest(serRequest)};
+        auto answer {json::parse(serAnswer)};
 
-auto UserHub::getUser(const std::string &username) const
-{
-    std::shared_ptr<UserHandler> userHandle;
+        if (answer["status"] == "Success") {
+            m_userHandled->bindTo(request["username"]);
+            m_userHandled->syncWithDB();
+            send(serAnswer);
+        }
+    }
 
-    auto userHandleIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
+    void UserHandler::processRelations(const std::string &serRequest)
+    {
+        auto request {json::parse(serRequest)};
 
-    if (userHandleIt != m_handlers.end())
-        userHandler = *userHandleIt;
+        m_relationsHandler->processRequest(serRequest);
+        m_userHandled->syncWithDB();
+    }
 
-    return userHandle;
-}
+    void UserHandler::processChatbox(const std::string &serRequest)
+    {
+        auto request {json::parse(serRequest)};
 
-void UserHub::eraseFinished()
-{
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
+        m_chatboxHandler->processRequest(serRequest);
+    }
 
-    m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h->isFinished(); }), m_handlers.end()); // <3 c++
-}
+    void UserHandler::processResourceRequest(const std::string &serRequest)
+    {
+        std::string requestedResource;
+        // TODO
+    }
 
-void UserHub::add(Socket &&user)
-{
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
+    void UserHandler::processGameSetup(const std::string &serRequest)
+    {
+        m_userHub->processRequest(serRequest);
+    }
 
-    // Start handling
-    std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(this, std::move(user))};
-    userHandler->startHandling();
+    void UserHandler::processGameAction(const std::string &serRequest)
+    {
+        m_activeGame->processRequest(serRequest);
+    }
 
-    m_handlers.push_back(std::move(userHandler));
-}
+    bool UserHandler::isFinished() const
+    {
+        return m_isFinished;
+    }
 
-void UserHub::relayMessageTo(const std::string &username, const std::string &message)
-{
-    auto receiver {getUser(username)};
+    std::string UserHandler::getUsername() const
+    {
+        return m_userHandled->getUsername();
+    }
 
-    if (receiver)
-        receiver->relayMessage(message);
-}
+    bool UserHandler::isInGame() const noexcept
+    {
+        return static_cast<bool>(m_activeGame);
+    }
 
-bool UserHub::isInGame(const std::string &username) const noexcept
-{
-    auto userHandle {getUser(username)};
+    void UserHandler::terminate()
+    {
+        m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
+    }
 
-    return userHandle->isInGame();
-}
+    void UserHandler::relayMessage(const std::string &serMessage)
+    {
+        // TODO: verification for user updates on certain specific messages
+        auto message {json::parse(serMessage)};
 
-bool UserHub::isConnected(const std::string &username)
-{
-    auto userHandle {getUser(username)};
+        if (message["domain"] == toJsonString(Domain::FRIENDS)) {
+            // Sync friend lists
+            m_userHandled->syncWithDB();
+        }
 
-    return static_cast<bool>(userHandle);
-}
+        send(serMessage);
+    }
 
-int UserHub::connectedUsers() const noexcept
-{
-    // Do not give size if the size is in the process of changing (add for example)
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
+    /**
+     * UserHub
+     */
 
-    return m_handlers.size();
-}
+    UserHub::UserHub()
+        : m_authHandler {std::make_shared<AuthHandler>(*this)}
+        , m_relationsHandler {std::make_shared<RelationsHandler>(*this)}
+    {
+    }
+
+    UserHub::~UserHub()
+    {
+        std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+        for (auto &h : m_handlers)
+            h->terminate();
+    }
+
+    auto UserHub::getUser(const std::string &username) const
+    {
+        std::shared_ptr<UserHandler> userHandle;
+
+        auto userHandleIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
+
+        if (userHandleIt != m_handlers.end())
+            userHandler = *userHandleIt;
+
+        return userHandle;
+    }
+
+    void UserHub::eraseFinished()
+    {
+        std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+        m_handlers.erase(std::remove_if(m_handlers.begin(), m_handlers.end(), [](const auto &h) { return h->isFinished(); }), m_handlers.end()); // <3 c++
+    }
+
+    void UserHub::add(Socket && user)
+    {
+        std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+        // Start handling
+        std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(std::move(user), this, m_authHandler, m_relationsHandler)};
+        userHandler->startHandling();
+
+        m_handlers.push_back(std::move(userHandler));
+    }
+
+    void UserHub::relayMessageTo(const std::string &username, const std::string &message)
+    {
+        auto receiver {getUser(username)};
+
+        if (receiver)
+            receiver->relayMessage(message);
+    }
+
+    bool UserHub::isInGame(const std::string &username) const noexcept
+    {
+        auto userHandle {getUser(username)};
+
+        return userHandle->isInGame();
+    }
+
+    bool UserHub::isConnected(const std::string &username)
+    {
+        auto userHandle {getUser(username)};
+
+        return static_cast<bool>(userHandle);
+    }
+
+    int UserHub::connectedUsers() const noexcept
+    {
+        // Do not give size if the size is in the process of changing (add for example)
+        std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+        return m_handlers.size();
+    }

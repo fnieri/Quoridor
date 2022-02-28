@@ -47,13 +47,15 @@ class UserHandler : public RequestHandler
 protected:
     // A pointer is used to allow the moving of UserHandlers
     UserHub *m_userHub;
-    bool m_isFinished {false};
-    std::shared_ptr<ServerUser> m_userHandled;
-
     std::shared_ptr<AuthHandler> m_authHandler;
     std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<GameHub> m_gameHub;
 
-    GameHandler *m_activeGame;
+    bool m_isFinished {false};
+    GameHandler *m_activeGame {nullptr};
+
+    std::shared_ptr<ServerUser> m_userHandled;
+
     /**
      * Receive messages from one user
      *
@@ -68,8 +70,15 @@ protected:
      */
     void handleRequests() override;
 
+    void processAuth(const std::string &);
+    void processRelations(const std::string &);
+    void processChatbox(const std::string &);
+    void processResourceRequest(const std::string &);
+    void processGameSetup(const std::string &);
+    void processGameAction(const std::string &);
+
 public:
-    explicit UserHandler(UserHub *, Socket &&);
+    UserHandler(Socket &&, UserHub *, std::shared_ptr<AuthHandler>, std::shared_ptr<RelationsHandler>, std::shared_ptr<GameHub>);
 
     UserHandler(const UserHandler &) = delete;
     UserHandler(UserHandler &&) = default;
@@ -77,12 +86,13 @@ public:
     UserHandler &operator=(const UserHandler &) = delete;
     UserHandler &operator=(UserHandler &&) = default;
 
+    bool isInGame() const noexcept;
     bool isFinished() const;
+
     std::string getUsername() const;
 
     void terminate();
 
-    bool isInGame() const;
 
     /**
      * Send message passing first by the handler
@@ -108,6 +118,7 @@ private:
 
     std::shared_ptr<AuthHandler> m_authHandler;
     std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<GameHub> m_gameHub;
 
     auto getUser(const std::string &) const;
 
