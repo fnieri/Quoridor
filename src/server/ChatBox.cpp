@@ -28,10 +28,10 @@ void ChatBox::recordMessage(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
 
-    if (request["action"] == "friend_msg") {
+    if (request["action"] == toJsonString(MessageType::FRIEND_MESSAGE)) {
         DatabaseHandler::recordMessage(request["sender"], request["receiver"], request["message"]);
 
-    } else if (request["action"] == "game_msg") {
+    } else if (request["action"] == toJsonString(MessageType::INGAME_MESSAGE)) {
         DatabaseHandler::recordMessage(request["sender"], request["message"], request["game_id"]);
     }
 }

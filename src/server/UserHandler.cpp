@@ -22,12 +22,12 @@ using json = nlohmann::json;
  */
 
 UserHandler::UserHandler(
-    Socket &&user, UserHub *userHub, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<RelationsHandler> relationsHandler, std::shared)
+    Socket &&user, UserHub *userHub, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<RelationsHandler> relationsHandler, std::shared<GameHub> gameHub)
     : RequestHandler {std::move(user)}
     , m_userHub {userHub}
     , m_authHandler {authHandler}
     , m_relationsHandler {relationsHandler}
-    , m_relationsHandler {relationsHandler}
+    , m_gameHub {gameHub}
 {
 }
 
@@ -44,8 +44,8 @@ void UserHandler::handleRequests()
 
                 processRequest(serRequest);
 
-                // Client was disconnected
             }
+            // Client was disconnected
             catch (UnableToRead &)
             {
                 m_isFinished = true;
@@ -70,19 +70,19 @@ void UserHandler::processRequest(const std::string &serRequest)
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::FRIENDS)) {
+    } else if (request["domain"] == toJsonString(Domain::RELATIONS)) {
         processRelations(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::CHATBOX)) {
+    } else if (request["domain"] == toJsonString(Domain::CHAT)) {
         processChatbox(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::OBJECT_REQUEST)) {
+    } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
         processResourceRequest(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::GAME_ACTION)) {
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
         processGameAction(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::GAME_CREATION)) {
+    } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
         processGameSetup(serRequest);
     }
 }
@@ -94,7 +94,7 @@ void UserHandler::processAuth(const std::string &serRequest)
     auto serAnswer {m_authHandler->processRequest(serRequest)};
     auto answer {json::parse(serAnswer)};
 
-    if (answer["status"] == "Success") {
+    if (answer["status"] == toJsonString(ServerAuthReturn::CORRECT)) {
         m_userHandled->bindTo(request["username"]);
         m_userHandled->syncWithDB();
         send(serAnswer);
@@ -157,7 +157,7 @@ void UserHandler::relayMessage(const std::string &serMessage)
     // TODO: verification for user updates on certain specific messages
     auto message {json::parse(serMessage)};
 
-    if (message["domain"] == toJsonString(Domain::FRIENDS)) {
+    if (message["domain"] == toJsonString(Domain::RELATIONS)) {
         // Sync friend lists
         m_userHandled->syncWithDB();
     }
@@ -207,7 +207,7 @@ void UserHub::add(Socket &&user)
     std::lock_guard<std::mutex> guard {m_handlersMutex};
 
     // Start handling
-    std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(std::move(user), this, m_authHandler, m_relationsHandler)};
+    std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(std::move(user), this, m_authHandler, m_relationsHandler, m_gameHub)};
     userHandler->startHandling();
 
     m_handlers.push_back(std::move(userHandler));
