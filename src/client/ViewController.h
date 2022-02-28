@@ -3,7 +3,8 @@
  * @author Kourieh Anne-Marie
  * @brief ViewController that gets messages from the View and sends them to the correct Model
  * @date 2022-02-25
- * 
+ * (every overriden methods are not documented here, but in the Controller class)
+ *
 */
 
 #pragma once
@@ -15,23 +16,30 @@ class ServerController;
 class ViewController : public Controller
 {
 private:
-    std::shared_ptr<Board> board;
-    int nPlayers;
-    std::vector<std::shared_ptr<Player>> players;
-    std::shared_ptr<ServerController> serverController;
-    int currentPlayerIndex = 0; // index of the current player in the vector of Players
-    int currentGameId;
-    std::string gameSetup;
+
+    std::shared_ptr<Board> board;                           // The Game Model
+    int nPlayers;                                           // The Number of Players
+    std::vector<std::shared_ptr<Player>> players;           // A vector containing pointers to all the Players 
+    std::shared_ptr<ServerController> serverController;     // The Server Controller because we need to send messages from the View to the Server
+    int currentPlayerIndex = 0;                             // Index of the current player in the vector of Players
+    std::string gameSetup;                                  // Json formatted message indicated the setup of the current game
+    
 public:
     ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
     ~ViewController() = default;
 
     /* Setters */
-
     virtual void setBoard(std::shared_ptr<Board> aBoard) override; 
     virtual void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers) override; 
     
-    /* To Game Model */
+    /**
+     * @brief Set the Game Setup object
+     * 
+     * @param gameS the setup given
+     */
+    void setGameSetup(std::string gameS);
+
+    /* ---- To Game Model ---- */
     /**
      * @brief Plays a PlayerAction, when the current player moves his pawn
      *
@@ -43,16 +51,14 @@ public:
      * @brief Plays a WallAction, when the current player places one of his walls on the board
      *
      * @param p the corridor in which the wall will be placed
-     * @param orientation
+     * @param orientation either a horizontal or a vertical wall
      */
     void placeWall(Point p, WallOrientation orientation);
 
-    /* To Network Model (all of these are to send to the ServerController) */ 
+    /* ---- To Network Model ---- */
     virtual void registerPlayer(std::string username, std::string password) override;
     virtual void logIn(std::string username, std::string password) override;
     virtual void logOut() override;
-
-    void setGameSetup(std::string gameS);
 
     virtual void startGame() override;
     virtual void saveGame(std::string username) override;
@@ -65,19 +71,32 @@ public:
     virtual void sendFriendRequest(std::string receiver)  override;
     virtual void checkLeaderBoard()  override;
 
-    /* To Chat Model (all of these are to send to the ServerController as well) */
+    /* ---- To Chat Model ---- */
     virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
     virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
     
-    virtual bool isDirectMessageReceived(bool received = false) override;
-    virtual bool isGroupMessageReceived(bool received = false) override;
-
+    /**
+     * @brief When the server has got a message sent from another player, it is sent back to the View to show it to everyone in the Multiplayer Game
+     * The view will call first the notifying methods to check if a message has been received or not
+     *
+     * @param msg the message in json
+     * @return 
+     */
     nlohmann::json receiveGroupMessage(nlohmann::json msg);
+    
+    /**
+     * @brief When the server has got a message sent from another player, it is sent back to the View to show it to everyone in the Multiplayer Game
+     * 
+     * @param msg the message sent (formatted in json)
+     * @return nlohmann::json : the message is sent in json to the View
+     */
     nlohmann::json receiveDirectMessage(nlohmann::json msg);
     
     virtual void loadDirectMessages(std::string username) override;
     virtual void loadGroupMessages(int gameId) override;
     
-    /* Noticing the view */
+    /* Notifying the view */
+    virtual bool isDirectMessageReceived(bool received = false) override;
+    virtual bool isGroupMessageReceived(bool received = false) override;
     virtual bool isGameOver(bool over = false) override;
 };

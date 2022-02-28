@@ -8,6 +8,7 @@
 #include "Point.h"
 #include "WallAction.h"
 #include "WallEnum.h"
+// To finish the Server Controller we must merge branches to be up to date with the Json Message Serialization
 // #include "../server/SerializableMessageFactory.h"
 
 #include <memory>
@@ -41,7 +42,6 @@ bool ServerController::isGameOver(bool over)
     return over;
 }
 
-/* Game handler */
 void ServerController::movePlayer(std::string action)
 {
     json playerAction = json::parse(action); // String to json
@@ -67,7 +67,7 @@ void ServerController::placeWall(std::string action)
     // Point wallCell {x, y};
     // PawnColors playerColor = (PawnColors)wallAction["player_id"]; // Spot playerID
 
-    // td::shared_ptr<WallAction> wallAction {board, dictPlayer[playerColor], end_position / 2, wallOrientation};
+    // std::shared_ptr<WallAction> wallAction {board, dictPlayer[playerColor], end_position / 2, wallOrientation};
 
     // wallAction->executeAction();
     // if (wallAction->isGameOver()) isGameOver(true);
@@ -76,10 +76,6 @@ void ServerController::placeWall(std::string action)
 // TODO getReceivers() // we need this to send messages to all gamers in the group chat
 // need the server to send this
 
-/* Chat handler */
-// Two types of messages : those sent in DM and those sent to a game party
-
-// when we receive a message from the View, we send it to the Server
 void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
     // json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg);   // make a json formated message
@@ -103,7 +99,6 @@ bool ServerController::isGroupMessageReceived(bool received)
     return received;
 }
 
-// when we receive a message from the Server, we send it to the View to show it to others
 json ServerController::receiveGroupMessage(std::string msg)
 {
     isGroupMessageReceived(true);
@@ -116,13 +111,10 @@ json ServerController::receiveDirectMessage(std::string msg)
     return json::parse(msg);
 }
 
-// Servers sends us all the messages to load them to the players' View
-// Do we load the messages one at a time or all the messages together
 void ServerController::loadDirectMessages(std::string username)
 {
     // message format not up to date yet in SerializableMessageFactory
     // json to_send = SerializableMessageFactory::serializeUserChatBoxRequest(ChatInteraction::SERVER_RELAY_MESSAGE, ?);
-    // why send the message ? and timestamp ? and ChatBoxId ??
     // send(to_send);
 }
 
@@ -132,10 +124,9 @@ void ServerController::loadGroupMessages(int gameId)
     // send(to_send);
 }
 
-/* Network handler */
 void ServerController::sendFriendRequest(std::string receiver)
 {
-    // FriendAction friend_action = ... ? what is that ?
+    // FriendAction friend_action = ...
 
     // json to_send = SerializableMessageFactory::serializeFriendRequest(friend_action, sender, receivers);
     // send(to_send);

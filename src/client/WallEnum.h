@@ -27,8 +27,9 @@ inline const char *toJsonOutput(WallOrientation w)
  * @param jsonOrientation the string to convert to WallOrientation
  * @returns WallOrientation
  */
-/*
-WallOrientation jsonToOrientation(std::string jsonOrientation)
+
+
+/*WallOrientation jsonToOrientation(std::string jsonOrientation)
 {
     // Use if-else because switch can't be used on strings
     if (jsonOrientation == "wall_vertical")
@@ -37,4 +38,4 @@ WallOrientation jsonToOrientation(std::string jsonOrientation)
         return WallOrientation::Horizontal;
     else
         throw std::invalid_argument("Not a valid orientation");
-} */
+}*/

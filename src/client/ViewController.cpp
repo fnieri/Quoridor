@@ -21,8 +21,6 @@ ViewController::ViewController(std::shared_ptr<ServerController> serverControlle
 {
 }
 
-/* Setters */ 
-
 void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
 {
     board = theBoard;
@@ -55,8 +53,6 @@ void ViewController::placeWall(Point p, WallOrientation orientation)
     if (action->executeAction())
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers;
 }
-
-/* To Network Model */
 
 void ViewController::startGame()
 {
@@ -135,7 +131,6 @@ void ViewController::checkLeaderBoard()
     serverController->checkLeaderBoard();       // or call immediatly ELO and give to the view ?
 }
 
-/* To Chat Model */
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
     serverController->sendDirectMessage(sender, receiver, msg);       
@@ -147,7 +142,6 @@ void ViewController::sendGroupMessage(std::string sender, std::string msg, int g
 }
 
 
-// don't know if this is a good idea to notice the view of a message entry
 bool ViewController::isGroupMessageReceived(bool received)
 {
     if (serverController->isGroupMessageReceived())
@@ -164,7 +158,6 @@ bool ViewController::isDirectMessageReceived(bool received)
         return received;
 }
 
-// although they are the same the json msg is not formatted the same way
 json ViewController::receiveGroupMessage(json msg)
 {
     isGroupMessageReceived(true);
@@ -177,8 +170,6 @@ json ViewController::receiveDirectMessage(json msg)
     return msg;
 }
 
-// the servers gives messages to load ?
-// there is no json formatted messages to ask the server to load all the messages
 void ViewController::loadDirectMessages(std::string username)
 {
     serverController->loadDirectMessages(username);       
@@ -192,5 +183,5 @@ void ViewController::loadGroupMessages(int gameId)
 bool ViewController::isGameOver(bool over)
 {
     serverController->isGameOver(over);
-    return over; // checked by the view
+    return over;
 }
