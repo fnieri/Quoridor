@@ -122,8 +122,8 @@ class TerminalVue
     /**
      * @brief Checks if move is actually valid
      * 
-     * @param x 
-     * @param y 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
      * @return true 
      * @return false 
      */
@@ -151,8 +151,8 @@ class TerminalVue
     /**
      * @brief Checks if mouse is targeting a player move cell.
      * 
-     * @param x 
-     * @param y 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
      * @return true 
      * @return false 
      */
@@ -161,8 +161,8 @@ class TerminalVue
     /**
      * @brief Checks if mouse is targeting a corridor
      * 
-     * @param x 
-     * @param y 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
      * @return true 
      * @return false 
      */
@@ -171,8 +171,8 @@ class TerminalVue
     /**
      * @brief view method that interacts with controller to handle a Cell click
      * 
-     * @param x column position of the mouse pointer in the matrix
-     * @param y row position of the mouse pointer in the matrix
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
      */
     void handleCellClick(int x, int y);
 
