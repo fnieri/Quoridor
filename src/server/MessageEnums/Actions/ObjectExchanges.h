@@ -1,35 +1,22 @@
-enum class Answer {
-    OBJECT_ANSWER,
-};
+/**
+ * @author Francesco Nieri
+ * @brief Enums for object exchanges
+ * #date 21/02/2022
+ *
+ */
 
-inline const char *toJsonString(Answer a)
+#pragma once
+enum class Exchange { OBJECT_ANSWER, OBJECT_REQUEST, STATUS_TRANSMISSION };
+
+inline const char *toJsonString(Exchange e)
 {
-    switch (a) {
-    case Answer::OBJECT_ANSWER:
+    switch (e) {
+    case Exchange::OBJECT_ANSWER:
         return "object_answer";
-    }
-}
-
-enum class Request {
-    OBJECT_REQUEST,
-};
-
-inline const char *toJsonString(Request r)
-{
-    switch (r) {
-    case Request::OBJECT_REQUEST:
+    case Exchange::OBJECT_REQUEST:
         return "object_request";
-    }
-}
-
-enum class StatusTransmission {
-    STATUS_TRANSMISSION,
-};
-
-inline const char *toJsonString(StatusTransmission s)
-{
-    switch (s) {
-    case StatusTransmission::STATUS_TRANSMISSION:
+    case Exchange::STATUS_TRANSMISSION:
         return "status_transmission";
     }
+    return "";
 }

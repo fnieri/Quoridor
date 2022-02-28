@@ -1,13 +1,27 @@
 # Library of the project, can be linked to the tests
-# add_library(${PREFIX}_client
-#     # Point.cpp
-#     # Stringable.cpp
-# )
+add_library(${PREFIX}_client
+    Board.cpp
+    BoardComponent.cpp
+    Cell.cpp
+    Corridor.cpp
+    Point.cpp
+    Stringable.cpp
+    Player.cpp
+    PlayerAction.cpp
+    WallAction.cpp
+    WallEnum.h
+    PlayerAction.h
+    )
 
-# target_include_directories(${PREFIX}_client
-#     PUBLIC
-#         ${CMAKE_SOURCE_DIR}
-# )
+target_link_libraries(${PREFIX}_client
+    PUBLIC
+        nlohmann_json
+)
+
+target_include_directories(${PREFIX}_client
+    PUBLIC
+        ${CMAKE_SOURCE_DIR}
+)
 
 add_executable(client
     main.cpp
@@ -20,4 +34,3 @@ target_link_libraries(client
 )
 
 target_compile_features(client PRIVATE cxx_std_17)
-

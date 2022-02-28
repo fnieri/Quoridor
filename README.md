@@ -1,6 +1,9 @@
 # Quoridor, for real
 
->J'ai r à dire pour l'instant c juste un test
+# Documentation
+
+[View documentation](https://quoridor-doc.herokuapp.com/docs/html/index.html)
+
 
 # Compilation
 

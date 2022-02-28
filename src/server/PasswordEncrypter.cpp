@@ -1,12 +1,14 @@
+// Written by Francesco Nieri
+
 #include "PasswordEncrypter.h"
 
-#include <cryptopp/cryptlib.h>
-#include <cryptopp/hex.h>
-#include <cryptopp/osrng.h>
-#include <cryptopp/pwdbased.h>
-#include <cryptopp/sha.h>
+#include <cryptlib.h>
+#include <hex.h>
+#include <osrng.h>
+#include <pwdbased.h>
+#include <sha.h>
+
 #include <chrono>
-#include <iostream>
 
 PasswordEncrypter::PasswordEncrypter(std::string passwordToEncrypt)
     : passwordToEncrypt {passwordToEncrypt}
@@ -38,14 +40,16 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
     // Thanks to Texan40 for help on how to hash a password
 
     // IMPORTANT NOTE: This should be CryptoPP::byte but it doesn't compile for me (If you see unsigned char in any emcrypting file IT IS CRYPTOPP::BYTE!!!)
-    unsigned char digest[CryptoPP::SHA256::DIGESTSIZE];
-    CryptoPP::SHA256 hashAlgorithm;
 
-    hashAlgorithm.CalculateDigest(digest, (unsigned char *)saltedPassword.c_str(), saltedPassword.size());
+    unsigned char digest[CryptoPP::SHA256::DIGESTSIZE];
+    CryptoPP::SHA256 hashAlgorithm; // Using SHA256 as encryption algorithm
+
+    hashAlgorithm.CalculateDigest(digest, (const unsigned char *)saltedPassword.c_str(), saltedPassword.size());
 
     CryptoPP::HexEncoder encoder;
     CryptoPP::StringSink *stringSink = new CryptoPP::StringSink(output);
-
+    // This method is describer in the cryptopp wiki
+    // Attach stringSink to Encoder to decode byte digest output
     encoder.Attach(stringSink);
     encoder.Put(digest, sizeof(digest));
     encoder.MessageEnd();

@@ -9,6 +9,7 @@
 
 #include <stdexcept>
 
+using json = nlohmann::json;
 // Point
 
 Point::operator std::string() const noexcept
@@ -42,4 +43,10 @@ Point Point::operator/(const int &div) const
 bool Point::operator==(const Point &rhs) const noexcept
 {
     return x() == rhs.x() && y() == rhs.y();
+}
+
+json Point::serialized() const
+{
+    json pointJson = {{"x", x()}, {"y", y()}};
+    return pointJson;
 }

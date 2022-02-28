@@ -1,5 +1,4 @@
 # Library of the project, can be linked to the tests
-
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
     LandingPool.cpp
@@ -9,7 +8,11 @@ add_library(${PREFIX}_server
     ChatBox.cpp
     # AuthHandler.cpp
     Database.cpp
-)
+    AuthSerializableMessageFactory.cpp
+    BoardActionsSerializableMessageFactory.cpp
+    SerializableMessageFactory.cpp
+    GameActionsSerializableMessageFactory.cpp
+    )
 
 find_package(mongocxx REQUIRED)
 find_package(bsoncxx REQUIRED)
@@ -20,11 +23,11 @@ include_directories("/usr/local/include/bsoncxx/v_noabi")
 
 target_link_libraries(${PREFIX}_server
     PUBLIC
-        sockpp
         nlohmann_json
+        sockpp
         ${PREFIX}_common
     PRIVATE
-        cryptopp
+        cryptopp-shared
         pthread
         mongo::bsoncxx_shared
         mongo::mongocxx_shared

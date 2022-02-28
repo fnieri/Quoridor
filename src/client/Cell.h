@@ -1,17 +1,35 @@
 #pragma once
 
+#include "BoardComponent.h"
 #include "Player.h"
-#include "Point.h"
 
-// contains the information of a cell
-class Cell
+#include <memory>
+
+/**
+ * Subclass of BoardComponent and used to indicate the presence of a player in the Board.
+ */
+class Cell : public BoardComponent
 {
 private:
-    Point position;
-    bool occupied;
-    Player *player;
+    /**
+     * The Player currently occupying the cell.
+     * Is set to nullptr if unoccupied.
+     */
+    std::shared_ptr<Player> player;
 
 public:
-    Cell(/* args */);
+    Cell(std::shared_ptr<Player> player = nullptr);
     ~Cell();
+
+    /**
+     * Sets the new Player occupying the cell.
+     *
+     * @param newPlayer the new Player to occupy the cell
+     */
+    void placePlayer(std::shared_ptr<Player> newPlayer);
+
+    /**
+     * Removes the Player currently occupying the cell.
+     */
+    void removePlayer();
 };
