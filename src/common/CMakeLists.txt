@@ -1,5 +1,7 @@
 add_library(${PREFIX}_common
-JoinGame.cpp    
+JoinGame.cpp
+SerializableMessageFactory.cpp
+
 )
 
 target_include_directories(${PREFIX}_common
@@ -8,6 +10,8 @@ PUBLIC
 )
 
 target_link_libraries(${PREFIX}_common
+PUBLIC
+    nlohmann_json
 PRIVATE
     sockpp
 )

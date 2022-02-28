@@ -10,7 +10,7 @@
 
 class GameRelatedActionsSerializableMessageFactory
 {
-  public:
+public:
     /**
      * @brief Serialize a user request when joining/leaving queue
      *
@@ -20,8 +20,8 @@ class GameRelatedActionsSerializableMessageFactory
      * @param ELO of user who's joining
      * @return nlohmann::json requestJson
      */
-     static nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string username, int ELO);
-     
+    static nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string username, int ELO);
+
     /**
      * @brief Serialize a user request when pausing, saving, forfeiting game
      *
@@ -30,5 +30,5 @@ class GameRelatedActionsSerializableMessageFactory
      * @param username User that is joining
      * @return nlohmann::json requestJson
      */
-     static nlohmann::json serializeGameRelatedRequest(GameAction gameAction, std::string username);
+    static nlohmann::json serializeGameRelatedRequest(GameAction gameAction, std::string username);
 };

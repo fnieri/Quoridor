@@ -13,7 +13,7 @@
 
 #include <nlohmann/json.hpp>
 
-class ChatBoxSerializableMessageFactory 
+class ChatBoxSerializableMessageFactory
 {
 public:
     /**
@@ -44,5 +44,4 @@ public:
      * }
      */
     static nlohmann::json serializeFriendMessage(std::string sender, std::string receiver, std::string message);
-
 };

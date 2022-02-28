@@ -1,14 +1,8 @@
 #pragma once
 
-enum class FriendAction {
-    FRIEND_REQUEST,
-    FRIEND_ACCEPT,
-    FRIEND_REMOVE,
-    FRIEND_REFUSE
-};
+enum class FriendAction { FRIEND_REQUEST, FRIEND_ACCEPT, FRIEND_REMOVE, FRIEND_REFUSE };
 
-inline const char *
-toJsonString(FriendAction f)
+inline const char *toJsonString(FriendAction f)
 {
     switch (f) {
     case FriendAction::FRIEND_REQUEST:

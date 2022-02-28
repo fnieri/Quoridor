@@ -3,7 +3,6 @@ add_library(${PREFIX}_server
     PasswordEncrypter.cpp
     #AuthSerializableMessageFactory.cpp
     #BoardActionsSerializableMessageFactory.cpp
-    SerializableMessageFactory.cpp
     
     # GameActionsSerializableMessageFactory.cpp
     )

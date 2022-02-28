@@ -18,7 +18,7 @@
 
 #include <tuple>
 
-class BoardActionsSerializableMessageFactory 
+class BoardActionsSerializableMessageFactory
 {
 public:
     /**
