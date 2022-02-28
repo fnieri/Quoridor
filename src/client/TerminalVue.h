@@ -13,6 +13,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector> // for vector
+#include <bits/stdc++.h>
 
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Renderer, Vertical
@@ -31,9 +32,13 @@
 
 using namespace ftxui;
 
+struct CheckboxState {
+    bool checked = false;
+};
+
 class TerminalVue
 {
-    GameController* gameController = new GameController{2, 0, 1};
+    GameController *gameController = new GameController {2, 0, 1};
     std::string message, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -49,7 +54,19 @@ class TerminalVue
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
     int chatSelected = 0;
+    int gameSelected = 0;
+    std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
     std::vector<std::string> chatElements;
+    std::vector<std::string> friendList {
+        "Ryan Reynolds",
+        "Louis",
+        "UserA",
+    };
+    std::vector<bool*> friendListStates {
+        new bool {false},
+        new bool {false},
+        new bool {false},
+    };
     std::vector<std::string> actionToggleEntries {
         "Move",
         "Wall",
@@ -61,7 +78,6 @@ class TerminalVue
     std::vector<std::string> mainTabValues {
         "Game",
         "Friends",
-        "Settings",
     };
     std::vector<std::string> loginTabValues {
         "Login",
@@ -71,6 +87,9 @@ class TerminalVue
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
     bool isLoggedIn = true; // change this to true to stay logged in
+    bool isGameStarted = false;
+    bool isCreatingGame = false;
+    InputOption passwordOption;
 
     bool isPlayerTurn();
 
@@ -81,6 +100,8 @@ class TerminalVue
     bool isClickValid(int x, int y);
 
     auto createCanvas();
+
+    auto createMainGameScreen();
 
     bool mouseInCell(int x, int y);
 
@@ -103,8 +124,6 @@ class TerminalVue
     auto createChatRenderer();
 
     auto createFriendsRenderer();
-
-    auto createSettingsRenderer();
 
     auto createMainTabContainer();
 
