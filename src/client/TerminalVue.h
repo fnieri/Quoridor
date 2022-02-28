@@ -175,7 +175,13 @@ class TerminalVue
      * @param y row of t he matrix in which stands the mousepointer
      */
     void handleCellClick(int x, int y);
-
+    
+    /**
+     * @brief view method that interacts with controller to handle a Wall placement
+     * 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
+     */
     void handleWallAdd(int x, int y);
 
     /**
