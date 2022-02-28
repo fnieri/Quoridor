@@ -1,4 +1,5 @@
 #include "ViewController.h"
+#include "Controller.h"
 #include "Board.h"
 #include "BoardComponent.h"
 #include "Player.h"

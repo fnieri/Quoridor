@@ -8,6 +8,7 @@
 #include <memory>
 #include <vector>
 
+
 /**
  * Stores the data of the game board, notably wall and player positions.
  */

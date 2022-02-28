@@ -1,19 +1,18 @@
 /**
  * @file ViewController.h
  * @author Kourieh Anne-Marie
- * @brief Controller that gets messages from the View and sends them to the correct Model
+ * @brief ViewController that gets messages from the View and sends them to the correct Model
  * @date 2022-02-25
  * 
 */
 
 #pragma once
 
-using json = nlohmann::json;
+#include "Controller.h"
 
 class ServerController;
 
-// View Controller to easily send actions to the different models' controller : Game + Chat + Network
-class ViewController
+class ViewController : public Controller
 {
 private:
     std::shared_ptr<Board> board;
@@ -28,9 +27,10 @@ public:
     ~ViewController() = default;
 
     /* Setters */
-    void setBoard(std::shared_ptr<Board> aBoard);
-    void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers);
 
+    virtual void setBoard(std::shared_ptr<Board> aBoard) override; 
+    virtual void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers) override; 
+    
     /* To Game Model */
     /**
      * @brief Plays a PlayerAction, when the current player moves his pawn
@@ -48,37 +48,36 @@ public:
     void placeWall(Point p, WallOrientation orientation);
 
     /* To Network Model (all of these are to send to the ServerController) */ 
-    void registerPlayer(std::string username, std::string password);
-    void logIn(std::string username, std::string password);
-    void logOut();
+    virtual void registerPlayer(std::string username, std::string password) override;
+    virtual void logIn(std::string username, std::string password) override;
+    virtual void logOut() override;
 
     void setGameSetup(std::string gameS);
-    void startGame();
-    void saveGame(std::string username);
-    void pauseGame(std::string username);
 
-    void sendInvite(std::string aFriend, std::string gameSetup);
-    void joinGame(int gameId);
-    void askToPause(std::string aFriend);
+    virtual void startGame() override;
+    virtual void saveGame(std::string username) override;
+    virtual void pauseGame(std::string username) override;
 
-    void sendFriendRequest(std::string receiver);
-    void checkLeaderBoard();
+    virtual void sendInvite(std::string aFriend, std::string gameSetup) override;
+    virtual void joinGame(int gameId)  override;
+    virtual void askToPause(std::string aFriend)  override;
+
+    virtual void sendFriendRequest(std::string receiver)  override;
+    virtual void checkLeaderBoard()  override;
 
     /* To Chat Model (all of these are to send to the ServerController as well) */
-    void sendDirectMessage(std::string sender, std::string receiver, std::string msg);
-    void sendGroupMessage(std::string sender, std::string msg, int gameId);
-
-    // void receiveMessage(std::string receiver, std::string msg, int gameId); // recoit du Server a donner a la vue
-
-    bool isDirectMessageReceived(bool received = false);
-    bool isGroupMessageReceived(bool received = false);
-
-    json receiveGroupMessage(json msg);
-    json receiveDirectMessage(json msg);
+    virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
+    virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
     
-    void loadDirectMessages(std::string username);
-    void loadGroupMessages(int gameId);
+    virtual bool isDirectMessageReceived(bool received = false) override;
+    virtual bool isGroupMessageReceived(bool received = false) override;
 
+    nlohmann::json receiveGroupMessage(nlohmann::json msg);
+    nlohmann::json receiveDirectMessage(nlohmann::json msg);
+    
+    virtual void loadDirectMessages(std::string username) override;
+    virtual void loadGroupMessages(int gameId) override;
+    
     /* Noticing the view */
-    bool isGameOver(bool over = false);
+    virtual bool isGameOver(bool over = false) override;
 };
