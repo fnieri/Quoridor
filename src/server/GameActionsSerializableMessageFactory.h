@@ -19,7 +19,7 @@ class GameActionsSerializableMessageFactory : public SerializableMessageFactory
      * @param user User that is joining
      * @return nlohmann::json requestJson
      */
-    nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::shared_ptr<User> user);
+    nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode);
     /**
      * @brief Serialize a user request when
      *
@@ -28,5 +28,5 @@ class GameActionsSerializableMessageFactory : public SerializableMessageFactory
      * @param user User that is joining
      * @return nlohmann::json requestJson
      */
-    nlohmann::json serializeInGameRequest(GameAction gameAction, std::shared_ptr<User> user);
+    nlohmann::json serializeInGameRequest(GameAction gameAction);
 };

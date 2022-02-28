@@ -11,7 +11,8 @@ add_library(${PREFIX}_server
     AuthSerializableMessageFactory.cpp
     BoardActionsSerializableMessageFactory.cpp
     SerializableMessageFactory.cpp
-    GameActionsSerializableMessageFactory.cpp
+    
+    # GameActionsSerializableMessageFactory.cpp
     )
 
 find_package(mongocxx REQUIRED)

@@ -10,26 +10,19 @@
 
 #include <chrono>
 
-PasswordEncrypter::PasswordEncrypter(std::string passwordToEncrypt)
-    : passwordToEncrypt {passwordToEncrypt}
-{
-    generateSaltKey();
-}
-
-PasswordEncrypter::PasswordEncrypter(std::string passwordToEncrypt, std::string saltKey)
-    : passwordToEncrypt {passwordToEncrypt}
-    , saltKey {saltKey}
+PasswordEncrypter::PasswordEncrypter()
 {
 }
 
-void PasswordEncrypter::generateSaltKey()
+std::string PasswordEncrypter::generateSaltKey()
 {
     // https://stackoverflow.com/questions/6012663/get-unix-timestamp-with-c
     // Salt key is unix time stamp as it is unique EVERY NEW SECOND
     // https://stackoverflow.com/questions/36955261/accepted-method-to-generate-salt-for-a-password-hash-function-c
 
     int64_t timestamp {std::chrono::duration_cast<std::chrono::milliseconds>(std::chrono::system_clock::now().time_since_epoch()).count()};
-    saltKey = std::to_string(timestamp);
+    std::string saltKey {std::to_string(timestamp)};
+    return saltKey;
 }
 
 std::string PasswordEncrypter::createDigest(std::string saltedPassword)
@@ -48,7 +41,7 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 
     CryptoPP::HexEncoder encoder;
     CryptoPP::StringSink *stringSink = new CryptoPP::StringSink(output);
-    // This method is describer in the cryptopp wiki
+    // This method is described in the cryptopp wiki
     // Attach stringSink to Encoder to decode byte digest output
     encoder.Attach(stringSink);
     encoder.Put(digest, sizeof(digest));
@@ -61,19 +54,22 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
     return output;
 }
 
-std::string PasswordEncrypter::hashPassword()
+bool PasswordEncrypter::compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash)
 {
     std::string saltedPassword = saltKey + passwordToEncrypt;
-
-    return createDigest(saltedPassword);
+    if (Instance()->createDigest(saltedPassword) == databaseHash) {
+        return true;
+    }
+    return false;
 }
 
-std::string PasswordEncrypter::getSaltKey()
+std::vector<std::string> PasswordEncrypter::registerEncryption(std::string passwordToEncrypt)
 {
-    return saltKey;
-}
 
-void PasswordEncrypter::setSaltKey(std::string newSaltKey)
-{
-    saltKey = newSaltKey;
+    std::string saltKey = Instance()->generateSaltKey();
+    std::string saltedPassword = saltKey + passwordToEncrypt;
+    std::string hashedPassword = Instance()->createDigest(saltedPassword);
+
+    std::vector<std::string> returnVector = {saltKey, hashedPassword};
+    return returnVector;
 }

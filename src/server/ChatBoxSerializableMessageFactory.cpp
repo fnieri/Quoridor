@@ -1,4 +1,3 @@
-
 #include "ChatBoxSerializableMessageFactory.h"
 
 #include <string>
