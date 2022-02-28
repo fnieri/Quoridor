@@ -14,6 +14,7 @@ include(cmake/CPM.cmake)
 include(cmake/AddCatch2.cmake)
 include(cmake/AddSockpp.cmake)
 include(cmake/Addjson.cmake)
+# include(cmake/Addcryptopp.cmake)
 
 add_subdirectory(src)
 add_subdirectory(tests)

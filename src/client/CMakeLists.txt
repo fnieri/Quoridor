@@ -1,20 +1,20 @@
 # Library of the project, can be linked to the tests
-add_library(${PREFIX}_client
-    Point.cpp
-    Stringable.cpp
-)
+# add_library(${PREFIX}_client
+#     # Point.cpp
+#     # Stringable.cpp
+# )
 
-target_include_directories(${PREFIX}_client
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}
-)
+# target_include_directories(${PREFIX}_client
+#     PUBLIC
+#         ${CMAKE_SOURCE_DIR}
+# )
 
 add_executable(client
     main.cpp
 )
 
 # Link the project libraries to the executable
-target_link_libraries(client
-    PRIVATE
-        ${PREFIX}_client
-)
+# target_link_libraries(client
+    # PRIVATE
+        # ${PREFIX}_client
+# )
