@@ -31,18 +31,19 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return true;
+    return gameController->isMoveValid(x, y);
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return true;
+    return gameController->isWallValid(x, y, wallOrientation);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
+        gameController->updateBoardIntMatrix(boardIntMatrix);
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
         auto c = Canvas(200, 200);
@@ -63,34 +64,33 @@ auto TerminalVue::createCanvas()
 
         // dx and dy represent the distance between cells
         int dy = 10;
-        for (int i = 0; i < testCanvasGrid.size(); i++) {
+        for (int i = 0; i < boardIntMatrix.size(); i++) {
             int dx = 10;
-            for (int j = 0; j < testCanvasGrid[i].size(); j++) {
-                int gridValue = testCanvasGrid[i][j];
+            for (int j = 0; j < boardIntMatrix[i].size(); j++) {
+                int gridValue = boardIntMatrix[i][j];
+                Point pos = Point(j, i);
                 switch (gridValue) {
                 case freeCell:
                     // draw a free cell
-                    // TODO: check if click is possible (gotta wait for merge with model and controller)
-                    if (isClickValid(dx, dy)) {
+                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
                         // if mouse is pressed on this cell/quoridor
                         c.DrawText(dx, dy, "\u25A0");
-                        // TODO: handle mouse click with controller
-                        handleCellClick(i, j);
+                        handleCellClick(j, i);
                     } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
                         // if mouse is pressed on this cell/quoridor
-                        c.DrawText(dx, dy, "\u25A0", isMoveValid(i, j) ? Color::Green : Color::Red);
+                        c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
                     } else {
                         c.DrawText(dx, dy, "\u25A1");
                     }
                     break;
 
                 case emptyQuoridor:
-                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(i, j)) {
+                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
                         std::vector<int> direction = quoridorDirection[wallOrientation];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                        handleWallAdd(i, j);
-                        // TODO sacha: if mouse is pressed on empty quoridor then draw a quoridor and also handle wallOrientation
-                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(i, j)) {
+                        handleWallAdd(j, i);
+                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
                         std::vector<int> direction = quoridorDirection[wallOrientation];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
                     }
@@ -127,13 +127,13 @@ auto TerminalVue::createCanvas()
 void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
-    return;
+    gameController->movePlayer(x, y);
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
-    return;
+    gameController->placeWall(x, y, wallOrientation);
 }
 
 auto TerminalVue::createChatInput()
@@ -170,6 +170,22 @@ auto TerminalVue::createMainTab()
     return Toggle(&mainTabValues, &mainTabSelect);
 }
 
+auto TerminalVue::createMainGameScreen()
+{
+    std::vector<std::string> entries = {
+        "entry 1",
+        "entry 2",
+        "entry 3",
+    };
+    int selected = 0;
+
+    MenuOption option;
+    auto menu = Menu(&entries, &selected, &option);
+
+    auto mainGameScreenContainer = Container::Vertical({menu});
+    return Renderer(mainGameScreenContainer, [menu] { return vbox(text("Pick a game"), menu->Render()); });
+}
+
 auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
@@ -189,21 +205,59 @@ auto TerminalVue::createBoardRenderer()
         }
         return false;
     });
-    auto boardContainer = Container::Vertical({
-        tabWithMouse,
-        actionToggle,
-        orientationToggle,
-        boardCanvas,
-    });
 
-    return Renderer(boardContainer, [actionToggle, boardCanvas, orientationToggle] {
-        return vbox(boardCanvas->Render(), separator(), hbox(actionToggle->Render(), separator(), orientationToggle->Render()) | center);
-    });
+    auto createGameBtn = Button(
+        "Create a Game", [&] { isCreatingGame = true; }, buttonOption);
+    auto joinGameBtn = Button(
+        "Join Game", [&] { isGameStarted = true; }, buttonOption);
+    auto inviteAndCreateGameBtn = Button(
+        "Create game",
+        [&] {
+            int friendSelected = 0;
+            for (bool *state : friendsListStates) {
+                if (*state) {
+                    friendSelected++;
+                }
+            }
+            if (friendSelected == 2 || friendSelected == 4) {
+                // TODO: create a game
+                isGameStarted = true;
+                isCreatingGame = false;
+            }
+        },
+        buttonOption);
+    auto cancelGameCreateGamme = Button(
+        "Cancel", [&] { isCreatingGame = false; }, buttonOption);
+    auto gamePickMenu = Menu(&gameList, &gameSelected);
+    Component friendsListContainer = Container::Vertical({});
+
+    for (int i = 0; i < friendsList.size(); ++i) {
+        friendsListContainer->Add(Checkbox(&friendsList[i], friendsListStates[i]));
+    }
+
+    auto boardContainer = Container::Vertical({tabWithMouse, actionToggle, orientationToggle, boardCanvas, createGameBtn, joinGameBtn, gamePickMenu,
+        friendsListContainer, inviteAndCreateGameBtn, cancelGameCreateGamme});
+
+    return Renderer(boardContainer,
+        [&, actionToggle, boardCanvas, orientationToggle, createGameBtn, joinGameBtn, gamePickMenu, friendsListContainer, inviteAndCreateGameBtn,
+            cancelGameCreateGamme] {
+            if (isCreatingGame) {
+                return vbox(text("Pick friends to play with"), friendsListContainer->Render() | vscroll_indicator | frame | border | size(HEIGHT, LESS_THAN, 10),
+                    inviteAndCreateGameBtn->Render(), separator(), cancelGameCreateGamme->Render());
+            }
+            if (!isGameStarted) {
+                return vbox(text("Welcome to Quoridor!"), separator(), createGameBtn->Render(), separator(), text("Join an existing game"),
+                    gamePickMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, joinGameBtn->Render());
+            }
+
+            return vbox(boardCanvas->Render(), separator(), hbox(actionToggle->Render(), separator(), orientationToggle->Render()) | center);
+        });
 }
 
 auto TerminalVue::createChatRenderer()
 {
     buttonOption.border = false;
+    passwordOption.password = true;
     auto chatInput = createChatInput();
 
     auto chatMenu = Menu(&chatElements, &chatSelected);
@@ -218,14 +272,17 @@ auto TerminalVue::createChatRenderer()
         buttonOption);
     auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
     return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
-        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15), separator(),
-            hbox({text(">"), chatInput->Render(), sendButton->Render()})});
+        if (isGameStarted) {
+            return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+                hbox({text(">"), chatInput->Render(), sendButton->Render()})});
+        }
+        return vbox();
     });
 }
 
 auto TerminalVue::createFriendsListRenderer()
 {
-    auto friendList = Window("Friends List", Menu(&friendsElements, &friend_selected));
+    auto friendList = Window("Friends List", Menu(&friendsList, &friend_selected));
     auto friendChat = Menu(&chatEntry, &chat_message_selected);
     auto chatToFriendInput = createChatFriendInput();
     auto sendChatToFriendButton = Button(
@@ -237,7 +294,7 @@ auto TerminalVue::createFriendsListRenderer()
         },
         buttonOption);
 
-    auto friendListContainer = Container::Vertical({
+    auto friendsListContainer = Container::Vertical({
         friendList,
         friendChat,
         chatToFriendInput,
@@ -245,7 +302,7 @@ auto TerminalVue::createFriendsListRenderer()
     });
 
 
-    return Renderer(friendListContainer, [&, friendList, friendChat, chatToFriendInput, sendChatToFriendButton] {
+    return Renderer(friendsListContainer, [&, friendList, friendChat, chatToFriendInput, sendChatToFriendButton] {
         chatEntry = chatEntries[friend_selected];
         return hbox({
             vbox({
@@ -297,10 +354,11 @@ auto TerminalVue::createSettingsRenderer()
 {
     return Renderer([] { return text("Settings") | center; });
 }
+
 auto TerminalVue::createLoginRenderer()
 {
     auto usernameInput = Input(&username, "Username");
-    auto passwordInput = Input(&password, "Password");
+    auto passwordInput = Input(&password, "Password", passwordOption);
     auto loginButton = Button(
         "Login", [this] { loginUser(); }, &buttonOption);
     auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
@@ -310,8 +368,8 @@ auto TerminalVue::createLoginRenderer()
 auto TerminalVue::createRegisterRenderer()
 {
     auto usernameInput = Input(&registerUsername, "Username");
-    auto passwordInput = Input(&registerPassword, "Password");
-    auto repeatPasswordInput = Input(&registerRepeatPassword, "Repeat password");
+    auto passwordInput = Input(&registerPassword, "Password", passwordOption);
+    auto repeatPasswordInput = Input(&registerRepeatPassword, "Repeat password", passwordOption);
     auto registerButton = Button(
         "Register", [] {}, &buttonOption);
     auto registerFieldsContainer = Container::Vertical({usernameInput, passwordInput, repeatPasswordInput, registerButton});
@@ -398,7 +456,7 @@ void TerminalVue::addChatFriendMessage(std::string username, std::string message
 
 void TerminalVue::addFriend(std::string username)
 {
-    // friendsElements.push_back( Component()<-- *items ?
+    // friendsList.push_back( Component()<-- *items ?
     //     text(username),
     //     Button("+", [&] { Invite friend to play;}, &buttonOption),
     //     Button("X", [&] { Delete friend at index given by &friend_selected;}, &buttonOption)

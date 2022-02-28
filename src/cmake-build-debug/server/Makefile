@@ -56,62 +56,16 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
-
-# Special rule for the target package_source
-package_source:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackSourceConfig.cmake /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CPackSourceConfig.cmake
-.PHONY : package_source
-
-# Special rule for the target package_source
-package_source/fast: package_source
-
-.PHONY : package_source/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
+.PHONY : edit_cache/fast
 
 # Special rule for the target rebuild_cache
 rebuild_cache:
@@ -123,28 +77,6 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
-
-# Special rule for the target package
-package: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackConfig.cmake
-.PHONY : package
-
-# Special rule for the target package
-package/fast: package
-
-.PHONY : package/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -179,63 +111,123 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-server/CMakeFiles/server.out.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/server.out.dir/rule
-.PHONY : server/CMakeFiles/server.out.dir/rule
+server/CMakeFiles/server.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/server.dir/rule
+.PHONY : server/CMakeFiles/server.dir/rule
 
 # Convenience name for target.
-server.out: server/CMakeFiles/server.out.dir/rule
+server: server/CMakeFiles/server.dir/rule
 
-.PHONY : server.out
+.PHONY : server
 
 # fast build rule for target.
-server.out/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/build
-.PHONY : server.out/fast
+server/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/build
+.PHONY : server/fast
 
 # Convenience name for target.
-server/CMakeFiles/quoridor_server.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/quoridor_server.dir/rule
-.PHONY : server/CMakeFiles/quoridor_server.dir/rule
+server/CMakeFiles/_server.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 server/CMakeFiles/_server.dir/rule
+.PHONY : server/CMakeFiles/_server.dir/rule
 
 # Convenience name for target.
-quoridor_server: server/CMakeFiles/quoridor_server.dir/rule
+_server: server/CMakeFiles/_server.dir/rule
 
-.PHONY : quoridor_server
+.PHONY : _server
 
 # fast build rule for target.
-quoridor_server/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/build
-.PHONY : quoridor_server/fast
+_server/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/build
+.PHONY : _server/fast
+
+# target to build an object file
+AuthSerializableMessageFactory.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/AuthSerializableMessageFactory.o
+.PHONY : AuthSerializableMessageFactory.o
+
+# target to preprocess a source file
+AuthSerializableMessageFactory.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/AuthSerializableMessageFactory.i
+.PHONY : AuthSerializableMessageFactory.i
+
+# target to generate assembly for a file
+AuthSerializableMessageFactory.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/AuthSerializableMessageFactory.s
+.PHONY : AuthSerializableMessageFactory.s
+
+# target to build an object file
+BoardActionsSerializableMessageFactory.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/BoardActionsSerializableMessageFactory.o
+.PHONY : BoardActionsSerializableMessageFactory.o
+
+# target to preprocess a source file
+BoardActionsSerializableMessageFactory.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/BoardActionsSerializableMessageFactory.i
+.PHONY : BoardActionsSerializableMessageFactory.i
+
+# target to generate assembly for a file
+BoardActionsSerializableMessageFactory.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/BoardActionsSerializableMessageFactory.s
+.PHONY : BoardActionsSerializableMessageFactory.s
+
+# target to build an object file
+GameActionsSerializableMessageFactory.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/GameActionsSerializableMessageFactory.o
+.PHONY : GameActionsSerializableMessageFactory.o
+
+# target to preprocess a source file
+GameActionsSerializableMessageFactory.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/GameActionsSerializableMessageFactory.i
+.PHONY : GameActionsSerializableMessageFactory.i
+
+# target to generate assembly for a file
+GameActionsSerializableMessageFactory.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/GameActionsSerializableMessageFactory.s
+.PHONY : GameActionsSerializableMessageFactory.s
 
 # target to build an object file
 PasswordEncrypter.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.o
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/PasswordEncrypter.o
 .PHONY : PasswordEncrypter.o
 
 # target to preprocess a source file
 PasswordEncrypter.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.i
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/PasswordEncrypter.i
 .PHONY : PasswordEncrypter.i
 
 # target to generate assembly for a file
 PasswordEncrypter.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/quoridor_server.dir/build.make server/CMakeFiles/quoridor_server.dir/PasswordEncrypter.s
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/PasswordEncrypter.s
 .PHONY : PasswordEncrypter.s
 
 # target to build an object file
+SerializableMessageFactory.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/SerializableMessageFactory.o
+.PHONY : SerializableMessageFactory.o
+
+# target to preprocess a source file
+SerializableMessageFactory.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/SerializableMessageFactory.i
+.PHONY : SerializableMessageFactory.i
+
+# target to generate assembly for a file
+SerializableMessageFactory.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/_server.dir/build.make server/CMakeFiles/_server.dir/SerializableMessageFactory.s
+.PHONY : SerializableMessageFactory.s
+
+# target to build an object file
 main.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.o
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.o
 .PHONY : main.o
 
 # target to preprocess a source file
 main.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.i
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.i
 .PHONY : main.i
 
 # target to generate assembly for a file
 main.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.out.dir/build.make server/CMakeFiles/server.out.dir/main.s
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f server/CMakeFiles/server.dir/build.make server/CMakeFiles/server.dir/main.s
 .PHONY : main.s
 
 # Help Target
@@ -244,19 +236,25 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... install/strip"
-	@echo "... install/local"
-	@echo "... package_source"
-	@echo "... install"
-	@echo "... list_install_components"
-	@echo "... rebuild_cache"
-	@echo "... package"
-	@echo "... server.out"
 	@echo "... edit_cache"
-	@echo "... quoridor_server"
+	@echo "... server"
+	@echo "... rebuild_cache"
+	@echo "... _server"
+	@echo "... AuthSerializableMessageFactory.o"
+	@echo "... AuthSerializableMessageFactory.i"
+	@echo "... AuthSerializableMessageFactory.s"
+	@echo "... BoardActionsSerializableMessageFactory.o"
+	@echo "... BoardActionsSerializableMessageFactory.i"
+	@echo "... BoardActionsSerializableMessageFactory.s"
+	@echo "... GameActionsSerializableMessageFactory.o"
+	@echo "... GameActionsSerializableMessageFactory.i"
+	@echo "... GameActionsSerializableMessageFactory.s"
 	@echo "... PasswordEncrypter.o"
 	@echo "... PasswordEncrypter.i"
 	@echo "... PasswordEncrypter.s"
+	@echo "... SerializableMessageFactory.o"
+	@echo "... SerializableMessageFactory.i"
+	@echo "... SerializableMessageFactory.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

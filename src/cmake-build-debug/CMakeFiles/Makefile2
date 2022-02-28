@@ -71,8 +71,8 @@ clean: client/clean
 # Directory level rules for directory client
 
 # Recursive "all" directory target.
-client/all: client/CMakeFiles/_client.dir/all
 client/all: client/CMakeFiles/client.dir/all
+client/all: client/CMakeFiles/_client.dir/all
 
 .PHONY : client/all
 
@@ -82,37 +82,10 @@ client/preinstall:
 .PHONY : client/preinstall
 
 # Recursive "clean" directory target.
-client/clean: client/CMakeFiles/_client.dir/clean
 client/clean: client/CMakeFiles/client.dir/clean
+client/clean: client/CMakeFiles/_client.dir/clean
 
 .PHONY : client/clean
-
-#=============================================================================
-# Target rules for target client/CMakeFiles/_client.dir
-
-# All Build rule for target.
-client/CMakeFiles/_client.dir/all:
-	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/depend
-	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4 "Built target _client"
-.PHONY : client/CMakeFiles/_client.dir/all
-
-# Build rule for subdir invocation for target.
-client/CMakeFiles/_client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 4
-	$(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/_client.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 0
-.PHONY : client/CMakeFiles/_client.dir/rule
-
-# Convenience name for target.
-_client: client/CMakeFiles/_client.dir/rule
-
-.PHONY : _client
-
-# clean rule for target.
-client/CMakeFiles/_client.dir/clean:
-	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/clean
-.PHONY : client/CMakeFiles/_client.dir/clean
 
 #=============================================================================
 # Target rules for target client/CMakeFiles/client.dir
@@ -121,12 +94,12 @@ client/CMakeFiles/_client.dir/clean:
 client/CMakeFiles/client.dir/all: client/CMakeFiles/_client.dir/all
 	$(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/depend
 	$(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=5,6 "Built target client"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=13,14 "Built target client"
 .PHONY : client/CMakeFiles/client.dir/all
 
 # Build rule for subdir invocation for target.
 client/CMakeFiles/client.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 6
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 14
 	$(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/client.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 0
 .PHONY : client/CMakeFiles/client.dir/rule
@@ -140,6 +113,33 @@ client: client/CMakeFiles/client.dir/rule
 client/CMakeFiles/client.dir/clean:
 	$(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/clean
 .PHONY : client/CMakeFiles/client.dir/clean
+
+#=============================================================================
+# Target rules for target client/CMakeFiles/_client.dir
+
+# All Build rule for target.
+client/CMakeFiles/_client.dir/all:
+	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/depend
+	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12 "Built target _client"
+.PHONY : client/CMakeFiles/_client.dir/all
+
+# Build rule for subdir invocation for target.
+client/CMakeFiles/_client.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 12
+	$(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/_client.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CMakeFiles 0
+.PHONY : client/CMakeFiles/_client.dir/rule
+
+# Convenience name for target.
+_client: client/CMakeFiles/_client.dir/rule
+
+.PHONY : _client
+
+# clean rule for target.
+client/CMakeFiles/_client.dir/clean:
+	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/clean
+.PHONY : client/CMakeFiles/_client.dir/clean
 
 #=============================================================================
 # Special targets to cleanup operation of make.

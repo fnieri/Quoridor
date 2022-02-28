@@ -56,50 +56,6 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
-# Special rule for the target package_source
-package_source:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackSourceConfig.cmake /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CPackSourceConfig.cmake
-.PHONY : package_source
-
-# Special rule for the target package_source
-package_source/fast: package_source
-
-.PHONY : package_source/fast
-
-# Special rule for the target install
-install: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install
-
-# Special rule for the target install
-install/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
-	/usr/bin/cmake -P cmake_install.cmake
-.PHONY : install/fast
-
-# Special rule for the target list_install_components
-list_install_components:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Available install components are: \"Unspecified\""
-.PHONY : list_install_components
-
-# Special rule for the target list_install_components
-list_install_components/fast: list_install_components
-
-.PHONY : list_install_components/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -111,40 +67,16 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target package
-package: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackConfig.cmake
-.PHONY : package
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target package
-package/fast: package
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-.PHONY : package/fast
-
-# Special rule for the target install/strip
-install/strip: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip
-
-# Special rule for the target install/strip
-install/strip/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing the project stripped..."
-	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
-.PHONY : install/strip/fast
-
-# Special rule for the target install/local
-install/local: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local
-
-# Special rule for the target install/local
-install/local/fast: preinstall/fast
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Installing only the local directory..."
-	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
-.PHONY : install/local/fast
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -179,64 +111,34 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-common/CMakeFiles/quoridor-client.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 common/CMakeFiles/quoridor-client.dir/rule
-.PHONY : common/CMakeFiles/quoridor-client.dir/rule
+common/CMakeFiles/_common.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 common/CMakeFiles/_common.dir/rule
+.PHONY : common/CMakeFiles/_common.dir/rule
 
 # Convenience name for target.
-quoridor-client: common/CMakeFiles/quoridor-client.dir/rule
+_common: common/CMakeFiles/_common.dir/rule
 
-.PHONY : quoridor-client
+.PHONY : _common
 
 # fast build rule for target.
-quoridor-client/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/quoridor-client.dir/build.make common/CMakeFiles/quoridor-client.dir/build
-.PHONY : quoridor-client/fast
-
-# Convenience name for target.
-common/CMakeFiles/src.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 common/CMakeFiles/src.dir/rule
-.PHONY : common/CMakeFiles/src.dir/rule
-
-# Convenience name for target.
-src: common/CMakeFiles/src.dir/rule
-
-.PHONY : src
-
-# fast build rule for target.
-src/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/src.dir/build.make common/CMakeFiles/src.dir/build
-.PHONY : src/fast
+_common/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/_common.dir/build.make common/CMakeFiles/_common.dir/build
+.PHONY : _common/fast
 
 # target to build an object file
-__/client/main.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/quoridor-client.dir/build.make common/CMakeFiles/quoridor-client.dir/__/client/main.o
-.PHONY : __/client/main.o
+JoinGame.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/_common.dir/build.make common/CMakeFiles/_common.dir/JoinGame.o
+.PHONY : JoinGame.o
 
 # target to preprocess a source file
-__/client/main.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/quoridor-client.dir/build.make common/CMakeFiles/quoridor-client.dir/__/client/main.i
-.PHONY : __/client/main.i
+JoinGame.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/_common.dir/build.make common/CMakeFiles/_common.dir/JoinGame.i
+.PHONY : JoinGame.i
 
 # target to generate assembly for a file
-__/client/main.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/quoridor-client.dir/build.make common/CMakeFiles/quoridor-client.dir/__/client/main.s
-.PHONY : __/client/main.s
-
-# target to build an object file
-__/server/PasswordEncrypter.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/src.dir/build.make common/CMakeFiles/src.dir/__/server/PasswordEncrypter.o
-.PHONY : __/server/PasswordEncrypter.o
-
-# target to preprocess a source file
-__/server/PasswordEncrypter.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/src.dir/build.make common/CMakeFiles/src.dir/__/server/PasswordEncrypter.i
-.PHONY : __/server/PasswordEncrypter.i
-
-# target to generate assembly for a file
-__/server/PasswordEncrypter.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/src.dir/build.make common/CMakeFiles/src.dir/__/server/PasswordEncrypter.s
-.PHONY : __/server/PasswordEncrypter.s
+JoinGame.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f common/CMakeFiles/_common.dir/build.make common/CMakeFiles/_common.dir/JoinGame.s
+.PHONY : JoinGame.s
 
 # Help Target
 help:
@@ -244,22 +146,12 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
-	@echo "... package_source"
-	@echo "... install"
-	@echo "... list_install_components"
 	@echo "... rebuild_cache"
-	@echo "... package"
-	@echo "... install/strip"
-	@echo "... quoridor-client"
-	@echo "... install/local"
-	@echo "... src"
-	@echo "... __/client/main.o"
-	@echo "... __/client/main.i"
-	@echo "... __/client/main.s"
-	@echo "... __/server/PasswordEncrypter.o"
-	@echo "... __/server/PasswordEncrypter.i"
-	@echo "... __/server/PasswordEncrypter.s"
+	@echo "... edit_cache"
+	@echo "... _common"
+	@echo "... JoinGame.o"
+	@echo "... JoinGame.i"
+	@echo "... JoinGame.s"
 .PHONY : help
 
 

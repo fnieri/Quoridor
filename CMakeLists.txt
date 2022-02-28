@@ -25,14 +25,19 @@ add_executable(quoridor
 #enable_testing()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CLANG_CXX_LANGUAGE_STANDARD : C++17/GNU++17)
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -std=c++1y")
 set(PREFIX qrd)
 
 # Dependencies
 include(cmake/CPM.cmake)
 include(cmake/AddCatch2.cmake)
 include(cmake/AddSockpp.cmake)
+include(cmake/Addjson.cmake)
+include(cmake/Addcryptopp.cmake)
 include(cmake/AddFTXUI.cmake)
 
 add_subdirectory(src)
+add_subdirectory(tests)
 
-#add_subdirectory(tests)

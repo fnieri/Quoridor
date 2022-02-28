@@ -21,6 +21,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector> // for vector
+#include <bits/stdc++.h>
 
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Renderer, Vertical
@@ -35,8 +36,13 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
+#include "GameController.h"
+
 using namespace ftxui;
 
+struct CheckboxState {
+    bool checked = false;
+};
 
 /**
  * @brief TUI of Quoridor using ftxui to display more easily the required components
@@ -44,6 +50,7 @@ using namespace ftxui;
  */
 class TerminalVue
 {
+    GameController *gameController = new GameController {2, 0, 1};
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -55,7 +62,7 @@ class TerminalVue
     std::vector<int> remainingWalls {1, 2, -1, -1}; // each index represents a player. if -1, then player is not in game.
     std::vector<std::vector<int>> testCanvasGrid {{0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0},
         {5, 5, 5, 5, 5, 5, 5, 5, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0}};
-
+    std::vector<std::vector<int>> boardIntMatrix;
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
     ButtonOption addButtonOption;
@@ -63,7 +70,9 @@ class TerminalVue
     std::vector<std::string> chatElements;
     int friend_selected = 0;
     int chat_message_selected = 0;
-    std::vector<std::string> friendsElements {"Hector","Lulu","Bernard","Léon","Charlotte","Merlin","Pierre","Fleure","Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+    int gameSelected = 0;
+    std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
+    std::vector<std::string> friendsList{"Hector","Lulu","Bernard","Léon","Charlotte","Merlin","Pierre","Fleure","Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
     std::vector<std::vector<std::string>> chatEntries {
         {"Hello Hector"},
         {"On se fait", "une partie ?"},
@@ -80,6 +89,11 @@ class TerminalVue
         {""},
         {""},
         {""},
+    };
+    std::vector<bool*> friendsListStates {
+        new bool {false},
+        new bool {false},
+        new bool {false},
     };
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
@@ -110,6 +124,9 @@ class TerminalVue
     int rightSize = 40;
     int rightSizeFriends = 70;
     bool isLoggedIn = true; // change this to true to stay logged in
+    bool isGameStarted = false;
+    bool isCreatingGame = false;
+    InputOption passwordOption;
 
     /**
      * @brief Checks if it's someone's turn
@@ -129,6 +146,14 @@ class TerminalVue
      */
     bool isMoveValid(int x, int y);
 
+    /**
+     * @brief Checks if wall placement is actually valid
+     * 
+     * @param x column of the matrix in wich stands the mousepointer
+     * @param y row of t he matrix in which stands the mousepointer
+     * @return true 
+     * @return false 
+     */
     bool isWallPlacementValid(int x, int y);
 
     /**
@@ -147,6 +172,13 @@ class TerminalVue
      * @return Renderer 
      */
     auto createCanvas();
+
+    /**
+     * @brief Create a Main Game Screen object; renders a game menu selector
+     * 
+     * @return Renderer
+     */
+    auto createMainGameScreen();
 
     /**
      * @brief Checks if mouse is targeting a player move cell.
@@ -177,10 +209,10 @@ class TerminalVue
     void handleCellClick(int x, int y);
     
     /**
-     * @brief view method that interacts with controller to handle a Wall placement
+     * @brief 
      * 
-     * @param x column of the matrix in wich stands the mousepointer
-     * @param y row of t he matrix in which stands the mousepointer
+     * @param x 
+     * @param y 
      */
     void handleWallAdd(int x, int y);
 
@@ -241,6 +273,14 @@ class TerminalVue
     auto createChatRenderer();
 
     /**
+     * @brief Create a Friends List Renderer object; renders the friends list
+     *  and a chat window to communicate with any of them
+     * 
+     * @return Renderer
+     */
+    auto createFriendsListRenderer();
+
+    /**
      * @brief create Renderer of the container of notifications and the friend searchbar
      * 
      * @return Renderer
@@ -287,6 +327,7 @@ class TerminalVue
      * 
      */
     void loginUser();
+    
 
 public:
     void run();

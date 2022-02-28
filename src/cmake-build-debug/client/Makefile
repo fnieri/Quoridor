@@ -56,28 +56,6 @@ CMAKE_BINARY_DIR = /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
-# Special rule for the target package_source
-package_source:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool for source..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackSourceConfig.cmake /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/CPackSourceConfig.cmake
-.PHONY : package_source
-
-# Special rule for the target package_source
-package_source/fast: package_source
-
-.PHONY : package_source/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -89,16 +67,16 @@ rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
 
-# Special rule for the target package
-package: preinstall
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Run CPack packaging tool..."
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && /usr/bin/cpack --config ./CPackConfig.cmake
-.PHONY : package
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/usr/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
 
-# Special rule for the target package
-package/fast: package
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
 
-.PHONY : package/fast
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -133,21 +111,6 @@ depend:
 .PHONY : depend
 
 # Convenience name for target.
-client/CMakeFiles/_client.dir/rule:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/_client.dir/rule
-.PHONY : client/CMakeFiles/_client.dir/rule
-
-# Convenience name for target.
-_client: client/CMakeFiles/_client.dir/rule
-
-.PHONY : _client
-
-# fast build rule for target.
-_client/fast:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
-.PHONY : _client/fast
-
-# Convenience name for target.
 client/CMakeFiles/client.dir/rule:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/client.dir/rule
 .PHONY : client/CMakeFiles/client.dir/rule
@@ -162,113 +125,200 @@ client/fast:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/build
 .PHONY : client/fast
 
-Point.o: Point.cpp.o
+# Convenience name for target.
+client/CMakeFiles/_client.dir/rule:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f CMakeFiles/Makefile2 client/CMakeFiles/_client.dir/rule
+.PHONY : client/CMakeFiles/_client.dir/rule
 
+# Convenience name for target.
+_client: client/CMakeFiles/_client.dir/rule
+
+.PHONY : _client
+
+# fast build rule for target.
+_client/fast:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
+.PHONY : _client/fast
+
+# target to build an object file
+Board.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Board.o
+.PHONY : Board.o
+
+# target to preprocess a source file
+Board.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Board.i
+.PHONY : Board.i
+
+# target to generate assembly for a file
+Board.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Board.s
+.PHONY : Board.s
+
+# target to build an object file
+BoardComponent.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/BoardComponent.o
+.PHONY : BoardComponent.o
+
+# target to preprocess a source file
+BoardComponent.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/BoardComponent.i
+.PHONY : BoardComponent.i
+
+# target to generate assembly for a file
+BoardComponent.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/BoardComponent.s
+.PHONY : BoardComponent.s
+
+# target to build an object file
+Cell.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Cell.o
+.PHONY : Cell.o
+
+# target to preprocess a source file
+Cell.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Cell.i
+.PHONY : Cell.i
+
+# target to generate assembly for a file
+Cell.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Cell.s
+.PHONY : Cell.s
+
+# target to build an object file
+Corridor.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Corridor.o
+.PHONY : Corridor.o
+
+# target to preprocess a source file
+Corridor.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Corridor.i
+.PHONY : Corridor.i
+
+# target to generate assembly for a file
+Corridor.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Corridor.s
+.PHONY : Corridor.s
+
+# target to build an object file
+GameController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.o
+.PHONY : GameController.o
+
+# target to preprocess a source file
+GameController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.i
+.PHONY : GameController.i
+
+# target to generate assembly for a file
+GameController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.s
+.PHONY : GameController.s
+
+# target to build an object file
+Player.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.o
+.PHONY : Player.o
+
+# target to preprocess a source file
+Player.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.i
+.PHONY : Player.i
+
+# target to generate assembly for a file
+Player.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.s
+.PHONY : Player.s
+
+# target to build an object file
+PlayerAction.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/PlayerAction.o
+.PHONY : PlayerAction.o
+
+# target to preprocess a source file
+PlayerAction.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/PlayerAction.i
+.PHONY : PlayerAction.i
+
+# target to generate assembly for a file
+PlayerAction.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/PlayerAction.s
+.PHONY : PlayerAction.s
+
+# target to build an object file
+Point.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.o
 .PHONY : Point.o
 
-# target to build an object file
-Point.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.o
-.PHONY : Point.cpp.o
-
-Point.i: Point.cpp.i
-
+# target to preprocess a source file
+Point.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.i
 .PHONY : Point.i
 
-# target to preprocess a source file
-Point.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.i
-.PHONY : Point.cpp.i
-
-Point.s: Point.cpp.s
-
+# target to generate assembly for a file
+Point.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.s
 .PHONY : Point.s
 
-# target to generate assembly for a file
-Point.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.cpp.s
-.PHONY : Point.cpp.s
-
-Stringable.o: Stringable.cpp.o
-
+# target to build an object file
+Stringable.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.o
 .PHONY : Stringable.o
 
-# target to build an object file
-Stringable.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.o
-.PHONY : Stringable.cpp.o
-
-Stringable.i: Stringable.cpp.i
-
+# target to preprocess a source file
+Stringable.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.i
 .PHONY : Stringable.i
 
-# target to preprocess a source file
-Stringable.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.i
-.PHONY : Stringable.cpp.i
-
-Stringable.s: Stringable.cpp.s
-
+# target to generate assembly for a file
+Stringable.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.s
 .PHONY : Stringable.s
 
-# target to generate assembly for a file
-Stringable.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.cpp.s
-.PHONY : Stringable.cpp.s
-
-TerminalVue.o: TerminalVue.cpp.o
-
+# target to build an object file
+TerminalVue.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.o
 .PHONY : TerminalVue.o
 
-# target to build an object file
-TerminalVue.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.o
-.PHONY : TerminalVue.cpp.o
-
-TerminalVue.i: TerminalVue.cpp.i
-
+# target to preprocess a source file
+TerminalVue.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.i
 .PHONY : TerminalVue.i
 
-# target to preprocess a source file
-TerminalVue.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.i
-.PHONY : TerminalVue.cpp.i
-
-TerminalVue.s: TerminalVue.cpp.s
-
+# target to generate assembly for a file
+TerminalVue.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.s
 .PHONY : TerminalVue.s
 
-# target to generate assembly for a file
-TerminalVue.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.cpp.s
-.PHONY : TerminalVue.cpp.s
-
-main.o: main.cpp.o
-
-.PHONY : main.o
-
 # target to build an object file
-main.cpp.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.o
-.PHONY : main.cpp.o
-
-main.i: main.cpp.i
-
-.PHONY : main.i
+WallAction.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/WallAction.o
+.PHONY : WallAction.o
 
 # target to preprocess a source file
-main.cpp.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.i
-.PHONY : main.cpp.i
-
-main.s: main.cpp.s
-
-.PHONY : main.s
+WallAction.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/WallAction.i
+.PHONY : WallAction.i
 
 # target to generate assembly for a file
-main.cpp.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.cpp.s
-.PHONY : main.cpp.s
+WallAction.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/WallAction.s
+.PHONY : WallAction.s
+
+# target to build an object file
+main.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.o
+.PHONY : main.o
+
+# target to preprocess a source file
+main.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.i
+.PHONY : main.i
+
+# target to generate assembly for a file
+main.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.s
+.PHONY : main.s
 
 # Help Target
 help:
@@ -276,12 +326,31 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
-	@echo "... package_source"
 	@echo "... rebuild_cache"
-	@echo "... package"
-	@echo "... _client"
+	@echo "... edit_cache"
 	@echo "... client"
+	@echo "... _client"
+	@echo "... Board.o"
+	@echo "... Board.i"
+	@echo "... Board.s"
+	@echo "... BoardComponent.o"
+	@echo "... BoardComponent.i"
+	@echo "... BoardComponent.s"
+	@echo "... Cell.o"
+	@echo "... Cell.i"
+	@echo "... Cell.s"
+	@echo "... Corridor.o"
+	@echo "... Corridor.i"
+	@echo "... Corridor.s"
+	@echo "... GameController.o"
+	@echo "... GameController.i"
+	@echo "... GameController.s"
+	@echo "... Player.o"
+	@echo "... Player.i"
+	@echo "... Player.s"
+	@echo "... PlayerAction.o"
+	@echo "... PlayerAction.i"
+	@echo "... PlayerAction.s"
 	@echo "... Point.o"
 	@echo "... Point.i"
 	@echo "... Point.s"
@@ -291,6 +360,9 @@ help:
 	@echo "... TerminalVue.o"
 	@echo "... TerminalVue.i"
 	@echo "... TerminalVue.s"
+	@echo "... WallAction.o"
+	@echo "... WallAction.i"
+	@echo "... WallAction.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
