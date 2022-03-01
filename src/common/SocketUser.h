@@ -21,7 +21,7 @@ using Socket = sockpp::tcp_socket;
 class SocketUser
 {
 public:
-    SocketUser(Socket &&);
+    SocketUser(Socket && = Socket {});
 
     SocketUser(const SocketUser &) = delete;
     SocketUser(SocketUser &&) = default;
@@ -29,6 +29,9 @@ public:
     SocketUser &operator=(const SocketUser &) = delete;
     SocketUser &operator=(SocketUser &&) = default;
 
+    void setSocket(Socket &&);
+    bool isOpen() const;
+    void close();
     /**
      * Write a std::string in the socket
      *

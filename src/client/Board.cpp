@@ -3,7 +3,7 @@
 #include "Cell.h"
 #include "Corridor.h"
 #include "Player.h"
-#include "Point.h"
+#include "src/common/Point.h"
 
 #include <iostream>
 #include <memory>

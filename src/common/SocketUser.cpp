@@ -19,6 +19,21 @@ SocketUser::SocketUser(Socket &&socket)
 {
 }
 
+void SocketUser::setSocket(Socket &&socket)
+{
+    m_socket = std::move(socket);
+}
+
+bool SocketUser::isOpen() const
+{
+    return m_socket.is_open();
+}
+
+void SocketUser::close()
+{
+    m_socket.close();
+}
+
 bool SocketUser::hasReadActivity(time_t seconds)
 {
     fd_set readfd;

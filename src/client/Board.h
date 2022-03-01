@@ -2,8 +2,8 @@
 
 #include "BoardComponent.h"
 #include "Player.h"
-#include "Point.h"
 #include "WallEnum.h"
+#include "src/common/Point.h"
 
 #include <memory>
 #include <vector>
