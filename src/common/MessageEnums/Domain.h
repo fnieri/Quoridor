@@ -18,4 +18,5 @@ inline const char *toJsonString(Domain d)
     case Domain::RESOURCE_REQUEST:
         return "domaine_resource_req";
     }
+    return "";
 }

@@ -207,5 +207,4 @@ void Board::debugPrint()
 
 json Board::serialized()
 {
-
 }

@@ -14,4 +14,5 @@ inline const char *toJsonString(FriendAction f)
     case FriendAction::FRIEND_REFUSE:
         return "friend_refuse";
     }
+    return "";
 }

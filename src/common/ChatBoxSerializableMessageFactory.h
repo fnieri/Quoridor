@@ -29,7 +29,7 @@ public:
      *  "game_id" : 123,
      * }
      */
-    static nlohmann::json serializeInGameMessage(std::string& sender, std::vector<std::string>& receivers, std::string& message, int gameID);
+    static nlohmann::json serializeInGameMessage(std::string &sender, std::vector<std::string> &receivers, std::string &message, int gameID);
     /**
      * @brief Serialize message being sent in a match
      *
@@ -43,5 +43,5 @@ public:
      *  "message" : "message",
      * }
      */
-    static nlohmann::json serializeFriendMessage(std::string& sender, std::string& receiver, std::string& message);
+    static nlohmann::json serializeFriendMessage(std::string &sender, std::string &receiver, std::string &message);
 };

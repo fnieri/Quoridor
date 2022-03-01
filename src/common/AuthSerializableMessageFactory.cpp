@@ -10,7 +10,7 @@
 
 using json = nlohmann::json;
 
-json AuthSerializableMessageFactory::serializeUserRequest(ClientAuthAction action, std::string& username, std::string& password)
+json AuthSerializableMessageFactory::serializeUserRequest(ClientAuthAction action, std::string &username, std::string &password)
 {
     json requestJson = {{"action", toJsonString(action)}, {"domain", toJsonString(Domain::AUTH)}, {"username", username}, {"password", password}};
     return requestJson;

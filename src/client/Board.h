@@ -1,10 +1,10 @@
 #pragma once
 
+#include "../common/Point.h"
+#include "../common/Serializable.h"
 #include "BoardComponent.h"
 #include "Player.h"
-#include "../common/Point.h"
 #include "WallEnum.h"
-#include "../common/Serializable.h"
 
 #include <nlohmann/json.hpp>
 

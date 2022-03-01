@@ -28,7 +28,7 @@ public:
      * @return nlohmann::json Json of request as such
      *
      */
-    static nlohmann::json serializeUserRequest(ClientAuthAction action, std::string& username, std::string& password);
+    static nlohmann::json serializeUserRequest(ClientAuthAction action, std::string &username, std::string &password);
     /**
      * @brief serialize server json response
      *
