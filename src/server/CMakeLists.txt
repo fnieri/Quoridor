@@ -6,7 +6,8 @@ add_library(${PREFIX}_server
     ServerUser.cpp
     GameHandler.cpp
     ChatBox.cpp
-    # AuthHandler.cpp
+    AuthHandler.cpp
+    RelationsHandler.cpp
     Database.cpp
     )
 

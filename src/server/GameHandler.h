@@ -10,6 +10,10 @@
 #include "UserHandler.h"
 #include "src/common/Observer.h"
 
+#include <memory>
+
+class GameHub;
+
 class GameHandler
 {
 private:

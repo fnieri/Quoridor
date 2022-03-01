@@ -28,12 +28,11 @@ void ServerUser::bindToUsername(const std::string &username)
 
 void ServerUser::syncWithDB()
 {
-      // TODO sync gameids
-
       m_cachedELO = DatabaseHandler::getELO(m_username);
       m_cachedFriends = DatabaseHandler::getFriends(m_username);
-      m_cachedRequestsSent = DatabaseHandler::getFriendRequestsSent(m_username);
-      m_cachedRequestsReceived = DatabaseHandler::getFriendsRequestsReceived(m_username);
+      m_cachedRequestsSent = DatabaseHandler::getSentFriendRequests(m_username);
+      m_cachedRequestsReceived = DatabaseHandler::getReceivedFriendRequests(m_username);
+      /* m_cachedGameIds = DatabaseHandler::getGameIds(m_username); */
 }
 
 int ServerUser::getELO() const noexcept
@@ -53,14 +52,5 @@ UserList ServerUser::getFriendRequestsSent() const noexcept
 
 UserList ServerUser::getFriendRequestsReceived() const noexcept
 {
-
     return m_cachedRequestsReceived;
-
-    // DatabaseHandler::removeFriend(m_username, oldFriend);
-    //try {
-    //    m_cachedFriends.erase(std::find(m_cachedFriends.begin(), m_cachedFriends.end(), oldFriend)); // into oblivion
-    //} catch (std::exception &e) {
-    //    // in case m_cachedFriends is empty
-    //}
-
 }

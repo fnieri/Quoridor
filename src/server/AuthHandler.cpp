@@ -7,6 +7,9 @@
 
 #include "AuthHandler.h"
 
+#include "Database.h"
+#include "src/common/SerializableMessageFactory.h"
+
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -15,22 +18,27 @@ using json = nlohmann::json;
  * AuthHandler
  */
 
+AuthHandler::AuthHandler(UserHub &userHub)
+    : m_userHub {userHub}
+{
+}
+
 std::string AuthHandler::tryRegister(const std::string &serRequest)
 {
     json requestAnswer;
     auto request {json::parse(serRequest)};
 
     if (DatabaseHandler::createAccount(request["username"], request["password"])) {
-        requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
+        requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
     } else {
-        requestAnswer
-            = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTER, RequestStatus::FAILURE, ServerAuthReturn::USERNAME_IN_USE);
+        requestAnswer = SerializableMessageFactory::serializeServerAnswer(
+            ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE);
     }
 
     return requestAnswer.dump();
 }
 
-std::string AuthHandler::tryLogIn(const std::string &serMessage)
+std::string AuthHandler::tryLogIn(const std::string &serRequest)
 {
     json requestAnswer;
     auto request {json::parse(serRequest)}; //

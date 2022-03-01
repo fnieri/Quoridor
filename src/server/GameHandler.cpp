@@ -7,6 +7,9 @@
 
 #include "GameHandler.h"
 
+#include "Database.h"
+#include "src/common/SerializableMessageFactory.h"
+
 #include <nlohmann/json.hpp>
 
 #include <cassert>
@@ -37,7 +40,7 @@ void GameHandler::setConfiguration(const std::string &configuration)
 
 void GameHandler::addPlayer(const std::string &username)
 {
-    m_players.push_back();
+    m_players.push_back(username);
 
     assert(m_players.size() <= 4);
 }
@@ -84,10 +87,23 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    auto startRequest {SerializableMessageFactory::getGameStarted(m_configuration)};
+    // TODO wait for serialized request
+    /* auto startRequest {SerializableMessageFactory::getGameStarted(m_configuration)}; */
 
-    for (auto &p : m_players)
-        m_userHub->relayMessageTo(p, startRequest);
+    /* for (auto &p : m_players) */
+    /*     m_userHub->relayMessageTo(p, startRequest); */
+}
+
+void GameHandler::terminate()
+{
+}
+
+void GameHandler::deleteFromDB()
+{
+}
+
+void GameHandler::saveToDB()
+{
 }
 
 void GameHandler::processRequest(const std::string &sender, const std::string &serMessage)
@@ -115,9 +131,10 @@ int GameHub::getUniqueID() const
 {
     auto ID {std::rand()};
 
-    while (DatabaseHandler::doesIDExist()) {
-        ID = std::rand()
-    }
+    // TODO see with database
+    /* while (DatabaseHandler::isGameIdUsed(ID)) { */
+    /*     ID = std::rand(); */
+    /* } */
 
     return ID;
 }
@@ -129,14 +146,14 @@ auto GameHub::getGame(int gameID) const
     auto gameHandleIt {std::find_if(m_games.begin(), m_games.end(), [gameID](const auto &g) { return g->getID() == gameID; })};
 
     if (gameHandleIt != m_games.end())
-        userHandler = *gameHandleIt;
+        gameHandle = *gameHandleIt;
 
     return gameHandle;
 }
 
 void GameHub::eraseFinished()
 {
-    m_games.erase(std::remove_if(m_games.begin(), m_games.end(), [](auto &g) { return g.isFinished(); }), m_games.end());
+    m_games.erase(std::remove_if(m_games.begin(), m_games.end(), [](auto &g) { return g->isFinished(); }), m_games.end());
 }
 
 void GameHub::processGameInvitation(const std::string &serRequest)
@@ -144,7 +161,7 @@ void GameHub::processGameInvitation(const std::string &serRequest)
     auto request {json::parse(serRequest)};
 
     auto gameID {getUniqueID()};
-    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub};
+    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
 
     tmp->addPlayer(request["username_sending"]);
     tmp->confirmPlayer(request["username_sending"]);
@@ -164,13 +181,13 @@ void GameHub::processGameInvitation(const std::string &serRequest)
 void GameHub::processGameInvitationAccept(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
-    auto targetGame {getGame(requet["game_id"])};
+    auto targetGame {getGame(request["game_id"])};
 
     targetGame->confirmPlayer(request["username"]);
 
     if (targetGame->areAllPlayersConfirmed()) {
         if (!targetGame->areAllPlayersConnected() || !targetGame->areAllPlayersNotInGame()) {
-            removeGame(targetGame);
+            removeGame(targetGame->getID());
         } else {
             targetGame->start();
         }
@@ -201,13 +218,14 @@ void GameHub::processRequest(const std::string &serRequest)
 
     auto request {json::parse(serRequest)};
 
-    if (request["action"] == toJsonString(GameSetup::GAME_INVITE)) {
-        processGameInvitation(serRequest);
+    // TODO see with serialized req
+    /* if (request["action"] == toJsonString(GameSetup::GAME_INVITE)) { */
+    /*     processGameInvitation(serRequest); */
 
-    } else if (request["action"] == toJsonString(GameSetup::GAME_ACCEPT_INVITATION)) {
-        processGameInvitationAccept(serRequest);
+    /* } else if (request["action"] == toJsonString(GameSetup::GAME_ACCEPT_INVITATION)) { */
+    /*     processGameInvitationAccept(serRequest); */
 
-    } else if (request["action"] == toJsonString(GameSetup::GAME_REFUSE_INVITATION)) {
-        processGameInvitationRefuse(serRequest);
-    }
+    /* } else if (request["action"] == toJsonString(GameSetup::GAME_REFUSE_INVITATION)) { */
+    /*     processGameInvitationRefuse(serRequest); */
+    /* } */
 }

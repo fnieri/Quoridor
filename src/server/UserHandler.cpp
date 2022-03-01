@@ -10,6 +10,8 @@
 #include "AuthHandler.h"
 #include "ServerUser.h"
 #include "src/common/Exceptions.h"
+#include "src/common/SerializableMessageFactory.h"
+#include "src/server/ChatBox.h"
 
 #include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
 
@@ -21,16 +23,18 @@ using json = nlohmann::json;
  * UserHandler
  */
 
-UserHandler::UserHandler(
-    Socket &&user, UserHub *userHub, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<RelationsHandler> relationsHandler, std::shared<GameHub> gameHub)
+UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHandler> authHandler, std::shared_ptr<RelationsHandler> relationsHandler,
+    std::shared_ptr<ChatBox> chatboxHandler, std::shared_ptr<GameHub> gameHub)
     : RequestHandler {std::move(user)}
     , m_userHub {userHub}
     , m_authHandler {authHandler}
     , m_relationsHandler {relationsHandler}
+    , m_chatboxHandler {chatboxHandler}
     , m_gameHub {gameHub}
 {
 }
 
+// TODO: Replace m_isFinished with UserSocket impl
 void UserHandler::handleRequests()
 {
     while (!m_isFinished) {
@@ -45,15 +49,12 @@ void UserHandler::handleRequests()
                 processRequest(serRequest);
 
             }
-            // Client was disconnected
-            catch (UnableToRead &)
-            {
-                m_isFinished = true;
-            }
-            catch (UnableToSend &)
-            {
-                m_isFinished = true;
-            }
+        }
+        // Client was disconnected
+        catch (UnableToRead &) {
+            m_isFinished = true;
+        } catch (UnableToSend &) {
+            m_isFinished = true;
         }
 
         // This may crash the server if the destructor
@@ -95,7 +96,7 @@ void UserHandler::processAuth(const std::string &serRequest)
     auto answer {json::parse(serAnswer)};
 
     if (answer["status"] == toJsonString(ServerAuthReturn::CORRECT)) {
-        m_userHandled->bindTo(request["username"]);
+        m_userHandled->bindToUsername(request["username"]);
         m_userHandled->syncWithDB();
         send(serAnswer);
     }
@@ -118,18 +119,27 @@ void UserHandler::processChatbox(const std::string &serRequest)
 
 void UserHandler::processResourceRequest(const std::string &serRequest)
 {
-    std::string requestedResource;
+    auto request {json::parse(serRequest)};
+
+    json data;
+
     // TODO
+    if (request["data_type"] == "friend_list") {
+        data["friend_list"] = m_userHandled->getFriendList();
+
+    } else if (request["data_type"] == "game_ids") {
+    }
 }
 
 void UserHandler::processGameSetup(const std::string &serRequest)
 {
-    m_userHub->processRequest(serRequest);
+    m_gameHub->processRequest(serRequest);
 }
 
 void UserHandler::processGameAction(const std::string &serRequest)
 {
-    m_activeGame->processRequest(serRequest);
+    // FIXME
+    /* m_activeGame->processRequest(serRequest); */
 }
 
 bool UserHandler::isFinished() const
@@ -172,6 +182,7 @@ void UserHandler::relayMessage(const std::string &serMessage)
 UserHub::UserHub()
     : m_authHandler {std::make_shared<AuthHandler>(*this)}
     , m_relationsHandler {std::make_shared<RelationsHandler>(*this)}
+    , m_chatboxHandler {std::make_shared<ChatBox>(*this)}
 {
 }
 
@@ -190,7 +201,7 @@ auto UserHub::getUser(const std::string &username) const
     auto userHandleIt {std::find_if(m_handlers.begin(), m_handlers.end(), [username](const auto &h) { return h->getUsername() == username; })};
 
     if (userHandleIt != m_handlers.end())
-        userHandler = *userHandleIt;
+        userHandle = *userHandleIt;
 
     return userHandle;
 }
@@ -207,7 +218,8 @@ void UserHub::add(Socket &&user)
     std::lock_guard<std::mutex> guard {m_handlersMutex};
 
     // Start handling
-    std::shared_ptr<UserHandler> userHandler {std::make_shared<UserHandler>(std::move(user), this, m_authHandler, m_relationsHandler, m_gameHub)};
+    std::shared_ptr<UserHandler> userHandler {
+        std::make_shared<UserHandler>(std::move(user), this, m_authHandler, m_relationsHandler, m_chatboxHandler, m_gameHub)};
     userHandler->startHandling();
 
     m_handlers.push_back(std::move(userHandler));
@@ -228,7 +240,7 @@ bool UserHub::isInGame(const std::string &username) const noexcept
     return userHandle->isInGame();
 }
 
-bool UserHub::isConnected(const std::string &username)
+bool UserHub::isConnected(const std::string &username) const noexcept
 {
     auto userHandle {getUser(username)};
 
