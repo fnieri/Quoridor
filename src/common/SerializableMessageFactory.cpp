@@ -48,9 +48,9 @@ json SerializableMessageFactory::serializeQueueJoinRequest(QueueAction queueActi
     return GameRelatedActionsSerializableMessageFactory::serializeQueueJoinRequest(queueAction, gameMode, username, ELO);
 }
 
-json SerializableMessageFactory::serializeGameRelatedRequest(GameAction gameAction, std::string username)
+json SerializableMessageFactory::serializeInGameRelatedRequest(GameAction gameAction, std::string username)
 {
-    return GameRelatedActionsSerializableMessageFactory::serializeGameRelatedRequest(gameAction, username);
+    return GameRelatedActionsSerializableMessageFactory::serializeInGameRelatedRequest(gameAction, username);
 }
 
 json SerializableMessageFactory::serializeRequestExchange(DataType dataType)

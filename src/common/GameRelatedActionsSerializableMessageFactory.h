@@ -30,5 +30,5 @@ public:
      * @param username User that is joining
      * @return nlohmann::json requestJson
      */
-    static nlohmann::json serializeGameRelatedRequest(GameAction gameAction, std::string username);
+    static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, std::string username);
 };

@@ -1,13 +1,18 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_common
-
-  SerializableMessageFactory.cpp
-    Stringable.cpp
-    Point.cpp
-    SocketUser.cpp
-    Observer.cpp
-    RequestHandler.cpp
-    JoinGame.cpp
+JoinGame.cpp
+SerializableMessageFactory.cpp
+AuthSerializableMessageFactory.cpp
+BoardActionsSerializableMessageFactory.cpp
+FriendActionsSerializableMessageFactory.cpp
+GameRelatedActionsSerializableMessageFactory.cpp
+GameSetupSerializableMessageFactory.cpp
+Stringable.cpp
+Point.cpp
+SocketUser.cpp
+Observer.cpp
+RequestHandler.cpp
+JoinGame.cpp
 )
 
 target_include_directories(${PREFIX}_common

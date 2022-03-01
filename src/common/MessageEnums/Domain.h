@@ -5,17 +5,17 @@ enum class Domain { CHAT, AUTH, IN_GAME_RELATED, GAME_SETUP, RELATIONS, RESOURCE
 inline const char *toJsonString(Domain d)
 {
     switch (d) {
-        switch
-            Domain::CHAT : return "domain_chat";
-        switch
-            Domain::AUTH : return "domain_auth";
-        switch
-            Domain::IN_GAME_RELATED : return "domain_in_game_related";
-        switch
-            Domain::GAME_SETUP : return "domain_game_setup";
-        switch
-            Domain::RELATIONS : return "domain_relations";
-        switch
-            Domain::RESOURCE_REQUEST : return "domaine_resource_req";
+    case Domain::CHAT:
+        return "domain_chat";
+    case Domain::AUTH:
+        return "domain_auth";
+    case Domain::IN_GAME_RELATED:
+        return "domain_in_game_related";
+    case Domain::GAME_SETUP:
+        return "domain_game_setup";
+    case Domain::RELATIONS:
+        return "domain_relations";
+    case Domain::RESOURCE_REQUEST:
+        return "domaine_resource_req";
     }
 }
