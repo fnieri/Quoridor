@@ -19,6 +19,8 @@
 
 using json = nlohmann::json;
 
+// TODO QOL, make handlers singletons
+
 /**
  * UserHandler
  */
@@ -35,6 +37,7 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
 }
 
 // TODO: Replace m_isFinished with UserSocket impl
+// TODO: add function to run when client is disconnected
 void UserHandler::handleRequests()
 {
     while (!m_isFinished) {
@@ -91,11 +94,14 @@ void UserHandler::processRequest(const std::string &serRequest)
 
 void UserHandler::processAuth(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
-
+    // The auth handler is the only one returning
+    // a request instead of sending it.
     auto serAnswer {m_authHandler->processRequest(serRequest)};
     auto answer {json::parse(serAnswer)};
 
+    auto request {json::parse(serRequest)};
+
+    // Login was successful, bind the connection to its username
     if (answer["status"] == toJsonString(ServerAuthReturn::CORRECT)) {
         m_userHandled->bindToUsername(request["username"]);
         m_userHandled->syncWithDB();
@@ -105,16 +111,12 @@ void UserHandler::processAuth(const std::string &serRequest)
 
 void UserHandler::processRelations(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
-
     m_relationsHandler->processRequest(serRequest);
     m_userHandled->syncWithDB();
 }
 
 void UserHandler::processChatbox(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
-
     m_chatboxHandler->processRequest(serRequest);
 }
 
@@ -196,17 +198,17 @@ void UserHandler::terminate()
     m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
 }
 
-void UserHandler::relayMessage(const std::string &serMessage)
+void UserHandler::relayMessage(const std::string &serRequest)
 {
     // TODO: verification for user updates on certain specific messages
-    auto message {json::parse(serMessage)};
+    auto request {json::parse(serRequest)};
 
-    if (message["domain"] == toJsonString(Domain::RELATIONS)) {
+    if (request["domain"] == toJsonString(Domain::RELATIONS)) {
         // Sync friend lists
         m_userHandled->syncWithDB();
     }
 
-    send(serMessage);
+    send(serRequest);
 }
 
 /**
@@ -263,8 +265,18 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
 {
     auto receiver {getUser(username)};
 
-    if (receiver)
-        receiver->relayMessage(message);
+    try {
+        if (receiver)
+            receiver->relayMessage(message);
+    }
+    // In case the target disconnects during the writing
+    catch (UnableToRead &) {
+        // Should always be valid but who knows, better avoid them segfaults !
+        if (receiver) {
+            receiver->terminate();
+            eraseFinished();
+        }
+    }
 }
 
 bool UserHub::isInGame(const std::string &username) const noexcept

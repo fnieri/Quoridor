@@ -101,7 +101,6 @@ public:
 
     void terminate();
 
-
     /**
      * Send message passing first by the handler
      *
@@ -129,6 +128,14 @@ private:
     std::shared_ptr<ChatBox> m_chatboxHandler;
     std::shared_ptr<GameHub> m_gameHub;
 
+    /**
+     * Get pointer to UserHandler of giver username
+     *
+     * @param username username to search for
+     *
+     * @returns The smart ptr to the user if he
+     * is connected, otherwise a nullptr.
+     */
     auto getUser(const std::string &) const;
 
 public:
