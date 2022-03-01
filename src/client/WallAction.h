@@ -1,15 +1,15 @@
 #pragma once
 
+#include "../common/Serializable.h"
 #include "Board.h"
 #include "Player.h"
 #include "WallEnum.h"
-
 #include <nlohmann/json.hpp>
 
 #include <memory>
 
 // Place a wall somewhere
-class WallAction
+class WallAction : public Serializable
 {
 private:
     std::shared_ptr<Board> board;

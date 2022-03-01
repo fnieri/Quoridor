@@ -18,7 +18,7 @@
 
 #include <tuple>
 
-class BoardActionsSerializableMessageFactory : public SerializableMessageFactory
+class BoardActionsSerializableMessageFactory
 {
 public:
     /**
@@ -40,7 +40,7 @@ public:
      * "player_id" : 0
      * }
      */
-    nlohmann::json serializePawnAction(PlayerAction pawnAction, int playerID);
+    static nlohmann::json serializePawnAction(PlayerAction pawnAction, int playerID);
     /**
      * @brief Serialize a wall action the board
      *
@@ -53,10 +53,10 @@ public:
      *      "wall_cell" : {
      *          "x" : 0,
      *          "y" : 0},
-     *      "wall_orientation" : vertical | horizontal
+     *      "wall_orientation" : vwall_ertical | wall_horizontal
      *  },
      *  "player_id" : 1
      * }
      */
-    nlohmann::json serializeWallAction(WallAction wallAction, int playerID);
+    static nlohmann::json serializeWallAction(WallAction wallAction, int playerID);
 };

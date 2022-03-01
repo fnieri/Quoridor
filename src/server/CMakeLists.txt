@@ -8,11 +8,7 @@ add_library(${PREFIX}_server
     ChatBox.cpp
     # AuthHandler.cpp
     Database.cpp
-    AuthSerializableMessageFactory.cpp
-    BoardActionsSerializableMessageFactory.cpp
     SerializableMessageFactory.cpp
-    
-    # GameActionsSerializableMessageFactory.cpp
     )
 
 find_package(mongocxx REQUIRED)

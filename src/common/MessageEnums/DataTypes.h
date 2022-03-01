@@ -14,10 +14,9 @@ enum class DataType {
     LEADERBOARD,
     FRIENDS_LIST,
     GAME_CONFIG,
-}
+};
 
-inline const char *
-toJsonString(DataType d)
+inline const char *toJsonString(DataType d)
 {
     switch (d) {
     case DataType::GAME_ACTION:
