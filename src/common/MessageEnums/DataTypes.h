@@ -14,6 +14,8 @@ enum class DataType {
     LEADERBOARD,
     FRIENDS_LIST,
     GAME_CONFIG,
+    FRIEND_REQUESTS_SENT,
+    FRIEND_REQUESTS_RECEIVED,
 };
 
 inline const char *toJsonString(DataType d)
@@ -27,6 +29,10 @@ inline const char *toJsonString(DataType d)
         return "friends_list";
     case DataType::GAME_CONFIG:
         return "game_config";
+    case DataType::FRIEND_REQUESTS_SENT:
+        return "friend_requests_sent";
+    case DataType::FRIEND_REQUESTS_RECEIVED:
+        return "friend_requests_received";
     }
     return "";
 }
