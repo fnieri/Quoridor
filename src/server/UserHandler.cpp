@@ -122,14 +122,38 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
 
+    // FIXME no default value :/
+    auto dataType = DataType::FRIENDS_LIST;
     json data;
 
-    // TODO
-    if (request["data_type"] == "friend_list") {
-        data["friend_list"] = m_userHandled->getFriendList();
+    if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST)) {
+        data = json {m_userHandled->getFriendList()};
+        dataType = DataType::FRIENDS_LIST;
 
-    } else if (request["data_type"] == "game_ids") {
+    } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
+        data = json {m_userHandled->getFriendRequestsSent()};
+        dataType = DataType::FRIEND_REQUESTS_SENT;
+
+    } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
+        data = json {m_userHandled->getFriendRequestsReceived()};
+        dataType = DataType::FRIEND_REQUESTS_RECEIVED;
     }
+
+    // TODO: waiting serialize
+    /* } else if (request["data_type"] == toJsonString(DataType::CHATS)) { */
+    /*     data = json{DatabaseHandler::getChats(m_userHandled->getUsername())}; */
+    /*     dataType = DataType::CHATS; */
+
+    /* } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) { */
+    /*     data = json{DatabaseHandler::getLeaderboard()}; */
+    /*     dataType = DataType::LEADERBOARD; */
+    /* else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) { */
+    /*     data = json{m_userHandled->getGameIDs()}; */
+    /* } */
+
+    // TODO: waiting serialize
+    /* auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data)}; */
+    /* send(answer); */
 }
 
 void UserHandler::processGameSetup(const std::string &serRequest)
