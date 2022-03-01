@@ -43,6 +43,7 @@ public:
     UserList getFriendList() const noexcept;
     UserList getFriendRequestsSent() const noexcept;
     UserList getFriendRequestsReceived() const noexcept;
+    std::vector<int> getGameIDs() const noexcept;
 
     /**
      * Usually this is a json serialized message

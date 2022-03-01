@@ -54,3 +54,8 @@ UserList ServerUser::getFriendRequestsReceived() const noexcept
 {
     return m_cachedRequestsReceived;
 }
+
+std::vector<int> ServerUser::getGameIDs() const noexcept
+{
+    return m_cachedGameIds;
+}
