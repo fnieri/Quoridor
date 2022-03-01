@@ -1,6 +1,6 @@
 #include <catch2/catch.hpp>
 
-#include "src/client/Point.h"
+#include "src/common/Point.h"
 
 #include <string>
 

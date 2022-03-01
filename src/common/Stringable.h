@@ -1,6 +1,12 @@
+/**
+ * @file Stringable.h
+ * @author Boris Petrov
+ * @brief What every printable object should inherit
+ * @date 02/25/22
+ */
+
 #pragma once
 
-// Forward declarations of io streams, see: https://gcc.gnu.org/onlinedocs/libstdc++/libstdc++-html-USERS-4.2/group__s27__2__iosfwd.html
 #include <iosfwd>
 #include <string>
 

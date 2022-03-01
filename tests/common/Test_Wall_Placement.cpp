@@ -13,7 +13,7 @@ TEST_CASE("Valid wall placements")
 {
     std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 99});
     std::shared_ptr<Board> b(new Board {});
-    
+
     SECTION("Vertical walls")
     {
         WallAction action_v {b, p, Point {1, 1}, WallOrientation::Vertical};

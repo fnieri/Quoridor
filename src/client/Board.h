@@ -1,9 +1,9 @@
 #pragma once
 
 #include "BoardComponent.h"
-#include "WallEnum.h"
-#include "Point.h"
 #include "Player.h"
+#include "Point.h"
+#include "WallEnum.h"
 
 #include <memory>
 #include <vector>
@@ -25,19 +25,14 @@ private:
 
     /// Size of the matrix, computed from CELL_SIZE.
     const int MATRIX_SIZE = (CELL_SIZE * 2) - 1;
-    const int CELL = 2;
-    const int CORRIDOR = 1;
 
     bool isEven(const int &i) const;
     bool isPositionValid(const Point &position) const;
     bool isCell(const Point &position) const;
     bool isCorridor(const Point &position) const;
     bool areNeighbours(const Point &first, const Point &second) const;
-    bool areDiagoNeighbours(const Point &first, const Point &second) const;
     bool isWayFree(const Point &first, const Point &second) const;
-    bool isWayValid(const Point &current, const Point &overtaken, const Point &destination) const;
-    Point getMiddleBoardComponent(const Point &first, const Point &second, const int &shift) const;
-    Point getDistance(const Point &first, const Point &second) const;
+    Point getIndexCorridor(const Point &first, const Point &second) const;
     std::vector<std::vector<int>> allComponents();
     void labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y);
 
@@ -75,8 +70,6 @@ public:
 
     /**
      * Moves a given Player to a new position on the board.
-     * DO NOT CALL THIS FUNCTION DIRECTLY!
-     * Create a PlayerAction and call PlayerAction::executeAction() instead.
      *
      * @param player the player to move
      * @param cell the new destination of the player
@@ -87,8 +80,6 @@ public:
 
     /**
      * Sets a full wall into the board.
-     * DO NOT CALL THIS FUNCTION DIRECTLY!
-     * Create a WallAction and call WallAction::executeAction() instead.
      *
      * @param cell the upper-left corner destination of the wall
      * @param direction the orientation of the new wall
@@ -100,10 +91,6 @@ public:
      * - if orienation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
      */
     void placeWall(const Point &cell, const WallOrientation &direction);
-
-    bool isBasicMove(const Point &current, const Point &destination) const;
-    bool isJumpMove(const Point &current, const Point &destination) const;
-    bool isDiagonalMove(const Point &current, const Point &destination) const;
 
     int getCellSize();
 

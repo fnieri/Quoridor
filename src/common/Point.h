@@ -1,3 +1,10 @@
+/**
+ * @file Point.h
+ * @author Boris Petrov
+ * @brief A position in a 2 dimentional grid
+ * @date 02/25/22
+ */
+
 #pragma once
 
 #include "../common/Serializable.h"
@@ -6,7 +13,7 @@
 /**
  * Coordinate in the plan
  *
- * Since the x and y getters a expected to be used
+ * @note Since the x and y getters a expected to be used
  * very often, a short form was given for them to be less
  * verbose than, for instance, getX().
  */

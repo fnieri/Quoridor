@@ -14,7 +14,7 @@ public:
     Player(const PawnColors &color, const Point &position, const int &nwalls); // Const or not ?
     int x() const;
     int y() const;
-    Point getPosition() const;
+
     void setPosition(const Point &newPosition);
 
     int nWalls() const;

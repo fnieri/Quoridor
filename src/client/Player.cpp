@@ -22,10 +22,6 @@ void Player::setPosition(const Point &newPosition)
     position = newPosition;
 }
 
-Point Player::getPosition() const
-{
-    return position;
-}
 int Player::nWalls() const
 {
     return nwalls;
