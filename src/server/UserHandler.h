@@ -93,10 +93,11 @@ public:
     UserHandler &operator=(const UserHandler &) = delete;
     UserHandler &operator=(UserHandler &&) = default;
 
+    bool isLoggedIn() const noexcept;
     bool isInGame() const noexcept;
-    bool isFinished() const;
+    bool isFinished() const noexcept;
 
-    std::string getUsername() const;
+    std::string getUsername() const noexcept;
 
     void terminate();
 

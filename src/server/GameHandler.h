@@ -11,6 +11,7 @@
 #include "src/common/Observer.h"
 
 #include <memory>
+#include <mutex>
 
 class GameHub;
 

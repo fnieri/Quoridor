@@ -51,6 +51,7 @@ void UserHandler::handleRequests()
             }
         }
         // Client was disconnected
+        // FIXME: unable to send may be thrown by another user
         catch (UnableToRead &) {
             m_isFinished = true;
         } catch (UnableToSend &) {
@@ -71,19 +72,19 @@ void UserHandler::processRequest(const std::string &serRequest)
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::RELATIONS)) {
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
         processRelations(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::CHAT)) {
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
         processChatbox(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
         processResourceRequest(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
         processGameAction(serRequest);
 
-    } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::GAME_SETUP)) {
         processGameSetup(serRequest);
     }
 }
@@ -142,12 +143,17 @@ void UserHandler::processGameAction(const std::string &serRequest)
     /* m_activeGame->processRequest(serRequest); */
 }
 
-bool UserHandler::isFinished() const
+bool UserHandler::isLoggedIn() const noexcept
+{
+    return m_userHandled->isLoggedIn();
+}
+
+bool UserHandler::isFinished() const noexcept
 {
     return m_isFinished;
 }
 
-std::string UserHandler::getUsername() const
+std::string UserHandler::getUsername() const noexcept
 {
     return m_userHandled->getUsername();
 }
