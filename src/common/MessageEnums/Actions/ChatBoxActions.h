@@ -10,4 +10,5 @@ inline const char *toJsonString(ChatInteraction a)
     case ChatInteraction::IN_GAME_MESSAGE:
         return "in_game_message";
     }
+    return "";
 }

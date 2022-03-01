@@ -6,8 +6,7 @@
 class GameSetupSerializableMessageFactory
 {
 public:
+    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string> &players);
 
-    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string>& players);
-
-    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string>& players, int time, int increment);
+    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string> &players, int time, int increment);
 };

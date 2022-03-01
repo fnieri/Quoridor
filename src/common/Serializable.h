@@ -5,6 +5,6 @@
 class Serializable
 {
 public:
-    virtual nlohmann::json serialized() {};
+    virtual nlohmann::json serialized()=0;
     virtual ~Serializable()=default;
 };

@@ -29,6 +29,7 @@ inline const char *toJsonString(ClientAuthAction a)
     case ClientAuthAction::REGISTRATION:
         return "registration";
     }
+    return "";
 }
 // https://stackoverflow.com/questions/5093460/how-to-convert-an-enum-type-variable-to-a-string
 
@@ -46,6 +47,7 @@ inline const char *toOutputString(ClientAuthAction a)
     case ClientAuthAction::REGISTRATION:
         return "Create an account";
     }
+    return "";
 }
 
 /// Enum representing the response that the server gives to the client when registering
@@ -83,6 +85,7 @@ inline const char *toJsonString(ServerAuthReturn a)
     case ServerAuthReturn::REGISTER_WRONG_CHARACTERS:
         return "register_wrong_char";
     }
+    return "";
 }
 
 /**
@@ -109,4 +112,5 @@ inline const char *toOutputString(ServerAuthReturn s)
     case ServerAuthReturn::REGISTER_WRONG_CHARACTERS:
         return "You must only use letters, numbers, or special characters @#()[]{}!\"£$%&/()=?^";
     }
+    return "";
 }

@@ -14,4 +14,5 @@ inline const char *toJsonString(GameMode g)
     case GameMode::FOG_OF_WAR:
         return "fow_mode"; // FOW == Fog Of War
     }
+    return "";
 }
