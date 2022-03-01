@@ -44,7 +44,7 @@ public:
 
     static nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string username, int ELO);
 
-    static nlohmann::json serializeGameRelatedRequest(GameAction gameAction, std::string username);
+    static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, std::string username);
 
     static nlohmann::json serializeRequestExchange(DataType dataType);
 

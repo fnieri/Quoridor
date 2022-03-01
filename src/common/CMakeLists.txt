@@ -2,6 +2,11 @@
 add_library(${PREFIX}_common
 JoinGame.cpp
 SerializableMessageFactory.cpp
+AuthSerializableMessageFactory.cpp
+BoardActionsSerializableMessageFactory.cpp
+FriendActionsSerializableMessageFactory.cpp
+GameRelatedActionsSerializableMessageFactory.cpp
+GameSetupSerializableMessageFactory.cpp
 Stringable.cpp
 Point.cpp
 SocketUser.cpp

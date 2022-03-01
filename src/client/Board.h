@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../common/Point.h"
 #include "BoardComponent.h"
 #include "Player.h"
-#include "../common/Point.h"
 #include "WallEnum.h"
 
 #include <memory>

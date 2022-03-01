@@ -7,8 +7,8 @@ using json = nlohmann::json;
 json FriendActionsSerializableMessageFactory::serializeFriendRequest(
     FriendAction friendAction, std::string friendRequestSender, std::string friendRequestReceiver)
 {
-    json requestJson = {
-        {"action", toJsonString(friendAction)}, {"domain", toJsonString(Domain::RELATIONS)}, {"friend_req_sender", sender}, {"friend_req_receiver", receiver}};
+    json requestJson = {{"action", toJsonString(friendAction)}, {"domain", toJsonString(Domain::RELATIONS)}, {"friend_req_sender", friendRequestSender},
+        {"friend_req_receiver", friendRequestReceiver}};
     return requestJson;
 }
 
