@@ -13,7 +13,6 @@ using bsoncxx::builder::stream::document;
 using bsoncxx::builder::stream::finalize;
 using bsoncxx::builder::stream::open_array;
 using bsoncxx::builder::stream::open_document;
-using json = nlohmann::json;
 
 mongocxx::instance inst {}; // Initialize MongoDB C++ driver
 
@@ -227,11 +226,11 @@ void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender
         userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
             document {} << "$pull" << open_document << "receivedFriendRequests" << friendRequestSenderId << close_document << finalize);
         // add receiver to user's friends
-        userColl.update_one(
-            document {} << "username" << friendRequestSender << finalize, document {} << "$push" << open_document << "friends" << friendRequestReceiverId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestSender << finalize,
+            document {} << "$push" << open_document << "friends" << friendRequestReceiverId << close_document << finalize);
         // add sender to receiver's friends
-        userColl.update_one(
-            document {} << "username" << friendRequestReceiver << finalize, document {} << "$push" << open_document << "friends" << friendRequestSenderId << close_document << finalize);
+        userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
+            document {} << "$push" << open_document << "friends" << friendRequestSenderId << close_document << finalize);
     }
 }
 
@@ -253,7 +252,6 @@ void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender
         // remove sender from received friend requests
         userColl.update_one(document {} << "username" << friendRequestReceiver << finalize,
             document {} << "$pull" << open_document << "receivedFriendRequests" << friendRequestSenderId << close_document << finalize);
-
     }
 }
 
@@ -299,7 +297,6 @@ void DatabaseHandler::removeFriend(const std::string &username, const std::strin
             document {} << "username" << username << finalize, document {} << "$pull" << open_document << "friends" << friendId << close_document << finalize);
         userColl.update_one(
             document {} << "username" << friendUsername << finalize, document {} << "$pull" << open_document << "friends" << id << close_document << finalize);
-
     }
 }
 
@@ -312,7 +309,7 @@ void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, 
         if (sentFriendRequest == friendRequestReceiver) {
             for (auto &receivedFriendRequest : receiverFriends) {
                 if (receivedFriendRequest == friendRequestSender)
-                return;
+                    return;
             }
             return;
         }
@@ -458,7 +455,6 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
         }
         gameColl.update_one(document {} << "game_id" << gameId << finalize,
             document {} << "$push" << open_document << "messages" << open_document << sender << message << close_document << close_document << finalize);
-
     }
 }
 
@@ -482,11 +478,47 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &ga
                 message.push_back(element.value().get<std::string>());
                 messages.push_back(message);
             }
-
             i++;
         }
     }
     return messages;
+}
+
+void DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        userColl.update_one(
+            document {} << "username" << username << finalize, document {} << "$push" << open_array << "accepted_gameId" << gameId << close_array << finalize);
+        userColl.update_one(
+            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "invite_gameId" << gameId << close_array << finalize);
+    }
+}
+
+void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        userColl.update_one(
+            document {} << "username" << username << finalize, document {} << "$push" << open_array << "invite_gameId" << gameId << close_array << finalize);
+    }
+}
+
+void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        userColl.update_one(
+            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "accepted_gameId" << gameId << close_array << finalize);
+        userColl.update_one(
+            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "invite_gameId" << gameId << close_array << finalize);
+    }
 }
 
 bool DatabaseHandler::isGameIdUsed(const int &gameId)
@@ -498,4 +530,109 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
         return false;
     }
     return true;
+}
+
+void DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    json playersJson;
+    for (auto &player : players) {
+        playersJson.push_back(player);
+    }
+
+    gameColl.insert_one(document {} << "game_id" << gameId << "players" << bsoncxx::from_json(playersJson.dump()) << "player_number" << nPlayers
+                                    << "board_config" << bsoncxx::from_json(boardConfig.dump()) << finalize);
+}
+
+json DatabaseHandler::getGameBoardConfig(const int &gameId)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
+    // check if gameId is contained in the collection
+    if (maybeResult) {
+        auto gameView = maybeResult->view();
+        auto boardConfig = gameView["board_config"].get_document().view();
+        json boardConfigJson = json::parse(bsoncxx::to_json(boardConfig));
+        return boardConfigJson;
+    }
+    return json();
+}
+
+json DatabaseHandler::getGameConfig(const int &gameId)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
+    // check if gameId is contained in the collection
+    if (maybeResult) {
+        auto gameView = maybeResult->view();
+        json gameConfigJson = json::parse(bsoncxx::to_json(gameView));
+        gameConfigJson.erase("_id");
+        return gameConfigJson;
+    }
+    return json();
+}
+
+std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        auto userView = maybeResult->view();
+        auto userViewBson = bsoncxx::to_json(userView);
+        json userViewJson = json::parse(userViewBson);
+        json acceptedGameIdsJson = userViewJson["accepted_gameId"];
+        std::vector<int> gameIds;
+        for (auto &gameId : acceptedGameIdsJson) {
+            gameIds.push_back(gameId);
+        }
+        return gameIds;
+    }
+    return std::vector<int>();
+}
+
+std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &username)
+{
+    mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
+    // check if usernames are contained in the collection
+    if (maybeResult) {
+        auto userView = maybeResult->view();
+        auto userViewBson = bsoncxx::to_json(userView);
+        json userViewJson = json::parse(userViewBson);
+        json inviteGameIdsJson = userViewJson["invite_gameId"];
+        std::vector<int> gameIds;
+        for (auto &gameId : inviteGameIdsJson) {
+            gameIds.push_back(gameId);
+        }
+        return gameIds;
+    }
+    return std::vector<int>();
+}
+
+void DatabaseHandler::deleteGame(const int &gameId)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    // get players_username
+    bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
+    // check if gameId is contained in the collection
+    if (maybeResult) {
+        auto gameView = maybeResult->view();
+        auto gameViewBson = bsoncxx::to_json(gameView);
+        json gameViewJson = json::parse(gameViewBson);
+        json playersJson = gameViewJson["players"];
+        for (auto &player : playersJson) {
+            // delete player from user collection
+            removeGameIdFromUser(player, gameId);
+        }
+        // delete game from game collection
+        gameColl.delete_one(document {} << "game_id" << gameId << finalize);
+    }
+}
+
+void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig)
+{
+    mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
+    gameColl.update_one(document {} << "game_id" << gameId << finalize,
+        document {} << "$set" << open_document << "board_config" << bsoncxx::from_json(boardConfig.dump()) << close_document << finalize);
 }

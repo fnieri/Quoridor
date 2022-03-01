@@ -24,6 +24,8 @@
 #include <cstdint>
 #include <iostream>
 
+using json = nlohmann::json;
+
 namespace database
 {
 const char kUsername[] {"louis"};
@@ -49,6 +51,7 @@ class DatabaseHandler
      */
     static bool doesUsernameExist(const std::string &username);
     static std::string getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId);
+    static void removeGameIdFromUser(const std::string &username, const int &gameId);
     DatabaseHandler();
     static std::unique_ptr<DatabaseHandler> &Instance()
     {
@@ -113,7 +116,7 @@ public:
      * @brief Send a friend request to the given username.
      * @param username string.
      */
-    static void sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver );
+    static void sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver);
     /**
      * @brief Remove a friend request sent to the given receiver from the given sender.
      * @param sender username string, receiver username string.
@@ -166,7 +169,66 @@ public:
      * @return True if the game id is already used, false otherwise.
      */
     static bool isGameIdUsed(const int &gameId);
-    // TODO
-//    static void getAllUserMessages(const std::string &username);
-//    static std::vector<std::vector<std::string>> getMessages(const std::string &username);
+
+    /**
+     * @brief Add game id to the user's list of accepted games and delete it from the user's gameId invite list.
+     * @param username string, gameId int.
+     * @note if you call this and the gameId is not in the user's invite list, it will not throw an error.
+     */
+    static void addGameIdToUser(const std::string &username, const int &gameId);
+
+    /**
+     * @brief Add game id to the user's list of invited games.
+     * @param string username, int gameId.
+     */
+    static void addGameIdInviteToUser(const std::string &username, const int &gameId);
+
+    /**
+     * @brief Create a new game.
+     * @param int gameId, vector<str> players, int number_of_players, json boardConfig
+     * @warning The gameId must be unique and no verification is made. Use isGameIdUsed() to check if the gameId is already used before creating a game.
+     */
+    static void createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig);
+
+    /**
+     * @brief Get the board configuration of a game.
+     * @param int gameId
+     * @return json boardConfig of the game.
+     */
+    static json getGameBoardConfig(const int &gameId);
+
+    /**
+     * @brief Get the game configuration of a game.
+     * @param int gameId
+     * @return json gameConfig of the game.
+     */
+    static json getGameConfig(const int &gameId);
+
+    /**
+     * @brief Get the player's accepted gameIds.
+     * @param string username
+     * @return vector<int> player's accepted gameIds.
+     */
+    static std::vector<int> getPlayerGameIds(const std::string &username);
+
+    /**
+     * @brief Get the player's invited gameIds.
+     * @param string username
+     * @return vector<int> player's invited gameIds.
+     */
+    static std::vector<int> getPlayerInviteGameIds(const std::string &username);
+
+    /**
+     * @brief Set the board config of a game.
+     * @param int gameId, json boardConfig
+     */
+    static void setGameBoardConfig(const int &gameId, const json &boardConfig);
+
+    /**
+     * @brief Delete a game.
+     * @param int gameId
+     * @warning This action is irreversible.
+     * @note This method will also handle the deletion of the gameId appearance in all user's accepted and invited gameIds.
+     */
+    static void deleteGame(const int &gameId);
 };

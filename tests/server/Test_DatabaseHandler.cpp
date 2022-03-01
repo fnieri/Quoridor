@@ -5,7 +5,10 @@
 
 #include "src/server/Database.h"
 #include <cstdlib>
+#include <nlohmann/json.hpp>
 #include <unistd.h>
+
+using json = nlohmann::json;
 
 bool isStringInVector(std::vector<std::string> vector, std::string string)
 {
@@ -128,6 +131,45 @@ SCENARIO("Chatting between friends")
 
             REQUIRE(userAMessages1[userAMessages1.size() - 1][0] == "testing");
             REQUIRE(userBMessages1[userBMessages1.size() - 1][1] == "another message 123");
+        }
+    }
+}
+
+SCENARIO("Handling game config")
+{
+    GIVEN("Game Id")
+    {
+        json boardConfig = {{"players_position", {{{"x", 1}, {"y", 0}}, {{"x", 7}, {"y", 8}}}},
+            {"wall_position", {{{"x", 4}, {"y", 6}}, {{"x", 2}, {"y", 1}}, {{"x", 5}, {"y", 2}}}}, {"leftover_walls", {7, 4}}};
+
+        json gameConfig = {{"game_id", 69}, {"player_number", 2}, {"players_username", {"testing", "testingFriend"}}, {"board_config", boardConfig}};
+
+        WHEN("CREATING A GAME")
+        {
+            DatabaseHandler::createGame(69, {"testing", "testingFriend"}, 2, boardConfig);
+
+            REQUIRE(DatabaseHandler::getGameConfig(69) == gameConfig);
+
+            REQUIRE(DatabaseHandler::getGameBoardConfig(69) == boardConfig);
+
+            //            REQUIRE(DatabaseHandler::getPlayerGameIds("testing") == std::vector<int>({69}));
+            //
+            //            REQUIRE(DatabaseHandler::getPlayerGameIds("testingFriend") == std::vector<int>({69}));
+            //        }
+            //
+            //        WHEN("UPDATING A GAME")
+            //        {
+            //            DatabaseHandler::updateGameConfig(69, "testing");
+            //
+            //            REQUIRE(DatabaseHandler::getGameConfig(69) == "testing");
+            //        }
+            //
+            //        WHEN("DELETING A GAME")
+            //        {
+            //            DatabaseHandler::deleteGame(69);
+            //
+            //            REQUIRE_FALSE(DatabaseHandler::isGameIdUsed(69));
+            //        }
         }
     }
 }
