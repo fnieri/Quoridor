@@ -29,8 +29,21 @@ public:
     SocketUser &operator=(const SocketUser &) = delete;
     SocketUser &operator=(SocketUser &&) = default;
 
+    /**
+     * Replace the existing socket with a new one
+     *
+     * @param socket the new socket, should be rvalue
+     */
     void setSocket(Socket &&);
+    /**
+     * Whether the socket is still open for reading and writing
+     */
     bool isOpen() const;
+    /**
+     * Close the socket for reading and writing
+     *
+     * @note When the usage of the socket is finished, it should be closed.
+     */
     void close();
     /**
      * Write a std::string in the socket
