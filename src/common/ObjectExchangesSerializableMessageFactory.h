@@ -9,6 +9,7 @@
 
 #include "MessageEnums/Actions/ObjectExchanges.h"
 #include "MessageEnums/Status.h"
+#include "MessageEnums/DataTypes.h"
 #include "Serializable.h"
 #include <nlohmann/json.hpp>
 
@@ -24,7 +25,7 @@ public:
      * "data_type" : "leaderboard | friend_list ...",
      * }
      */
-    static nlohmann::json serializeRequestExchange(DataType dataType);
+    static nlohmann::json serializeRequestExchange(DataType dataType, Serializable& serializable);
     /**
      * @brief serialize an answer from server to user
      * @param dataType type of data the user has asked
@@ -35,7 +36,7 @@ public:
      * "serialized_data" : "json_serialized_object"
      * }
      */
-    static nlohmann::json serializeAnswerExchange(Exchange answerExchange, DataType dataType, Serializable serializableData);
+    static nlohmann::json serializeAnswerExchange(DataType dataType, Serializable& serializableData);
 
     /**
      * @brief Serialize wether a status transmission failed

@@ -1,9 +1,12 @@
 #pragma once
 
-#include "../common/Point.h"
 #include "BoardComponent.h"
 #include "Player.h"
+#include "../common/Point.h"
 #include "WallEnum.h"
+#include "../common/Serializable.h"
+
+#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <vector>
@@ -11,7 +14,7 @@
 /**
  * Stores the data of the game board, notably wall and player positions.
  */
-class Board
+class Board : public Serializable
 {
 private:
     /**
@@ -97,4 +100,6 @@ public:
     void debugPrint();
 
     ~Board();
+
+    nlohmann::json serialized();
 };

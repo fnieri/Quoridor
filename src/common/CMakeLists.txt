@@ -4,20 +4,24 @@ JoinGame.cpp
 SerializableMessageFactory.cpp
 AuthSerializableMessageFactory.cpp
 BoardActionsSerializableMessageFactory.cpp
+ChatBoxSerializableMessageFactory.cpp
 FriendActionsSerializableMessageFactory.cpp
 GameRelatedActionsSerializableMessageFactory.cpp
+ObjectExchangesSerializableMessageFactory.cpp
 GameSetupSerializableMessageFactory.cpp
 Stringable.cpp
+../client/WallAction.cpp
+../client/PlayerAction.cpp
+        ../client/Board.cpp
+        ../client/Player.cpp
+        ../client/Corridor.cpp
+        ../client/BoardComponent.cpp
+        ../client/Cell.cpp
 Point.cpp
 SocketUser.cpp
 Observer.cpp
 RequestHandler.cpp
 JoinGame.cpp
-)
-
-target_include_directories(${PREFIX}_common
-    PUBLIC
-        ${CMAKE_SOURCE_DIR}
 )
 
 target_link_libraries(${PREFIX}_common
@@ -27,4 +31,18 @@ PUBLIC
 PRIVATE
     sockpp
 
+)
+
+target_include_directories(${PREFIX}_common
+    PUBLIC
+        ${CMAKE_SOURCE_DIR}
+)
+
+add_executable(common
+    main.cpp
+)
+
+target_link_libraries(common
+    PRIVATE
+    ${PREFIX}_common
 )

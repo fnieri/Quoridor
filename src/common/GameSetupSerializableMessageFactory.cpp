@@ -3,7 +3,7 @@
 
 using json = nlohmann::json;
 
-json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> players)
+json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string>& players)
 {
     json playerArray = json::array();
     for (auto &player : players)
@@ -13,7 +13,7 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
     return setupJson;
 }
 
-json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> players, int time, int increment)
+json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string>& players, int time, int increment)
 {
     json playerArray = json::array();
     for (auto &player : players)
@@ -23,3 +23,4 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
         {"increment", increment}};
     return setupJson;
 }
+
