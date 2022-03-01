@@ -57,7 +57,7 @@ public:
      * not the sender), the username of the sender is also passed
      * to the method.
      */
-    void processRequest(const std::string &, const std::string &);
+    void processRequest(const std::string &);
 };
 
 class GameHub

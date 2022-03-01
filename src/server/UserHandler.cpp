@@ -163,8 +163,12 @@ void UserHandler::processGameSetup(const std::string &serRequest)
 
 void UserHandler::processGameAction(const std::string &serRequest)
 {
-    // FIXME
-    /* m_activeGame->processRequest(serRequest); */
+    auto request {json::parse(serRequest)};
+
+    // Add username to the request
+    request["username"] = m_userHandled->getUsername();
+
+    m_activeGame->processRequest(request.dump());
 }
 
 bool UserHandler::isLoggedIn() const noexcept

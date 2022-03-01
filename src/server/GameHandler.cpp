@@ -106,16 +106,16 @@ void GameHandler::saveToDB()
 {
 }
 
-void GameHandler::processRequest(const std::string &sender, const std::string &serMessage)
+void GameHandler::processRequest(const std::string &serRequest)
 {
-    auto message {json::parse(serMessage)};
+    auto request {json::parse(serRequest)};
 
     // TODO: handle
     // - endgame
 
     for (auto &p : m_players)
-        if (p != sender)
-            m_userHub->relayMessageTo(p, serMessage);
+        if (p != request["username"])
+            m_userHub->relayMessageTo(p, serRequest);
 }
 
 /**
