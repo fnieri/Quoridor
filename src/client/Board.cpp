@@ -8,6 +8,8 @@
 #include <iostream>
 #include <memory>
 
+using json = nlohmann::json;
+
 Board::Board(/* args */)
 {
     for (int x = 0; x < MATRIX_SIZE; x++) {
@@ -201,4 +203,9 @@ void Board::debugPrint()
         }
         std::cout << std::endl;
     }
+}
+
+json Board::serialized()
+{
+
 }
