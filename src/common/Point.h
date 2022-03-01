@@ -17,6 +17,7 @@
  * very often, a short form was given for them to be less
  * verbose than, for instance, getX().
  */
+
 class Point : public Stringable, public Serializable
 {
 public:
