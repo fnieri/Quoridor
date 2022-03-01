@@ -5,21 +5,16 @@
 #include <stdexcept>
 #include <string>
 
-EloCalculator::EloCalculator(std::vector<User> users, std::vector<bool> hasWon)
-    : users {users}
+EloCalculator::EloCalculator(std::vector<float> startingELOs, std::vector<bool> hasWon)
+    : startingELOs {startingELOs}
     , hasWon {hasWon}
 {
     assert(
-        ("Users and hasWon vectors must be 2 or 4 and equal in size ", (users.size() == 2 && hasWon.size() == 2) || users.size() == 4 && (hasWon.size() == 4)));
+        ("Users and hasWon vectors must be 2 or 4 and equal in size ", (startingELOs.size() == 2 && hasWon.size() == 2) || startingELOs.size() == 4 && (hasWon.size() == 4)));
 }
 
 void EloCalculator::calculateELO()
 {
-
-    for (auto &user : users) {
-        startingELOs.push_back((float)user.getELO());
-    }
-
     calculateTransformedScore();
     if (users.size() == 2)
         calculateTwoPlayersExpectedScore();
