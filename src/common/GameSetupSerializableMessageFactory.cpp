@@ -19,7 +19,7 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
     for (auto &player : players)
         playerArray.push_back(player);
 
-    json setupJson = {
-        {"domain", toJsonString(Domain::GAME_SETUP)}, {"game_mode", toJsonString(gameMode)}, {"players", playerArray}, {"time", time}, {"increment", increment}};
+    json setupJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"game_mode", toJsonString(gameMode)}, {"players", playerArray}, {"time", time},
+        {"increment", increment}};
     return setupJson;
 }
