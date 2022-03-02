@@ -162,12 +162,14 @@ void UserHandler::processGameSetup(const std::string &serRequest)
 
 void UserHandler::processGameAction(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    if (isInGame()) {
+        auto request {json::parse(serRequest)};
 
-    // Add username to the request
-    request["username"] = m_userHandled->getUsername();
+        // Add username to the request
+        request["username"] = m_userHandled->getUsername();
 
-    m_activeGame->processRequest(request.dump());
+        m_activeGame.lock()->processRequest(request.dump());
+    }
 }
 
 bool UserHandler::isLoggedIn() const noexcept
@@ -187,7 +189,8 @@ std::string UserHandler::getUsername() const noexcept
 
 bool UserHandler::isInGame() const noexcept
 {
-    return static_cast<bool>(m_activeGame);
+    /* return static_cast<bool>(m_activeGame); */
+    return !m_activeGame.expired();
 }
 
 void UserHandler::terminate()
@@ -204,6 +207,17 @@ void UserHandler::relayMessage(const std::string &serRequest)
         // Sync friend lists
         m_userHandled->syncWithDB();
     }
+
+    // TODO wait serialize
+    /* } else if (request["domain"] == Domain::GAME_ACTION */
+    /*         && request["action"] == GameSetup::GAME_STARTED) { */
+    /*     m_activeGame = m_gameHub->getGame(request["game_id"]); */
+
+    /* } else if (request["domain"] == Domain::GAME_ACTION */
+    /*         && request["action"] == GameSetup::GAME_ENDED) { */
+    /*     m_activeGame.reset();
+
+    /* } */
 
     send(serRequest);
 }

@@ -28,6 +28,8 @@ private:
     std::vector<std::string> m_players;
     std::array<bool, 4> m_confirmedPlayers;
 
+    void setConfirmationState(const std::string &, bool);
+
 public:
     /**
      * @param gameId identifier of the game, should be unique
@@ -41,6 +43,8 @@ public:
     void setConfiguration(const std::string &);
     void addPlayer(const std::string &);
     void confirmPlayer(const std::string &);
+    void cancelPlayer(const std::string &);
+    int numberOfConfirmedPlayers() const;
 
     bool areAllPlayersConfirmed() const;
     bool areAllPlayersConnected() const;
@@ -73,17 +77,17 @@ private:
     std::vector<std::shared_ptr<GameHandler>> m_games;
 
     int getUniqueID() const;
-    auto getGame(int) const;
 
-    void processGameInvitation(const std::string &);
-    void processGameInvitationAccept(const std::string &);
-    void processGameInvitationRefuse(const std::string &);
+    void processGameCreation(const std::string &);
+    void processGameJoin(const std::string &);
+    void processGameQuit(const std::string &);
 
     void removeGame(int);
 
 public:
     GameHub(UserHub *);
 
+    std::shared_ptr<GameHandler> getGame(int) const;
     /**
      * Create game with two users' usernames.
      */

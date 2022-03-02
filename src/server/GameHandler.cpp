@@ -45,24 +45,39 @@ void GameHandler::addPlayer(const std::string &username)
     assert(m_players.size() <= 4);
 }
 
-void GameHandler::confirmPlayer(const std::string &username)
+int GameHandler::numberOfConfirmedPlayers() const
+{
+    int confirmedPlayers;
+
+    for (auto &state : m_confirmedPlayers)
+        confirmedPlayers += static_cast<int>(state);
+
+    return confirmedPlayers;
+}
+
+void GameHandler::setConfirmationState(const std::string &username, bool state)
 {
     for (auto i {0}; i < m_players.size(); ++i) {
         if (m_players[i] == username) {
-            m_confirmedPlayers[i] = true;
+            m_confirmedPlayers[i] = state;
             break;
         }
     }
 }
 
+void GameHandler::confirmPlayer(const std::string &username)
+{
+    setConfirmationState(username, true);
+}
+
+void GameHandler::cancelPlayer(const std::string &username)
+{
+    setConfirmationState(username, false);
+}
+
 bool GameHandler::areAllPlayersConfirmed() const
 {
-    bool allConfirmed {true};
-
-    for (auto &state : m_confirmedPlayers)
-        allConfirmed = allConfirmed && state;
-
-    return allConfirmed;
+    return numberOfConfirmedPlayers() == m_players.size();
 }
 
 bool GameHandler::areAllPlayersConnected() const
@@ -100,10 +115,12 @@ void GameHandler::terminate()
 
 void GameHandler::deleteFromDB()
 {
+    /* DatabaseHandler::deleteGame(getID()); */
 }
 
 void GameHandler::saveToDB()
 {
+    /* DatabaseHandler::saveGame(getID(), m_players, m_players.size(), json::parse(m_configuration)); */
 }
 
 void GameHandler::processRequest(const std::string &serRequest)
@@ -139,7 +156,7 @@ int GameHub::getUniqueID() const
     return ID;
 }
 
-auto GameHub::getGame(int gameID) const
+std::shared_ptr<GameHandler> GameHub::getGame(int gameID) const
 {
     std::shared_ptr<GameHandler> gameHandle;
 
@@ -156,7 +173,7 @@ void GameHub::eraseFinished()
     m_games.erase(std::remove_if(m_games.begin(), m_games.end(), [](auto &g) { return g->isFinished(); }), m_games.end());
 }
 
-void GameHub::processGameInvitation(const std::string &serRequest)
+void GameHub::processGameCreation(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
 
@@ -178,27 +195,29 @@ void GameHub::processGameInvitation(const std::string &serRequest)
     m_games.push_back(tmp);
 }
 
-void GameHub::processGameInvitationAccept(const std::string &serRequest)
+void GameHub::processGameJoin(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
     auto targetGame {getGame(request["game_id"])};
 
     targetGame->confirmPlayer(request["username"]);
 
-    if (targetGame->areAllPlayersConfirmed()) {
-        if (!targetGame->areAllPlayersConnected() || !targetGame->areAllPlayersNotInGame()) {
-            removeGame(targetGame->getID());
-        } else {
-            targetGame->start();
-        }
+    if (targetGame->areAllPlayersConfirmed() && targetGame->areAllPlayersConnected() && targetGame->areAllPlayersNotInGame()) {
+        targetGame->start();
     }
 }
 
-void GameHub::processGameInvitationRefuse(const std::string &serRequest)
+void GameHub::processGameQuit(const std::string &serRequest)
 {
     auto request {json::parse(serRequest)};
+    auto targetGame {getGame(request["game_id"])};
 
-    removeGame(request["game_id"]);
+    targetGame->confirmPlayer(request["username"]);
+
+    if (targetGame->numberOfConfirmedPlayers() == 0) {
+        targetGame->terminate();
+        eraseFinished();
+    }
 }
 
 void GameHub::removeGame(int gameID)
@@ -219,13 +238,13 @@ void GameHub::processRequest(const std::string &serRequest)
     auto request {json::parse(serRequest)};
 
     // TODO see with serialized req
-    /* if (request["action"] == toJsonString(GameSetup::GAME_INVITE)) { */
-    /*     processGameInvitation(serRequest); */
+    /* if (request["action"] == toJsonString(GameSetup::GAME_CREATE)) { */
+    /*     processGameCreation(serRequest); */
 
-    /* } else if (request["action"] == toJsonString(GameSetup::GAME_ACCEPT_INVITATION)) { */
-    /*     processGameInvitationAccept(serRequest); */
+    /* } else if (request["action"] == toJsonString(GameSetup::GAME_JOIN)) { */
+    /*     processGameJoin(serRequest); */
 
-    /* } else if (request["action"] == toJsonString(GameSetup::GAME_REFUSE_INVITATION)) { */
-    /*     processGameInvitationRefuse(serRequest); */
+    /* } else if (request["action"] == toJsonString(GameSetup::GAME_QUIT)) { */
+    /*     processGameInvitationQuit(serRequest); */
     /* } */
 }

@@ -58,7 +58,7 @@ protected:
     std::shared_ptr<GameHub> m_gameHub;
 
     bool m_isFinished {false};
-    GameHandler *m_activeGame {nullptr};
+    std::weak_ptr<GameHandler> m_activeGame;
 
     std::shared_ptr<ServerUser> m_userHandled;
 
