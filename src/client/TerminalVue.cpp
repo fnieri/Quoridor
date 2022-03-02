@@ -301,7 +301,6 @@ auto TerminalVue::createFriendsListRenderer()
     });
 
     return Renderer(friendsListContainer, [&, friendList, friendChat, chatToFriendInput, sendChatToFriendButton] {
-        if (depth != 0) return vbox();
         chatEntry = chatEntries[friend_selected];
         return hbox({
             vbox({
@@ -312,7 +311,6 @@ auto TerminalVue::createFriendsListRenderer()
                 text("Chat") | center,
                 separator(),
                 friendChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15),
-                text(L"") | focus,
                 separator(),
                 hbox({text(">"), chatToFriendInput->Render(), sendChatToFriendButton->Render()}),
             }) | yframe
@@ -344,7 +342,6 @@ auto TerminalVue::createFriendUtilitariesRenderer()
     });
 
     return Renderer(utilitariesContainer, [&, searchInput, addButton, delButton, notifBox] {
-        if (depth != 0) return vbox();
         return vbox({
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
@@ -391,8 +388,6 @@ auto TerminalVue::createFriendsRenderer()
     auto quitButton = Button("Cancel", [&] { depth = 0; });
     auto wantToDelete = Button("Delete", [&] { depth = 2; }); // color(Color::Red, text("Deletion Menu"))
 
-    auto dialogBox = Container::Vertical({deleteSomeoneMenu, wantToDelete, quitButton});
-
     auto deleteConfirmation = Container::Vertical({
         Button("Confirm",
             [&] {
@@ -402,27 +397,23 @@ auto TerminalVue::createFriendsRenderer()
         Button("Cancel", [&] { depth = 1; }), // returns to the selection of a person to delete from friendsList
     });
 
-    auto friendContainer = Container::Vertical({
-        resizeFriendTab,
-        dialogBox,
-        deleteConfirmation,
-    });
+    auto friendContainer = Container::Vertical({resizeFriendTab, deleteConfirmation, deleteSomeoneMenu, wantToDelete, quitButton});
 
-    return Renderer(friendContainer, [&, resizeFriendTab, dialogBox, deleteConfirmation] {
+    return Renderer(friendContainer, [&, resizeFriendTab, deleteConfirmation, deleteSomeoneMenu, wantToDelete, quitButton] {
         if (depth == 1) {
             return vbox({
                        color(Color::Red, text("Deletion Menu")),
                        separator(),
-                       vbox(dialogBox->Render()),
-                   })
-                | border | center;
+                       deleteSomeoneMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border,
+                       wantToDelete->Render(),
+                       quitButton->Render(),
+                   });
         } else if (depth == 2) {
             return vbox({
                        text("Are you sure to delete"),
                        separator(),
                        vbox(deleteConfirmation->Render()),
-                   })
-                | border | center;
+                   });
         }
         return resizeFriendTab->Render();
     });
@@ -435,10 +426,6 @@ auto TerminalVue::createMainTabContainer()
     auto resizeContainer = boardTab;
     resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
     auto friendRenderer = createFriendsRenderer();
-    //    auto friendsList = createFriendsListRenderer();
-    //    auto friendUtilitaries = createFriendUtilitariesRenderer();
-    //    auto resizeFriendTab = friendsList;
-    //    resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
     auto LeaderBoard = createLeaderBoardRenderer();
     auto tabContainer = Container::Tab({resizeContainer, friendRenderer, LeaderBoard}, &mainTabSelect);
     return tabContainer;
@@ -481,55 +468,8 @@ auto TerminalVue::createMainRenderer()
 auto TerminalVue::createFinalContainer()
 {
     auto mainContent = createMainRenderer();
-    //    auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
-    //    auto quitButton = Button("Cancel", [&] { depth = 0; });
-    //    auto wantToDelete = Button("Delete", [&] { depth = 2; }); // color(Color::Red, text("Deletion Menu"))
-    //
-    //    auto dialogBox = Container::Vertical({
-    //        deleteSomeoneMenu,
-    //        wantToDelete,
-    //        quitButton,
-    //    });
-    //
-    //    auto deleteConfirmation = Container::Vertical({
-    //        Button("Confirm",
-    //            [&] {
-    //                deleteFriend();
-    //                depth = 0;
-    //            }), // Close all dialogs
-    //        Button("Cancel", [&] { depth = 1; }), // returns to the selection of a person to delete from friendsList
-    //    });
-    //
-    //    auto mainContainer = Container::Vertical({
-    //        mainContent,
-    //    });
-    //
-    //    auto finalTab = Container::Tab(
-    //        {
-    //            mainContainer,
-    //            dialogBox,
-    //            deleteConfirmation,
-    //        },
-    //        &depth);
 
     return Renderer(mainContent, [mainContent] {
-        //        if (depth == 1) {
-        //            return vbox({
-        //                       color(Color::Red, text("Deletion Menu")),
-        //                       separator(),
-        //                       vbox(dialogBox->Render()),
-        //                   })
-        //                | border | center;
-        //        }
-        //
-        //        if (depth == 2) {
-        //            return vbox({
-        //                       text("Are you sure to delete"),
-        //                       separator(),
-        //                       vbox(deleteConfirmation->Render()),
-        //                   })
-        //                | border | center;
-        //        }
         return mainContent->Render();
     });
 }
