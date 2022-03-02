@@ -345,6 +345,12 @@ class TerminalVue
      */
     auto createDeleteConfirmationRenderer();
 
+    auto createJoinedRenderer();
+
+    void handleFriendDelete(const std::string &friendUsername);
+
+    void handleFriendAdd(const std::string &friendUsername);
+
 public:
     void run();
 
