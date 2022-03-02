@@ -26,18 +26,14 @@ json ObjectExchangesSerializableMessageFactory::serializeStatusTransmission(Requ
 
 json ObjectExchangesSerializableMessageFactory::serializeFriendChatRequest(const std::string &requester, const std::string &receiver)
 {
-    json chatJson = {
-        {"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"domain",  toJsonString(Domain::RESOURCE_REQUEST)}, {"data_type", toJsonString(DataType::CHATS)},
-        {"sender", requester}, {"receiver", receiver}
-    };
+    json chatJson = {{"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"domain", toJsonString(Domain::RESOURCE_REQUEST)},
+        {"data_type", toJsonString(DataType::CHATS)}, {"sender", requester}, {"receiver", receiver}};
     return chatJson;
 }
 
 json ObjectExchangesSerializableMessageFactory::serializeRequestGameID(int gameID)
 {
-    json gameJson = {
-        {"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"domain", toJsonString((Domain::RESOURCE_REQUEST))}, {"data_type", toJsonString(DataType::GAME_IDS)},
-        {"game_id", gameID}
-    };
+    json gameJson = {{"action", toJsonString(Exchange::OBJECT_REQUEST)}, {"domain", toJsonString((Domain::RESOURCE_REQUEST))},
+        {"data_type", toJsonString(DataType::GAME_IDS)}, {"game_id", gameID}};
     return gameJson;
 }
