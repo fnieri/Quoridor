@@ -57,7 +57,7 @@ void RelationsHandler::relayFriendAction(const std::string &serRequest)
     } else if (request["action"] == toJsonString(FriendAction::FRIEND_REFUSE)) {
         m_userHub.relayMessageTo(request["friend_req_sender"], serRequest);
 
-    } else if (request["action"] == toJsonString(FriendAction::FRIEND_REFUSE)) {
+    } else if (request["action"] == toJsonString(FriendAction::FRIEND_REMOVE)) {
         m_userHub.relayMessageTo(request["friend_rm_receiver"], serRequest);
     }
 }
