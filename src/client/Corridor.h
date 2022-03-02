@@ -26,5 +26,6 @@ public:
      */
     void placeWall();
 
+    void setOrientation(WallOrientation orientation);
     WallOrientation getOrientation();
 };

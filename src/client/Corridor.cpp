@@ -15,6 +15,11 @@ Corridor::~Corridor()
 {
 }
 
+void Corridor::setOrientation(WallOrientation _orientation)
+{
+    orientation = _orientation;
+}
+
 WallOrientation Corridor::getOrientation()
 {
     return orientation;

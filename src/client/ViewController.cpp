@@ -21,6 +21,7 @@ ViewController::ViewController(std::shared_ptr<ServerController> serverControlle
     : serverController {serverController}
     , nPlayers {nPlayers}
 {
+    // Player spawn moved to startGame()
 }
 
 ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
@@ -28,16 +29,6 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
     , currentPlayerIndex(currentPlayerIndex)
     , gameId(gameId)
 {
-    std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
-    std::vector<FinishLine> finishLines {FinishLine::North, FinishLine::South, FinishLine::East, FinishLine::West};
-
-    for (int i = 0; i < nPlayers; i++) {
-        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, finishLines.at(i));
-
-        players.push_back(p);
-
-        board->spawnPlayer(p);
-    }
 }
 
 void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
@@ -63,7 +54,7 @@ std::shared_ptr<Board> ViewController::getBoard()
 void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix)
 {
     boardIntMatrix.clear();
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &boardMatrix = board->getBoardMatrix();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
@@ -101,7 +92,7 @@ void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIn
 std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
 {
     std::vector<std::vector<int>> boardIntMatrix;
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getBoardMatrix();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < board->getCellSize(); y++) {
         boardIntMatrix.push_back(std::vector<int>());
@@ -167,18 +158,16 @@ void ViewController::startGame()
     std::vector<std::shared_ptr<Player>> players;
     std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
 
-    // loop for made by Léo
-    for (int i = 0; i < nPlayers; i++) 
-    {
-        // TODO: Change spawn position of players
-        Point pos{i, i};
-        auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
+    // Initialize and spawn the players
+    std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
+    std::vector<FinishLine> finishLines {FinishLine::North, FinishLine::South, FinishLine::East, FinishLine::West};
+
+    for (int i = 0; i < nPlayers; i++) {
+        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, finishLines.at(i));
 
         players.push_back(p);
 
         board->spawnPlayer(p);
-
-        // dictPlayer.insert(players[i]->getColor(), players[i]);
     }
 
     setBoard(board);
