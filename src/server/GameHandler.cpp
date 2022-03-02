@@ -8,6 +8,7 @@
 #include "GameHandler.h"
 
 #include "Database.h"
+#include "EloCalculator.h"
 #include "src/common/SerializableMessageFactory.h"
 
 #include <nlohmann/json.hpp>
@@ -121,6 +122,25 @@ void GameHandler::deleteFromDB()
 void GameHandler::saveToDB()
 {
     /* DatabaseHandler::saveGame(getID(), m_players, m_players.size(), json::parse(m_configuration)); */
+}
+
+void GameHandler::updateELO(const std::string &winner)
+{
+    std::vector<float> currentELOs;
+    std::vector<bool> winningState;
+
+    for (auto &i_player : m_players) {
+        currentELOs.push_back(DatabaseHandler::getELO(i_player));
+        winningState.push_back(i_player == winner);
+    }
+
+    EloCalculator eloCalc {currentELOs, winningState};
+    eloCalc.calculateELO();
+    auto finalELOs {eloCalc.getFinalELOs()};
+
+    for (auto i {0}; i < m_players.size(); ++i) {
+        DatabaseHandler::setELO(m_players.at(i), finalELOs.at(i));
+    }
 }
 
 void GameHandler::processRequest(const std::string &serRequest)

@@ -50,6 +50,8 @@ public:
     bool areAllPlayersConnected() const;
     bool areAllPlayersNotInGame() const;
 
+    void updateELO(const std::string &);
+
     void start();
     void terminate();
 

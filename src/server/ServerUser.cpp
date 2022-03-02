@@ -35,7 +35,7 @@ void ServerUser::syncWithDB()
       /* m_cachedGameIds = DatabaseHandler::getGameIds(m_username); */
 }
 
-int ServerUser::getELO() const noexcept
+float ServerUser::getELO() const noexcept
 {
     return m_cachedELO;
 }
