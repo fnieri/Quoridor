@@ -5,7 +5,8 @@
 
 using json = nlohmann::json;
 
-json ChatBoxSerializableMessageFactory::serializeInGameMessage(const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID)
+json ChatBoxSerializableMessageFactory::serializeInGameMessage(
+    const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID)
 {
     json receiversArray = json::array();
     for (auto &receiver : receivers)

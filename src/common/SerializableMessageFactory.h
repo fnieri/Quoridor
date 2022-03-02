@@ -23,7 +23,7 @@
 class SerializableMessageFactory
 {
 public:
-    static nlohmann::json serializeUserRequest(ClientAuthAction action, std::string &username, std::string &password);
+    static nlohmann::json serializeUserRequest(ClientAuthAction action, const std::string &username, const std::string &password);
 
     static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
 
@@ -31,21 +31,21 @@ public:
 
     static nlohmann::json serializeWallAction(WallAction &wallAction, int playerID);
 
-    static nlohmann::json serializeInGameMessage(std::string &sender, std::vector<std::string> &receivers, std::string &message, int gameID);
+    static nlohmann::json serializeInGameMessage(const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID);
 
-    static nlohmann::json serializeFriendMessage(std::string &sender, std::string &receiver, std::string &message);
+    static nlohmann::json serializeFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message);
 
-    static nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, std::string &username, int ELO);
+    static nlohmann::json serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, const std::string &username, int ELO);
 
-    static nlohmann::json serializeFriendRequest(FriendAction friendAction, std::string &friendRequestSender, std::string &friendRequestReceiver);
+    static nlohmann::json serializeFriendRequest(FriendAction friendAction, const std::string &friendRequestSender, const std::string &friendRequestReceiver);
 
-    static nlohmann::json serializeFriendRemove(std::string &friendRemoveSender, std::string &friendRemoveReceiver);
+    static nlohmann::json serializeFriendRemove(const std::string &friendRemoveSender, const std::string &friendRemoveReceiver);
 
-    static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, std::string &username);
+    static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, const std::string &username);
 
     static nlohmann::json serializeRequestExchange(DataType dataType);
 
-    static nlohmann::json serializeAnswerExchange(DataType dataType, nlohmann::json& serializedData);
+    static nlohmann::json serializeAnswerExchange(DataType dataType, nlohmann::json &serializedData);
 
     static nlohmann::json serializeStatusTransmission(RequestStatus requestStatus);
 

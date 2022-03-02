@@ -9,16 +9,7 @@
  * @brief Enum representing data types which can be requested by an user
  *
  */
-enum class DataType {
-    GAME_ACTION,
-    LEADERBOARD,
-    FRIENDS_LIST,
-    GAME_CONFIG,
-    FRIEND_REQUESTS_SENT,
-    FRIEND_REQUESTS_RECEIVED,
-    CHATS,
-    GAME_IDS
-};
+enum class DataType { GAME_ACTION, LEADERBOARD, FRIENDS_LIST, GAME_CONFIG, FRIEND_REQUESTS_SENT, FRIEND_REQUESTS_RECEIVED, CHATS, GAME_IDS };
 
 inline const char *toJsonString(DataType d)
 {
