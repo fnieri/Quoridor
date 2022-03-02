@@ -318,38 +318,41 @@ class TerminalVue
 
     /**
      * @brief Create a Main container
-     * [@details This container will be permanently refreshed in order to display the interface and any updates]
+     * [@details This container contains the biggest part to render]
      * @return Renderer of container
      */
     auto createMainRenderer();
 
     /**
+     * @brief Create a Final container, containing dialogs to confirm or not a friend deletion
+     * [@details This container will be permanently refreshed in order to display the interface and any updates]
+     * @return Renderer of container
+     */
+    auto createFinalContainer();
+    
+    /**
      * @brief Detects if someone is logged in
      * 
      */
     void loginUser();
-
-    /**
-     * @brief Create a Delete Dialog Box Renderer object,
-     *  that shows your friendslist to chose from it someone who to delete
-     * 
-     * @return Renderer
-     */
-    auto createDeleteDialogBoxRenderer();
     
-    /**
-     * @brief Create a Delete Confirmation DialogBox,
-     *  that asks you if you're sure to delete the person you clicked on to delete her from your friendsList
-     * 
-     * @return Renderer
-     */
-    auto createDeleteConfirmationRenderer();
-
-    auto createJoinedRenderer();
 
     void handleFriendDelete(const std::string &friendUsername);
 
     void handleFriendAdd(const std::string &friendUsername);
+    
+    /**
+     * @brief Creates Wraper window object that renders a rounded box shape with a title
+     * 
+     * @param title Text that will be shown above the rendered window
+     * @param component Component that has to be shown within the window 
+     * @return Renderer
+     */
+    Component Window(std::string title, Component component) {
+        return Renderer(component, [component, title] {  //
+            return window(text(title), component->Render()) | flex;
+        });
+    }
 
 public:
     void run();
@@ -383,17 +386,5 @@ public:
      */
     void addChatFriendMessage(std::string username, std::string message);
 
-    /**
-     * @brief Creates Wraper window object that renders a rounded box shape with a title
-     * 
-     * @param title Text that will be shown above the rendered window
-     * @param component Component that has to be shown within the window 
-     * @return Renderer
-     */
-    Component Window(std::string title, Component component) {
-        return Renderer(component, [component, title] {  //
-            return window(text(title), component->Render()) | flex;
-        });
-    }
 
 };

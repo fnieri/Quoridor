@@ -426,17 +426,20 @@ auto TerminalVue::createMainRenderer()
     });
 };
 
-auto TerminalVue::createJoinedRenderer()
+auto TerminalVue::createFinalContainer()
 {
     auto mainContent = createMainRenderer();
     auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
     auto quitButton = Button("Quit", [&] { depth = 0; });
-    auto dialogBox = Container::Horizontal({
+    auto wantToDelete = Button("Delete", [&] { depth = 2; }); //color(Color::Red, text("Deletion Menu"))
+
+    auto dialogBox = Container::Vertical({
         deleteSomeoneMenu,
         quitButton,
+        wantToDelete
     });
 
-    auto deleteConfirmation = Container::Horizontal({
+    auto deleteConfirmation = Container::Vertical({
         Button("Confirm",
             [&] {
                 deleteFriend();
@@ -448,6 +451,7 @@ auto TerminalVue::createJoinedRenderer()
     auto mainContainer = Container::Vertical({
         mainContent,
     });
+    
     auto finalTab = Container::Tab(
         {
             mainContainer,
@@ -462,7 +466,7 @@ auto TerminalVue::createJoinedRenderer()
             return vbox({
                        color(Color::Red, text("Deletion Menu")),
                        separator(),
-                       hbox(dialogBox->Render()),
+                       vbox(dialogBox->Render()),
                    })
                 | border | center;
         }
@@ -471,9 +475,9 @@ auto TerminalVue::createJoinedRenderer()
             return vbox({
                        text("Are you sure to delete"),
                        separator(),
-                       hbox(deleteConfirmation->Render()),
+                       vbox(deleteConfirmation->Render()),
                    })
-                | border;
+                | border | center;
         }
         return mainContainer->Render();
     });
@@ -490,7 +494,7 @@ void TerminalVue::loginUser()
 
 void TerminalVue::run()
 {
-    auto mainRenderer = createJoinedRenderer();
+    auto mainRenderer = createFinalContainer();
     auto screen = ScreenInteractive::TerminalOutput();
     //    loginUser();
     screen.Loop(mainRenderer);
@@ -512,8 +516,8 @@ void TerminalVue::addFriend(std::string username)
 {
     friendsList.push_back(username);
     chatEntries.push_back(std::vector<std::string> {""});
-    searchField.clear();
     handleFriendAdd(username);
+    searchField.clear();
 }
 
 void TerminalVue::deleteFriend()
