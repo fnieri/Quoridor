@@ -40,13 +40,13 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
 // TODO: add function to run when client is disconnected
 void UserHandler::handleRequests()
 {
-    while (!m_isFinished) {
+    while (!m_isFinished && !m_wasTerminated) {
         try {
             if (hasReadActivity(1)) {
                 auto serRequest {receive()};
 
                 // Do not continue if the thread was terminated during or after the receive
-                if (m_isFinished)
+                if (m_isFinished || m_wasTerminated)
                     break;
 
                 processRequest(serRequest);
@@ -59,6 +59,14 @@ void UserHandler::handleRequests()
             m_isFinished = true;
         } catch (UnableToSend &) {
             m_isFinished = true;
+        }
+
+        // Only run this if the connection was lost,
+        // not if the server is shuting itself down.
+        if (!m_wasTerminated && isInGame()) {
+            // TODO: wait for serialize
+            /* auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())}; */
+            /* processRequest(req.dump()); */
         }
 
         m_userHub->eraseFinished();
@@ -166,7 +174,7 @@ void UserHandler::processGameAction(const std::string &serRequest)
         auto request {json::parse(serRequest)};
 
         // Add username to the request
-        request["username"] = m_userHandled->getUsername();
+        request["sender"] = m_userHandled->getUsername();
 
         m_activeGame.lock()->processRequest(request.dump());
     }
@@ -195,7 +203,8 @@ bool UserHandler::isInGame() const noexcept
 
 void UserHandler::terminate()
 {
-    m_isFinished = true; // TODO: use another variable, to be able to send message to client about the termination
+    m_wasTerminated = true;
+    m_isFinished = true;
 }
 
 void UserHandler::relayMessage(const std::string &serRequest)
