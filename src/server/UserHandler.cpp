@@ -61,9 +61,6 @@ void UserHandler::handleRequests()
             m_isFinished = true;
         }
 
-        // This may crash the server if the destructor
-        // of the UserHub finishes before the current thread.
-        // FIXME
         m_userHub->eraseFinished();
     }
 }
@@ -224,10 +221,13 @@ UserHub::UserHub()
 
 UserHub::~UserHub()
 {
-    std::lock_guard<std::mutex> guard {m_handlersMutex};
-
+    m_handlersMutex.lock();
     for (auto &h : m_handlers)
         h->terminate();
+    m_handlersMutex.unlock();
+
+    while (connectedUsers() != 0)
+        sleep(1);
 }
 
 auto UserHub::getUser(const std::string &username) const
