@@ -309,6 +309,8 @@ class TerminalVue
      */
     auto createLoginRenderer();
 
+    auto createFriendsRenderer();
+
     /**
      * @brief Create a Register Renderer object in which you can complete a form to register
      * 
