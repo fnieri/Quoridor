@@ -65,6 +65,7 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
     // create document
     auto builder = document {} << "username" << username << "password" << encryptedPassword << "salt_key" << saltKey << "elo" << elo << "friends"
                                << bsoncxx::builder::stream::array() << "sentFriendRequests" << bsoncxx::builder::stream::array() << "receivedFriendRequests"
+                               << bsoncxx::builder::stream::array() << "invite_gameId" << bsoncxx::builder::stream::array() << "accepted_gameId"
                                << bsoncxx::builder::stream::array() << finalize;
 
     // insert username+password into user collection
@@ -490,10 +491,10 @@ void DatabaseHandler::addGameIdToUser(const std::string &username, const int &ga
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
     if (maybeResult) {
-        userColl.update_one(
-            document {} << "username" << username << finalize, document {} << "$push" << open_array << "accepted_gameId" << gameId << close_array << finalize);
-        userColl.update_one(
-            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "invite_gameId" << gameId << close_array << finalize);
+        userColl.update_one(document {} << "username" << username << finalize,
+            document {} << "$push" << open_document << "accepted_gameId" << gameId << close_document << finalize);
+        userColl.update_one(document {} << "username" << username << finalize,
+            document {} << "$pull" << open_document << "invite_gameId" << gameId << close_document << finalize);
     }
 }
 
@@ -503,8 +504,8 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
     if (maybeResult) {
-        userColl.update_one(
-            document {} << "username" << username << finalize, document {} << "$push" << open_array << "invite_gameId" << gameId << close_array << finalize);
+        userColl.update_one(document {} << "username" << username << finalize,
+            document {} << "$push" << open_document << "invite_gameId" << gameId << close_document << finalize);
     }
 }
 
@@ -514,10 +515,10 @@ void DatabaseHandler::removeGameIdFromUser(const std::string &username, const in
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
     if (maybeResult) {
-        userColl.update_one(
-            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "accepted_gameId" << gameId << close_array << finalize);
-        userColl.update_one(
-            document {} << "username" << username << finalize, document {} << "$pull" << open_array << "invite_gameId" << gameId << close_array << finalize);
+        userColl.update_one(document {} << "username" << username << finalize,
+            document {} << "$pull" << open_document << "accepted_gameId" << gameId << close_document << finalize);
+        userColl.update_one(document {} << "username" << username << finalize,
+            document {} << "$pull" << open_document << "invite_gameId" << gameId << close_document << finalize);
     }
 }
 
@@ -527,9 +528,9 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
     // check if gameId is contained in the collection
     if (maybeResult) {
-        return false;
+        return true;
     }
-    return true;
+    return false;
 }
 
 void DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig)

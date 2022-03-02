@@ -146,30 +146,56 @@ SCENARIO("Handling game config")
 
         WHEN("CREATING A GAME")
         {
+            DatabaseHandler::deleteGame(69);
+
             DatabaseHandler::createGame(69, {"testing", "testingFriend"}, 2, boardConfig);
 
-            REQUIRE(DatabaseHandler::getGameConfig(69) == gameConfig);
+            std::cout << DatabaseHandler::getGameConfig(69) << std::endl;
 
-            REQUIRE(DatabaseHandler::getGameBoardConfig(69) == boardConfig);
+            std::cout << DatabaseHandler::getGameBoardConfig(69) << std::endl;
 
-            //            REQUIRE(DatabaseHandler::getPlayerGameIds("testing") == std::vector<int>({69}));
-            //
-            //            REQUIRE(DatabaseHandler::getPlayerGameIds("testingFriend") == std::vector<int>({69}));
-            //        }
-            //
-            //        WHEN("UPDATING A GAME")
-            //        {
-            //            DatabaseHandler::updateGameConfig(69, "testing");
-            //
-            //            REQUIRE(DatabaseHandler::getGameConfig(69) == "testing");
-            //        }
-            //
-            //        WHEN("DELETING A GAME")
-            //        {
-            //            DatabaseHandler::deleteGame(69);
-            //
-            //            REQUIRE_FALSE(DatabaseHandler::isGameIdUsed(69));
-            //        }
+            DatabaseHandler::addGameIdToUser("testing", 69);
+
+            DatabaseHandler::addGameIdInviteToUser("testingFriend", 69);
+
+            REQUIRE(DatabaseHandler::getPlayerGameIds("testing") == std::vector<int>({69}));
+
+            REQUIRE(DatabaseHandler::getPlayerInviteGameIds("testingFriend") == std::vector<int>({69}));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerInviteGameIds("testing") == std::vector<int>({69}));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerGameIds("testingFriend") == std::vector<int>({69}));
+        }
+
+        WHEN("UPDATING A GAME")
+        {
+            json newBoardConfig = {{"players_position", {{{"x", 1}, {"y", 0}}, {{"x", 7}, {"y", 8}}}},
+                {"wall_position", {{{"x", 5}, {"y", 6}}, {{"x", 2}, {"y", 1}}, {{"x", 5}, {"y", 2}}}}, {"leftover_walls", {6, 2}}};
+
+            DatabaseHandler::setGameBoardConfig(69, newBoardConfig);
+
+            std::cout << DatabaseHandler::getGameConfig(69) << std::endl;
+
+            std::cout << DatabaseHandler::getGameBoardConfig(69) << std::endl;
+
+            REQUIRE(DatabaseHandler::getGameBoardConfig(69) == newBoardConfig);
+
+            REQUIRE_FALSE(DatabaseHandler::getGameBoardConfig(69) == boardConfig);
+        }
+
+        WHEN("DELETING A GAME")
+        {
+            DatabaseHandler::deleteGame(69);
+
+            REQUIRE_FALSE(DatabaseHandler::isGameIdUsed(69));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerInviteGameIds("testing") == std::vector<int>({69}));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerInviteGameIds("testingFriend") == std::vector<int>({69}));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerGameIds("testing") == std::vector<int>({69}));
+
+            REQUIRE_FALSE(DatabaseHandler::getPlayerGameIds("testingFriend") == std::vector<int>({69}));
         }
     }
 }
