@@ -11,7 +11,7 @@
  *
  */
 
-#include "../common/User.h"
+/* #include "../common/User.h" */
 #include <vector>
 
 class EloCalculator
