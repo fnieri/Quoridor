@@ -143,7 +143,6 @@ auto TerminalVue::createChatInput()
 
 auto TerminalVue::createSearchInput()
 {
-    // return Input(&searchField, "Type text...");
     return Input(&searchField, "Search a friend...");
 }
 
@@ -266,7 +265,6 @@ auto TerminalVue::createChatRenderer()
         "Send",
         [&] {
             if (!message.empty()) {
-                // TODO: actually send message to server
                 addChatMessage(username, message);
             }
         },
@@ -316,8 +314,7 @@ auto TerminalVue::createFriendsListRenderer()
                 text(L"") | focus,
                 separator(),
                 hbox({text(">"), chatToFriendInput->Render(), sendChatToFriendButton->Render()}),
-            }) | yframe
-                | yflex | xflex,
+            }) | yframe | yflex | xflex,
         });
     });
 }
@@ -328,7 +325,7 @@ auto TerminalVue::createFriendUtilitariesRenderer()
     auto addButton = Button(
         "Add",
         [&] {
-            if (!searchField.empty()) { // Note that methods not implemented yet
+            if (!searchField.empty()) {
                 addFriend(searchField);
             }
         },
@@ -352,39 +349,6 @@ auto TerminalVue::createFriendUtilitariesRenderer()
             notifBox->Render() | yflex,
         });
     });
-}
-
-auto TerminalVue::createDeleteConfirmationRenderer() // WHEN DEPTH = TWO (Confirmation layer)
-{
-    auto deleteConfirmation = Container::Horizontal({
-        Button("Confirm",
-            [&] {
-                deleteFriend();
-                depth = 0;
-            }), // Close all dialogs
-        Button("Cancel", [&] { depth = 1; }), // returns to the selection of a person to delete from friendsList
-    });
-
-    return Renderer(deleteConfirmation, [&] {
-        return vbox({
-                   text("Are you sure to delete" + friendsList[friend_selected]),
-                   separator(),
-                   hbox(deleteConfirmation->Render()),
-               })
-            | border;
-    });
-}
-
-auto TerminalVue::createDeleteDialogBoxRenderer() // WHEN DEPTH = ONE (Chosing phase)
-{
-    auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
-    auto quitButton = Button("Quit", [&] { depth = 0; });
-    auto dialogBox = Container::Horizontal({
-        deleteSomeoneMenu,
-        quitButton,
-    });
-
-    return dialogBox;
 }
 
 auto TerminalVue::createLeaderBoardRenderer()
@@ -442,7 +406,6 @@ auto TerminalVue::createMainRenderer()
         },
         &loginTabSelect);
     auto mainContainer = Container::Vertical({
-        //        tabWithMouse,
         tabToggle,
         tabContainer,
         loginToggle,
@@ -494,10 +457,8 @@ auto TerminalVue::createJoinedRenderer()
         &depth);
 
     return Renderer(finalTab, [&, dialogBox, deleteConfirmation, mainContainer] {
-        // Element document = mainContent->Render();
 
         if (depth == 1) {
-            // document = dbox({document, page1->Render() | clear_under | center});
             return vbox({
                        color(Color::Red, text("Deletion Menu")),
                        separator(),
@@ -507,7 +468,6 @@ auto TerminalVue::createJoinedRenderer()
         }
 
         if (depth == 2) {
-            // document = dbox({document, page2->Render() | clear_under | center});
             return vbox({
                        text("Are you sure to delete"),
                        separator(),
@@ -515,7 +475,6 @@ auto TerminalVue::createJoinedRenderer()
                    })
                 | border;
         }
-        // return document;
         return mainContainer->Render();
     });
 }
@@ -531,7 +490,6 @@ void TerminalVue::loginUser()
 
 void TerminalVue::run()
 {
-    // auto mainRenderer = createMainRenderer();
     auto mainRenderer = createJoinedRenderer();
     auto screen = ScreenInteractive::TerminalOutput();
     //    loginUser();
