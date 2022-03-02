@@ -305,7 +305,7 @@ auto TerminalVue::createFriendsListRenderer()
         return hbox({
             vbox({
                 friendList->Render() | frame | size(HEIGHT, LESS_THAN, 15),
-            }) | xflex,
+            }) | xflex |yflex,
             separator(),
             vbox({
                 text("Chat") | center,
@@ -346,14 +346,31 @@ auto TerminalVue::createFriendUtilitariesRenderer()
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
             delButton->Render() | center,
-            notifBox->Render() | yflex,
+            notifBox->Render() | yflex  | frame | size(HEIGHT, LESS_THAN, 9),
         });
     });
 }
 
 auto TerminalVue::createLeaderBoardRenderer()
-{
-    return Renderer([] { return text("LeaderBoard") | center; });
+{  
+
+    for(int i = 0; i < leaders.size(); i++){
+        listLeadersWithElo.push_back(std::to_string(i+1) + ". " + leaders[i] + " (" + std::to_string(elos[i])+")");
+    }
+    
+    auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
+    auto leaderBoardContainer = Container::Vertical({
+        listLeaders,
+    });
+
+    return Renderer(leaderBoardContainer, [&, listLeaders] { 
+        return vbox({
+            // text("LeaderBoard") | center,
+            color(Color::YellowLight,text("Best players of the moment")),
+            separator(),
+            listLeaders->Render(),
+        }) | center;
+    });
 }
 
 auto TerminalVue::createLoginRenderer()
@@ -473,7 +490,7 @@ auto TerminalVue::createFinalContainer()
 
         if (depth == 2) {
             return vbox({
-                       text("Are you sure to delete"),
+                       color(Color::Red, text("Are you sure to delete " + friendsList[friend_selected])),
                        separator(),
                        vbox(deleteConfirmation->Render()),
                    })
@@ -516,13 +533,15 @@ void TerminalVue::addFriend(std::string username)
 {
     friendsList.push_back(username);
     chatEntries.push_back(std::vector<std::string> {""});
+    notifications.push_back("Added: " + username);
     handleFriendAdd(username);
     searchField.clear();
 }
 
 void TerminalVue::deleteFriend()
 {
-    friendsList.erase(friendsList.begin() + friend_selected); // TODO: Have to modify for a dictionary
+    notifications.push_back("Deleted: " + friendsList[friend_selected]);
+    friendsList.erase(friendsList.begin() + friend_selected);
     chatEntries.erase(chatEntries.begin() + friend_selected);
     handleFriendDelete(friendsList[friend_selected]);
 }

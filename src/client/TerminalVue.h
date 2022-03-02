@@ -98,8 +98,6 @@ class TerminalVue
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
     std::vector<std::string> notifications{
-        "User1 wants to add you!   (A)ccept or (D)eny ?",
-        "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
 
     std::vector<std::string> actionToggleEntries {
@@ -119,6 +117,11 @@ class TerminalVue
         "Login",
         "Register",
     };
+    int leader_selected = 0;
+    std::vector<std::string> leaders{"Hector", "Charlotte", "Nescafé", "Guy", "Auguste"};
+    std::vector<int> elos{1480, 1276, 920, 919, 874};
+    std::vector<std::string>listLeadersWithElo;
+    
     std::vector<Component> mainTabComponents;
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
@@ -291,7 +294,7 @@ class TerminalVue
     /**
      * @brief Create a LeaderBoard Renderer object
      * 
-     *[@return text("LeaderBoard") for now]
+     * @return Renderer
      */
     auto createLeaderBoardRenderer();
 
