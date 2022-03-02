@@ -29,3 +29,18 @@ inline const char *toJsonString(QueueAction q)
     }
     return "";
 }
+
+enum class GameInvite { GAME_INVITE, GAME_ACCEPT_INVITE, GAME_REFUSE_INVITE };
+
+inline const char *toJsonString(GameInvite g)
+{
+    switch (g) {
+        case GameInvite::GAME_INVITE:
+            return "game_invite";
+        case GameInvite::GAME_ACCEPT_INVITE:
+            return "game_accept_invite";
+        case GameInvite::GAME_REFUSE_INVITE:
+            return "game_refuse_invite";
+    }
+    return "";
+}

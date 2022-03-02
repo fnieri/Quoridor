@@ -43,13 +43,13 @@ public:
 
     static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, std::string &username);
 
-    static nlohmann::json serializeRequestExchange(DataType dataType, Serializable &serializable);
+    static nlohmann::json serializeRequestExchange(DataType dataType);
 
-    static nlohmann::json serializeAnswerExchange(DataType dataType, Serializable &serializableData);
+    static nlohmann::json serializeAnswerExchange(DataType dataType, nlohmann::json& serializedData);
 
     static nlohmann::json serializeStatusTransmission(RequestStatus requestStatus);
 
-    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string> &players);
+    static nlohmann::json serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players);
 
-    static nlohmann::json serializeGameSetup(GameMode gameMode, std::vector<std::string> &players, int time, int increment);
+    static nlohmann::json serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players, int time, int increment);
 };
