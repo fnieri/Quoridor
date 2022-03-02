@@ -35,6 +35,9 @@ SCENARIO("Creating and login into an account")
         WHEN("Checking credentials")
         {
             REQUIRE(DatabaseHandler::checkLogin("testing", "testingPassword"));
+
+            DatabaseHandler::getFriends("testing");            
+
             REQUIRE(DatabaseHandler::checkLogin("testingFriend", "testingFriendPassword"));
             REQUIRE(DatabaseHandler::checkLogin("testing", "wrongPassword") == false);
             REQUIRE(DatabaseHandler::checkLogin("testingFriend", "anotherWrongPassword") == false);
