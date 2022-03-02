@@ -53,14 +53,14 @@ json SerializableMessageFactory::serializeInGameRelatedRequest(GameAction gameAc
     return GameRelatedActionsSerializableMessageFactory::serializeInGameRelatedRequest(gameAction, username);
 }
 
-json SerializableMessageFactory::serializeRequestExchange(DataType dataType, Serializable &serializable)
+json SerializableMessageFactory::serializeRequestExchange(DataType dataType)
 {
-    return ObjectExchangesSerializableMessageFactory::serializeRequestExchange(dataType, serializable);
+    return ObjectExchangesSerializableMessageFactory::serializeRequestExchange(dataType);
 }
 
-json SerializableMessageFactory::serializeAnswerExchange(DataType dataType, Serializable &serializableData)
+json SerializableMessageFactory::serializeAnswerExchange(DataType dataType, json& serializedData)
 {
-    return ObjectExchangesSerializableMessageFactory::serializeAnswerExchange(dataType, serializableData);
+    return ObjectExchangesSerializableMessageFactory::serializeAnswerExchange(dataType, serializedData);
 }
 
 json SerializableMessageFactory::serializeStatusTransmission(RequestStatus requestStatus)
@@ -68,12 +68,12 @@ json SerializableMessageFactory::serializeStatusTransmission(RequestStatus reque
     return ObjectExchangesSerializableMessageFactory::serializeStatusTransmission(requestStatus);
 }
 
-json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> &players)
+json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players)
 {
-    return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, players);
+    return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, gameInvite, players);
 }
 
-json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> &players, int time, int increment)
+json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players, int time, int increment)
 {
-    return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, players, time, increment);
+    return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, gameInvite, players, time, increment);
 }

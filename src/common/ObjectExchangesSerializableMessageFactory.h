@@ -25,7 +25,7 @@ public:
      * "data_type" : "leaderboard | friend_list ...",
      * }
      */
-    static nlohmann::json serializeRequestExchange(DataType dataType, Serializable &serializable);
+    static nlohmann::json serializeRequestExchange(DataType dataType);
     /**
      * @brief serialize an answer from server to user
      * @param dataType type of data the user has asked
@@ -36,7 +36,7 @@ public:
      * "serialized_data" : "json_serialized_object"
      * }
      */
-    static nlohmann::json serializeAnswerExchange(DataType dataType, Serializable &serializableData);
+    static nlohmann::json serializeAnswerExchange(DataType dataType, nlohmann::json &serializedData);
 
     /**
      * @brief Serialize wether a status transmission failed
@@ -48,4 +48,8 @@ public:
      * }
      */
     static nlohmann::json serializeStatusTransmission(RequestStatus requestStatus);
+
+    static nlohmann::json serializeFriendChatRequest(const std::string &requester, const std::string &receiver);
+
+    static nlohmann::json serializeRequestGameID(int gameID);
 };
