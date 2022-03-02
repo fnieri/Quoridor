@@ -26,7 +26,7 @@ AuthHandler::AuthHandler(UserHub &userHub)
 std::string AuthHandler::tryRegister(const std::string &serRequest)
 {
     json requestAnswer;
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     if (DatabaseHandler::createAccount(request["username"], request["password"])) {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
@@ -42,7 +42,7 @@ std::string AuthHandler::tryRegister(const std::string &serRequest)
 std::string AuthHandler::tryLogIn(const std::string &serRequest)
 {
     json requestAnswer;
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     if (DatabaseHandler::checkLogin(request["username"], request["password"])) {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
@@ -59,7 +59,7 @@ std::string AuthHandler::tryLogIn(const std::string &serRequest)
 std::string AuthHandler::processRequest(const std::string &serRequest)
 {
     std::string requestAnswer;
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     if (request["action"] == toJsonString(ClientAuthAction::REGISTRATION)) {
         requestAnswer = tryRegister(serRequest);

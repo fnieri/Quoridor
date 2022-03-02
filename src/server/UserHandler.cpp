@@ -15,6 +15,7 @@
 
 #include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
 
+#include <iostream>
 #include <thread>
 
 using json = nlohmann::json;
@@ -33,6 +34,7 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
     , m_relationsHandler {relationsHandler}
     , m_chatboxHandler {chatboxHandler}
     , m_gameHub {gameHub}
+    , m_userHandled {std::make_shared<ServerUser>()}
 {
 }
 
@@ -60,27 +62,31 @@ void UserHandler::handleRequests()
         } catch (UnableToSend &) {
             m_isFinished = true;
         }
-
-        // Only run this if the connection was lost,
-        // not if the server is shuting itself down.
-        if (!m_wasTerminated && isInGame()) {
-            // TODO: wait for serialize
-            /* auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())}; */
-            /* processRequest(req.dump()); */
-        }
-
-        m_userHub->eraseFinished();
     }
+
+    // Only run this if the connection was lost,
+    // not if the server is shuting itself down.
+    if (!m_wasTerminated && isInGame()) {
+        // TODO: wait for serialize
+        /* auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())}; */
+        /* processRequest(req.dump()); */
+    }
+
+    m_userHub->eraseFinished();
 }
 
 void UserHandler::processRequest(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
+
+    std::cerr << request << std::endl << toJsonString(Domain::RELATIONS);
+    /* sleep(2); */
 
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
+        std::cerr << "in relations";
         processRelations(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
@@ -102,22 +108,24 @@ void UserHandler::processAuth(const std::string &serRequest)
     // The auth handler is the only one returning
     // a request instead of sending it.
     auto serAnswer {m_authHandler->processRequest(serRequest)};
-    auto answer {json::parse(serAnswer)};
+    auto answer(json::parse(serAnswer));
 
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // Login was successful, bind the connection to its username
-    if (answer["status"] == toJsonString(ServerAuthReturn::CORRECT)) {
+    if (answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS)) {
         m_userHandled->bindToUsername(request["username"]);
-        m_userHandled->syncWithDB();
-        send(serAnswer);
+        std::cerr << "in success" << isLoggedIn();
+        /* m_userHandled->syncWithDB(); */
     }
+
+    relayMessage(serAnswer);
 }
 
 void UserHandler::processRelations(const std::string &serRequest)
 {
     m_relationsHandler->processRequest(serRequest);
-    m_userHandled->syncWithDB();
+    /* m_userHandled->syncWithDB(); */
 }
 
 void UserHandler::processChatbox(const std::string &serRequest)
@@ -127,7 +135,7 @@ void UserHandler::processChatbox(const std::string &serRequest)
 
 void UserHandler::processResourceRequest(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // FIXME no default value :/
     auto dataType = DataType::FRIENDS_LIST;
@@ -171,7 +179,7 @@ void UserHandler::processGameSetup(const std::string &serRequest)
 void UserHandler::processGameAction(const std::string &serRequest)
 {
     if (isInGame()) {
-        auto request {json::parse(serRequest)};
+        auto request(json::parse(serRequest));
 
         // Add username to the request
         request["sender"] = m_userHandled->getUsername();
@@ -210,7 +218,7 @@ void UserHandler::terminate()
 void UserHandler::relayMessage(const std::string &serRequest)
 {
     // TODO: verification for user updates on certain specific messages
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     if (request["domain"] == toJsonString(Domain::RELATIONS)) {
         // Sync friend lists

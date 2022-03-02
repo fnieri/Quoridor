@@ -84,7 +84,8 @@ private:
     void processGameJoin(const std::string &);
     void processGameQuit(const std::string &);
 
-    void removeGame(int);
+    void createGameFromDB(int);
+    void unloadGame(int);
 
 public:
     GameHub(UserHub *);

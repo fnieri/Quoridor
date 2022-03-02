@@ -37,6 +37,14 @@ int GameHandler::getID() const noexcept
 void GameHandler::setConfiguration(const std::string &configuration)
 {
     m_configuration = configuration;
+
+    auto config(json::parse(configuration));
+
+    m_players.clear();
+    for (auto &i : config["players_username"])
+        addPlayer(i);
+
+    m_confirmedPlayers.fill(false);
 }
 
 void GameHandler::addPlayer(const std::string &username)
@@ -112,6 +120,8 @@ void GameHandler::start()
 
 void GameHandler::terminate()
 {
+    // TODO: inform players that it was terminated and use another variable
+    m_isFinished = true;
 }
 
 void GameHandler::deleteFromDB()
@@ -145,13 +155,20 @@ void GameHandler::updateELO(const std::string &winner)
 
 void GameHandler::processRequest(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
-    // TODO: handle
-    // - endgame
+    /* if (request["action"] == toJsonString(GameAction::SURRENDER)) { */
+
+    /* } else if (request["action"] == toJsonString(GameAction::SAVE_GAME)) { */
+    /*     m_isFinished = true; */
+
+    /* } else if (request["action"] == toJsonString(GameAction::GAME_ENDED)) { */
+    /*     updateELO(request["winner"]); */
+    /*     m_isFinished = true; */
+    /* } */
 
     for (auto &p : m_players)
-        if (p != request["username"])
+        if (p != request["sender"])
             m_userHub->relayMessageTo(p, serRequest);
 }
 
@@ -195,30 +212,43 @@ void GameHub::eraseFinished()
 
 void GameHub::processGameCreation(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     auto gameID {getUniqueID()};
     auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
 
-    tmp->addPlayer(request["username_sending"]);
-    tmp->confirmPlayer(request["username_sending"]);
-
-    for (auto &i_user : request["username_receiving"])
-        tmp->addPlayer(i_user);
-
+    // This add the players to the game
     tmp->setConfiguration(request["game_configuration"]);
+    tmp->confirmPlayer(request["username_sending"]);
+    tmp->saveToDB();
+
+    m_games.push_back(tmp);
 
     for (auto &i_user : request["username_receiving"]) {
         m_userHub->relayMessageTo(i_user, serRequest);
     }
+}
+
+void GameHub::createGameFromDB(int gameID)
+{
+    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
+
+    // TODO wait for db
+    /* auto config {DatabaseHandler::getGameConfig(gameID)}; */
+    /* tmp->setConfiguration(config); */
 
     m_games.push_back(tmp);
 }
 
 void GameHub::processGameJoin(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
+
+    if (!targetGame) {
+        createGameFromDB(request["game_id"]);
+        targetGame = getGame(request["game_id"]);
+    }
 
     targetGame->confirmPlayer(request["username"]);
 
@@ -229,24 +259,23 @@ void GameHub::processGameJoin(const std::string &serRequest)
 
 void GameHub::processGameQuit(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
 
     targetGame->confirmPlayer(request["username"]);
 
     if (targetGame->numberOfConfirmedPlayers() == 0) {
-        targetGame->terminate();
-        eraseFinished();
+        unloadGame(request["game_id"]);
     }
 }
 
-void GameHub::removeGame(int gameID)
+void GameHub::unloadGame(int gameID)
 {
     auto targetGame {getGame(gameID)};
 
     if (targetGame) {
-        targetGame->deleteFromDB();
         targetGame->terminate();
+        eraseFinished();
     }
 }
 
@@ -255,7 +284,7 @@ void GameHub::processRequest(const std::string &serRequest)
     // Mutex when operating on game creation
     std::lock_guard<std::mutex> guard {m_gamesMutex};
 
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // TODO see with serialized req
     /* if (request["action"] == toJsonString(GameSetup::GAME_CREATE)) { */

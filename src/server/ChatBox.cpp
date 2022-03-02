@@ -28,7 +28,7 @@ void ChatBox::processRequest(const std::string &serMessage)
 
 void ChatBox::recordMessage(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // TODO see with database
     /* if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) { */
@@ -41,7 +41,7 @@ void ChatBox::recordMessage(const std::string &serRequest)
 
 void ChatBox::relayMessage(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // Works only for one to one conversations
     m_userHub.relayMessageTo(request["receiver"], serRequest);
