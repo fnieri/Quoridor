@@ -29,8 +29,10 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
     , gameId(gameId)
 {
     std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
+    std::vector<FinishLine> finishLines {FinishLine::North, FinishLine::South, FinishLine::East, FinishLine::West};
+
     for (int i = 0; i < nPlayers; i++) {
-        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, FinishLine::North);
+        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, finishLines.at(i));
 
         players.push_back(p);
 
