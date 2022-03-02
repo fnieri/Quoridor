@@ -358,14 +358,14 @@ auto TerminalVue::createFriendUtilitariesRenderer()
 auto TerminalVue::createDeleteConfirmationRenderer()  //WHEN DEPTH = TWO (Confirmation layer)
 {
     auto deleteConfirmation = Container::Horizontal({
-        Button("Confirm",[&] {deleteFriend(); depth = 0;} );//Close all dialogs
-        Button("Cancel",[&] {depth = 1;} ); //returns to the selection of a person to delete from friendsList
+        Button("Confirm",[&] {deleteFriend(); depth = 0;} ),//Close all dialogs
+        Button("Cancel",[&] {depth = 1;} ), //returns to the selection of a person to delete from friendsList
     });
 
     return Renderer(deleteConfirmation, [&]{
         return vbox({
             text("Are you sure to delete" + friendsList[friend_selected]),
-            separtator(),
+            separator(),
             hbox(deleteConfirmation->Render()),
         }) | 
         border;

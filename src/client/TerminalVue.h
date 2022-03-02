@@ -364,6 +364,12 @@ public:
     void addFriend(std::string username);
 
     /**
+     * @brief Delete a friend from your friends list
+     * 
+     */
+    void deleteFriend();
+
+    /**
      * @brief Add a message to the conversation you have with your friend
      * 
      * @param username String of the sender's username
