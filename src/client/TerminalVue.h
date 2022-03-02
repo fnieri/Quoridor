@@ -97,7 +97,7 @@ class TerminalVue
     };
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
-    std::vector<std::string> notifs{
+    std::vector<std::string> notifications{
         "User1 wants to add you!   (A)ccept or (D)eny ?",
         "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
@@ -113,7 +113,7 @@ class TerminalVue
     std::vector<std::string> mainTabValues {
         "Game",
         "Friends",
-        "Settings",
+        "LeaderBoard",
     };
     std::vector<std::string> loginTabValues {
         "Login",
@@ -127,6 +127,7 @@ class TerminalVue
     bool isGameStarted = false;
     bool isCreatingGame = false;
     InputOption passwordOption;
+    int depth = 0;
 
     /**
      * @brief Checks if it's someone's turn
@@ -288,11 +289,11 @@ class TerminalVue
     auto createFriendUtilitariesRenderer();
 
     /**
-     * @brief Create a Settings Renderer object
+     * @brief Create a LeaderBoard Renderer object
      * 
-     *[@return text("Settings") for now]
+     *[@return text("LeaderBoard") for now]
      */
-    auto createSettingsRenderer();
+    auto createLeaderBoardRenderer();
 
     /**
      * @brief Create a Main Tab Container object containing all windows you can toggle to
@@ -327,7 +328,22 @@ class TerminalVue
      * 
      */
     void loginUser();
+
+    /**
+     * @brief Create a Delete Dialog Box Renderer object,
+     *  that shows your friendslist to chose from it someone who to delete
+     * 
+     * @return Renderer
+     */
+    auto createDeleteDialogBoxRenderer();
     
+    /**
+     * @brief Create a Delete Confirmation DialogBox,
+     *  that asks you if you're sure to delete the person you clicked on to delete her from your friendsList
+     * 
+     * @return Renderer
+     */
+    auto createDeleteConfirmationRenderer();
 
 public:
     void run();
