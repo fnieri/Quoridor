@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../common/Point.h"
 #include "PlayerEnum.h"
+#include "src/common/Point.h"
 
 // defines a player in the game
 class Player

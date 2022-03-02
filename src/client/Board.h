@@ -5,6 +5,7 @@
 #include "BoardComponent.h"
 #include "Player.h"
 #include "WallEnum.h"
+#include "src/common/Point.h"
 
 #include <nlohmann/json.hpp>
 
