@@ -7,8 +7,8 @@
 
 #include "AuthHandler.h"
 
-#include "Database.h"
 #include "src/common/SerializableMessageFactory.h"
+#include "src/server/Database.h"
 
 #include <nlohmann/json.hpp>
 
@@ -30,6 +30,7 @@ std::string AuthHandler::tryRegister(const std::string &serRequest)
 
     if (DatabaseHandler::createAccount(request["username"], request["password"])) {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
+
     } else {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(
             ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE);
@@ -41,10 +42,11 @@ std::string AuthHandler::tryRegister(const std::string &serRequest)
 std::string AuthHandler::tryLogIn(const std::string &serRequest)
 {
     json requestAnswer;
-    auto request {json::parse(serRequest)}; //
+    auto request {json::parse(serRequest)};
 
     if (DatabaseHandler::checkLogin(request["username"], request["password"])) {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
+
     } else {
         // TODO: see for two types of login failures
         requestAnswer
@@ -61,6 +63,7 @@ std::string AuthHandler::processRequest(const std::string &serRequest)
 
     if (request["action"] == toJsonString(ClientAuthAction::REGISTRATION)) {
         requestAnswer = tryRegister(serRequest);
+
     } else if (request["action"] == toJsonString(ClientAuthAction::LOGIN)) {
         requestAnswer = tryLogIn(serRequest);
     }
