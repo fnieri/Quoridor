@@ -1,12 +1,13 @@
 /**
-* @brief Password Encrypter using cryptopp::SHA256 to encrypt passwords
-* upon registering or logging in
-* @details The encrypter uses a salt key defined by the epoch time of the call
-* the Encrypter which will be hashed is a combination of the salt key and the
-* password. The final digest will be the SHA256 digest, which will either brief
-* used to verify if the login was successful and to append an user with his password
-* and saltKey to the database. PasswordEncrypter is a singleton so it needs to be instanciated only once
-*/
+
+ * @brief Password Encrypter using cryptopp::SHA256 to encrypt passwords
+ * upon registering or logging in
+ * @details The encrypter uses a salt key defined by the epoch time of the call
+ * the Encrypter which will be hashed is a combination of the salt key and the
+ * password. The final digest will be the SHA256 digest, which will either brief
+ * used to verify if the login was successful and to append an user with his password
+ * and saltKey to the database. PasswordEncrypter is a singleton so it needs to be instanciated only once
+ */
 
 #pragma once
 

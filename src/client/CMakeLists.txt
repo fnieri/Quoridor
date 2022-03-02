@@ -1,7 +1,22 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_client
-    Point.cpp
-    Stringable.cpp
+    Board.cpp
+    BoardComponent.cpp
+    Cell.cpp
+    Corridor.cpp
+    Player.cpp
+    PlayerAction.cpp
+    ServerBridge.cpp
+    WallAction.cpp
+    WallEnum.h
+    PlayerAction.h
+    )
+
+target_link_libraries(${PREFIX}_client
+    PUBLIC
+        nlohmann_json
+        sockpp
+        pthread
 )
 
 target_include_directories(${PREFIX}_client

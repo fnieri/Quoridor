@@ -1,10 +1,36 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_common
-    Stringable.cpp
-    Point.cpp
-    SocketUser.cpp
-    Observer.cpp
-    RequestHandler.cpp
+JoinGame.cpp
+SerializableMessageFactory.cpp
+AuthSerializableMessageFactory.cpp
+BoardActionsSerializableMessageFactory.cpp
+ChatBoxSerializableMessageFactory.cpp
+FriendActionsSerializableMessageFactory.cpp
+GameRelatedActionsSerializableMessageFactory.cpp
+ObjectExchangesSerializableMessageFactory.cpp
+GameSetupSerializableMessageFactory.cpp
+Stringable.cpp
+../client/WallAction.cpp
+../client/PlayerAction.cpp
+        ../client/Board.cpp
+        ../client/Player.cpp
+        ../client/Corridor.cpp
+        ../client/BoardComponent.cpp
+        ../client/Cell.cpp
+Point.cpp
+SocketUser.cpp
+Observer.cpp
+RequestHandler.cpp
+JoinGame.cpp
+)
+
+target_link_libraries(${PREFIX}_common
+
+PUBLIC
+    nlohmann_json
+PRIVATE
+    sockpp
+
 )
 
 target_include_directories(${PREFIX}_common
@@ -12,13 +38,11 @@ target_include_directories(${PREFIX}_common
         ${CMAKE_SOURCE_DIR}
 )
 
-target_link_libraries(${PREFIX}_common
-    PRIVATE
-        sockpp
+add_executable(common
+    main.cpp
 )
 
-# # Link the project libraries to the executable
-# target_link_libraries(quoridor-client
-#     PRIVATE
-#         src
-# )
+target_link_libraries(common
+    PRIVATE
+    ${PREFIX}_common
+)

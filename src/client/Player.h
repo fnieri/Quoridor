@@ -1,19 +1,27 @@
 #pragma once
 
 #include "PlayerEnum.h"
-#include "Point.h"
-#include <string>
+#include "src/common/Point.h"
 
 // defines a player in the game
 class Player
 {
-    pawnColors color;
+    PawnColors color;
     Point position;
+    int nwalls; // how
 
 public:
-    Player(/* args */);
+    Player(const PawnColors &color, const Point &position, const int &nwalls); // Const or not ?
+    int x() const;
+    int y() const;
 
-    void move(std::string action);
+    void setPosition(const Point &newPosition);
+
+    int nWalls() const;
+    void takeAwayWall();
 
     ~Player();
+    Point getPosition();
+    PawnColors getColor();
+    void setColor(PawnColors newColor);
 };

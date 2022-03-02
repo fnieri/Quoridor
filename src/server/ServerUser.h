@@ -1,5 +1,8 @@
 /**
+ * @file ServerUser.h
  * @author Boris Petrov
+ * @brief Representation of User on the server
+ * @date 02/25/22
  */
 
 #pragma once
@@ -7,12 +10,10 @@
 #include <string>
 #include <vector>
 
+using UserList = std::vector<std::string>;
+
 /**
- * The setters here should also update the entries
- * related in the database.
- *
- * For instance, setting the elo should modify the cached
- * value but also the one in the database.
+ * Interface bewteen DB and UserHandler
  */
 class ServerUser
 {
@@ -21,21 +22,49 @@ public:
     {
     }
 
+    /**
+     * Whether the user is bound to a username from the DB
+     */
     bool isLoggedIn() const noexcept;
 
     std::string getUsername() const noexcept;
     void bindToUsername(const std::string &);
 
-    int getELO() noexcept;
-    void setELO(int);
+    /**
+     * Sync cached data with the DB
+     *
+     * @note This is to be called when a modification
+     * was done to the DB.
+     */
+    void syncWithDB();
 
-    std::vector<std::string> getFriends() noexcept;
-    void addFriend(const std::string &);
-    void removeFriend(const std::string &);
+    // Getters of mutable data available on the DB
+    float getELO() const noexcept;
+    UserList getFriendList() const noexcept;
+    UserList getFriendRequestsSent() const noexcept;
+    UserList getFriendRequestsReceived() const noexcept;
+    std::vector<int> getGameIDs() const noexcept;
+
+    /**
+     * Usually this is a json serialized message
+     * that is of the following three types:
+     *  - send friend request;
+     *  - accept friend request;
+     *  - remove friend.
+     */
+    /* void updateFriendRelations(const std::string &); */
 
 private:
     bool m_isLoggedIn {false};
     std::string m_username;
-    int m_cachedELO;
-    std::vector<std::string> m_cachedFriends;
+
+    // Instead of always fetching data from the DB,
+    // the data is stored locally and updated only
+    // when the DB itself is modified.
+    float m_cachedELO;
+    UserList m_cachedFriends;
+    UserList m_cachedRequestsSent;
+    UserList m_cachedRequestsReceived;
+
+    std::vector<int> m_cachedGameIds;
 };

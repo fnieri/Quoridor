@@ -1,12 +1,16 @@
 # Library of the project, can be linked to the tests
-
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
     LandingPool.cpp
     UserHandler.cpp
     ServerUser.cpp
-        Database.cpp
-)
+    GameHandler.cpp
+    ChatBox.cpp
+    AuthHandler.cpp
+    RelationsHandler.cpp
+    Database.cpp
+    EloCalculator.cpp
+    )
 
 find_package(mongocxx REQUIRED)
 find_package(bsoncxx REQUIRED)
@@ -14,15 +18,13 @@ include_directories(${LIBMONGOCXX_INCLUDE_DIR})
 include_directories(${LIBBSONCXX_INCLUDE_DIR})
 include_directories("/usr/local/include/mongocxx/v_noabi")
 include_directories("/usr/local/include/bsoncxx/v_noabi")
-#include_directories("/usr/local/include/libmongoc-1.0")
-#include_directories("/usr/local/include/libbson-1.0")
-#include_directories("/usr/local/lib")
 
 target_link_libraries(${PREFIX}_server
     PUBLIC
-        sockpp
         nlohmann_json
+        sockpp
         ${PREFIX}_common
+    PRIVATE
         cryptopp-shared
         pthread
         mongo::bsoncxx_shared

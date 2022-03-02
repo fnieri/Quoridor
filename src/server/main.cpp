@@ -1,5 +1,8 @@
 /**
+ * @file main.cpp
  * @author Boris Petrov
+ * @brief Server's main
+ * @date 02/25/22
  */
 
 #include "LandingPool.h"
@@ -9,7 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-        UserHub userHub;
-        LandingPool entryDoor {12345, userHub};
-        return entryDoor.openToConnections();
+    std::cout << "Server started" << std::endl;
+    UserHub userHub;
+    LandingPool entryDoor {12345, userHub};
+    return entryDoor.openToConnections();
 }
