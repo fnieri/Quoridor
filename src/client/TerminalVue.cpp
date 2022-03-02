@@ -328,31 +328,72 @@ auto TerminalVue::createFriendUtilitariesRenderer()
         "Add",
         [&] {
             if (!searchField.empty()) { // Note that methods not implemented yet
-                // addFriend(username);
+                addFriend(searchField);
             }
         },
         buttonOption);
-    auto notifBox = Menu(&notifs, &notif_selected);
+    
+    auto delButton = Button(
+        "Delete someone",
+        [&] {depth = 1;});
+
+    auto notifBox = Window("Notifications", Menu(&notifications, &notif_selected));
     auto utilitariesContainer = Container::Vertical({
         searchInput,
         addButton,
+        delButton,
         notifBox,
     });
 
-    return Renderer(utilitariesContainer, [&, searchInput, addButton, notifBox] {
+    return Renderer(utilitariesContainer, [&, searchInput, addButton, delButton, notifBox] {
         return vbox({
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
-            // text("Notifications") | center,
-            // separator(),
+            delButton->Render() | center,
             notifBox->Render() | yflex,
         });
     });
 }
 
-auto TerminalVue::createSettingsRenderer()
+auto TerminalVue::createDeleteConfirmationRenderer()  //WHEN DEPTH = TWO (Confirmation layer)
 {
-    return Renderer([] { return text("Settings") | center; });
+    auto deleteConfirmation = Container::Horizontal({
+        Button("Confirm",[&] {deleteFriend(); depth = 0;} );//Close all dialogs
+        Button("Cancel",[&] {depth = 1;} ); //returns to the selection of a person to delete from friendsList
+    });
+
+    return Renderer(deleteConfirmation, [&]{
+        return vbox({
+            text("Are you sure to delete" + friendsList[friend_selected]),
+            separtator(),
+            hbox(deleteConfirmation->Render()),
+        }) | 
+        border;
+    } );
+}
+
+auto TerminalVue::createDeleteDialogBoxRenderer() //WHEN DEPTH = ONE (Chosing phase)
+{   
+    auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
+    auto quitButton = Button("Quit", [&] {depth = 0;});
+    auto dialogBox= Container::Horizontal({
+        deleteSomeoneMenu,
+        quitButton,
+    });
+    
+    return Renderer(dialogBox, [&] { 
+        return vbox({
+            color(Color::Red, text("Deletion Menu")),
+            separator(),
+            hbox(dialogBox->Render()),
+        }) | 
+        border;
+    });
+}
+
+auto TerminalVue::createLeaderBoardRenderer()
+{
+    return Renderer([] { return text("LeaderBoard") | center; });
 }
 
 auto TerminalVue::createLoginRenderer()
@@ -386,8 +427,8 @@ auto TerminalVue::createMainTabContainer()
     auto friendUtilitaries = createFriendUtilitariesRenderer();
     auto resizeFriendTab = friendsList;
     resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
-    auto settings = createSettingsRenderer();
-    auto tabContainer = Container::Tab({resizeContainer, resizeFriendTab, settings}, &mainTabSelect);
+    auto LeaderBoard = createLeaderBoardRenderer();
+    auto tabContainer = Container::Tab({resizeContainer, resizeFriendTab, LeaderBoard}, &mainTabSelect);
     return tabContainer;
 }
 
@@ -421,6 +462,14 @@ auto TerminalVue::createMainRenderer()
                    })
                 | border;
         }
+        
+        // if (depth == 1){
+        //     return
+        //     document = dbox({
+        //         document,
+        //         dialogDeleteBox->Render() | clear_under | center,
+        //     });
+        // }
         return vbox({tabToggle->Render(), separator(), tabContainer->Render()}) | border;
     });
 };
@@ -456,9 +505,13 @@ void TerminalVue::addChatFriendMessage(std::string username, std::string message
 
 void TerminalVue::addFriend(std::string username)
 {
-    // friendsList.push_back( Component()<-- *items ?
-    //     text(username),
-    //     Button("+", [&] { Invite friend to play;}, &buttonOption),
-    //     Button("X", [&] { Delete friend at index given by &friend_selected;}, &buttonOption)
-    //     );
+    friendsList.push_back(username);
+    chatEntries.push_back(std::vector<std::string> {""});
+    searchField.clear();
+}
+
+void TerminalVue::deleteFriend()
+{
+    friendsList.erase(friendsList.begin() + friend_selected); //TODO: Have to modify for a dictionary 
+    chatEntries.erase(chatEntries.begin() + friend_selected);
 }
