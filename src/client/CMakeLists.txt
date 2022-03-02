@@ -4,8 +4,6 @@ add_library(${PREFIX}_client
     BoardComponent.cpp
     Cell.cpp
     Corridor.cpp
-    # Point.cpp
-    # Stringable.cpp
     Player.cpp
     PlayerAction.cpp
     ServerBridge.cpp

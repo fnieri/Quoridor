@@ -11,12 +11,11 @@
  *
  */
 
-#include "../common/User.h"
+/* #include "../common/User.h" */
 #include <vector>
 
 class EloCalculator
 {
-    std::vector<User> users;
     std::vector<float> startingELOs;
     std::vector<float> transformedScores;
     std::vector<float> expectedScores;
@@ -70,11 +69,11 @@ public:
     /**
      * @brief Construct a new Elo Calculator object, this may be changed as Users is not that relevant in a game
      *
-     * @param users Vector of Users that participated in a game
+     * @param startingELOs Vector of starting ELOS of players that participated in a game
      * @param hasWon Vector of bool with true or false indicating wether the user at index i has won
      * @throw Assertion error when users and hasWon is != 2 || 4 and when they're not equal in size
      */
-    EloCalculator(std::vector<User> users, std::vector<bool> hasWon);
+    EloCalculator(std::vector<float> startingELOs, std::vector<bool> hasWon);
 
     /**
      * @brief Calculate ELO for all players involved in a Game

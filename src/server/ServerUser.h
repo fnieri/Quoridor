@@ -39,10 +39,11 @@ public:
     void syncWithDB();
 
     // Getters of mutable data available on the DB
-    int getELO() const noexcept;
+    float getELO() const noexcept;
     UserList getFriendList() const noexcept;
     UserList getFriendRequestsSent() const noexcept;
     UserList getFriendRequestsReceived() const noexcept;
+    std::vector<int> getGameIDs() const noexcept;
 
     /**
      * Usually this is a json serialized message
@@ -60,7 +61,7 @@ private:
     // Instead of always fetching data from the DB,
     // the data is stored locally and updated only
     // when the DB itself is modified.
-    int m_cachedELO;
+    float m_cachedELO;
     UserList m_cachedFriends;
     UserList m_cachedRequestsSent;
     UserList m_cachedRequestsReceived;

@@ -11,13 +11,12 @@
 
 #include "MessageEnums/Actions/AuthActions.h"
 #include "MessageEnums/Status.h"
-#include "SerializableMessageFactory.h"
 
 #include <nlohmann/json.hpp>
 
 #include <string>
 
-class AuthSerializableMessageFactory : public SerializableMessageFactory
+class AuthSerializableMessageFactory
 {
 public:
     /**
@@ -29,7 +28,7 @@ public:
      * @return nlohmann::json Json of request as such
      *
      */
-    nlohmann::json serializeUserRequest(ClientAuthAction action, std::string username, std::string password);
+    static nlohmann::json serializeUserRequest(ClientAuthAction action, const std::string &username, const std::string &password);
     /**
      * @brief serialize server json response
      *
@@ -38,5 +37,5 @@ public:
      * @param authReturn Return which auth error occured
      * @return nlohmann::json
      */
-    nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
+    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
 };

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "src/common/Serializable.h"
 #include "Board.h"
 #include "Player.h"
 #include "PlayerEnum.h"

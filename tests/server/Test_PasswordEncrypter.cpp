@@ -1,47 +1,45 @@
 #include <catch2/catch.hpp>
 
 #include "src/server/PasswordEncrypter.h"
+
 #include <cstdlib>
 #include <unistd.h>
 
-SCENARIO("Encrypting with no default saltKey")
+SCENARIO("Encrypting upon registering")
 {
-    GIVEN("Two encrypters that generate their own salt keys 1 second apart")
+    GIVEN("An encrypter that generates two passwords 1 second apart")
     {
-
-        PasswordEncrypter firstEncrypterNoSalt("password123");
+        
+        std::vector<std::string> firstRegisterHash = PasswordEncrypter::Instance()->registerEncryption("password123");
         sleep(1);
-        PasswordEncrypter secondEncrypterNoSalt("password123");
-        THEN("Salt keys must be different as they are generated in different seconds")
+        std::vector<std::string> secondRegisterHash = PasswordEncrypter::Instance()->registerEncryption("password123");
+        
+        THEN("Salt keys and digests should be different")
         {
-            REQUIRE_FALSE(firstEncrypterNoSalt.getSaltKey() == secondEncrypterNoSalt.getSaltKey());
-            REQUIRE_FALSE(firstEncrypterNoSalt.hashPassword() == secondEncrypterNoSalt.hashPassword());
+            REQUIRE_FALSE(firstRegisterHash[0] == secondRegisterHash[0]);
+            REQUIRE_FALSE(firstRegisterHash[1] == secondRegisterHash[1]);
         }
-        WHEN("Salt keys are set to be the same")
+    }
+    GIVEN("Two hashes generated in the same second")
+    {
+        THEN("Salt Keys and hashes should be the same")
         {
-            firstEncrypterNoSalt.setSaltKey("1234567890");
-            secondEncrypterNoSalt.setSaltKey("1234567890");
-            THEN("Digest should be the same")
-            {
-                REQUIRE(firstEncrypterNoSalt.hashPassword() == secondEncrypterNoSalt.hashPassword());
-            }
+            REQUIRE(PasswordEncrypter::Instance()->registerEncryption("password123") == PasswordEncrypter::Instance()->registerEncryption("password123"));
         }
     }
 }
 
-SCENARIO("Encrypting with a default saltKey")
+SCENARIO("Encrypting upon login")
 {
-    GIVEN("An encrypter with known salt key and password")
+    GIVEN("SaltKey + passwordEncrypt with known digest")
     {
-        PasswordEncrypter knownEncrypter("password123", "1234567890");
-        THEN("Digest should be F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9")
+        THEN("Hashing should return true")
         {
-            REQUIRE(knownEncrypter.hashPassword() == "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9");
+          REQUIRE(PasswordEncrypter::Instance()->compareHash("password123", "1234567890", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9") == true);
         }
-        THEN("By changing the salt key, digest should change")
+        THEN("By changing salt key, digest should be the same")
         {
-            knownEncrypter.setSaltKey("1234567891");
-            REQUIRE_FALSE(knownEncrypter.hashPassword() == "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9");
+          REQUIRE(PasswordEncrypter::Instance()->compareHash("password123", "1234567891", "F6211D8C3930C89E962D5B293541D3113D95F9CED1DF14CA96517B98F03B31D9") == false);
         }
     }
 }

@@ -12,4 +12,5 @@ inline const char *toJsonString(RequestStatus s)
     case RequestStatus::CONNECTION_LOST:
         return "request_timeout";
     }
+    return "";
 }

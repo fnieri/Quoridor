@@ -7,7 +7,9 @@
 
 #include "ChatBox.h"
 
+#include "Database.h"
 #include "UserHandler.h"
+#include "src/common/SerializableMessageFactory.h"
 
 #include <nlohmann/json.hpp>
 
@@ -26,19 +28,20 @@ void ChatBox::processRequest(const std::string &serMessage)
 
 void ChatBox::recordMessage(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
-    if (request["action"] == toJsonString(MessageType::FRIEND_MESSAGE)) {
-        DatabaseHandler::recordMessage(request["sender"], request["receiver"], request["message"]);
+    // TODO see with database
+    /* if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) { */
+    /*     DatabaseHandler::recordMessage(request["sender"], request["receiver"], request["message"]); */
 
-    } else if (request["action"] == toJsonString(MessageType::INGAME_MESSAGE)) {
-        DatabaseHandler::recordMessage(request["sender"], request["message"], request["game_id"]);
-    }
+    /* } else if (request["action"] == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) { */
+    /*     DatabaseHandler::recordMessage(request["sender"], request["message"], request["game_id"]); */
+    /* } */
 }
 
 void ChatBox::relayMessage(const std::string &serRequest)
 {
-    auto request {json::parse(serRequest)};
+    auto request(json::parse(serRequest));
 
     // Works only for one to one conversations
     m_userHub.relayMessageTo(request["receiver"], serRequest);

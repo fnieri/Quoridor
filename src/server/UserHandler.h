@@ -9,6 +9,8 @@
 #pragma once
 
 #include "AuthHandler.h"
+#include "GameHandler.h"
+#include "RelationsHandler.h"
 #include "src/common/Observer.h"
 #include "src/common/RequestHandler.h"
 
@@ -19,6 +21,9 @@
 
 class ServerUser;
 class UserHub;
+class ChatBox;
+class GameHub;
+class GameHandler;
 
 /**
  * Take care of exchanges with a client
@@ -49,10 +54,12 @@ protected:
     UserHub *m_userHub;
     std::shared_ptr<AuthHandler> m_authHandler;
     std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<ChatBox> m_chatboxHandler;
     std::shared_ptr<GameHub> m_gameHub;
 
     bool m_isFinished {false};
-    GameHandler *m_activeGame {nullptr};
+    bool m_wasTerminated {false};
+    std::weak_ptr<GameHandler> m_activeGame;
 
     std::shared_ptr<ServerUser> m_userHandled;
 
@@ -69,6 +76,7 @@ protected:
      *                     \ GameHandler
      */
     void handleRequests() override;
+    void processRequest(const std::string &);
 
     void processAuth(const std::string &);
     void processRelations(const std::string &);
@@ -78,7 +86,7 @@ protected:
     void processGameAction(const std::string &);
 
 public:
-    UserHandler(Socket &&, UserHub *, std::shared_ptr<AuthHandler>, std::shared_ptr<RelationsHandler>, std::shared_ptr<GameHub>);
+    UserHandler(Socket &&, UserHub *, std::shared_ptr<AuthHandler>, std::shared_ptr<RelationsHandler>, std::shared_ptr<ChatBox>, std::shared_ptr<GameHub>);
 
     UserHandler(const UserHandler &) = delete;
     UserHandler(UserHandler &&) = default;
@@ -86,13 +94,13 @@ public:
     UserHandler &operator=(const UserHandler &) = delete;
     UserHandler &operator=(UserHandler &&) = default;
 
+    bool isLoggedIn() const noexcept;
     bool isInGame() const noexcept;
-    bool isFinished() const;
+    bool isFinished() const noexcept;
 
-    std::string getUsername() const;
+    std::string getUsername() const noexcept;
 
     void terminate();
-
 
     /**
      * Send message passing first by the handler
@@ -118,8 +126,17 @@ private:
 
     std::shared_ptr<AuthHandler> m_authHandler;
     std::shared_ptr<RelationsHandler> m_relationsHandler;
+    std::shared_ptr<ChatBox> m_chatboxHandler;
     std::shared_ptr<GameHub> m_gameHub;
 
+    /**
+     * Get pointer to UserHandler of giver username
+     *
+     * @param username username to search for
+     *
+     * @returns The smart ptr to the user if he
+     * is connected, otherwise a nullptr.
+     */
     auto getUser(const std::string &) const;
 
 public:

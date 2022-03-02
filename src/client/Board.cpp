@@ -5,8 +5,11 @@
 #include "Player.h"
 #include "src/common/Point.h"
 
+
 #include <iostream>
 #include <memory>
+
+using json = nlohmann::json;
 
 Board::Board(/* args */)
 {
@@ -201,4 +204,8 @@ void Board::debugPrint()
         }
         std::cout << std::endl;
     }
+}
+
+json Board::serialized()
+{
 }

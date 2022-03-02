@@ -8,8 +8,9 @@
 #pragma once
 
 #include "MessageEnums/Actions/ObjectExchanges.h"
+#include "MessageEnums/DataTypes.h"
 #include "MessageEnums/Status.h"
-
+#include "Serializable.h"
 #include <nlohmann/json.hpp>
 
 class ObjectExchangesSerializableMessageFactory
@@ -24,7 +25,7 @@ public:
      * "data_type" : "leaderboard | friend_list ...",
      * }
      */
-    nlohmann::json serializeRequestExchange(DataType dataType) const;
+    static nlohmann::json serializeRequestExchange(DataType dataType);
     /**
      * @brief serialize an answer from server to user
      * @param dataType type of data the user has asked
@@ -35,7 +36,7 @@ public:
      * "serialized_data" : "json_serialized_object"
      * }
      */
-    nlohmann::json serializeAnswerExchange(Exchange answerExchange, DataType dataType, Serializable serializableData) const;
+    static nlohmann::json serializeAnswerExchange(DataType dataType, nlohmann::json &serializedData);
 
     /**
      * @brief Serialize wether a status transmission failed
@@ -46,5 +47,9 @@ public:
      * "status" : "success | failure"
      * }
      */
-    nlohmann::json serializeStatusTransmission(RequestStatus requestStatus) const;
-}
+    static nlohmann::json serializeStatusTransmission(RequestStatus requestStatus);
+
+    static nlohmann::json serializeFriendChatRequest(const std::string &requester, const std::string &receiver);
+
+    static nlohmann::json serializeRequestGameID(int gameID);
+};

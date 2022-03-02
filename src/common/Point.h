@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "../common/Serializable.h"
 #include "Stringable.h"
 #include <nlohmann/json.hpp>
 /**
@@ -16,7 +17,8 @@
  * very often, a short form was given for them to be less
  * verbose than, for instance, getX().
  */
-class Point : public Stringable
+
+class Point : public Stringable, public Serializable
 {
 public:
     constexpr Point(const int &_x = 0, const int &_y = 0)
@@ -51,7 +53,7 @@ public:
     Point operator/(const int &) const;
 
     bool operator==(const Point &) const noexcept;
-    nlohmann::json serialized() const;
+    nlohmann::json serialized();
 
 protected:
     int m_x;
