@@ -7,7 +7,7 @@
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
-#include "Point.h"
+#include "../common/Point.h"
 #include "ServerController.h"
 #include "WallAction.h"
 #include "WallEnum.h"

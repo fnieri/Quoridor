@@ -18,13 +18,15 @@ class ServerController : public Controller
     std::vector<std::shared_ptr<Player>> players;       // A vector containing pointers to all the Players 
     std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;   // A map with Colors of a player's pawn and the corresponding Player
 
+    ServerBridge serverBridge {"localhost", 12345, this};  
+
 public:
     ServerController();
     ~ServerController() = default;
     
     // make general send request function
     void sendServerRequest();
-    void receiveServerMessage();
+    void processRequest(std::string message);
 
     /* Setters */
     
@@ -39,7 +41,7 @@ public:
      */
     void setDict(std::map<PawnColors, std::shared_ptr<Player>> dict_play);
 
-    /* ---- To Game Model ---- */
+    /* ---- Sending Request TO The Server ---- */
     
     /**
      * @brief The servers sends an action (a pawn move) which was played by another player to the model and the view will update itself
@@ -54,13 +56,9 @@ public:
      * @param action also formatted in json
      */
     void placeWall(std::string action);
-
-    /* ---- To Network Model ---- */
-    // requete
     
     virtual void registerPlayer(std::string username, std::string password) override;
     virtual void logIn(std::string username, std::string password) override;
-    virtual void logOut() override;
 
     virtual void startGame() override;
     virtual void saveGame(std::string username) override;
@@ -73,15 +71,10 @@ public:
     virtual void sendFriendRequest(std::string receiver)  override;
     virtual void checkLeaderBoard()  override;
 
-    /* ---- To Chat Model ---- */
-    // requete
     virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
     virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
     
-    virtual bool isDirectMessageReceived(bool received = false) override;
-    virtual bool isGroupMessageReceived(bool received = false) override;
-
-    // recu
+    // 
     /**
      * @brief When the server has got a message sent from another player, it is sent back to the View to show it to everyone in the Multiplayer Game
      * 
@@ -103,6 +96,12 @@ public:
     virtual void loadDirectMessages(std::string username) override;
     virtual void loadGroupMessages(int gameId) override;
     
+    /* ---- Sending Request TO The Server ---- */
+
+
     /* Notify the view */
     virtual bool isGameOver(bool over = false) override;
+    virtual bool isDirectMessageReceived(bool received = false) override;
+    virtual bool isGroupMessageReceived(bool received = false) override;
+
 };

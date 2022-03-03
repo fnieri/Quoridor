@@ -10,7 +10,7 @@
 
 #include "Board.h"
 #include "Player.h"
-#include "Point.h"
+#include "../common/Point.h"
 #include "WallAction.h"
 
 class Controller
