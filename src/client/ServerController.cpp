@@ -102,11 +102,12 @@ void ServerController::sendInvite(std::string aFriend)
 }
 
 // send Game Join Request (matchmaking) 
+/*
 void ServerController::joinGame(std::string gameSetup, int ELO, std::string username)
 {
     json to_send = SerializableMessageFactory::serializeQueueJoinRequest(QueueAction::JOIN_QUEUE, GameMode::CLASSIC, username, ELO); // not implemented yet
     serverBridge.send(to_send);
-}
+}*/
 
 void ServerController::acceptFriendInvite(std::string username)
 {

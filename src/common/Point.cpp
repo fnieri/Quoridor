@@ -1,11 +1,4 @@
-/**
- * @file Point.cpp
- * @author Boris Petrov
- * @brief A position in a 2 dimentional grid
- * @date 02/25/22
- */
-
-#include "src/common/Point.h"
+#include "Point.h"
 
 #include <stdexcept>
 
@@ -45,7 +38,12 @@ bool Point::operator==(const Point &rhs) const noexcept
     return x() == rhs.x() && y() == rhs.y();
 }
 
-json Point::serialized()
+bool Point::operator!=(const Point &rhs) const noexcept
+{
+    return x() != rhs.x() || y() != rhs.y();
+}
+
+json Point::serialized() const
 {
     json pointJson = {{"x", x()}, {"y", y()}};
     return pointJson;

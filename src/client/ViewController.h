@@ -105,7 +105,7 @@ public:
     virtual void pauseGame(std::string username) override;
 
     void sendInvite(std::string aFriend);
-    virtual void joinGame(int gameId)  override;
+    // virtual void joinGame(int gameId)  override;
 
     void sendFriendRequest(std::string sender, std::string receiver);
     virtual void checkLeaderBoard()  override;
@@ -155,6 +155,7 @@ public:
     // Getters
     nlohmann::json getLogInReceipts();
     nlohmann::json getRegisterReceipts();
+    nlohmann::json getFriendsListReceipt();
     nlohmann::json getFriendsRequestReceipts();
     nlohmann::json getFriendsRequestSentList();
     nlohmann::json getFriendsRequestReceivedList();
@@ -166,9 +167,10 @@ public:
     virtual bool isGroupMessageReceived(bool received = false) override;
     bool isLogInReceived(bool received = false);
     bool isRegisterReceived(bool received = false);
+
     bool isFriendsRequestReceived(bool received = false);
     bool isFriendsRequestSentListReceived(bool received = false);
-    bool isFriendsRequestReceivedReceived(bool received = false);
-
+    bool isFriendsRequestReceivedListReceived(bool received = false);
+    bool isFriendsListReceived(bool received = false);
 
 };

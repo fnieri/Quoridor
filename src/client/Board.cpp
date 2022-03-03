@@ -3,14 +3,11 @@
 #include "Cell.h"
 #include "Corridor.h"
 #include "Player.h"
-#include "src/common/Point.h"
-
+#include "../common/Point.h"
 
 #include <iostream>
 #include <memory>
 #include <stack>
-
-using json = nlohmann::json;
 
 Board::Board()
 {

@@ -1,21 +1,18 @@
 #pragma once
 
-#include "../common/Point.h"
-#include "../common/Serializable.h"
 #include "BoardComponent.h"
 #include "Player.h"
+#include "../common/Point.h"
 #include "WallEnum.h"
-#include "src/common/Point.h"
-
-#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <vector>
 
+
 /**
  * Stores the data of the game board, notably wall and player positions.
  */
-class Board : public Serializable
+class Board
 {
 private:
     /**

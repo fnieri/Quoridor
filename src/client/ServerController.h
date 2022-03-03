@@ -59,7 +59,7 @@ public:
     void sendPauseRequest(std::string username);
 
     void sendInvite(std::string aFriend);
-    void joinGame(std::string gameSetup, int ELO, std::string username);
+    // void joinGame(std::string gameSetup, int ELO, std::string username);
     void acceptFriendInvite(std::string username);
 
     void sendFriendRequest(std::string sender, std::string receiver);

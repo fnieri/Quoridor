@@ -129,7 +129,7 @@ void ViewController::startGame()
         // TODO: Change spawn position of players
         Point pos{i, i};
         auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
-        p.setIndex(i);
+        p->setIndex(i);
         players.push_back(p);
 
         board->spawnPlayer(p);
@@ -208,11 +208,11 @@ void ViewController::sendInvite(std::string aFriend)
 {
     serverController->sendInvite(aFriend);
 }
-
+/*
 void ViewController::joinGame(int gameId)
 {
     serverController->joinGame(gameId);
-}
+}*/
 
 void ViewController::sendFriendRequest(std::string sender, std::string receiver)
 {
@@ -267,13 +267,13 @@ bool ViewController::isWallValid(int x, int y, int orientation)
 
 void ViewController::receiveGroupMessage(std::string msg)
 {
-    groupMessage = json::parse(msg)
+    groupMessage = json::parse(msg);
     isGroupMessageReceived(true);
 }
 
 void ViewController::receiveDirectMessage(std::string msg)
 {
-    directMessage = json::parse(msg)
+    directMessage = json::parse(msg);
     isDirectMessageReceived(true);
 }
 
@@ -292,7 +292,7 @@ void ViewController::registerReceipt(std::string msg)
 void ViewController::friendRequestReceipt(std::string msg)
 {
     friendReqReceipt = json::parse(msg);
-    isfriendRequestReceived(true);
+    isFriendsRequestReceived(true);
 }
 
 void ViewController::sendFriendsList(std::string msg)
@@ -315,37 +315,37 @@ void ViewController::sendfriendsRequestReceivedList(std::string msg)
 
 // Getters
 
-json getLogInReceipts()
+json ViewController::getLogInReceipts()
 {
     return logInMessage;
 }
 
-json getRegisterReceipts()
+json ViewController::getRegisterReceipts()
 {
     return registerMessage;
 }
 
-json getFriendsRequestReceipts()
+json ViewController::getFriendsRequestReceipts()
 {
     return friendReqReceipt;
 }
 
-json getFriendsRequestSentList()
+json ViewController::getFriendsRequestSentList()
 {
     return friendsRequestSentList;
 }
 
-json getFriendsRequestReceivedList()
+json ViewController::getFriendsRequestReceivedList()
 {
     return friendsRequestReceivedList;
 }
 
-json getDirectMessage()
+json ViewController::getDirectMessage()
 {
     return directMessage;
 }
 
-json getGroupMessage()
+json ViewController::getGroupMessage()
 {
     return groupMessage;
 }
@@ -362,28 +362,32 @@ bool ViewController::isDirectMessageReceived(bool received)
     return received;
 }
 
-bool isLogInReceived(bool received)
+bool ViewController::isLogInReceived(bool received)
 {
     return received;
 }
 
-bool isRegisterReceived(bool received)
+bool ViewController::isRegisterReceived(bool received)
 {
     return received;
 }
 
-bool isFriendsRequestReceived(bool received)
+bool ViewController::isFriendsRequestReceived(bool received)
 {
     return received;
 }
 
-bool isFriendsRequestSentListReceived(bool received = false)
+bool ViewController::isFriendsRequestSentListReceived(bool received)
 {
     return received;
 }
 
-bool isFriendsRequestReceivedReceived(bool received = false)
+bool ViewController::isFriendsRequestReceivedListReceived(bool received)
 {
     return received;
 }
 
+bool ViewController::isFriendsListReceived(bool received)
+{
+    return received;
+}
