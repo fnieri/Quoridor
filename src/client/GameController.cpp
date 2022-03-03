@@ -4,6 +4,8 @@
 
 #include "GameController.h"
 
+#include "../common/Point.h"
+
 GameController::GameController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
     , currentPlayerIndex(currentPlayerIndex)

@@ -4,33 +4,32 @@ add_library(${PREFIX}_client
         BoardComponent.cpp
         Cell.cpp
         Corridor.cpp
-        Point.cpp
-        Stringable.cpp
         Player.cpp
         PlayerAction.cpp
         WallAction.cpp
         WallEnum.h
         PlayerAction.h
         TerminalVue.cpp
-        GameController.cpp
+        ServerController.cpp
+        ViewController.cpp
         )
 
 target_link_libraries(${PREFIX}_client
-        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component
+        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread
 )
 
 target_include_directories(${PREFIX}_client
-        PUBLIC
+    PUBLIC
         ${CMAKE_SOURCE_DIR}
-        )
+)
 
 add_executable(client
-        main.cpp
-        )
+    main.cpp
+)
 
 # Link the project libraries to the executable
 target_link_libraries(client
-        PRIVATE
+    PRIVATE
         ${PREFIX}_client
         )
 

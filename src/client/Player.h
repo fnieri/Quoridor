@@ -1,7 +1,7 @@
 #pragma once
 
 #include "PlayerEnum.h"
-#include "Point.h"
+#include "src/common/Point.h"
 
 /**
  * Represents a Player in the game.
@@ -27,6 +27,8 @@ class Player
 
     /// The username of the Player.
     std::string username;
+
+    int index;
 
 public:
     /**
@@ -121,4 +123,9 @@ public:
      * @param newColor the new pawn color for the player.
      */
     void setColor(PawnColors newColor);
+
+    
+    int getIndex();
+    void setIndex(int ind);
+
 };

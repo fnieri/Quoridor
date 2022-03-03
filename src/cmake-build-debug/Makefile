@@ -136,6 +136,32 @@ _client/fast:
 	$(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/build
 .PHONY : _client/fast
 
+#=============================================================================
+# Target rules for targets named common
+
+# Build rule for target.
+common: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 common
+.PHONY : common
+
+# fast build rule for target.
+common/fast:
+	$(MAKE) -f common/CMakeFiles/common.dir/build.make common/CMakeFiles/common.dir/build
+.PHONY : common/fast
+
+#=============================================================================
+# Target rules for targets named _common
+
+# Build rule for target.
+_common: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 _common
+.PHONY : _common
+
+# fast build rule for target.
+_common/fast:
+	$(MAKE) -f common/CMakeFiles/_common.dir/build.make common/CMakeFiles/_common.dir/build
+.PHONY : _common/fast
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -146,6 +172,8 @@ help:
 	@echo "... edit_cache"
 	@echo "... client"
 	@echo "... _client"
+	@echo "... common"
+	@echo "... _common"
 .PHONY : help
 
 

@@ -1,12 +1,18 @@
 #pragma once
 
 #include "BoardComponent.h"
-#include "Player.h"
-#include "Point.h"
 #include "WallEnum.h"
+#include "Cell.h"
+#include "Corridor.h"
+#include "Player.h"
+#include "../common/Point.h"
+#include "Player.h"
 
+#include <iostream>
 #include <memory>
+#include <stack>
 #include <vector>
+
 
 /**
  * Stores the data of the game board, notably wall and player positions.
@@ -259,6 +265,31 @@ public:
      * @returns int
      */
     int getCellSize();
+
+    /**
+     * Rotates the Point around the middle depending on the given play finish line.
+     *
+     * @param p the point to rotate
+     * @param f the finish line to dictate rotation
+     * @return Point the rotated Point
+     *
+     * @warning both the given and returned point are assumed to have *proper matrix indices*
+     *
+     * @note
+     * - FinishLine::North is the default position
+     * - FinishLine::East is 90° rotation counter-clockwise
+     * - FinishLine::South is 180° rotation counter-clockwise
+     * - FinishLine::West is 270° rotation counter-clockwise
+     */
+    Point getRotatedMatrixPosition(Point p, FinishLine f);
+
+    /**
+     * Get the Board matrix, rotated depending on the given play finish line.
+     *
+     * @param rotation the finish line to use as a rotation reference
+     * @return std::vector<std::vector<std::shared_ptr<BoardComponent>>>& the rotated matrix
+     */
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> getRotatedBoardMatrix(FinishLine rotation);
 
     std::vector<std::vector<std::shared_ptr<BoardComponent>>> &getBoardMatrix();
 

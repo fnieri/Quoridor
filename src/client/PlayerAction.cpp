@@ -48,6 +48,7 @@ json PlayerAction::serialized()
     return actionJson;
 }
 
+
 PlayerAction::~PlayerAction()
 {
 }

@@ -6,7 +6,7 @@
 #include "Board.h"
 #include "Player.h"
 #include "PlayerAction.h"
-#include "Point.h"
+#include "../common/Point.h"
 #include "WallEnum.h"
 #include "BoardComponent.h"
 #include "WallEnum.h"
@@ -15,7 +15,6 @@
 #include "PlayerEnum.h"
 #include "PlayerAction.h"
 #include "WallAction.h"
-
 
 #include <memory>
 #include <vector>

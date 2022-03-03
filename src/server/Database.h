@@ -7,6 +7,7 @@
 #include <bsoncxx/builder/stream/document.hpp>
 #include <bsoncxx/builder/stream/helpers.hpp>
 #include <bsoncxx/json.hpp>
+#include <bsoncxx/types.hpp>
 #include <mongocxx/client.hpp>
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
@@ -17,32 +18,42 @@
 
 namespace database
 {
-// this will need to be changed to env variables
-const char kUsername[]{"louis"};
-constexpr char kPassword[]{"randompass456"};
+const char kUsername[] {"louis"};
+constexpr char kPassword[] {"randompass456"};
 // need to actually use username and password
-constexpr char kMongoDbUri[]{"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-constexpr char kDatabaseName[]{"testing"};
-constexpr char kCollectionName[]{"TestCollection"};
-constexpr char kUserCollectionName[]{"UserCollection"};
+constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
+constexpr char kDatabaseName[] {"testing"};
+constexpr char kCollectionName[] {"TestCollection"};
+constexpr char kUserCollectionName[] {"UserCollection"};
 }
 
 class DatabaseHandler
 {
-    static std::unique_ptr<DatabaseHandler> singleton;
     mongocxx::uri uri;
     mongocxx::client client;
     mongocxx::database db;
-    bool doesUsernameExist(const std::string &username);
+    static bool doesUsernameExist(const std::string &username);
     DatabaseHandler();
-public:
-    static DatabaseHandler &get();
-    void quickTest();
-    bool createAccount(std::string username, std::string password);
-    bool checkLogin(std::string username, std::string password);
+    static std::unique_ptr<DatabaseHandler> &Instance()
+    {
+        static std::unique_ptr<DatabaseHandler> singleton;
+        if (!singleton)
+            singleton = std::move(std::unique_ptr<DatabaseHandler> {new DatabaseHandler});
+        return singleton;
+    }
 
-    // TODO
-//    void getFriends(std::string username); should be json
-    void addFriend(std::string username, std::string friendUsername);
-    void removeFriend(std::string username, std::string friendUsername);
+public:
+    static void quickTest();
+    static bool createAccount(const std::string &username, const std::string &password);
+    static bool checkLogin(const std::string &username, const std::string &password);
+    static std::vector<std::string> getFriends(const std::string &username);
+    static std::vector<std::string>  getSentFriendRequests(const std::string &username);
+    static std::vector<std::string>  getReceivedFriendRequests(const std::string &username);
+    static void addFriend(const std::string &username, const std::string &friendUsername);
+    static void removeFriend(const std::string &username, const std::string &friendUsername);
+    static void sendFriendRequest(const std::string &username, const std::string &friendUsername);
+    static void removeFriendRequest(const std::string &username, const std::string &friendUsername);
+    static void acceptFriendRequest(const std::string &username, const std::string &friendUsername);
+    static int getELO(const std::string &username);
+    static void setELO(const std::string &username, const int &elo);
 };

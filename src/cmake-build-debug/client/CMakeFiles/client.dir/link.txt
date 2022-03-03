@@ -1,1 +1,1 @@
-/usr/bin/c++  -g  -rdynamic CMakeFiles/client.dir/main.o  -o client   -L/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client  lib_client.a -lnlohmann_json -lftxui::screen -lftxui::dom -lftxui::component 
+/usr/bin/c++  -g  -rdynamic CMakeFiles/client.dir/main.o  -o client   -L/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client  lib_client.a -lnlohmann_json -lftxui::screen -lftxui::dom -lftxui::component -lsockpp -lpthread 

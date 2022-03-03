@@ -243,10 +243,10 @@ Project_BINARY_DIR:STATIC=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209
 Project_SOURCE_DIR:STATIC=/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src
 
 //Dependencies for the target
-_client_LIB_DEPENDS:STATIC=general;nlohmann_json;general;ftxui::screen;general;ftxui::dom;general;ftxui::component;
+_client_LIB_DEPENDS:STATIC=general;nlohmann_json;general;ftxui::screen;general;ftxui::dom;general;ftxui::component;general;sockpp;general;pthread;
 
 //Dependencies for the target
-_common_LIB_DEPENDS:STATIC=general;sockpp;
+_common_LIB_DEPENDS:STATIC=general;nlohmann_json;general;sockpp;
 
 //Dependencies for the target
 _server_LIB_DEPENDS:STATIC=general;nlohmann_json;general;sockpp;general;_common;general;cryptopp-shared;general;pthread;
@@ -364,7 +364,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_NM
 CMAKE_NM-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=3
 //ADVANCED property for variable: CMAKE_OBJCOPY
 CMAKE_OBJCOPY-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_OBJDUMP

@@ -2,7 +2,6 @@
 // Created by louis on 10/02/2022.
 //
 
-
 /**
  * @file TerminalVue.h
  * @author Louis Vanstappen, [Sacha Testaert]
@@ -12,6 +11,7 @@
 
 #pragma once
 
+#include <bits/stdc++.h>
 #include <iostream>
 #include <iterator>
 #include <memory> // for allocator, shared_ptr, __shared_ptr_access
@@ -21,7 +21,6 @@
 #include <thread>
 #include <unistd.h>
 #include <vector> // for vector
-#include <bits/stdc++.h>
 
 #include "ftxui/component/captured_mouse.hpp" // for ftxui
 #include "ftxui/component/component.hpp" // for Slider, Renderer, Vertical
@@ -36,7 +35,8 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
-#include "GameController.h"
+//#include "GameController.h"
+#include "ViewController.h"
 
 using namespace ftxui;
 
@@ -50,7 +50,8 @@ struct CheckboxState {
  */
 class TerminalVue
 {
-    GameController *gameController = new GameController {2, 0, 1};
+    //    GameController *gameController = new GameController {2, 0, 1};
+    std::unique_ptr<ViewController> = new ViewController();
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -72,7 +73,8 @@ class TerminalVue
     int chat_message_selected = 0;
     int gameSelected = 0;
     std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
-    std::vector<std::string> friendsList{"Hector","Lulu","Bernard","Léon","Charlotte","Merlin","Pierre","Fleure","Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+    std::vector<std::string> friendsList {
+        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
     std::vector<std::vector<std::string>> chatEntries {
         {"Hello Hector"},
         {"On se fait", "une partie ?"},
@@ -90,14 +92,14 @@ class TerminalVue
         {""},
         {""},
     };
-    std::vector<bool*> friendsListStates {
+    std::vector<bool *> friendsListStates {
         new bool {false},
         new bool {false},
         new bool {false},
     };
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
-    std::vector<std::string> notifications{
+    std::vector<std::string> notifications {
         "User1 wants to add you!   (A)ccept or (D)eny ?",
         "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
@@ -131,29 +133,29 @@ class TerminalVue
 
     /**
      * @brief Checks if it's someone's turn
-     * 
-     * @return true 
-     * @return false 
+     *
+     * @return true
+     * @return false
      */
     bool isPlayerTurn();
 
     /**
      * @brief Checks if move is actually valid
-     * 
+     *
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
-     * @return true 
-     * @return false 
+     * @return true
+     * @return false
      */
     bool isMoveValid(int x, int y);
 
     /**
      * @brief Checks if wall placement is actually valid
-     * 
+     *
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
-     * @return true 
-     * @return false 
+     * @return true
+     * @return false
      */
     bool isWallPlacementValid(int x, int y);
 
@@ -162,113 +164,113 @@ class TerminalVue
      * [@details returns true if  (mouseInCell(x, y) && mousePressed && isPlayerTurn())]
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
-     * @return true 
-     * @return false 
+     * @return true
+     * @return false
      */
     bool isClickValid(int x, int y);
 
     /**
      * @brief Create a Canvas object; when rendered displays the board and game indications
-     * 
-     * @return Renderer 
+     *
+     * @return Renderer
      */
     auto createCanvas();
 
     /**
      * @brief Create a Main Game Screen object; renders a game menu selector
-     * 
+     *
      * @return Renderer
      */
     auto createMainGameScreen();
 
     /**
      * @brief Checks if mouse is targeting a player move cell.
-     * 
+     *
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
-     * @return true 
-     * @return false 
+     * @return true
+     * @return false
      */
     bool mouseInCell(int x, int y);
 
     /**
      * @brief Checks if mouse is targeting a corridor
-     * 
+     *
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
-     * @return true 
-     * @return false 
+     * @return true
+     * @return false
      */
     bool mouseInQuoridor(int x, int y);
 
     /**
      * @brief view method that interacts with controller to handle a Cell click
-     * 
+     *
      * @param x column of the matrix in wich stands the mousepointer
      * @param y row of t he matrix in which stands the mousepointer
      */
     void handleCellClick(int x, int y);
-    
+
     /**
-     * @brief 
-     * 
-     * @param x 
-     * @param y 
+     * @brief
+     *
+     * @param x
+     * @param y
      */
     void handleWallAdd(int x, int y);
 
     /**
      * @brief Create a Chat Input object for the game on
-     * 
+     *
      * @return Input
      */
     auto createChatInput();
 
     /**
      * @brief Create a Search field Input object to find someone to add to your friends list
-     * 
+     *
      * @return Input
      */
     auto createSearchInput();
 
     /**
      * @brief Create a Chat Input object to talk with a friend
-     * 
+     *
      * @return Input
      */
     auto createChatFriendInput();
 
     /**
      * @brief Create a Action Toggle object, to chose either to Move or place a Wall
-     * 
+     *
      * @return Toggle
      */
     auto createActionToggle();
 
     /**
      * @brief Create a Orientation Toggle object, to chose in which direction you place your wall
-     * 
+     *
      * @return Toggle
      */
     auto createOrientationToggle();
 
     /**
      * @brief Create a Main Tab object containing all of the tabs you can toggle to
-     * 
+     *
      * @return Toggle
      */
     auto createMainTab();
 
     /**
      * @brief Create a Board Renderer object that renders all board features
-     * 
-     * @return Renderer 
+     *
+     * @return Renderer
      */
     auto createBoardRenderer();
 
     /**
      * @brief create Renderer of Chat Container rendering in-game chat functionalities
-     * 
+     *
      * @return Renderer
      */
     auto createChatRenderer();
@@ -276,35 +278,35 @@ class TerminalVue
     /**
      * @brief Create a Friends List Renderer object; renders the friends list
      *  and a chat window to communicate with any of them
-     * 
+     *
      * @return Renderer
      */
     auto createFriendsListRenderer();
 
     /**
      * @brief create Renderer of the container of notifications and the friend searchbar
-     * 
+     *
      * @return Renderer
      */
     auto createFriendUtilitariesRenderer();
 
     /**
      * @brief Create a LeaderBoard Renderer object
-     * 
+     *
      *[@return text("LeaderBoard") for now]
      */
     auto createLeaderBoardRenderer();
 
     /**
      * @brief Create a Main Tab Container object containing all windows you can toggle to
-     * 
+     *
      * @return Renderer of container
      */
     auto createMainTabContainer();
 
     /**
      * @brief Create a Login Renderer object in which you can complete a form to login
-     * 
+     *
      * @return Renderer
      */
     auto createLoginRenderer();
@@ -313,7 +315,7 @@ class TerminalVue
 
     /**
      * @brief Create a Register Renderer object in which you can complete a form to register
-     * 
+     *
      * @return Renderer of container
      */
     auto createRegisterRenderer();
@@ -331,27 +333,27 @@ class TerminalVue
      * @return Renderer of container
      */
     auto createFinalContainer();
-    
+
     /**
      * @brief Detects if someone is logged in
-     * 
+     *
      */
     void loginUser();
-    
 
     void handleFriendDelete(const std::string &friendUsername);
 
     void handleFriendAdd(const std::string &friendUsername);
-    
+
     /**
      * @brief Creates Wraper window object that renders a rounded box shape with a title
-     * 
+     *
      * @param title Text that will be shown above the rendered window
-     * @param component Component that has to be shown within the window 
+     * @param component Component that has to be shown within the window
      * @return Renderer
      */
-    Component Window(std::string title, Component component) {
-        return Renderer(component, [component, title] {  //
+    Component Window(std::string title, Component component)
+    {
+        return Renderer(component, [component, title] { //
             return window(text(title), component->Render()) | flex;
         });
     }
@@ -376,17 +378,15 @@ public:
 
     /**
      * @brief Delete a friend from your friends list
-     * 
+     *
      */
     void deleteFriend();
 
     /**
      * @brief Add a message to the conversation you have with your friend
-     * 
+     *
      * @param username String of the sender's username
      * @param message String of the user's typing
      */
     void addChatFriendMessage(std::string username, std::string message);
-
-
 };

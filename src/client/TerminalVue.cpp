@@ -31,19 +31,19 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return gameController->isMoveValid(x, y);
+//    return gameController->isMoveValid(x, y);
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return gameController->isWallValid(x, y, wallOrientation);
+//    return gameController->isWallValid(x, y, wallOrientation);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        gameController->updateBoardIntMatrix(boardIntMatrix);
+//        gameController->updateBoardIntMatrix(boardIntMatrix);
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
         auto c = Canvas(200, 200);
@@ -68,7 +68,6 @@ auto TerminalVue::createCanvas()
             int dx = 10;
             for (int j = 0; j < boardIntMatrix[i].size(); j++) {
                 int gridValue = boardIntMatrix[i][j];
-                Point pos = Point(j, i);
                 switch (gridValue) {
                 case freeCell:
                     // draw a free cell
@@ -127,13 +126,13 @@ auto TerminalVue::createCanvas()
 void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
-    gameController->movePlayer(x, y);
+//    gameController->movePlayer(x, y);
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
-    gameController->placeWall(x, y, wallOrientation);
+//    gameController->placeWall(x, y, wallOrientation);
 }
 
 auto TerminalVue::createChatInput()

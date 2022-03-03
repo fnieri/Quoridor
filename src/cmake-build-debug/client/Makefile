@@ -201,21 +201,6 @@ Corridor.s:
 .PHONY : Corridor.s
 
 # target to build an object file
-GameController.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.o
-.PHONY : GameController.o
-
-# target to preprocess a source file
-GameController.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.i
-.PHONY : GameController.i
-
-# target to generate assembly for a file
-GameController.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/GameController.s
-.PHONY : GameController.s
-
-# target to build an object file
 Player.o:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.o
 .PHONY : Player.o
@@ -246,34 +231,19 @@ PlayerAction.s:
 .PHONY : PlayerAction.s
 
 # target to build an object file
-Point.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.o
-.PHONY : Point.o
+ServerController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.o
+.PHONY : ServerController.o
 
 # target to preprocess a source file
-Point.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.i
-.PHONY : Point.i
+ServerController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.i
+.PHONY : ServerController.i
 
 # target to generate assembly for a file
-Point.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Point.s
-.PHONY : Point.s
-
-# target to build an object file
-Stringable.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.o
-.PHONY : Stringable.o
-
-# target to preprocess a source file
-Stringable.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.i
-.PHONY : Stringable.i
-
-# target to generate assembly for a file
-Stringable.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Stringable.s
-.PHONY : Stringable.s
+ServerController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.s
+.PHONY : ServerController.s
 
 # target to build an object file
 TerminalVue.o:
@@ -289,6 +259,21 @@ TerminalVue.i:
 TerminalVue.s:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.s
 .PHONY : TerminalVue.s
+
+# target to build an object file
+ViewController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ViewController.o
+.PHONY : ViewController.o
+
+# target to preprocess a source file
+ViewController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ViewController.i
+.PHONY : ViewController.i
+
+# target to generate assembly for a file
+ViewController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ViewController.s
+.PHONY : ViewController.s
 
 # target to build an object file
 WallAction.o:
@@ -342,24 +327,21 @@ help:
 	@echo "... Corridor.o"
 	@echo "... Corridor.i"
 	@echo "... Corridor.s"
-	@echo "... GameController.o"
-	@echo "... GameController.i"
-	@echo "... GameController.s"
 	@echo "... Player.o"
 	@echo "... Player.i"
 	@echo "... Player.s"
 	@echo "... PlayerAction.o"
 	@echo "... PlayerAction.i"
 	@echo "... PlayerAction.s"
-	@echo "... Point.o"
-	@echo "... Point.i"
-	@echo "... Point.s"
-	@echo "... Stringable.o"
-	@echo "... Stringable.i"
-	@echo "... Stringable.s"
+	@echo "... ServerController.o"
+	@echo "... ServerController.i"
+	@echo "... ServerController.s"
 	@echo "... TerminalVue.o"
 	@echo "... TerminalVue.i"
 	@echo "... TerminalVue.s"
+	@echo "... ViewController.o"
+	@echo "... ViewController.i"
+	@echo "... ViewController.s"
 	@echo "... WallAction.o"
 	@echo "... WallAction.i"
 	@echo "... WallAction.s"

@@ -1,13 +1,4 @@
 #include "Board.h"
-#include "BoardComponent.h"
-#include "Cell.h"
-#include "Corridor.h"
-#include "Player.h"
-#include "Point.h"
-
-#include <iostream>
-#include <memory>
-#include <stack>
 
 Board::Board()
 {
@@ -294,6 +285,8 @@ int Board::getCellSize()
 
 void Board::debugPrint()
 {
+    auto m = getRotatedBoardMatrix(FinishLine::North);
+
     for (int y = 0; y < MATRIX_SIZE; y++) {
         for (int x = 0; x < MATRIX_SIZE; x++) {
             if (isCell({x, y})) {
@@ -308,6 +301,45 @@ void Board::debugPrint()
     }
 }
 
+Point Board::getRotatedMatrixPosition(Point p, FinishLine f)
+{
+    switch (f) {
+    case FinishLine::South:
+        return Point {MATRIX_SIZE - p.x() - 1, MATRIX_SIZE - p.y() - 1};
+
+    case FinishLine::East:
+        return Point {p.y(), MATRIX_SIZE - p.x() - 1};
+
+    case FinishLine::West:
+        return Point {MATRIX_SIZE - p.y() - 1, p.x()};
+
+    case FinishLine::North:
+    default:
+        return p;
+    }
+}
+
+std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoardMatrix(FinishLine rotation)
+{
+    auto rotated = matrix;
+
+    for (int x = 0; x < MATRIX_SIZE; x++) {
+        for (int y = 0; y < MATRIX_SIZE; y++) {
+            // copy over all the board components while rotating the matrix
+            Point p = getRotatedMatrixPosition(Point {x, y}, rotation);
+            rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
+
+            // make sure to rotate the direction of the walls when needed
+            if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) {
+                auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y()));
+
+                wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal);
+            }
+        }
+    }
+
+    return rotated;
+}
 std::vector<std::vector<std::shared_ptr<BoardComponent>>> &Board::getBoardMatrix(){
     return matrix;
 }

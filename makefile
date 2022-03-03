@@ -13,6 +13,6 @@ build:
 
 .PHONY: test
 test:
-	ctest --test-dir build
+	ctest --test-dir build --output-on-failure
 	echo -e "\e[32m== SUCCESSFUL TESTING! ==\e[0m\n"
 
