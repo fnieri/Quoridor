@@ -59,7 +59,8 @@ std::shared_ptr<Board> ViewController::getBoard()
 void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix)
 {
     boardIntMatrix.clear();
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &boardMatrix = board->getBoardMatrix();
+    FinishLine rot = players[currentPlayerIndex]->getFinishLine();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(rot);
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
@@ -97,7 +98,8 @@ void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIn
 std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
 {
     std::vector<std::vector<int>> boardIntMatrix;
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getBoardMatrix();
+    FinishLine rot = players[currentPlayerIndex]->getFinishLine();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(rot);
 
     for (int y = 0; y < board->getCellSize(); y++) {
         boardIntMatrix.push_back(std::vector<int>());
