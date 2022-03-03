@@ -6,6 +6,7 @@
 // defines a player in the game
 class Player
 {
+    int index;
     PawnColors color;
     Point position;
     int nwalls; // how
@@ -16,6 +17,8 @@ public:
     int y() const;
 
     void setPosition(const Point &newPosition);
+    void setIndex(int ind);
+    void setColor(PawnColors newColor);
 
     int nWalls() const;
     void takeAwayWall();
@@ -23,5 +26,5 @@ public:
     ~Player();
     Point getPosition();
     PawnColors getColor();
-    void setColor(PawnColors newColor);
+    int getIndex();
 };

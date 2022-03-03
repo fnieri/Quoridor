@@ -13,11 +13,11 @@
 
 class ServerController : public Controller
 {
-    std::shared_ptr<Board> board;                       // The Game Model
+    std::shared_ptr<Board> board = std::make_shared<Board>();;                       // The Game Model
     int nPlayers;                                       // The Number of Players
     std::vector<std::shared_ptr<Player>> players;       // A vector containing pointers to all the Players 
     std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;   // A map with Colors of a player's pawn and the corresponding Player
-
+    std::shared_ptr<ViewController> viewController = std::make_shared<ViewController>();;
     ServerBridge serverBridge {"localhost", 12345, this};  
 
 public:
@@ -41,40 +41,60 @@ public:
      */
     void setDict(std::map<PawnColors, std::shared_ptr<Player>> dict_play);
 
+    void setViewController(std::shared_ptr<ViewController> vController);
+
     /* ---- Sending Request TO The Server ---- */
     
+    void sendPlayerAction(PlayerAction action, int playerId);
+    void sendWallAction(WallAction action, int playerId);
+
+    virtual void sendRegisterRequest(std::string username, std::string password) override;
+    virtual void sendLogInRequest(std::string username, std::string password) override;
+
+    void sendGameSetup(std::string gameS); // TODO
+    virtual void sendGameStarted() override;
+    virtual void sendSaveGameRequest(std::string username) override;
+    virtual void sendPauseRequest(std::string username) override;
+
+    virtual void sendInvite(std::string aFriend) override;
+    void joinGame(std::string gameSetup, int ELO, std::string username);
+    void acceptFriendInvite(std::string username);
+
+    virtual void sendFriendRequest(std::string receiver)  override;
+    virtual void sendLeaderboardRequest()  override;
+
+    virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
+    virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
+
+    virtual void sendDMChatBoxRequest(std::string sender, std::string receiver) override;
+    
+    /* ---- Sending Server Messages to The View/Model ---- */
+
+    void processRequest(std::string message);
+
+    void processAuth(std::string message);
+    void processRelations(std::string message);
+    void processResourceRequest(std::string message);
+    void processChatbox(std::string message);
+    void processGameSetup(std::string message);
+    void processGameAction(std::string message);
+
+
     /**
      * @brief The servers sends an action (a pawn move) which was played by another player to the model and the view will update itself
      * 
      * @param action formatted in json
      */
-    void movePlayer(std::string action);
+    void movePlayerReceipt(std::string action);
     
     /**
      * @brief The servers sends an action (a wall placement) which was played by another player to the model and the view will update itself
      * 
      * @param action also formatted in json
      */
-    void placeWall(std::string action);
+    void placeWallReceipt(std::string action);
     
-    virtual void registerPlayer(std::string username, std::string password) override;
-    virtual void logIn(std::string username, std::string password) override;
 
-    virtual void startGame() override;
-    virtual void saveGame(std::string username) override;
-    virtual void pauseGame(std::string username) override;
-
-    virtual void sendInvite(std::string aFriend, std::string gameSetup) override;
-    virtual void joinGame(int gameId)  override;
-    virtual void askToPause(std::string aFriend)  override;
-
-    virtual void sendFriendRequest(std::string receiver)  override;
-    virtual void checkLeaderBoard()  override;
-
-    virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
-    virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
-    
-    // 
     /**
      * @brief When the server has got a message sent from another player, it is sent back to the View to show it to everyone in the Multiplayer Game
      * 
@@ -83,7 +103,6 @@ public:
      */
     nlohmann::json receiveGroupMessage(std::string msg);
     
-    // recu
     /**
      * @brief When the server has got a message sent from another player, it is sent back to the View to show it to the other person in the Direct Message Chatbox
      * 
@@ -92,16 +111,17 @@ public:
      */
     nlohmann::json receiveDirectMessage(std::string msg);
 
-    // requete
-    virtual void loadDirectMessages(std::string username) override;
-    virtual void loadGroupMessages(int gameId) override;
-    
-    /* ---- Sending Request TO The Server ---- */
+    nlohmann::json logInReceipt(std::string msg);
+    nlohmann::json registerReceipt(std::string msg);
+    nlohmann::json friendRequestReceipt(std::string msg);
+
+    nlohmann::json sendFriendsList(std::string msg);
+    nlohmann::json sendfriendsRequestSentList(std::string msg);
+    nlohmann::json sendfriendsRequestReceivedList(std::string msg);
+    //  nlohmann::json sendChats(std::string msg);
+    //  nlohmann::json sendGameIds(std::string msg);
 
 
-    /* Notify the view */
     virtual bool isGameOver(bool over = false) override;
-    virtual bool isDirectMessageReceived(bool received = false) override;
-    virtual bool isGroupMessageReceived(bool received = false) override;
-
+    
 };

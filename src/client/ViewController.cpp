@@ -17,11 +17,6 @@
 
 using json = nlohmann::json;
 
-ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers)
-    : serverController {serverController}
-    , nPlayers {nPlayers}
-{
-}
 
 ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
@@ -36,6 +31,8 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
 
         board->spawnPlayer(p);
     }
+
+    serverController->setViewController(this);
 }
 
 void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
@@ -51,6 +48,7 @@ void ViewController::setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
 void ViewController::setGameSetup(std::string gameS)
 {
     gameSetup = gameS;
+    serverController->sendGameSetup(gameS);
 }
 
 std::shared_ptr<Board> ViewController::getBoard()
@@ -119,8 +117,34 @@ std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
     return boardIntMatrix;
 };
 
-/* To Game Model */ 
+void ViewController::startGame()
+{
+    std::shared_ptr<Board> board = std::make_shared<Board>();
+    std::vector<std::shared_ptr<Player>> players;
+    std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
 
+    // loop for made by Léo
+    for (int i = 0; i < nPlayers; i++) 
+    {
+        // TODO: Change spawn position of players
+        Point pos{i, i};
+        auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
+        p.setIndex(i);
+        players.push_back(p);
+
+        board->spawnPlayer(p);
+
+        // dictPlayer.insert(players[i]->getColor(), players[i]);
+    }
+
+    setBoard(board);
+    setPlayers(players);
+    serverController->setBoard(board);
+    serverController->setPlayers(players);
+    serverController->setDict(dictPlayer);
+}
+
+/*  Sending these to Model/Server  */
 void ViewController::movePlayer(int x, int y)
 {
     // Old method :
@@ -133,7 +157,7 @@ void ViewController::movePlayer(int x, int y)
 
     // Louis' method :
     PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
-    move.executeAction();
+    if (move.executeAction()) serverController->sendPlayerAction(move, currentPlayerIndex);
 }
 
 void ViewController::placeWall(int x, int y, int orientation)
@@ -157,35 +181,7 @@ void ViewController::placeWall(int x, int y, int orientation)
         wallY = y / 2;
     }
     WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
-    wallAction.executeAction();
-
-}
-
-void ViewController::startGame()
-{
-    std::shared_ptr<Board> board = std::make_shared<Board>();
-    std::vector<std::shared_ptr<Player>> players;
-    std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
-
-    // loop for made by Léo
-    for (int i = 0; i < nPlayers; i++) 
-    {
-        // TODO: Change spawn position of players
-        Point pos{i, i};
-        auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
-
-        players.push_back(p);
-
-        board->spawnPlayer(p);
-
-        // dictPlayer.insert(players[i]->getColor(), players[i]);
-    }
-
-    setBoard(board);
-    setPlayers(players);
-    serverController->setBoard(board);
-    serverController->setPlayers(players);
-    serverController->setDict(dictPlayer);
+    if (wallAction.executeAction()) serverController->sendWallAction(wallAction, currentPlayerIndex);
 }
 
 void ViewController::saveGame(std::string username)
@@ -208,11 +204,6 @@ void ViewController::logIn(std::string username, std::string password)
     serverController->logIn(username, password);
 }
 
-void ViewController::logOut()
-{
-    serverController->logOut();
-}
-
 void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
 {
     serverController->sendInvite(aFriend, gameSetup);
@@ -223,11 +214,6 @@ void ViewController::joinGame(int gameId)
     serverController->joinGame(gameId);
 }
 
-void ViewController::askToPause(std::string aFriend)
-{
-    serverController->askToPause(aFriend);
-}
-
 void ViewController::sendFriendRequest(std::string receiver)
 {
     serverController->sendFriendRequest(receiver);
@@ -235,7 +221,7 @@ void ViewController::sendFriendRequest(std::string receiver)
 
 void ViewController::checkLeaderBoard()
 {
-    serverController->checkLeaderBoard();       // or call immediatly ELO and give to the view ?
+    serverController->sendLeaderboardRequest();       
 }
 
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
@@ -249,43 +235,12 @@ void ViewController::sendGroupMessage(std::string sender, std::string msg, int g
 }
 
 
-bool ViewController::isGroupMessageReceived(bool received)
+void ViewController::loadDirectMessages(std::string sender, std::string receiver)
 {
-    if (serverController->isGroupMessageReceived())
-        return true;
-    else
-        return received;
+    serverController->sendDMChatBoxRequest(sender, receiver);       
 }
 
-bool ViewController::isDirectMessageReceived(bool received)
-{
-    if (serverController->isDirectMessageReceived())
-        return true;
-    else
-        return received;
-}
-
-json ViewController::receiveGroupMessage(json msg)
-{
-    isGroupMessageReceived(true);
-    return msg;
-}
-
-json ViewController::receiveDirectMessage(json msg)
-{
-    isDirectMessageReceived(true);
-    return msg;
-}
-
-void ViewController::loadDirectMessages(std::string username)
-{
-    serverController->loadDirectMessages(username);       
-}
-
-void ViewController::loadGroupMessages(int gameId)
-{
-    serverController->loadGroupMessages(gameId);       
-}
+// Booleans
 
 bool ViewController::isGameOver(bool over)
 {
@@ -307,3 +262,128 @@ bool ViewController::isWallValid(int x, int y, int orientation)
     WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
     return wallAction.isWallPlacementValid();
 }
+
+// Work of 03/03
+
+void ViewController::receiveGroupMessage(std::string msg)
+{
+    groupMessage = json::parse(msg)
+    isGroupMessageReceived(true);
+}
+
+void ViewController::receiveDirectMessage(std::string msg)
+{
+    directMessage = json::parse(msg)
+    isDirectMessageReceived(true);
+}
+
+void ViewController::logInReceipt(std::string msg)
+{
+    logInReceipt = json::parse(msg);
+    isLogInReceived(true);
+}
+
+void ViewController::registerReceipt(std::string msg)
+{
+    registerReceipt = json::parse(msg);
+    isRegisterReceived(true);
+}
+
+void ViewController::friendRequestReceipt(std::string msg)
+{
+    friendReqReceipt = json::parse(msg);
+    isfriendRequestReceived(true);
+}
+
+void ViewController::sendFriendsList(std::string msg)
+{
+    friendsListReceipt = json::parse(msg);
+    isFriendsListReceived(true);
+}
+
+void ViewController::sendfriendsRequestSentList(std::string msg)
+{
+    friendsRequestSentList = json::parse(msg);
+    isFriendsRequestSentListReceived(true);
+}
+
+void ViewController::sendfriendsRequestReceivedList(std::string msg)
+{
+    friendsRequestReceivedList = json::parse(msg);
+    isFriendsRequestReceivedListReceived(true);
+}
+
+// Getters
+
+json getLogInReceipts()
+{
+    return logInReceipt;
+}
+
+json getRegisterReceipts()
+{
+    return registerReceipt;
+}
+
+json getFriendsRequestReceipts()
+{
+    return friendReqReceipt;
+}
+
+json getFriendsRequestSentList()
+{
+    return friendsRequestSentList;
+}
+
+json getFriendsRequestReceivedList()
+{
+    return friendsRequestReceivedList;
+}
+
+json getDirectMessage()
+{
+    return directMessage;
+}
+
+json getGroupMessage()
+{
+    return groupMessage;
+}
+
+// Booleans : the view calls these consistently to check wether the server has sent sth
+
+bool ViewController::isGroupMessageReceived(bool received)
+{
+    return received;
+}
+
+bool ViewController::isDirectMessageReceived(bool received)
+{
+    return received;
+}
+
+bool isLogInReceived(bool received)
+{
+    return received;
+}
+
+bool isRegisterReceived(bool received)
+{
+    return received;
+}
+
+bool isFriendsRequestReceived(bool received)
+{
+    return received;
+}
+
+bool isFriendsRequestSentListReceived(bool received = false)
+{
+    return received;
+}
+
+bool isFriendsRequestReceivedReceived(bool received = false)
+{
+    return received;
+}
+
