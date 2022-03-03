@@ -5,7 +5,7 @@
  * @date 02/25/22
  */
 
-#include "Point.h"
+#include "src/common/Point.h"
 
 #include <stdexcept>
 
