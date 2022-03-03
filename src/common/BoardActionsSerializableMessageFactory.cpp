@@ -1,6 +1,6 @@
 /**
  * @file BoardActionsSerializableMessageFactory.cpp
- * @author Francesco Nier
+ * @author Francesco Nieri
  * @date 2022-02-21
  *
  */

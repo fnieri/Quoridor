@@ -20,3 +20,15 @@ json GameRelatedActionsSerializableMessageFactory::serializeInGameRelatedRequest
     };
     return requestJson;
 }
+
+json GameRelatedActionsSerializableMessageFactory::serializeGameStarted(int gameID, nlohmann::json configuration)
+{
+    json gameJson = {{"action", toJsonString(GameAction::START_GAME)}, {"domain", toJsonString(Domain::IN_GAME_RELATED)}, {"configuration", configuration}};
+    return gameJson;
+}
+
+json GameRelatedActionsSerializableMessageFactory::serializeGameEnded(int gameID)
+{
+    json endJson = {{"action", toJsonString(GameAction::END_GAME)}, {"domain", toJsonString(Domain::IN_GAME_RELATED)}, {"game_id", gameID}};
+    return endJson;
+}

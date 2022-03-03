@@ -8,29 +8,35 @@
 using namespace std;
 using json = nlohmann::json;
 
-PlayerAction::PlayerAction(shared_ptr<Board> board, shared_ptr<Player> player, const Point &destination)
+PlayerAction::PlayerAction(shared_ptr<Board> board, shared_ptr<Player> player, const Point &_destination)
     : board {board}
     , player {player}
-    , destination {destination}
 {
+    destination = _destination * 2;
 }
 
 bool PlayerAction::isActionValid()
 {
-    // Check if the position is occupied or......
-    return false;
+    return player->getMatrixPosition() != destination
+        && (board->isValidBasicMove(player->getMatrixPosition(), destination) || board->isValidJumpMove(player->getMatrixPosition(), destination)
+            || board->isValidDiagonalMove(player->getMatrixPosition(), destination));
 }
 
 bool PlayerAction::isGameOver()
 {
-    return false;
+
+    return board->isPositionOnFinishLine(player->getMatrixPosition(), player->getFinishLine());
 }
 
 bool PlayerAction::executeAction()
 {
-    return false;
 
-    // board->movePlayer()
+    if (isActionValid()) {
+        board->movePlayer(player, destination);
+        player->setMatrixPosition(destination);
+        return true;
+    } else
+        return false;
 }
 
 json PlayerAction::serialized()

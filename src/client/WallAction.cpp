@@ -2,7 +2,9 @@
 #include "Board.h"
 #include "Player.h"
 
+#include <iostream>
 #include <memory>
+#include <vector>
 
 using namespace std;
 using json = nlohmann::json;
@@ -19,9 +21,35 @@ WallAction::~WallAction()
 {
 }
 
+Point WallAction::piece1()
+{
+    if (orientation == WallOrientation::Vertical) {
+        return Point {destCell.x() * 2 + 1, destCell.y() * 2};
+    } else {
+        return Point {destCell.x() * 2, destCell.y() * 2 + 1};
+    }
+}
+
+Point WallAction::piece2()
+{
+    if (orientation == WallOrientation::Vertical) {
+        return Point {destCell.x() * 2 + 1, destCell.y() * 2 + 2};
+    } else {
+        return Point {destCell.x() * 2 + 2, destCell.y() * 2 + 1};
+    }
+}
+
 bool WallAction::isWallPlacementLegal()
 {
     // Check if the placement doesn't block the other players
+
+    std::vector<std::shared_ptr<Player>> players = board->findPlayers();
+
+    for (auto &p : players) {
+        if (!board->pathExists(p->getPosition(), p->getFinishLine(), piece1(), piece2()))
+            return false;
+    }
+
     return true;
 }
 
@@ -45,9 +73,7 @@ bool WallAction::isWallPlacementValid()
         return false;
 
     // Check that both wall pieces don't interesect, for vertical walls and horizontal walls
-    if (orientation == WallOrientation::Vertical && board->isFree(Point {x + 1, y}) && board->isFree(Point {x + 1, y + 2})) {
-        return true;
-    } else if (orientation == WallOrientation::Horizontal && board->isFree(Point {x, y + 1}) && board->isFree(Point {x + 2, y + 1})) {
+    if (board->isFree(piece1()) && board->isFree(piece2())) {
         return true;
     }
 
