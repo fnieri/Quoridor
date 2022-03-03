@@ -366,7 +366,7 @@ json Board::serialized()
                         json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
                         wallArray.push_back(wallJson);
                     } else if (isCell({i, j})) {
-                        NOfPlayers++:
+                        NOfPlayers++;
                         std::shared_ptr<Player> currentPlayer = std::dynamic_pointer_cast<Cell>(matrix.at(i).at(j))->getPlayer();
                         // Get informations about player and serialize it
                         PawnColors currentPlayerColor = currentPlayer->getColor();
