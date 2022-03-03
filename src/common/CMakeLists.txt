@@ -18,6 +18,7 @@ Stringable.cpp
         ../client/Corridor.cpp
         ../client/BoardComponent.cpp
         ../client/Cell.cpp
+        GameConfiguration.cpp
 Point.cpp
 SocketUser.cpp
 Observer.cpp

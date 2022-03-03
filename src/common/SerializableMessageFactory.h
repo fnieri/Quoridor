@@ -24,8 +24,8 @@ class SerializableMessageFactory
 {
 public:
     /*----------------------
-    * Auth
-    *-----------------------*/
+     * Auth
+     *-----------------------*/
     static nlohmann::json serializeUserRequest(ClientAuthAction action, const std::string &username, const std::string &password);
 
     static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
@@ -77,5 +77,5 @@ public:
 
     static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID);
 
-    static nlohmann::json serializeGameCreationRequest(const std::string& sender, std::vector<std::string>& receivers, nlohmann::json configuration);
+    static nlohmann::json serializeGameCreationRequest(const std::string &sender, std::vector<std::string> &receivers, nlohmann::json configuration);
 };

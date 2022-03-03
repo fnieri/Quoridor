@@ -355,6 +355,7 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
 json Board::serialized()
 {
     json wallArray = json::array(), playerArray = json::array();
+    int NOfPlayers;
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
             if (matrix.at(i).at(j)) {
@@ -365,6 +366,7 @@ json Board::serialized()
                         json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
                         wallArray.push_back(wallJson);
                     } else if (isCell({i, j})) {
+                        NOfPlayers++:
                         std::shared_ptr<Player> currentPlayer = std::dynamic_pointer_cast<Cell>(matrix.at(i).at(j))->getPlayer();
                         // Get informations about player and serialize it
                         PawnColors currentPlayerColor = currentPlayer->getColor();
@@ -385,7 +387,7 @@ json Board::serialized()
             }
         }
     }
-    json boardJson = {{"walls", wallArray}, {"players", playerArray}};
+    json boardJson = {{"walls", wallArray}, {"players", playerArray}, {"n_of_players", NOfPlayers}};
     return boardJson;
 }
 

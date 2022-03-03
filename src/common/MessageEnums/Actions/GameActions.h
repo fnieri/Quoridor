@@ -1,6 +1,6 @@
 #pragma once
 
-enum class GameAction { ACTION, SURRENDER, PROPOSE_SAVE, ACCEPT_INVITE, START_GAME, END_GAME};
+enum class GameAction { ACTION, SURRENDER, PROPOSE_SAVE, ACCEPT_INVITE, START_GAME, END_GAME };
 
 inline const char *toJsonString(GameAction g)
 {
@@ -35,10 +35,10 @@ enum class GameSetup { JOIN_GAME, QUIT_GAME, CREATE_GAME };
 inline const char *toJsonString(GameSetup g)
 {
     switch (g) {
-        case GameSetup::JOIN_GAME:
-            return "join_game";
-        case GameSetup::QUIT_GAME:
-            return "quit_game";
+    case GameSetup::JOIN_GAME:
+        return "join_game";
+    case GameSetup::QUIT_GAME:
+        return "quit_game";
     }
     return "";
 }

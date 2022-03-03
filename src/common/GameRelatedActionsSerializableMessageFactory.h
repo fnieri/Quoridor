@@ -35,7 +35,4 @@ public:
     static nlohmann::json serializeGameStarted(int gameID, nlohmann::json configuration);
 
     static nlohmann::json serializeGameEnded(int gameID);
-
-
 };
-

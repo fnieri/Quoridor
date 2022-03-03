@@ -26,7 +26,7 @@ json SerializableMessageFactory::serializeWallAction(WallAction &wallAction, int
 /*----------------------
  * ChatBox
  *--------------------*/
-json SerializableMessageFactory::serializeInGameMessage(const  std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID)
+json SerializableMessageFactory::serializeInGameMessage(const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID)
 {
     return ChatBoxSerializableMessageFactory::serializeInGameMessage(sender, receivers, message, gameID);
 }
@@ -39,7 +39,8 @@ json SerializableMessageFactory::serializeFriendMessage(const std::string &sende
 /*---------------------
  * FriendActions
  *---------------------*/
-json SerializableMessageFactory::serializeFriendRequest(FriendAction friendAction, const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+json SerializableMessageFactory::serializeFriendRequest(
+    FriendAction friendAction, const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
     return FriendActionsSerializableMessageFactory::serializeFriendRequest(friendAction, friendRequestSender, friendRequestReceiver);
 }
@@ -63,7 +64,7 @@ json SerializableMessageFactory::serializeInGameRelatedRequest(GameAction gameAc
     return GameRelatedActionsSerializableMessageFactory::serializeInGameRelatedRequest(gameAction, username);
 }
 
-    json SerializableMessageFactory::serializeGameStarted(int gameID, json configuration)
+json SerializableMessageFactory::serializeGameStarted(int gameID, json configuration)
 {
     return GameRelatedActionsSerializableMessageFactory::serializeGameStarted(gameID, configuration);
 }
@@ -95,7 +96,6 @@ json SerializableMessageFactory::serializeStatusTransmission(RequestStatus reque
 json SerializableMessageFactory::serializeFriendChatRequest(const std::string &requester, const std::string &receiver)
 {
     return ObjectExchangesSerializableMessageFactory::serializeFriendChatRequest(requester, receiver);
-
 }
 
 json SerializableMessageFactory::serializeRequestGameID(int gameID)
@@ -117,11 +117,10 @@ json SerializableMessageFactory::serializeGameParticipationRequest(GameSetup gam
     return GameSetupSerializableMessageFactory::serializeGameParticipationRequest(gameSetup, gameID);
 }
 
-json SerializableMessageFactory::serializeGameCreationRequest(const std::string& sender, std::vector<std::string>& receivers, json configuration)
+json SerializableMessageFactory::serializeGameCreationRequest(const std::string &sender, std::vector<std::string> &receivers, json configuration)
 {
     return GameSetupSerializableMessageFactory::serializeGameCreationRequest(sender, receivers, configuration);
 }
-
 
 /*
 json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players, int time, int increment)
