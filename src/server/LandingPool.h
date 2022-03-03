@@ -11,8 +11,6 @@
 
 #include <sockpp/tcp_acceptor.h>
 
-#include <atomic>
-
 /**
  * First contact with the holy server
  *
@@ -47,7 +45,6 @@ public:
     void close();
 
 private:
-    std::atomic<bool> m_isServerOpen {true};
     sockpp::tcp_acceptor m_acceptor;
     UserHub &m_userHub;
 };
