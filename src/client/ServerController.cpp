@@ -18,10 +18,8 @@ using json = nlohmann::json;
 
 class Player;
 
-ServerController::ServerController(std::shared_ptr<ViewController> viewController) :
-    viewController{viewController}
+ServerController::ServerController()
 {
-    serverBridge {"localhost", 12345, this};  
     serverBridge.startHandling();
 }
 
@@ -40,7 +38,7 @@ void ServerController::setDict(std::map<PawnColors, std::shared_ptr<Player>> dic
     dictPlayer = dict_player;
 }
 
-void ServerController::setViewController(std::shared_ptr<ViewController> viewController)
+void ServerController::setViewController(std::shared_ptr<ViewController> vController)
 {
     viewController = vController;
 }
@@ -74,8 +72,8 @@ void ServerController::sendDirectMessage(std::string sender, std::string receive
 void ServerController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
     // find all receivers ?
-    json to_send = SerializableMessageFactory::serializeInGameMessage(sender, receivers, msg, gameID);
-    serverBridge.send(to_send);
+    // json to_send = SerializableMessageFactory::serializeInGameMessage(sender, receivers, msg, gameID);
+    // serverBridge.send(to_send);
 }
 
 void ServerController::sendDMChatBoxRequest(std::string sender, std::string receiver)
@@ -85,9 +83,9 @@ void ServerController::sendDMChatBoxRequest(std::string sender, std::string rece
 }
 
 
-void ServerController::sendFriendRequest(std::string receiver)
+void ServerController::sendFriendRequest(std::string sender, std::string receiver)
 {
-    json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receivers);
+    json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receiver);
     serverBridge.send(to_send);
 }
 
@@ -97,7 +95,7 @@ void ServerController::sendLeaderboardRequest()
     serverBridge.send(to_send);
 }
 
-void ServerController::sendInvite(std::string friend)
+void ServerController::sendInvite(std::string aFriend)
 {
     // json to_send = SerializableMessageFactory::serializeGameRequest(GameInvite::GAME_INVITE, friend); 
     // serverBridge.send(to_send);
@@ -152,26 +150,28 @@ void ServerController::sendPauseRequest(std::string username)
 /* GENERAL REQUEST HANDLER */
 void ServerController::processRequest(std::string message)
 {
+    /*
     json msg = json::parse(msg);
-    
+
     switch (msg["domain"]) {
         case toJsonString(Domain::AUTH): 
-            processAuth(serRequest);
+            processAuth(message);
         case toJsonString(Domain::RELATIONS): 
-            processRelations(serRequest);
+            processRelations(message);
         case toJsonString(Domain::RESOURCE_REQUEST): 
-            processResourceRequest(serRequest);
+            processResourceRequest(message);
         case toJsonString(Domain::IN_GAME_RELATED): 
-            processGameAction(serRequest);
+            processGameAction(message);
         case toJsonString(Domain::GAME_SETUP): 
-            processGameSetup(serRequest);
+            processGameSetup(message);
         case toJsonString(Domain::CHAT): 
-            processChatbox(serRequest);
-    }
+            processChatbox(message);
+    }*/
 }
 
-json ServerController::processAuth(std::string message) 
+void ServerController::processAuth(std::string message) 
 {
+    /*
     switch (message["action"]) {
         case toJsonString(ClientAuthAction::LOGIN):
             logInReceipt(message);      // we have to send this to the view (either succesful or nah)
@@ -179,11 +179,12 @@ json ServerController::processAuth(std::string message)
         case toJsonString(ClientAuthAction::REGISTRATION):
             registerReceipt(message);   // also this to the view
     }
-    return json::parse(message);
+    return json::parse(message);*/
 }
 
 void ServerController::processRelations(std::string message) 
 {
+    /*
     switch (message["action"]) {
         // case toJsonString(FriendAction::FRIEND_REQUEST):
         //     sendFriendRequest(message);      
@@ -193,11 +194,12 @@ void ServerController::processRelations(std::string message)
             friendRequestReceipt(message);   
         // case toJsonString(FriendAction::FRIEND_REMOVE):
         //     removeFriend(message);   
-    }
+    }*/
 }
 
 void ServerController::processResourceRequest(std::string message) 
 {   
+    /*
     // les ressources quon peut demander du serveur : FRIENDS_LIST, FRIEND_REQUESTS_SENT, FRIEND_REQUESTS_RECEIVED, CHATS, LEADERBOARD, GAME_IDS
     // donc ici apres avoir demander au serveur on recoit la ressource quon renvoie a la vue 
     
@@ -212,18 +214,19 @@ void ServerController::processResourceRequest(std::string message)
         //     sendChats(message); 
         //case toJsonString(DataType::GAME_IDS):
         //    sendGameIds(message);   
-    }
+    }*/
 }
 
 void ServerController::processChatbox(std::string message) 
 {
+    /*
     // the servers sends us a message received from friends
     switch (message["action"]) {
     case toJsonString(ChatInteraction::FRIEND_MESSAGE):
         receiveDirectMessage(message);
     case toJsonString(ChatInteraction::IN_GAME_MESSAGE):
         receiveGroupMessage(message);
-    }
+    }*/
 }
 
 
@@ -234,20 +237,21 @@ void ServerController::processGameSetup(std::string message)
 
 void ServerController::processGameAction(std::string message)
 {
+    /*
     switch (message["action"]) {
         case toJsonString(JsonPlayerAction::PLACE_WALL):
             receiveDirectMessage(message);
         case toJsonString(JsonPlayerAction::MOVE_PAWN):
             receiveGroupMessage(message);
-    }   
+    }  */ 
 }
 
-json ServerController::receiveGroupMessage(std::string msg)
+void ServerController::receiveGroupMessage(std::string msg)
 {
     viewController->receiveGroupMessage(msg);
 }
 
-json ServerController::receiveDirectMessage(std::string msg)
+void ServerController::receiveDirectMessage(std::string msg)
 {
     viewController->receiveDirectMessage(msg);
 }
@@ -277,7 +281,7 @@ void ServerController::sendfriendsRequestSentList(std::string msg)
     viewController->sendfriendsRequestSentList(msg);
 }
 
-json ServerController::sendfriendsRequestReceivedList(std::string msg)
+void ServerController::sendfriendsRequestReceivedList(std::string msg)
 {
     viewController->sendfriendsRequestReceivedList(msg);
 }

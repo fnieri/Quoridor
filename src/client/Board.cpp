@@ -8,10 +8,11 @@
 
 #include <iostream>
 #include <memory>
+#include <stack>
 
 using json = nlohmann::json;
 
-Board::Board(/* args */)
+Board::Board()
 {
     for (int x = 0; x < MATRIX_SIZE; x++) {
         matrix.push_back({});
@@ -45,14 +46,13 @@ bool Board::isPositionValid(const Point &position) const
 
 bool Board::isCell(const Point &position) const
 {
-    // Is this a cell emplacement ?
+
     return isEven(position.x()) && isEven(position.y());
 }
 
 bool Board::isCorridor(const Point &position) const
 {
-    // Is this a corridor emplacement ?
-    // Here != serves as a xor, since indices where both are even are cells and where both are odd are empty
+
     return isEven(position.x()) != isEven(position.y());
 }
 
@@ -67,61 +67,123 @@ bool Board::isFree(const Point &position) const
 
 bool Board::areNeighbours(const Point &first, const Point &second) const
 {
-    // This wroks with up down left right. Ask myself : does this works with diagonal ? i think yes
-    // For diagonal to work distX == 2 && distY == 2
-    int distX = abs(first.x() - second.x());
-    int distY = abs(first.y() - second.y());
-    return ((distX == 2 || distX == 0) && (distY == 2 || distY == 0));
+
+    Point distance = getDistance(first, second);
+    int x = distance.x();
+    int y = distance.y();
+    return ((x == 2 || x == 0) && (y == 2 || y == 0) && x != y);
+}
+
+bool Board::areDiagoNeighbours(const Point &first, const Point &second) const
+{
+
+    Point distance = getDistance(first, second);
+    return distance.x() == 2 && distance.y() == 2;
 }
 
 bool Board::isWayFree(const Point &first, const Point &second) const
 {
+    int x;
+    int y;
+    if (first.y() == second.y()) {
+        // Cells are on the same row
+        x = std::max(first.x(), second.x()) - 1;
+        y = first.y();
+    } else if (first.x() == second.x()) {
+        // Cells are on the same column
+        x = first.x();
+        y = std::max(first.y(), second.y()) - 1;
+    } else {
+        return false;
+    }
 
-    // Check if two cells are separated by a wall
-    Point position = getIndexCorridor(first, second);
-    if (matrix[position.x()][position.y()] && isPositionValid(position)) {
-        return !matrix[position.x()][position.y()]->isOccupied();
+    if (matrix.at(x).at(y) && isPositionValid(Point {x, y})) {
+        return !matrix.at(x).at(y)->isOccupied();
     }
 
     return false;
 }
 
-Point Board::getIndexCorridor(const Point &first, const Point &second) const
+bool Board::isWayValid(const Point &current, const Point &overtaken, const Point &destination) const
 {
-    // Give the position in the matrix of a Corridor between two Cells
+
+    return !isFree(overtaken) && isFree(destination) && isWayFree(current, overtaken) && isWayFree(overtaken, destination);
+}
+
+bool Board::isValidBasicMove(const Point &current, const Point &destination) const
+{
+
+    return isPositionValid(destination) && isCell(destination) && areNeighbours(current, destination) && isFree(destination) && isWayFree(current, destination);
+}
+
+bool Board::isValidJumpMove(const Point &current, const Point &destination) const
+{
+
+    Point distance = getDistance(current, destination);
+    int dx = distance.x();
+    int dy = distance.y();
+
+    if (!((dx == 4 || dx == 0) && (dy == 4 || dy == 0) && (dx != dy)))
+        return false;
+
     int x;
     int y;
-    // Cells are on the same row
-    if (first.x() == second.x()) {
-        x = first.x();
-        y = std::max(first.y(), second.y()) - 1;
-
+    if (current.y() == destination.y()) {
+        // Cells are on the same row
+        x = std::max(current.x(), destination.x()) - 2;
+        y = current.y();
+    } else if (current.x() == destination.x()) {
+        // Cells are on the same column
+        x = current.x();
+        y = std::max(current.y(), destination.y()) - 2;
+    } else {
+        return false;
     }
-    // Cells are on the same column
-    else if (first.y() == second.y()) {
-        x = std::max(first.x(), second.x()) - 1;
-        y = first.y();
+
+    return isPositionValid(destination) && isCell(destination) && isWayValid(current, Point {x, y}, destination);
+}
+
+bool Board::isValidDiagonalMove(const Point &current, const Point &destination) const
+{
+
+    if (isPositionValid(destination) && isCell(destination) && areDiagoNeighbours(current, destination)) {
+
+        Point vNeighbor {current.x(), destination.y()};
+        Point hNeighbor {destination.x(), current.y()};
+
+        return (isPositionValid(vNeighbor) && isWayValid(current, vNeighbor, destination))
+            || (isPositionValid(hNeighbor) && isWayValid(current, hNeighbor, destination));
     }
 
-    Point position {x, y};
-    return position;
+    return false;
+}
+
+Point Board::getDistance(const Point &first, const Point &second) const
+{
+    int x = abs(first.x() - second.x());
+    int y = abs(first.y() - second.y());
+    Point d {x, y};
+    return d;
 }
 
 void Board::movePlayer(std::shared_ptr<Player> player, const Point &cell)
 {
     // We suppose here that the move is valid
-    // std::dynamic_pointer_cast<Cell>(matrix[player->x()][player->y()])->removePlayer();
-    // std::dynamic_pointer_cast<Cell>(matrix[to.x()][to.y()])->placePlayer(player);
-    // TODO: Needs fixing
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->removePlayer();
+    std::dynamic_pointer_cast<Cell>(matrix.at(cell.x()).at(cell.y()))->placePlayer(player);
+}
+
+void Board::spawnPlayer(std::shared_ptr<Player> player)
+{
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
 }
 
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
-    // We suppose here that the the placement of the wall is valid
-    // We suppose here that the given indices have already been converted into matrix indexes
-    // Downcasting
-    std::dynamic_pointer_cast<Corridor>(matrix[firstHalf.x()][firstHalf.y()])->placeWall();
-    std::dynamic_pointer_cast<Corridor>(matrix[secondHalf.x()][secondHalf.y()])->placeWall();
+    std::dynamic_pointer_cast<Corridor>(matrix.at(firstHalf.x()).at(firstHalf.y()))->placeWall();
+    std::dynamic_pointer_cast<Corridor>(matrix.at(secondHalf.x()).at(secondHalf.y()))->placeWall();
 }
 
 void Board::placeWallMiddlePiece(const Point &middlePiece, const WallOrientation &orientation)
@@ -129,7 +191,7 @@ void Board::placeWallMiddlePiece(const Point &middlePiece, const WallOrientation
     // Place the "middle piece" of the wall, on the empty spot in the board
     auto mid = std::make_shared<Corridor>(orientation);
     mid->placeWall();
-    matrix[middlePiece.x()][middlePiece.y()] = mid;
+    matrix.at(middlePiece.x()).at(middlePiece.y()) = mid;
 }
 
 void Board::placeWall(const Point &cell, const WallOrientation &direction)
@@ -153,36 +215,79 @@ void Board::placeWall(const Point &cell, const WallOrientation &direction)
     placeWallMiddlePiece(Point {x + 1, y + 1}, direction);
 }
 
-std::vector<std::vector<int>> Board::allComponents()
+bool Board::isPositionOnFinishLine(const Point &position, const FinishLine &finishLine) const
 {
-    // Build the matrix of all the connected component
-    int id = 0;
-    std::vector<std::vector<int>> labels(MATRIX_SIZE, std::vector<int>(MATRIX_SIZE, 0));
-    for (int x = 0; x < MATRIX_SIZE; x += 2) {
-        for (int y = 0; y < MATRIX_SIZE; y += 2) {
-            if (labels[x][y] == 0) {
-                id += 1;
-                labelComponent(id, labels, x, y);
-            }
-        }
-    }
-    return labels;
+    if (!isCell(position))
+        return false;
+
+    // define the finish line as Horizontal/Vertical + value for y/x
+    bool destinationHorizontal = finishLine == FinishLine::North || finishLine == FinishLine::South;
+    int destinationValue = finishLine == FinishLine::North || finishLine == FinishLine::West ? 0 : MATRIX_SIZE - 1;
+
+    // A border is reached and it's the specific finish line
+    if ((destinationHorizontal && position.y() == destinationValue) || (!destinationHorizontal && position.x() == destinationValue))
+        return true;
+    return false;
 }
 
-void Board::labelComponent(int id, std::vector<std::vector<int>> &labels, int x, int y)
+bool Board::pathExists(const Point &start, FinishLine finishLine, Point newWallPiece1, Point newWallPiece2) const
 {
-    // Build each connected component
-    labels[x][y] = id;
-    std::vector<Point> shifts = {{-2, 0}, {2, 0}, {0, -2}, {0, 2}}; // UP, DOWN, LEFT, RIGHT
-    for (auto &shift : shifts) {
-        int x_shift = x + shift.x();
-        int y_shift = y + shift.y();
-        if (isPositionValid({x_shift, y_shift})) {
-            if (isWayFree({x, y}, {x_shift, y_shift}) && labels[x_shift][y_shift] == 0) {
-                labelComponent(id, labels, x_shift, y_shift);
+    // This function essentially performs a DFS on the matrix
+
+    Point startMatrix = start * 2;
+
+    // double check the given start position
+    if (!isPositionValid(startMatrix))
+        return false;
+
+    std::vector<std::vector<bool>> done(MATRIX_SIZE, std::vector<bool>(MATRIX_SIZE));
+    std::stack<Point> searches;
+    searches.push(startMatrix);
+
+    while (!searches.empty()) {
+        Point p = searches.top();
+        searches.pop();
+
+        int x = p.x();
+        int y = p.y();
+
+        if (done[x][y])
+            continue;
+        done[x][y] = true;
+
+        // We have found a path to the finish line
+        if (isPositionOnFinishLine(Point {x, y}, finishLine))
+            return true;
+
+        if (x > 0 && !matrix.at(x - 1).at(y)->isOccupied() && Point {x - 1, y} != newWallPiece1 && Point {x - 1, y} != newWallPiece2)
+            searches.push(Point {x - 2, y});
+
+        if (x < MATRIX_SIZE - 1 && !matrix.at(x + 1).at(y)->isOccupied() && Point {x + 1, y} != newWallPiece1 && Point {x + 1, y} != newWallPiece2)
+            searches.push(Point {x + 2, y});
+
+        if (y > 0 && !matrix.at(x).at(y - 1)->isOccupied() && Point {x, y - 1} != newWallPiece1 && Point {x, y - 1} != newWallPiece2)
+            searches.push(Point {x, y - 2});
+
+        if (y < MATRIX_SIZE - 1 && !matrix.at(x).at(y + 1)->isOccupied() && Point {x, y + 1} != newWallPiece1 && Point {x, y + 1} != newWallPiece2)
+            searches.push(Point {x, y + 2});
+    }
+
+    return false;
+}
+
+std::vector<std::shared_ptr<Player>> Board::findPlayers()
+{
+    std::vector<std::shared_ptr<Player>> players;
+
+    for (int x = 0; x < MATRIX_SIZE; x += 2) {
+        for (int y = 0; y < MATRIX_SIZE; y += 2) {
+            if (isCell({x, y}) && matrix.at(x).at(y) && matrix.at(x).at(y)->isOccupied()) {
+                players.push_back(std::dynamic_pointer_cast<Cell>(matrix.at(x).at(y))->getPlayer());
             }
         }
     }
+
+    return players;
 }
 
 int Board::getCellSize()
@@ -192,12 +297,14 @@ int Board::getCellSize()
 
 void Board::debugPrint()
 {
+    auto m = getRotatedBoardMatrix(FinishLine::North);
+    
     for (int y = 0; y < MATRIX_SIZE; y++) {
         for (int x = 0; x < MATRIX_SIZE; x++) {
             if (isCell({x, y})) {
                 std::cout << "■";
-            } else if (matrix[x][y] && matrix[x][y]->isOccupied()) {
-                auto orientation = std::dynamic_pointer_cast<Corridor>(matrix[x][y])->getOrientation();
+            } else if (m.at(x).at(y) && m.at(x).at(y)->isOccupied()) {
+                auto orientation = std::dynamic_pointer_cast<Corridor>(m.at(x).at(y))->getOrientation();
                 std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");
             } else
                 std::cout << " ";
@@ -206,6 +313,42 @@ void Board::debugPrint()
     }
 }
 
-json Board::serialized()
+Point Board::getRotatedMatrixPosition(Point p, FinishLine f)
 {
+    switch (f) {
+    case FinishLine::South:
+        return Point {MATRIX_SIZE - p.x() - 1, MATRIX_SIZE - p.y() - 1};
+
+    case FinishLine::East:
+        return Point {p.y(), MATRIX_SIZE - p.x() - 1};
+
+    case FinishLine::West:
+        return Point {MATRIX_SIZE - p.y() - 1, p.x()};
+
+    case FinishLine::North:
+    default:
+        return p;
+    }
+}
+
+std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoardMatrix(FinishLine rotation)
+{
+    auto rotated = matrix;
+
+    for (int x = 0; x < MATRIX_SIZE; x++) {
+        for (int y = 0; y < MATRIX_SIZE; y++) {
+            // copy over all the board components while rotating the matrix
+            Point p = getRotatedMatrixPosition(Point {x, y}, rotation);
+            rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
+            
+            // make sure to rotate the direction of the walls when needed
+            if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) {
+                auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y()));
+                
+                wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal);
+            }
+        }
+    }
+
+    return rotated;
 }

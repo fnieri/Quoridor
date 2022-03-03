@@ -50,3 +50,13 @@ void Player::setColor(PawnColors newColor)
 Player::~Player()
 {
 }
+
+void Player::setIndex(int ind)
+{
+    index = ind;
+}
+
+int Player::getIndex()
+{
+    return index;
+}

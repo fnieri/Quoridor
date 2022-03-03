@@ -32,7 +32,7 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
         board->spawnPlayer(p);
     }
 
-    serverController->setViewController(this);
+    serverController->setViewController(shared_from_this());
 }
 
 void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
@@ -186,27 +186,27 @@ void ViewController::placeWall(int x, int y, int orientation)
 
 void ViewController::saveGame(std::string username)
 {
-    serverController->saveGame(username);
+    serverController->sendSaveGameRequest(username);
 }
 
 void ViewController::pauseGame(std::string username)
 {
-    serverController->pauseGame(username);
+    serverController->sendPauseRequest(username);
 }
 
 void ViewController::registerPlayer(std::string username, std::string password)
 {
-    serverController->registerPlayer(username, password);
+    serverController->sendRegisterRequest(username, password);
 }
 
 void ViewController::logIn(std::string username, std::string password)
 {
-    serverController->logIn(username, password);
+    serverController->sendLogInRequest(username, password);
 }
 
-void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
+void ViewController::sendInvite(std::string aFriend)
 {
-    serverController->sendInvite(aFriend, gameSetup);
+    serverController->sendInvite(aFriend);
 }
 
 void ViewController::joinGame(int gameId)
@@ -214,9 +214,9 @@ void ViewController::joinGame(int gameId)
     serverController->joinGame(gameId);
 }
 
-void ViewController::sendFriendRequest(std::string receiver)
+void ViewController::sendFriendRequest(std::string sender, std::string receiver)
 {
-    serverController->sendFriendRequest(receiver);
+    serverController->sendFriendRequest(sender, receiver);
 }
 
 void ViewController::checkLeaderBoard()
@@ -279,13 +279,13 @@ void ViewController::receiveDirectMessage(std::string msg)
 
 void ViewController::logInReceipt(std::string msg)
 {
-    logInReceipt = json::parse(msg);
+    logInMessage = json::parse(msg);
     isLogInReceived(true);
 }
 
 void ViewController::registerReceipt(std::string msg)
 {
-    registerReceipt = json::parse(msg);
+    registerMessage = json::parse(msg);
     isRegisterReceived(true);
 }
 
@@ -317,12 +317,12 @@ void ViewController::sendfriendsRequestReceivedList(std::string msg)
 
 json getLogInReceipts()
 {
-    return logInReceipt;
+    return logInMessage;
 }
 
 json getRegisterReceipts()
 {
-    return registerReceipt;
+    return registerMessage;
 }
 
 json getFriendsRequestReceipts()

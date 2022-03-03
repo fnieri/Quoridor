@@ -12,6 +12,7 @@
 #include "Player.h"
 #include "../common/Point.h"
 #include "WallAction.h"
+#include "PlayerAction.h"
 
 class Controller
 {

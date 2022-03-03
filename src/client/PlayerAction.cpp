@@ -43,15 +43,6 @@ json PlayerAction::serialized()
     return actionJson;
 }
 
-void setIndex(int ind)
-{
-    index = ind;
-}
-
-int getIndex()
-{
-    return index;
-}
 
 PlayerAction::~PlayerAction()
 {

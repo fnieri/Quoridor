@@ -13,12 +13,12 @@
 
 class ServerController;
 
-class ViewController : public Controller
+class ViewController : public Controller,  public std::enable_shared_from_this<ViewController>
 {
 private:
     // Server Receipt Variables
-    nlohmann::json logInReceipt;
-    nlohmann::json registerReceipt;
+    nlohmann::json logInMessage;
+    nlohmann::json registerMessage;
     nlohmann::json friendReqReceipt;
     nlohmann::json friendsListReceipt;
     nlohmann::json friendsRequestSentList;
@@ -104,10 +104,10 @@ public:
     virtual void saveGame(std::string username) override;
     virtual void pauseGame(std::string username) override;
 
-    virtual void sendInvite(std::string aFriend, std::string gameSetup) override;
+    void sendInvite(std::string aFriend);
     virtual void joinGame(int gameId)  override;
 
-    virtual void sendFriendRequest(std::string receiver)  override;
+    void sendFriendRequest(std::string sender, std::string receiver);
     virtual void checkLeaderBoard()  override;
 
     virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
@@ -144,7 +144,7 @@ public:
     Or do we just send with multiple methods
     */
     void logInReceipt(std::string msg);
-    void sendfriendsRequestReceivedList(std::string msg);
+    void registerReceipt(std::string msg);
     void friendRequestReceipt(std::string msg);
     void sendFriendsList(std::string msg);
     void sendfriendsRequestSentList(std::string msg);
@@ -162,8 +162,8 @@ public:
     nlohmann::json getGroupMessage();
 
     // Booleans
-    bool isDirectMessageReceived(bool received = false);
-    bool isGroupMessageReceived(bool received = false);
+    virtual bool isDirectMessageReceived(bool received = false) override;
+    virtual bool isGroupMessageReceived(bool received = false) override;
     bool isLogInReceived(bool received = false);
     bool isRegisterReceived(bool received = false);
     bool isFriendsRequestReceived(bool received = false);

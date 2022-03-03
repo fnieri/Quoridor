@@ -6,6 +6,7 @@
 // defines a player in the game
 class Player
 {
+    char* username;
     int index;
     PawnColors color;
     Point position;
