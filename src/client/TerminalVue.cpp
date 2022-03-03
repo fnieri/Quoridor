@@ -541,9 +541,10 @@ void TerminalVue::addFriend(std::string username)
 void TerminalVue::deleteFriend()
 {
     notifications.push_back("Deleted: " + friendsList[friend_selected]);
-    friendsList.erase(friendsList.begin() + friend_selected);
     chatEntries.erase(chatEntries.begin() + friend_selected);
     handleFriendDelete(friendsList[friend_selected]);
+    friendsList.erase(friendsList.begin() + friend_selected);
+    friend_selected -= 1;
 }
 
 void TerminalVue::handleFriendDelete(const std::string &friendUsername)
