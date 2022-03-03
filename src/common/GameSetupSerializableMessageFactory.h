@@ -10,4 +10,6 @@ public:
     static nlohmann::json serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players);
 
     static nlohmann::json serializeGameSetup(GameMode gameMode, GameInvite gameInvite, std::vector<std::string> &players, int time, int increment);
+
+   // static nlohmann::json serializeGameStarted(int gameID, GameConfiguration gameConfiguration);
 };

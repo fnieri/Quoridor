@@ -50,7 +50,11 @@ public:
      * @return string Salt key and hash to store in database
      * first parameter in vector is saltKey, second is the hash
      */
+<<<<<<< HEAD
     static std::vector<std::string> registerEncryption(std::string passwordToEncrypt);
+=======
+    std::vector<std::string> registerEncryption(std::string passwordToEncrypt);
+>>>>>>> 5e920d1a39c8e1473ac57e39b636d1358fab73ab
     /**
      * @brief Compare login password with saltKey and hash found in database
      * @param passwordToEncrypt password input by user
@@ -58,5 +62,9 @@ public:
      * @param databaseHash hash calculated upon registering, found in database
      * @return bool check if saltedPassword hash matches hash in database
      */
+<<<<<<< HEAD
     static bool compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash);
+=======
+    bool compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash);
+>>>>>>> 5e920d1a39c8e1473ac57e39b636d1358fab73ab
 };

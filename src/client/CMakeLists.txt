@@ -10,6 +10,8 @@ add_library(${PREFIX}_client
     WallAction.cpp
     WallEnum.h
     PlayerAction.h
+    #ServerController.cpp
+    ViewController.cpp
     )
 
 target_link_libraries(${PREFIX}_client
@@ -31,5 +33,4 @@ target_link_libraries(client
     PRIVATE
         ${PREFIX}_client
 )
-
 target_compile_features(client PRIVATE cxx_std_17)

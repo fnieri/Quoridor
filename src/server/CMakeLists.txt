@@ -23,7 +23,8 @@ target_link_libraries(${PREFIX}_server
         sockpp
         ${PREFIX}_common
     PRIVATE
-        cryptopp-shared
+        PRIVATE
+        cryptopp-shared 
         pthread
         mongo::bsoncxx_shared
         mongo::mongocxx_shared

@@ -13,6 +13,7 @@
 #include "Serializable.h"
 #include <nlohmann/json.hpp>
 
+
 class ObjectExchangesSerializableMessageFactory
 {
 public:

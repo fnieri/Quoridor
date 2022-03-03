@@ -10,6 +10,7 @@ GameRelatedActionsSerializableMessageFactory.cpp
 ObjectExchangesSerializableMessageFactory.cpp
 GameSetupSerializableMessageFactory.cpp
 Stringable.cpp
+
 ../client/WallAction.cpp
 ../client/PlayerAction.cpp
         ../client/Board.cpp
