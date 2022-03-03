@@ -19,6 +19,21 @@ SocketUser::SocketUser(Socket &&socket)
 {
 }
 
+void SocketUser::setSocket(Socket &&socket)
+{
+    m_socket = std::move(socket);
+}
+
+bool SocketUser::isOpen() const
+{
+    return m_socket.is_open();
+}
+
+void SocketUser::close()
+{
+    m_socket.close();
+}
+
 bool SocketUser::hasReadActivity(time_t seconds)
 {
     fd_set readfd;
@@ -40,12 +55,12 @@ void SocketUser::send(const std::string &msg)
     std::lock_guard<std::mutex> guard {m_socketMutex};
 
     // Firt send the size of the data to be sent
-    auto sz {msg.size()};
+    auto sz {msg.size() + 1};
     if (m_socket.write_n(&sz, sizeof(sz)) < sizeof(sz))
         throw UnableToSend {};
 
     // Then the data itself
-    if (m_socket.write_n(msg.c_str(), sz) < sz)
+    if (m_socket.write_n(msg.c_str(), sz + 1) < sz + 1)
         throw UnableToSend {};
 }
 

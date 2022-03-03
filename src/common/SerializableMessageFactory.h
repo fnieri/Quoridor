@@ -15,6 +15,7 @@
 #include "MessageEnums/Actions/ObjectExchanges.h"
 #include "MessageEnums/Actions/PlayerActions.h"
 #include "MessageEnums/DataTypes.h"
+#include "MessageEnums/Domain.h"
 #include "MessageEnums/Modes/GameModes.h"
 #include "MessageEnums/Status.h"
 #include "ObjectExchangesSerializableMessageFactory.h"

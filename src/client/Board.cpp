@@ -1,9 +1,10 @@
 #include "Board.h"
-#include "../common/Point.h"
 #include "BoardComponent.h"
 #include "Cell.h"
 #include "Corridor.h"
 #include "Player.h"
+#include "src/common/Point.h"
+
 
 #include <iostream>
 #include <memory>
