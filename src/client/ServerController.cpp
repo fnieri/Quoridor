@@ -286,6 +286,7 @@ void ServerController::sendfriendsRequestReceivedList(std::string msg)
     viewController->sendfriendsRequestReceivedList(msg);
 }
  
+// These need to be sent first from the server...
 // removeFriend
 
 // sendChats

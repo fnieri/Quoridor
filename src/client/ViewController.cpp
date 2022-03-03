@@ -136,7 +136,7 @@ void ViewController::startGame()
 
         board->spawnPlayer(p);
 
-        // dictPlayer.insert(players[i]->getColor(), players[i]);
+        dictPlayer.insert(std::pair<PawnColors, std::shared_ptr<Player>>(players[i]->getColor(), players[i]));
     }
 
     setBoard(board);
@@ -210,7 +210,8 @@ void ViewController::sendInvite(std::string aFriend)
 {
     serverController->sendInvite(aFriend);
 }
-/*
+
+/* // TODO SERIALIZE
 void ViewController::joinGame(int gameId)
 {
     serverController->joinGame(gameId);
