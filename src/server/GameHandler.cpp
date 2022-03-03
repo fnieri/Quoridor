@@ -185,10 +185,9 @@ int GameHub::getUniqueID() const
 {
     auto ID {std::rand()};
 
-    // TODO see with database
-    /* while (DatabaseHandler::isGameIdUsed(ID)) { */
-    /*     ID = std::rand(); */
-    /* } */
+    while (DatabaseHandler::isGameIdUsed(ID)) {
+        ID = std::rand();
+    }
 
     return ID;
 }
@@ -233,9 +232,8 @@ void GameHub::createGameFromDB(int gameID)
 {
     auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
 
-    // TODO wait for db
-    /* auto config {DatabaseHandler::getGameConfig(gameID)}; */
-    /* tmp->setConfiguration(config); */
+    auto config {DatabaseHandler::getGameConfig(gameID)};
+    tmp->setConfiguration(config);
 
     m_games.push_back(tmp);
 }

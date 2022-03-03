@@ -32,7 +32,7 @@ void ServerUser::syncWithDB()
       m_cachedFriends = DatabaseHandler::getFriends(m_username);
       m_cachedRequestsSent = DatabaseHandler::getSentFriendRequests(m_username);
       m_cachedRequestsReceived = DatabaseHandler::getReceivedFriendRequests(m_username);
-      /* m_cachedGameIds = DatabaseHandler::getGameIds(m_username); */
+      m_cachedGameIds = DatabaseHandler::getPlayerGameIds(m_username);
 }
 
 float ServerUser::getELO() const noexcept
