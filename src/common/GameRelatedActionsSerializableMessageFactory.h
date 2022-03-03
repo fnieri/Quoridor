@@ -31,4 +31,11 @@ public:
      * @return nlohmann::json requestJson
      */
     static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, const std::string &username);
+
+    static nlohmann::json serializeGameStarted(int gameID, nlohmann::json configuration);
+
+    static nlohmann::json serializeGameEnded(int gameID);
+
+
 };
+
