@@ -71,7 +71,7 @@ void ServerController::sendDirectMessage(std::string sender, std::string receive
 
 void ServerController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
-    // find all receivers ?
+    // find all receivers ? not understood
     // json to_send = SerializableMessageFactory::serializeInGameMessage(sender, receivers, msg, gameID);
     // serverBridge.send(to_send);
 }
@@ -95,13 +95,14 @@ void ServerController::sendLeaderboardRequest()
     serverBridge.send(to_send);
 }
 
+// TODO SERIALIZE INVITE
 void ServerController::sendInvite(std::string aFriend)
 {
     // json to_send = SerializableMessageFactory::serializeGameRequest(GameInvite::GAME_INVITE, friend); 
     // serverBridge.send(to_send);
 }
 
-// send Game Join Request (matchmaking) 
+// send Game Join Request (matchmaking) + TODO SERIALIZE
 /*
 void ServerController::joinGame(std::string gameSetup, int ELO, std::string username)
 {
@@ -138,6 +139,7 @@ void ServerController::sendSaveGameRequest(std::string username)
     serverBridge.send(to_send);
 }
 
+// TODO SERIALIZE PAUSE
 void ServerController::sendPauseRequest(std::string username)
 {
     // json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::ASK_PAUSE, username);
@@ -149,85 +151,83 @@ void ServerController::sendPauseRequest(std::string username)
 // Deals with income from the server => sends it to the view
 
 /* GENERAL REQUEST HANDLER */
+// Method inspired by Boris' UserHandler::processRequest method
 void ServerController::processRequest(std::string message)
 {
-    /*
-    json msg = json::parse(msg);
+    auto request(json::parse(message));
 
-    switch (msg["domain"]) {
-        case toJsonString(Domain::AUTH): 
-            processAuth(message);
-        case toJsonString(Domain::RELATIONS): 
-            processRelations(message);
-        case toJsonString(Domain::RESOURCE_REQUEST): 
-            processResourceRequest(message);
-        case toJsonString(Domain::IN_GAME_RELATED): 
-            processGameAction(message);
-        case toJsonString(Domain::GAME_SETUP): 
-            processGameSetup(message);
-        case toJsonString(Domain::CHAT): 
-            processChatbox(message);
-    }*/
+    if (request["domain"] == toJsonString(Domain::AUTH)) {
+        processAuth(message);
+
+    } else if (request["domain"] == toJsonString(Domain::RELATIONS)) {
+        processRelations(message);
+
+    } else if (request["domain"] == toJsonString(Domain::CHAT)) {
+        processChatbox(message);
+
+    } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
+        processResourceRequest(message);
+
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
+        processGameAction(message);
+
+    } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
+        processGameSetup(message);
+    }
 }
 
 void ServerController::processAuth(std::string message) 
 {
-    /*
-    switch (message["action"]) {
-        case toJsonString(ClientAuthAction::LOGIN):
-            logInReceipt(message);      // we have to send this to the view (either succesful or nah)
-
-        case toJsonString(ClientAuthAction::REGISTRATION):
-            registerReceipt(message);   // also this to the view
-    }
-    return json::parse(message);*/
+    auto request(json::parse(message));
+    if (request["action"] == toJsonString(ClientAuthAction::LOGIN))
+        logInReceipt(message);      // we have to send this to the view (either succesful or nah)
+    else if (request["action"] == toJsonString(ClientAuthAction::REGISTRATION))
+        registerReceipt(message);   // also this to the view
 }
 
 void ServerController::processRelations(std::string message) 
 {
-    /*
-    switch (message["action"]) {
-        // case toJsonString(FriendAction::FRIEND_REQUEST):
-        //     sendFriendRequest(message);      
-        case toJsonString(FriendAction::FRIEND_ACCEPT):
-            friendRequestReceipt(message);   
-        case toJsonString(FriendAction::FRIEND_REFUSE):
-            friendRequestReceipt(message);   
-        // case toJsonString(FriendAction::FRIEND_REMOVE):
-        //     removeFriend(message);   
-    }*/
+    auto request(json::parse(message));
+
+    if (request["action"] == toJsonString(FriendAction::FRIEND_ACCEPT))
+        friendRequestReceipt(message);    
+    else if (request["action"] == toJsonString(FriendAction::FRIEND_REFUSE))
+        friendRequestReceipt(message);   
+
+    // case toJsonString(FriendAction::FRIEND_REMOVE):
+    //     removeFriend(message);   
+    // case toJsonString(FriendAction::FRIEND_REQUEST):
+    //     sendFriendRequest(message);  
 }
 
 void ServerController::processResourceRequest(std::string message) 
 {   
-    /*
     // les ressources quon peut demander du serveur : FRIENDS_LIST, FRIEND_REQUESTS_SENT, FRIEND_REQUESTS_RECEIVED, CHATS, LEADERBOARD, GAME_IDS
     // donc ici apres avoir demander au serveur on recoit la ressource quon renvoie a la vue 
     
-    switch (message["data_type"]) {     
-        case toJsonString(DataType::FRIENDS_LIST):
-            sendFriendsList(message);   
-        case toJsonString(DataType::FRIEND_REQUESTS_SENT):
-            sendfriendsRequestSentList(message);   
-        case toJsonString(DataType::FRIEND_REQUESTS_RECEIVED):
-            sendfriendsRequestReceivedList(message);      
-        // case toJsonString(DataType::CHATS):
-        //     sendChats(message); 
-        //case toJsonString(DataType::GAME_IDS):
-        //    sendGameIds(message);   
-    }*/
+    auto request(json::parse(message));
+
+    if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST))
+        sendFriendsList(message);     
+    else if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST))
+        sendfriendsRequestSentList(message);  
+    else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED))
+        sendfriendsRequestReceivedList(message);      
+
+    // case toJsonString(DataType::CHATS):
+    //     sendChats(message); 
+    //case toJsonString(DataType::GAME_IDS):
+    //    sendGameIds(message);   
 }
 
 void ServerController::processChatbox(std::string message) 
 {
-    /*
-    // the servers sends us a message received from friends
-    switch (message["action"]) {
-    case toJsonString(ChatInteraction::FRIEND_MESSAGE):
+    auto request(json::parse(message));
+
+    if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE))
         receiveDirectMessage(message);
-    case toJsonString(ChatInteraction::IN_GAME_MESSAGE):
+    else if (request["action"] == toJsonString(ChatInteraction::IN_GAME_MESSAGE))
         receiveGroupMessage(message);
-    }*/
 }
 
 
@@ -238,13 +238,12 @@ void ServerController::processGameSetup(std::string message)
 
 void ServerController::processGameAction(std::string message)
 {
-    /*
-    switch (message["action"]) {
-        case toJsonString(JsonPlayerAction::PLACE_WALL):
-            receiveDirectMessage(message);
-        case toJsonString(JsonPlayerAction::MOVE_PAWN):
-            receiveGroupMessage(message);
-    }  */ 
+    auto request(json::parse(message));
+
+    if (request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL))
+        placeWallReceipt(message);
+    else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN))
+        movePlayerReceipt(message);
 }
 
 void ServerController::receiveGroupMessage(std::string msg)
