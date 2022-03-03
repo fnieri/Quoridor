@@ -38,6 +38,12 @@ public:
      * handlers.
      */
     int openToConnections();
+    /**
+     * Cloes the server
+     *
+     * No new connections will be possible. This is mostly
+     * used for testing.
+     */
     void close();
 
 private:
