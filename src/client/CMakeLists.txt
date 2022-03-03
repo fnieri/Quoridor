@@ -32,6 +32,7 @@ add_executable(client
 target_link_libraries(client
     PRIVATE
         ${PREFIX}_client
+        ${PREFIX}_common
 )
 
 target_compile_features(client PRIVATE cxx_std_17)

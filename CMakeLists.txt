@@ -17,6 +17,8 @@ include(cmake/AddCatch2.cmake)
 include(cmake/AddSockpp.cmake)
 include(cmake/Addjson.cmake)
 include(cmake/Addcryptopp.cmake)
+include(cmake/Addmongoc.cmake)
+include(cmake/Addmongocxx.cmake)
 
 add_subdirectory(src)
 add_subdirectory(tests)

@@ -30,13 +30,17 @@ void ChatBox::recordMessage(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
-    // TODO see with database
-    /* if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) { */
-    /*     DatabaseHandler::recordMessage(request["sender"], request["receiver"], request["message"]); */
+    std::string sender {request["sender"]};
+    std::string message {request["message"]};
 
-    /* } else if (request["action"] == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) { */
-    /*     DatabaseHandler::recordMessage(request["sender"], request["message"], request["game_id"]); */
-    /* } */
+    if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
+        std::string receiver {request["receiver"]};
+        DatabaseHandler::recordMessage(sender, receiver, message);
+
+    } else if (request["action"] == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
+        int game_id {request["game_id"]};
+        DatabaseHandler::recordMessage(sender, message, game_id);
+    }
 }
 
 void ChatBox::relayMessage(const std::string &serRequest)

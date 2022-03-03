@@ -26,7 +26,6 @@ RelationsHandler::RelationsHandler(UserHub &userHub)
 
 void RelationsHandler::recordFriendAction(const std::string &serRequest)
 {
-    std::cerr << "in record";
     auto request(json::parse(serRequest));
 
     if (request["action"] == toJsonString(FriendAction::FRIEND_REQUEST)) {
@@ -45,7 +44,6 @@ void RelationsHandler::recordFriendAction(const std::string &serRequest)
 
 void RelationsHandler::relayFriendAction(const std::string &serRequest)
 {
-    std::cerr << "in relay";
     auto request(json::parse(serRequest));
 
     if (request["action"] == toJsonString(FriendAction::FRIEND_REQUEST)) {
@@ -57,7 +55,7 @@ void RelationsHandler::relayFriendAction(const std::string &serRequest)
     } else if (request["action"] == toJsonString(FriendAction::FRIEND_REFUSE)) {
         m_userHub.relayMessageTo(request["friend_req_sender"], serRequest);
 
-    } else if (request["action"] == toJsonString(FriendAction::FRIEND_REFUSE)) {
+    } else if (request["action"] == toJsonString(FriendAction::FRIEND_REMOVE)) {
         m_userHub.relayMessageTo(request["friend_rm_receiver"], serRequest);
     }
 }
@@ -66,6 +64,4 @@ void RelationsHandler::processRequest(const std::string &serRequest)
 {
     recordFriendAction(serRequest);
     relayFriendAction(serRequest);
-
-    std::cerr << "after relations";
 }

@@ -116,7 +116,7 @@ void UserHandler::processAuth(const std::string &serRequest)
     if (answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS)) {
         m_userHandled->bindToUsername(request["username"]);
         std::cerr << "in success" << isLoggedIn();
-        /* m_userHandled->syncWithDB(); */
+        m_userHandled->syncWithDB();
     }
 
     relayMessage(serAnswer);
@@ -125,7 +125,7 @@ void UserHandler::processAuth(const std::string &serRequest)
 void UserHandler::processRelations(const std::string &serRequest)
 {
     m_relationsHandler->processRequest(serRequest);
-    /* m_userHandled->syncWithDB(); */
+    m_userHandled->syncWithDB();
 }
 
 void UserHandler::processChatbox(const std::string &serRequest)
