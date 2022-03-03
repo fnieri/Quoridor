@@ -10,7 +10,7 @@ add_library(${PREFIX}_client
     WallAction.cpp
     WallEnum.h
     PlayerAction.h
-    #ServerController.cpp
+    ServerController.cpp
     ViewController.cpp
     )
 

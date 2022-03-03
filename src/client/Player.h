@@ -37,7 +37,7 @@ public:
      * @param nwalls the starting number of walls
      * @param finishLine the finish line objective of the player
      */
-    Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine, const std::string& username);
+    Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine, const std::string &username);
     ~Player();
 
     /// Returns the x cell position

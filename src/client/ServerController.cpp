@@ -1,14 +1,14 @@
 #include "ServerController.h"
-#include "Controller.h"
+#include "../common/Point.h"
+#include "../common/SerializableMessageFactory.h"
 #include "Board.h"
 #include "BoardComponent.h"
+#include "Controller.h"
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
-#include "../common/Point.h"
 #include "WallAction.h"
 #include "WallEnum.h"
-#include "../common/SerializableMessageFactory.h"
 
 #include <memory>
 #include <vector>
@@ -77,7 +77,7 @@ void ServerController::placeWall(std::string action)
 
 void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg);   // make a json formated message
+    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg); // make a json formated message
     // send(to_send);
 }
 
@@ -172,12 +172,12 @@ void ServerController::logOut()
 
 void ServerController::saveGame(std::string username)
 {
-    json to_send = SerializableMessageFactory::serializeInGameRequest(GameAction::PROPOSE_SAVE, username);
+    json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::PROPOSE_SAVE, username);
     // send(to_send);
 }
 
 void ServerController::pauseGame(std::string username)
 {
-    // json to_send = SerializableMessageFactory::serializeInGameRequest(GameAction::ASK_PAUSE, username);
+    // json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::ASK_PAUSE, username);
     // send(to_send);
 }

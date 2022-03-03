@@ -105,12 +105,12 @@ TEST_CASE("Player Move not valid")
             REQUIRE(!a2.isActionValid());
         }
 
-        SECTION("Player doesn't move") 
+        SECTION("Player doesn't move")
         {
-            PlayerAction a3 {b, player, {2,3}};
+            PlayerAction a3 {b, player, {2, 3}};
             REQUIRE(!a3.isActionValid());
         }
-        
+
         SECTION("Move to an occupied cell")
         {
             std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 3}, 99, FinishLine::North, "w"});

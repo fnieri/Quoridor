@@ -1,8 +1,8 @@
 #pragma once
 
+#include <nlohmann/json.hpp>
 #include <string>
 #include <vector>
-#include <nlohmann/json.hpp>
 
 class Point;
 enum class GameMode;
@@ -10,11 +10,11 @@ enum class GameMode;
 using Positions = std::vector<Point>;
 using WallCount = std::vector<unsigned>;
 
-
-class GameConfiguration {
+class GameConfiguration
+{
 public:
     GameConfiguration(GameMode gameMode, unsigned, const Positions &, const Positions &, const WallCount &);
-    GameConfiguration(const std::string &);  // from file
+    GameConfiguration(const std::string &); // from file
 
     GameMode mode() const;
     unsigned numberOfPlayers() const;
@@ -26,9 +26,8 @@ public:
     nlohmann::json serialized();
 
 private:
-
     GameMode m_mode;
-    unsigned m_numberOfPlayers;  // 2 - 4
+    unsigned m_numberOfPlayers; // 2 - 4
 
     // Fields mostly used to resume a game
     // from a file.

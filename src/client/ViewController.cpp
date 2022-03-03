@@ -1,13 +1,13 @@
 #include "ViewController.h"
-#include "Controller.h"
-#include "Corridor.h"
-#include "Cell.h"
+#include "../common/Point.h"
 #include "Board.h"
 #include "BoardComponent.h"
+#include "Cell.h"
+#include "Controller.h"
+#include "Corridor.h"
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
-#include "../common/Point.h"
 #include "ServerController.h"
 #include "WallAction.h"
 #include "WallEnum.h"
@@ -31,7 +31,7 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
 {
 }
 
-void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
+void ViewController::setBoard(std::shared_ptr<Board> theBoard)
 {
     board = theBoard;
 }
@@ -112,7 +112,7 @@ std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
     return boardIntMatrix;
 };
 
-/* To Game Model */ 
+/* To Game Model */
 
 void ViewController::movePlayer(int x, int y)
 {
@@ -225,19 +225,18 @@ void ViewController::sendFriendRequest(std::string receiver)
 
 void ViewController::checkLeaderBoard()
 {
-    serverController->checkLeaderBoard();       // or call immediatly ELO and give to the view ?
+    serverController->checkLeaderBoard(); // or call immediatly ELO and give to the view ?
 }
 
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    serverController->sendDirectMessage(sender, receiver, msg);       
+    serverController->sendDirectMessage(sender, receiver, msg);
 }
 
 void ViewController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
-    serverController->sendGroupMessage(sender, msg, gameId);       
+    serverController->sendGroupMessage(sender, msg, gameId);
 }
-
 
 bool ViewController::isGroupMessageReceived(bool received)
 {
@@ -269,12 +268,12 @@ json ViewController::receiveDirectMessage(json msg)
 
 void ViewController::loadDirectMessages(std::string username)
 {
-    serverController->loadDirectMessages(username);       
+    serverController->loadDirectMessages(username);
 }
 
 void ViewController::loadGroupMessages(int gameId)
 {
-    serverController->loadGroupMessages(gameId);       
+    serverController->loadGroupMessages(gameId);
 }
 
 bool ViewController::isGameOver(bool over)

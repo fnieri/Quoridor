@@ -3,19 +3,18 @@
  * @author Kourieh Anne-Marie (and Gamboa Dos Santos Léo)
  * @brief main.cpp plays the game when the player clicks on start game (Idea but don't know how to call this)
  * @date 2022-02-25
-*/
+ */
 
+#include "../common/Point.h"
 #include "Board.h"
 #include "Player.h"
 #include "PlayerAction.h"
-#include "../common/Point.h"
-#include "ViewController.h"
 #include "ServerController.h"
+#include "ViewController.h"
 
-
+#include <iostream>
 #include <memory>
 #include <vector>
-#include <iostream>
 int main()
 {
     /*
@@ -41,6 +40,5 @@ int main()
         board2->deserialized(a);
         board2->debugPrint();
     */
-     return 0;
-
+    return 0;
 }

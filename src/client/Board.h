@@ -4,13 +4,11 @@
 #include "../common/Serializable.h"
 #include "BoardComponent.h"
 #include "Player.h"
-#include <nlohmann/json.hpp>
-#include "../common/Point.h"
 #include "WallEnum.h"
+#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <vector>
-
 
 /**
  * Stores the data of the game board, notably wall and player positions.
@@ -295,5 +293,5 @@ public:
 
     nlohmann::json serialized() override;
 
-    void deserialized(const std::string& serializedBoard);
+    void deserialized(const std::string &serializedBoard);
 };

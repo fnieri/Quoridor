@@ -1,7 +1,7 @@
 #include "Player.h"
 #include "PlayerEnum.h"
 
-Player::Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine, const std::string& username)
+Player::Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine, const std::string &username)
     : color {color}
     , position {position}
     , nwalls {nwalls}
