@@ -331,3 +331,15 @@ int UserHub::connectedUsers() const noexcept
 
     return m_handlers.size();
 }
+
+std::vector<std::string> UserHub::namesOfConnectedUsers()
+{
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+    std::vector<std::string> names;
+
+    for (auto &i : m_handlers)
+        names.push_back(i->getUsername());
+
+    return names;
+}
