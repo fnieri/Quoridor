@@ -157,7 +157,9 @@ void GameHandler::processRequest(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
-    /* if (request["action"] == toJsonString(GameAction::SURRENDER)) { */
+    /* if (request["action"] == toJsonString(
+     *
+     * GameAction::SURRENDER)) { */
 
     /* } else if (request["action"] == toJsonString(GameAction::SAVE_GAME)) { */
     /*     m_isFinished = true; */

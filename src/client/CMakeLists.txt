@@ -9,18 +9,20 @@ add_library(${PREFIX}_client
         WallAction.cpp
         WallEnum.h
         PlayerAction.h
+        ServerBridge.cpp
+        GameController.cpp
         TerminalVue.cpp
-        ServerController.cpp
-        ViewController.cpp
+        MainController.cpp
         )
 
 target_link_libraries(${PREFIX}_client
-        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread
+        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread ${PREFIX}_common
 )
 
 target_include_directories(${PREFIX}_client
     PUBLIC
         ${CMAKE_SOURCE_DIR}
+
 )
 
 add_executable(client

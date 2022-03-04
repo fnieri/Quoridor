@@ -28,6 +28,7 @@ target_link_libraries(${PREFIX}_common
         PUBLIC
         nlohmann_json
         PRIVATE
+        pthread
         sockpp
         )
 

@@ -1,13 +1,13 @@
 #include "ViewController.h"
-#include "Controller.h"
-#include "Corridor.h"
-#include "Cell.h"
+#include "../common/Point.h"
 #include "Board.h"
 #include "BoardComponent.h"
+#include "Cell.h"
+#include "Controller.h"
+#include "Corridor.h"
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
-#include "../common/Point.h"
 #include "ServerController.h"
 #include "WallAction.h"
 #include "WallEnum.h"
@@ -16,7 +16,6 @@
 #include <vector>
 
 using json = nlohmann::json;
-
 
 ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
@@ -31,11 +30,11 @@ ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
 
         board->spawnPlayer(p);
     }
-
-    serverController->setViewController(shared_from_this());
+    serverController = std::make_shared<ServerController>();
+    serverController->setViewController(this);
 }
 
-void ViewController::setBoard(std::shared_ptr<Board> theBoard) 
+void ViewController::setBoard(std::shared_ptr<Board> theBoard)
 {
     board = theBoard;
 }
@@ -126,10 +125,9 @@ void ViewController::startGame()
     std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
 
     // loop for made by Léo
-    for (int i = 0; i < nPlayers; i++) 
-    {
+    for (int i = 0; i < nPlayers; i++) {
         // TODO: Change spawn position of players
-        Point pos{i, i};
+        Point pos {i, i};
         auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
         p->setIndex(i);
         players.push_back(p);
@@ -159,7 +157,8 @@ void ViewController::movePlayer(int x, int y)
 
     // Louis' method :
     PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
-    if (move.executeAction()) serverController->sendPlayerAction(move, currentPlayerIndex);
+    if (move.executeAction())
+        serverController->sendPlayerAction(move, currentPlayerIndex);
 }
 
 void ViewController::placeWall(int x, int y, int orientation)
@@ -171,7 +170,7 @@ void ViewController::placeWall(int x, int y, int orientation)
      */
 
     // Louis' method :
-    
+
     WallOrientation wallOrientation = orientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal;
     int wallX;
     int wallY;
@@ -183,7 +182,8 @@ void ViewController::placeWall(int x, int y, int orientation)
         wallY = y / 2;
     }
     WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
-    if (wallAction.executeAction()) serverController->sendWallAction(wallAction, currentPlayerIndex);
+    if (wallAction.executeAction())
+        serverController->sendWallAction(wallAction, currentPlayerIndex);
 }
 
 void ViewController::saveGame(std::string username)
@@ -223,23 +223,22 @@ void ViewController::sendFriendRequest(std::string sender, std::string receiver)
 
 void ViewController::checkLeaderBoard()
 {
-    serverController->sendLeaderboardRequest();       
+    serverController->sendLeaderboardRequest();
 }
 
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    serverController->sendDirectMessage(sender, receiver, msg);       
+    serverController->sendDirectMessage(sender, receiver, msg);
 }
 
 void ViewController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
-    serverController->sendGroupMessage(sender, msg, gameId);       
+    serverController->sendGroupMessage(sender, msg, gameId);
 }
-
 
 void ViewController::loadDirectMessages(std::string sender, std::string receiver)
 {
-    serverController->sendDMChatBoxRequest(sender, receiver);       
+    serverController->sendDMChatBoxRequest(sender, receiver);
 }
 
 // Booleans
@@ -350,6 +349,11 @@ json ViewController::getDirectMessage()
 json ViewController::getGroupMessage()
 {
     return groupMessage;
+}
+
+nlohmann::json ViewController::getFriendsListReceipt()
+{
+    return friendsListReceipt;
 }
 
 // Booleans : the view calls these consistently to check wether the server has sent sth

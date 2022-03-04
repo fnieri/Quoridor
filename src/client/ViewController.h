@@ -3,19 +3,22 @@
  * @author Kourieh Anne-Marie and Vanstappen Louis 
  * @brief ViewController that gets messages from the View and sends them to the correct Model
  * @date 2022-02-25
- * (every overriden methods are not documented here, but in the Controller class)
+ * (every n methods are not documented here, but in the Controller class)
  *
 */
 
 #pragma once
 
-#include "Controller.h"
+#include "Board.h"
+#include "Player.h"
+#include "src/common/Point.h"
+#include "WallAction.h"
+#include "ServerController.h"
 
 class ServerController;
 
-class ViewController : public Controller,  public std::enable_shared_from_this<ViewController>
+class ViewController
 {
-private:
     // Server Receipt Variables
     nlohmann::json logInMessage;
     nlohmann::json registerMessage;
@@ -26,12 +29,12 @@ private:
     nlohmann::json groupMessage;
     nlohmann::json directMessage;
 
-
     // Others
     std::shared_ptr<Board> board = std::make_shared<Board>();                           // The Game Model
     int nPlayers;                                           // The Number of Players
     std::vector<std::shared_ptr<Player>> players;           // A vector containing pointers to all the Players 
-    std::shared_ptr<ServerController> serverController = std::make_shared<ServerController>();     // The Server Controller because we need to send messages from the View to the Server
+//    std::shared_ptr<ServerController> serverController = std::make_shared<ServerController>();     // The Server Controller because we need to send messages from the View to the Server
+    std::shared_ptr<ServerController> serverController;
     int currentPlayerIndex = 0;                             // Index of the current player in the vector of Players
     std::string gameSetup;                                  // Json formatted message indicated the setup of the current game
     int gameId;
@@ -39,7 +42,7 @@ private:
             occupiedHorizontalQuoridor = 7;
 
 public: 
-    ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
+//    ViewController(std::shared_ptr<ServerController> serverController, int nPlayers);
     ViewController(int nPlayers, int currentPlayerIndex, int gameId);       // Louis' Constructor
     ~ViewController() = default;
 
@@ -52,8 +55,8 @@ public:
 
 
     /* Setters */
-    virtual void setBoard(std::shared_ptr<Board> aBoard) override; 
-    virtual void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers) override; 
+     void setBoard(std::shared_ptr<Board> aBoard) ; 
+     void setPlayers(std::vector<std::shared_ptr<Player>> thePlayers) ; 
     
     /**
      * @brief Set the Game Setup object and send it to the server
@@ -78,7 +81,7 @@ public:
      */
     std::vector<std::vector<int>> getBoardAsIntMatrix();
 
-    virtual void startGame() override;
+     void startGame() ;
 
     /* ---- Sending messages to Server/Model ---- */
     /**
@@ -98,25 +101,25 @@ public:
      */
     void placeWall(int x, int y, int orientation);
 
-    virtual void registerPlayer(std::string username, std::string password) override;
-    virtual void logIn(std::string username, std::string password) override;
+     void registerPlayer(std::string username, std::string password) ;
+     void logIn(std::string username, std::string password) ;
 
-    virtual void saveGame(std::string username) override;
-    virtual void pauseGame(std::string username) override;
+     void saveGame(std::string username) ;
+     void pauseGame(std::string username) ;
 
     void sendInvite(std::string aFriend);
-    // virtual void joinGame(int gameId)  override;
+    //  void joinGame(int gameId)  ;
 
     void sendFriendRequest(std::string sender, std::string receiver);
-    virtual void checkLeaderBoard()  override;
+     void checkLeaderBoard()  ;
 
-    virtual void sendDirectMessage(std::string sender, std::string receiver, std::string msg) override;
-    virtual void sendGroupMessage(std::string sender, std::string msg, int gameId) override;
+     void sendDirectMessage(std::string sender, std::string receiver, std::string msg) ;
+     void sendGroupMessage(std::string sender, std::string msg, int gameId) ;
 
     void loadDirectMessages(std::string sender, std::string receiver);
     
     /* Booleans */
-    virtual bool isGameOver(bool over = false) override;
+     bool isGameOver(bool over = false) ;
 
     /**
      * @brief Checks wether a playerAction was valid or not
@@ -163,8 +166,8 @@ public:
     nlohmann::json getGroupMessage();
 
     // Booleans
-    virtual bool isDirectMessageReceived(bool received = false) override;
-    virtual bool isGroupMessageReceived(bool received = false) override;
+     bool isDirectMessageReceived(bool received = false) ;
+     bool isGroupMessageReceived(bool received = false) ;
     bool isLogInReceived(bool received = false);
     bool isRegisterReceived(bool received = false);
 

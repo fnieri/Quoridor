@@ -35,8 +35,9 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
-//#include "GameController.h"
-#include "ViewController.h"
+#include "GameController.h"
+//#include "ViewController.h"
+//#include "ServerController.h"
 
 using namespace ftxui;
 
@@ -50,8 +51,7 @@ struct CheckboxState {
  */
 class TerminalVue
 {
-    //    GameController *gameController = new GameController {2, 0, 1};
-    std::unique_ptr<ViewController> = new ViewController();
+    GameController *gameController = new GameController {2, 0, 1};
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -125,11 +125,12 @@ class TerminalVue
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 40;
     int rightSizeFriends = 70;
-    bool isLoggedIn = true; // change this to true to stay logged in
+    bool isLoggedIn = false; // change this to true to stay logged in
     bool isGameStarted = false;
     bool isCreatingGame = false;
     InputOption passwordOption;
     int depth = 0;
+    int currentGameId = 69;
 
     /**
      * @brief Checks if it's someone's turn
@@ -357,6 +358,20 @@ class TerminalVue
             return window(text(title), component->Render()) | flex;
         });
     }
+
+    void loadFriends();
+
+    void loadFriendChats();
+
+    void loadLeaderboard();
+
+    void registerUser();
+
+    void loadMessages();
+
+    void sendMessageGame(std::string message, int gameId);
+
+    void sendUserMessage(std::string message, std::string receiver);
 
 public:
     void run();

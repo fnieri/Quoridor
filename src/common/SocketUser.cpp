@@ -55,12 +55,12 @@ void SocketUser::send(const std::string &msg)
     std::lock_guard<std::mutex> guard {m_socketMutex};
 
     // Firt send the size of the data to be sent
-    auto sz {msg.size() + 1};
+    auto sz {msg.size()};
     if (m_socket.write_n(&sz, sizeof(sz)) < sizeof(sz))
         throw UnableToSend {};
 
     // Then the data itself
-    if (m_socket.write_n(msg.c_str(), sz + 1) < sz + 1)
+    if (m_socket.write_n(msg.c_str(), sz) < sz)
         throw UnableToSend {};
 }
 
@@ -74,10 +74,11 @@ std::string SocketUser::receive()
         throw UnableToRead {};
 
     // Then the data itself
-    auto buff = new char[sz];
+    auto buff = new char[sz + 1];
     if (m_socket.read_n(buff, sz) < sz)
         throw UnableToRead {};
 
+    buff[sz] = '\0';
     std::string ret {buff};
     delete[] buff;
 

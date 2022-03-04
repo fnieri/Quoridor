@@ -4,8 +4,6 @@
 
 #include "GameController.h"
 
-#include "../common/Point.h"
-
 GameController::GameController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
     , currentPlayerIndex(currentPlayerIndex)
@@ -23,6 +21,10 @@ GameController::GameController(int nPlayers, int currentPlayerIndex, int gameId)
         //        PlayerAction spawnPlayer {board, p, startPositions.at(i)};
         //        spawnPlayer.executeAction();
     }
+
+    mainController.registerObserver(this);
+
+    mainController.startHandling();
 }
 
 std::shared_ptr<Board> GameController::getBoard()
@@ -49,6 +51,8 @@ void GameController::movePlayer(int x, int y)
 {
     PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
     move.executeAction();
+    json to_send = SerializableMessageFactory::serializePawnAction(move, currentPlayerIndex);
+    mainController.getSyncAnswer(to_send.dump());
 }
 
 void GameController::placeWall(int x, int y, int orientation)
@@ -65,6 +69,8 @@ void GameController::placeWall(int x, int y, int orientation)
     }
     WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
     wallAction.executeAction();
+    json to_send = SerializableMessageFactory::serializeWallAction(wallAction, currentPlayerIndex);
+    mainController.sendAsync(to_send.dump());
 }
 
 std::vector<std::vector<int>> GameController::getBoardAsIntMatrix()
@@ -127,3 +133,93 @@ void GameController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIn
         boardIntMatrix.push_back(row);
     }
 };
+
+bool GameController::registerPlayer(std::string username, std::string password)
+{
+    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, username, password);
+    json answer = json::parse(mainController.getSyncAnswer(to_send.dump()));
+    return answer["action"] == toJsonString(ClientAuthAction::REGISTRATION) && answer["status"] == toJsonString(RequestStatus::SUCCESS);
+};
+
+bool GameController::logIn(std::string username, std::string password)
+{
+    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, username, password);
+    json answer = json::parse(mainController.getSyncAnswer(to_send.dump()));
+    return answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS);
+};
+
+void GameController::saveGame(std::string username)
+{
+    json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::PROPOSE_SAVE, username);
+    mainController.getSyncAnswer(to_send.dump());
+};
+
+void GameController::sendFriendRequest(std::string sender, std::string receiver)
+{
+    json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receiver);
+    mainController.sendAsync(to_send.dump());
+};
+
+void GameController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
+{
+    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg); // make a json formated message
+    mainController.sendAsync(to_send.dump());
+}
+
+void GameController::sendGroupMessage(std::string sender, std::string msg, int gId, std::vector<std::string> receivers)
+{
+    json to_send = SerializableMessageFactory::serializeInGameMessage(sender, receivers, msg, gId);
+    mainController.sendAsync(to_send.dump());
+}
+
+void GameController::update(QuoridorEvent)
+{
+    auto lastRequest {mainController.getLastAsyncRequest()}
+}
+
+// void GameController::processRequest(std::string serRequest)
+// {
+//     json request(json::parse(serRequest));
+
+//     if (request["domain"] == toJsonString(Domain::AUTH)) {
+//         processAuth(serRequest);
+
+//     } else if (request["domain"] == toJsonString(Domain::RELATIONS)) {
+//         processRelations(serRequest);
+
+//     } else if (request["domain"] == toJsonString(Domain::CHAT)) {
+//         processChatbox(serRequest);
+
+//     } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
+//         processResourceRequest(serRequest);
+
+//     } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
+//         processGameAction(serRequest);
+
+//     } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
+//         processGameSetup(serRequest);
+//     }
+// }
+
+// void GameController::processAuth(std::string message)
+// {
+// }
+
+// void GameController::processRelations(std::string message)
+// {
+// }
+
+// void GameController::processResourceRequest(std::string message)
+// {
+// }
+// void GameController::processChatbox(std::string message)
+// {
+// }
+
+// void GameController::processGameSetup(std::string message)
+// {
+// }
+
+// void GameController::processGameAction(std::string message)
+// {
+// }

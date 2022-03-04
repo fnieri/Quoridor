@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include "Event.h"
+#include "QuoridorEvent.h"
 
 #include <algorithm>
 #include <vector>
@@ -28,7 +28,7 @@ public:
      *
      * @param event event according to which the observer is to be updated
      */
-    virtual void update(Event) = 0;
+    virtual void update(QuoridorEvent) = 0;
 
     virtual ~Observer() noexcept = default;
 };
@@ -65,7 +65,7 @@ public:
      *
      * @param event event to pass over
      */
-    virtual void notifyObservers(Event = Event::Modified) const;
+    virtual void notifyObservers(QuoridorEvent = QuoridorEvent::Modified) const;
 
     virtual ~Subject() noexcept = default;
 

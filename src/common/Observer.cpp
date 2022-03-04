@@ -7,7 +7,7 @@
 
 #include "Observer.h"
 
-#include "Event.h"
+#include "QuoridorEvent.h"
 
 #include <algorithm>
 #include <vector>
@@ -28,7 +28,7 @@ void Subject::removeObserver(Observer *observer)
     m_observers.erase(std::remove(m_observers.begin(), m_observers.end(), observer), m_observers.end());
 }
 
-void Subject::notifyObservers(Event event) const
+void Subject::notifyObservers(QuoridorEvent event) const
 {
     for (auto &observer : m_observers)
         observer->update(event);

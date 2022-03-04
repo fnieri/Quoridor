@@ -1,24 +1,20 @@
 #include "ServerController.h"
-#include "Controller.h"
-#include "Board.h"
-#include "BoardComponent.h"
-#include "Player.h"
-#include "PlayerAction.h"
-#include "PlayerEnum.h"
 #include "../common/Point.h"
-#include "WallAction.h"
-#include "WallEnum.h"
-#include "../common/SerializableMessageFactory.h"
-#include "ServerBridge.h"
 
 #include <memory>
 #include <vector>
 
 using json = nlohmann::json;
 
-class Player;
+// class Player;
 
-ServerController::ServerController()
+// ServerController::ServerController()
+//     :
+//{
+//     serverBridge.startHandling();
+// }
+
+void ServerController::startHandling()
 {
     serverBridge.startHandling();
 }
@@ -38,7 +34,7 @@ void ServerController::setDict(std::map<PawnColors, std::shared_ptr<Player>> dic
     dictPlayer = dict_player;
 }
 
-void ServerController::setViewController(std::shared_ptr<ViewController> vController)
+void ServerController::setViewController(ViewController *vController)
 {
     viewController = vController;
 }
@@ -48,24 +44,23 @@ bool ServerController::isGameOver(bool over)
     return over;
 }
 
-
 /* GENERAL REQUEST SENDER */
 
 void ServerController::sendPlayerAction(PlayerAction action, int playerId)
 {
-    json to_send = SerializableMessageFactory::serializePawnAction(action, playerId);   
+    json to_send = SerializableMessageFactory::serializePawnAction(action, playerId);
     serverBridge.send(to_send);
 }
 
 void ServerController::sendWallAction(WallAction action, int playerId)
 {
-    json to_send = SerializableMessageFactory::serializeWallAction(action, playerId);  
+    json to_send = SerializableMessageFactory::serializeWallAction(action, playerId);
     serverBridge.send(to_send);
 }
 
 void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg);   // make a json formated message
+    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg); // make a json formated message
     serverBridge.send(to_send);
 }
 
@@ -82,7 +77,6 @@ void ServerController::sendDMChatBoxRequest(std::string sender, std::string rece
     serverBridge.send(to_send);
 }
 
-
 void ServerController::sendFriendRequest(std::string sender, std::string receiver)
 {
     json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receiver);
@@ -97,11 +91,11 @@ void ServerController::sendLeaderboardRequest()
 
 void ServerController::sendInvite(std::string aFriend)
 {
-    // json to_send = SerializableMessageFactory::serializeGameRequest(GameInvite::GAME_INVITE, friend); 
+    // json to_send = SerializableMessageFactory::serializeGameRequest(GameInvite::GAME_INVITE, friend);
     // serverBridge.send(to_send);
 }
 
-// send Game Join Request (matchmaking) 
+// send Game Join Request (matchmaking)
 /*
 void ServerController::joinGame(std::string gameSetup, int ELO, std::string username)
 {
@@ -115,7 +109,6 @@ void ServerController::acceptFriendInvite(std::string username)
     json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::ACCEPT_INVITE, username); // not implemented yet
     serverBridge.send(to_send);
 }
-
 
 // send register request
 void ServerController::sendRegisterRequest(std::string username, std::string password)
@@ -131,7 +124,6 @@ void ServerController::sendLogInRequest(std::string username, std::string passwo
     serverBridge.send(to_send);
 }
 
-
 void ServerController::sendSaveGameRequest(std::string username)
 {
     json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::PROPOSE_SAVE, username);
@@ -144,7 +136,6 @@ void ServerController::sendPauseRequest(std::string username)
     // serverBridge.send(to_send);
 }
 
-
 // Work 02/03
 // Deals with income from the server => sends it to the view
 
@@ -155,70 +146,70 @@ void ServerController::processRequest(std::string message)
     json msg = json::parse(msg);
 
     switch (msg["domain"]) {
-        case toJsonString(Domain::AUTH): 
+        case toJsonString(Domain::AUTH):
             processAuth(message);
-        case toJsonString(Domain::RELATIONS): 
+        case toJsonString(Domain::RELATIONS):
             processRelations(message);
-        case toJsonString(Domain::RESOURCE_REQUEST): 
+        case toJsonString(Domain::RESOURCE_REQUEST):
             processResourceRequest(message);
-        case toJsonString(Domain::IN_GAME_RELATED): 
+        case toJsonString(Domain::IN_GAME_RELATED):
             processGameAction(message);
-        case toJsonString(Domain::GAME_SETUP): 
+        case toJsonString(Domain::GAME_SETUP):
             processGameSetup(message);
-        case toJsonString(Domain::CHAT): 
+        case toJsonString(Domain::CHAT):
             processChatbox(message);
     }*/
 }
 
-void ServerController::processAuth(std::string message) 
+void ServerController::processAuth(std::string message)
 {
-    /*
-    switch (message["action"]) {
-        case toJsonString(ClientAuthAction::LOGIN):
-            logInReceipt(message);      // we have to send this to the view (either succesful or nah)
+        switmessage["action"]on "]) {
+            case toJsonString(ClientAuthAction::LOGIN)
+            : logInReceipt(message); // we have to send this to the view (either succesful or nah)
 
-        case toJsonString(ClientAuthAction::REGISTRATION):
-            registerReceipt(message);   // also this to the view
-    }
-    return json::parse(message);*/
+case toJsonString(ClientAuthAction::REGISTRATION):
+    registerReceipt(message); // also this to the view
+}
+return json::parse(message);
+* /
 }
 
-void ServerController::processRelations(std::string message) 
+void ServerController::processRelations(std::string message)
 {
     /*
     switch (message["action"]) {
         // case toJsonString(FriendAction::FRIEND_REQUEST):
-        //     sendFriendRequest(message);      
+        //     sendFriendRequest(message);
         case toJsonString(FriendAction::FRIEND_ACCEPT):
-            friendRequestReceipt(message);   
+            friendRequestReceipt(message);
         case toJsonString(FriendAction::FRIEND_REFUSE):
-            friendRequestReceipt(message);   
+            friendRequestReceipt(message);
         // case toJsonString(FriendAction::FRIEND_REMOVE):
-        //     removeFriend(message);   
+        //     removeFriend(message);
     }*/
 }
 
-void ServerController::processResourceRequest(std::string message) 
-{   
+void ServerController::processResourceRequest(std::string message)
+{
     /*
     // les ressources quon peut demander du serveur : FRIENDS_LIST, FRIEND_REQUESTS_SENT, FRIEND_REQUESTS_RECEIVED, CHATS, LEADERBOARD, GAME_IDS
-    // donc ici apres avoir demander au serveur on recoit la ressource quon renvoie a la vue 
-    
-    switch (message["data_type"]) {     
+    // donc ici apres avoir demander au serveur on recoit la ressource quon renvoie a la vue
+
+    switch (message["data_type"]) {
         case toJsonString(DataType::FRIENDS_LIST):
-            sendFriendsList(message);   
+            sendFriendsList(message);
         case toJsonString(DataType::FRIEND_REQUESTS_SENT):
-            sendfriendsRequestSentList(message);   
+            sendfriendsRequestSentList(message);
         case toJsonString(DataType::FRIEND_REQUESTS_RECEIVED):
-            sendfriendsRequestReceivedList(message);      
+            sendfriendsRequestReceivedList(message);
         // case toJsonString(DataType::CHATS):
-        //     sendChats(message); 
+        //     sendChats(message);
         //case toJsonString(DataType::GAME_IDS):
-        //    sendGameIds(message);   
+        //    sendGameIds(message);
     }*/
 }
 
-void ServerController::processChatbox(std::string message) 
+void ServerController::processChatbox(std::string message)
 {
     /*
     // the servers sends us a message received from friends
@@ -229,7 +220,6 @@ void ServerController::processChatbox(std::string message)
         receiveGroupMessage(message);
     }*/
 }
-
 
 void ServerController::processGameSetup(std::string message)
 {
@@ -244,7 +234,7 @@ void ServerController::processGameAction(std::string message)
             receiveDirectMessage(message);
         case toJsonString(JsonPlayerAction::MOVE_PAWN):
             receiveGroupMessage(message);
-    }  */ 
+    }  */
 }
 
 void ServerController::receiveGroupMessage(std::string msg)
@@ -286,7 +276,7 @@ void ServerController::sendfriendsRequestReceivedList(std::string msg)
 {
     viewController->sendfriendsRequestReceivedList(msg);
 }
- 
+
 // removeFriend
 
 // sendChats

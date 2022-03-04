@@ -31,19 +31,19 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-//    return gameController->isMoveValid(x, y);
+    return gameController->isMoveValid(x, y);
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-//    return gameController->isWallValid(x, y, wallOrientation);
+    return gameController->isWallValid(x, y, wallOrientation);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-//        gameController->updateBoardIntMatrix(boardIntMatrix);
+        gameController->updateBoardIntMatrix(boardIntMatrix);
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
         auto c = Canvas(200, 200);
@@ -126,13 +126,13 @@ auto TerminalVue::createCanvas()
 void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
-//    gameController->movePlayer(x, y);
+    gameController->movePlayer(x, y);
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
-//    gameController->placeWall(x, y, wallOrientation);
+    gameController->placeWall(x, y, wallOrientation);
 }
 
 auto TerminalVue::createChatInput()
@@ -265,6 +265,7 @@ auto TerminalVue::createChatRenderer()
         [&] {
             if (!message.empty()) {
                 addChatMessage(username, message);
+                sendMessageGame(message, currenGameId);
             }
         },
         buttonOption);
@@ -288,6 +289,7 @@ auto TerminalVue::createFriendsListRenderer()
         [&] {
             if (!messageToFriend.empty()) {
                 addChatFriendMessage(username, messageToFriend);
+                sendUserMessage(messageToFriend, friendsList[friend_selected]);
             }
         },
         buttonOption);
@@ -330,21 +332,18 @@ auto TerminalVue::createFriendUtilitariesRenderer()
         },
         buttonOption);
 
-    auto delButton = Button("Delete someone", [&] { depth = 1; });
-
     auto notifBox = Window("Notifications", Menu(&notifications, &notif_selected));
     auto utilitariesContainer = Container::Vertical({
         searchInput,
         addButton,
-        delButton,
         notifBox,
     });
 
-    return Renderer(utilitariesContainer, [&, searchInput, addButton, delButton, notifBox] {
+    return Renderer(utilitariesContainer, [&, searchInput, addButton, notifBox] {
         return vbox({
             hbox({text(">"), searchInput->Render(), addButton->Render()}),
             separator(),
-            delButton->Render() | center,
+
             notifBox->Render() | yflex,
         });
     });
@@ -371,7 +370,7 @@ auto TerminalVue::createRegisterRenderer()
     auto passwordInput = Input(&registerPassword, "Password", passwordOption);
     auto repeatPasswordInput = Input(&registerRepeatPassword, "Repeat password", passwordOption);
     auto registerButton = Button(
-        "Register", [] {}, &buttonOption);
+        "Register", [&] { registerUser(); }, &buttonOption);
     auto registerFieldsContainer = Container::Vertical({usernameInput, passwordInput, repeatPasswordInput, registerButton});
     return Renderer(registerFieldsContainer, [registerFieldsContainer] { return vbox({registerFieldsContainer->Render() | center}); });
 }
@@ -380,42 +379,45 @@ auto TerminalVue::createFriendsRenderer()
 {
     auto friendsListRenderer = createFriendsListRenderer();
     auto friendUtilitaries = createFriendUtilitariesRenderer();
-    auto resizeFriendTab = friendsListRenderer;
-    resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
+    // auto resizeFriendTab = friendsListRenderer;
+    // resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
+    // auto friendsContainer = Container::Horizontal({friendsListRenderer, friendUtilitaries});
 
     auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
     auto quitButton = Button("Cancel", [&] { depth = 0; });
     auto wantToDelete = Button("Delete", [&] { depth = 2; }); // color(Color::Red, text("Deletion Menu"))
+    auto delButton = Button("Delete someone", [&] { depth = 1; });
+    auto confirmDelete = Button("Confirm", [&] {
+        deleteFriend();
+        depth = 0;
+    }); // Close all dialogs
+    auto cancelDelete = Button("Cancel", [&] { depth = 1; }); // returns to the selection of a person to delete from friendsList
 
-    auto deleteConfirmation = Container::Vertical({
-        Button("Confirm",
-            [&] {
-                deleteFriend();
-                depth = 0;
-            }), // Close all dialogs
-        Button("Cancel", [&] { depth = 1; }), // returns to the selection of a person to delete from friendsList
+    auto friendContainer = Container::Vertical({
+        friendsListRenderer,
+        friendUtilitaries,
+        confirmDelete,
+        cancelDelete,
+        deleteSomeoneMenu,
+        wantToDelete,
+        quitButton,
+        delButton,
     });
 
-    auto friendContainer = Container::Vertical({resizeFriendTab, deleteConfirmation, deleteSomeoneMenu, wantToDelete, quitButton});
-
-    return Renderer(friendContainer, [&, resizeFriendTab, deleteConfirmation, deleteSomeoneMenu, wantToDelete, quitButton] {
-        if (depth == 1) {
-            return vbox({
-                       color(Color::Red, text("Deletion Menu")),
-                       separator(),
-                       deleteSomeoneMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border,
-                       wantToDelete->Render(),
-                       quitButton->Render(),
-                   });
-        } else if (depth == 2) {
-            return vbox({
-                       text("Are you sure to delete"),
-                       separator(),
-                       vbox(deleteConfirmation->Render()),
-                   });
-        }
-        return resizeFriendTab->Render();
-    });
+    return Renderer(
+        friendContainer, [&, friendsListRenderer, friendUtilitaries, confirmDelete, cancelDelete, deleteSomeoneMenu, wantToDelete, quitButton, delButton] {
+            Element v;
+            if (depth == 1) {
+                v = vbox(text("Delete a friend") | center, separator(),
+                    deleteSomeoneMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, wantToDelete->Render(),
+                    quitButton->Render());
+            } else if (depth == 2) {
+                v = vbox(text("Are you sure to delete") | center, separator(), confirmDelete->Render(), cancelDelete->Render());
+            } else {
+                v = delButton->Render() | center;
+            }
+            return hbox(friendsListRenderer->Render(), friendUtilitaries->Render(), v);
+        });
 }
 
 auto TerminalVue::createMainTabContainer()
@@ -468,9 +470,7 @@ auto TerminalVue::createFinalContainer()
 {
     auto mainContent = createMainRenderer();
 
-    return Renderer(mainContent, [mainContent] {
-        return mainContent->Render();
-    });
+    return Renderer(mainContent, [mainContent] { return mainContent->Render(); });
 }
 
 void TerminalVue::loginUser()
@@ -479,7 +479,8 @@ void TerminalVue::loginUser()
         return;
     }
     // interact with server
-    isLoggedIn = true;
+    isLoggedIn = gameController->logIn(username, password);
+    system("clear");
 }
 
 void TerminalVue::run()
@@ -517,10 +518,69 @@ void TerminalVue::deleteFriend()
     handleFriendDelete(friendsList[friend_selected]);
 }
 
+void TerminalVue::registerUser()
+{
+    if (registerPassword == registerRepeatPassword && !registerUsername.empty() && !registerPassword.empty()) {
+        if (gameController->registerPlayer(registerUsername, registerPassword)) {
+            isLoggedIn = true;
+            username = registerUsername;
+        }
+        system("clear");
+    }
+}
+
 void TerminalVue::handleFriendDelete(const std::string &friendUsername)
 {
+    // gameController->deleteFriend(friendUsername);
 }
 
 void TerminalVue::handleFriendAdd(const std::string &friendUsername)
 {
+    gameController->sendFriendRequest(friendUsername);
 }
+
+// void TerminalVue::handleFriendRequestAccept()
+// {
+
+// }
+
+void TerminalVue::loadFriends()
+{
+}
+
+void TerminalVue::loadFriendChats()
+{
+}
+
+void TerminalVue::loadLeaderboard()
+{
+}
+
+void TerminalVue::registerUser()
+{
+}
+
+void TerminalVue::loadMessages()
+{
+}
+
+void TerminalVue::sendMessageGame(std::string message, int gameId)
+{
+}
+
+void TerminalVue::sendUserMessage(std::string message, std::string receiver)
+{
+}
+
+// void TerminalVue::loadData()
+// {
+
+// }
+
+// void TerminalVue::loadGameData()
+// {}
+
+// void TerminalVue::loadFriends()
+// {
+//     friendsList = gameController->getFriends();
+// }

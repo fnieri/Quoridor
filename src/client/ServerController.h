@@ -9,9 +9,21 @@
 
 #pragma once
 
-#include "Controller.h"
+//#include "Controller.h"
 #include "ViewController.h"
 #include "ServerBridge.h"
+#include "Board.h"
+#include "Player.h"
+#include "src/common/Point.h"
+#include "WallAction.h"
+#include "../common/SerializableMessageFactory.h"
+#include "BoardComponent.h"
+#include "PlayerAction.h"
+#include "PlayerEnum.h"
+#include "ServerBridge.h"
+#include "WallEnum.h"
+#include "../common/SerializableMessageFactory.h"
+
 
 
 class ViewController;
@@ -23,12 +35,11 @@ class ServerController
     int nPlayers;                                       // The Number of Players
     std::vector<std::shared_ptr<Player>> players;       // A vector containing pointers to all the Players 
     std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;   // A map with Colors of a player's pawn and the corresponding Player
-    std::shared_ptr<ViewController> viewController;
+    ViewController *viewController;
     ServerBridge serverBridge{"localhost", 12345};  
 
 public:
-    ServerController();
-    ~ServerController() = default;
+    void startHandling();
 
     /* Setters */
     
@@ -43,7 +54,7 @@ public:
      */
     void setDict(std::map<PawnColors, std::shared_ptr<Player>> dict_play);
 
-    void setViewController(std::shared_ptr<ViewController> vController);
+    void setViewController(ViewController *viewController);
 
     /* ---- Sending Request TO The Server ---- */
     

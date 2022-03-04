@@ -8,7 +8,6 @@
 #pragma once
 
 #include "src/common/RequestHandler.h"
-/* #include "src/client/ServerController.h" */
 
 #include <sockpp/tcp_connector.h>
 

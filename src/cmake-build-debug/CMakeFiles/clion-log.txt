@@ -23,7 +23,7 @@ CMake Warning (dev) in CMakeLists.txt:
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
 -- Configuring done
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
+CMake Warning (dev) at client/CMakeLists.txt:48 (add_executable):
   Policy CMP0028 is not set: Double colon in target name means ALIAS or
   IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
   Use the cmake_policy command to set the policy and suppress this warning.
@@ -33,7 +33,7 @@ CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
   an ALIAS target is missing?
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
+CMake Warning (dev) at client/CMakeLists.txt:48 (add_executable):
   Policy CMP0028 is not set: Double colon in target name means ALIAS or
   IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
   Use the cmake_policy command to set the policy and suppress this warning.
@@ -43,7 +43,7 @@ CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
   ALIAS target is missing?
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
+CMake Warning (dev) at client/CMakeLists.txt:48 (add_executable):
   Policy CMP0028 is not set: Double colon in target name means ALIAS or
   IMPORTED target.  Run "cmake --help-policy CMP0028" for policy details.
   Use the cmake_policy command to set the policy and suppress this warning.
@@ -83,7 +83,7 @@ CMake Warning (dev) at client/CMakeLists.txt:2 (add_library):
   an ALIAS target is missing?
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:26 (add_executable):
+CMake Warning (dev) at client/CMakeLists.txt:48 (add_executable):
   Policy CMP0003 should be set before this line.  Add code such as
 
     if(COMMAND cmake_policy)

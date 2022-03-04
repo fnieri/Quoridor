@@ -254,6 +254,12 @@
 			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/GameController.cpp">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/GameController.h">
+			<Option target="_client"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Player.cpp">
 			<Option target="_client"/>
 			<Option target="_common"/>
@@ -269,22 +275,16 @@
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/PlayerAction.h">
 			<Option target="_client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerController.cpp">
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerBridge.cpp">
 			<Option target="_client"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerController.h">
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerBridge.h">
 			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/TerminalVue.cpp">
 			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/TerminalVue.h">
-			<Option target="_client"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ViewController.cpp">
-			<Option target="_client"/>
-		</Unit>
-		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ViewController.h">
 			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/WallAction.cpp">
@@ -302,39 +302,51 @@
 			<Option target="client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/AuthSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/AuthSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/BoardActionsSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/BoardActionsSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/ChatBoxSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/ChatBoxSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/FriendActionsSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/FriendActionsSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/GameRelatedActionsSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/GameRelatedActionsSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/GameSetupSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/GameSetupSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/JoinGame.cpp">
@@ -343,10 +355,42 @@
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/JoinGame.h">
 			<Option target="_common"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/AuthActions.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/ChatBoxActions.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/FriendActions.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/GameActions.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/ObjectExchanges.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Actions/PlayerActions.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/DataTypes.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Domain.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Modes/GameModes.h">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/MessageEnums/Status.h">
+			<Option target="_client"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/ObjectExchangesSerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/ObjectExchangesSerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/Observer.cpp">
@@ -356,27 +400,38 @@
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/Point.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/Point.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/RequestHandler.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/RequestHandler.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/Serializable.h">
+			<Option target="_client"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/SerializableMessageFactory.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/SerializableMessageFactory.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/SocketUser.cpp">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/SocketUser.h">
+			<Option target="_client"/>
 			<Option target="_common"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/Stringable.cpp">
