@@ -39,11 +39,11 @@ void GameHandler::setConfiguration(const std::string &configuration)
     m_configuration = configuration;
 
     auto config(json::parse(configuration));
-
+    auto players = config.at("player");
     m_players.clear();
-    for (auto &i : config["players_username"])
-        addPlayer(i);
-
+    for (auto &player: players) {
+        addPlayer(player.at("username").get<std::string>()); // Add player by its username
+    }
     m_confirmedPlayers.fill(false);
 }
 

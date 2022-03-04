@@ -1,3 +1,12 @@
+/**
+* @file FriendActionsSerializableMessageFactory.h
+* @author Francesco
+* @brief Factory methods for friendActions serialized messages
+* @date 2022-03-04
+*
+ */
+
+
 #include "FriendActionsSerializableMessageFactory.h"
 
 #include "MessageEnums/Domain.h"

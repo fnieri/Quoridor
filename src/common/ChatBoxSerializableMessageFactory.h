@@ -19,12 +19,13 @@ public:
     /**
      * @brief Serialize message being sent in a match
      *
-     * @param username Username of sender
-     * @param message Message of sender
+     * @param sender username of sender
+     * @param receivers
      * @return nlohmann::json as such
      * {
-     *  "action" : "send_message",
+     *  "action" : "in_game_message",
      *  "sender" : "sox",
+     *  "receivers" : ["nobody", "but", "me"],
      *  "message" : "message",
      *  "game_id" : 123,
      * }

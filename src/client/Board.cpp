@@ -1,3 +1,12 @@
+/**
+* @file Board.cpp
+* @author Nargis, Lèo, Anne-Marie, Francesco
+* @brief Class representing a Board in a game
+* @date 2022-03-04
+*
+ */
+
+
 #include "Board.h"
 #include "BoardComponent.h"
 #include "Cell.h"
@@ -356,17 +365,20 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
 json Board::serialized()
 {
     json wallArray = json::array(), playerArray = json::array();
-    int NOfPlayers;
+    int NOfPlayers = 0;
     for (int i = 0; i < MATRIX_SIZE; i++) {
         for (int j = 0; j < MATRIX_SIZE; j++) {
-            if (matrix.at(i).at(j)) {
-                if (matrix.at(i).at(j)->isOccupied()) {
+            if (matrix.at(i).at(j)) { // Check if current looped boardComponent is non nullptr
+                if (matrix.at(i).at(j)->isOccupied()) { // Someone or a wall is in a corridor
                     if (isCorridor({i, j})) {
 
                         WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
                         json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
                         wallArray.push_back(wallJson);
-                    } else if (isCell({i, j})) {
+
+                    }
+                    // Case where the cell is occupied by a Player
+                    else if (isCell({i, j})) {
                         NOfPlayers++;
                         std::shared_ptr<Player> currentPlayer = std::dynamic_pointer_cast<Cell>(matrix.at(i).at(j))->getPlayer();
                         // Get informations about player and serialize it
@@ -378,7 +390,8 @@ json Board::serialized()
                             {"remaining_walls", currentPlayerNWalls}, {"username", currentPlayerUsername},
                             {"finish_line", static_cast<int>(currentFinishLine)}};
                         playerArray.push_back(playerJson);
-                    } else {
+                    }
+                    else {
                         // This only concerns placement between 4 player cells
                         WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
                         json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};

@@ -1,3 +1,12 @@
+/**
+* @file Board.h
+* @author Nargis, Lèo, Anne-Marie, Francesco
+* @brief Class representing a Board in a game
+* @date 2022-03-04
+*
+*/
+
+
 #pragma once
 
 #include "../common/Point.h"
@@ -291,7 +300,16 @@ public:
 
     ~Board();
 
+    /**
+     * @brief Serialize player positions, wall positions and number of players in a board
+     * @return nlohmann::json Serialized json of current Board
+     */
     nlohmann::json serialized() override;
 
+    /**
+     * @brief Construct board from a serialized json of a Board passed as string
+     * @param serializedBoard Board->serialized() as string
+     *
+     */
     void deserialized(const std::string &serializedBoard);
 };

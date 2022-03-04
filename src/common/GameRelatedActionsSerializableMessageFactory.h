@@ -1,3 +1,12 @@
+/**
+* @file GameRelatedActionsSerializableMessageFactory.h
+* @author Francesco Nieri
+* @brief Factory methods for gameRelated serialized messages
+* @date 2022-03-04
+*
+ */
+
+
 #pragma once
 
 #include "MessageEnums/Actions/GameActions.h"
@@ -32,7 +41,28 @@ public:
      */
     static nlohmann::json serializeInGameRelatedRequest(GameAction gameAction, const std::string &username);
 
+    /**
+     * @brief Serialize a game starting up based on a configuration
+     * @param gameID id of new game
+     * @param configuration json configuration of new game
+     * @return  serialied json of request as such
+     * {
+     * {"action", "start_game},
+     * {"domain", "in_game_related"},
+     * {"configuration", **json config**},
+     * {"game_id", 123}
+     * }
+     */
     static nlohmann::json serializeGameStarted(int gameID, nlohmann::json configuration);
-
+    /**
+     * @brief Serialize a game ending
+     * @param gameID id of ending game
+     * @return serialized json as such
+     * {
+     * {"action", "end_game"},
+     * {"domain", "in_game_related"},
+     * {"game_id", 123}
+     * }
+     */
     static nlohmann::json serializeGameEnded(int gameID);
 };
