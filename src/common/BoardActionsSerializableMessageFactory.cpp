@@ -1,9 +1,9 @@
 /**
- * @file BoardActionsSerializableMessageFactory.cpp
- * @author Francesco Nieri
- * @date 2022-02-21
- *
- */
+* @file BoardActionsSerializableMessageFactory.h
+* @author Francesco Nieri
+* @brief MessageFactory for Player userActions
+* @date 2022-02-19
+*/
 
 #include "BoardActionsSerializableMessageFactory.h"
 

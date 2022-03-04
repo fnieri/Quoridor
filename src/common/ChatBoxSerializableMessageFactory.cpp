@@ -1,3 +1,12 @@
+/**
+* @file ChatBoxSerializableMessageFactory.h
+* @author Francesco
+* @brief Factory methods for chatbox serialized messages
+* @date 2022-02-17
+*
+*/
+
+
 #include "ChatBoxSerializableMessageFactory.h"
 #include "MessageEnums/Domain.h"
 

@@ -13,7 +13,7 @@
 #include "src/common/SerializableMessageFactory.h"
 #include "src/server/ChatBox.h"
 
-#include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
+#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <thread>

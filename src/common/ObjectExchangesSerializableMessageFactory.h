@@ -22,6 +22,7 @@ public:
      * @return json of the request as such
      * {
      * "action" : "object_request",
+     * "domain" : "resource_request",
      * "data_type" : "leaderboard | friend_list ...",
      * }
      */
@@ -32,6 +33,7 @@ public:
      * @return json of the request as such
      * {
      * "action" : "object_answer",
+     * "domain" : "resource_request"
      * "data_type" : "leaderboard | friend_list",
      * "serialized_data" : "json_serialized_object"
      * }
@@ -44,12 +46,35 @@ public:
      * @return json of the request as such
      * {
      * "action" : "status_transmission",
+     * "domain" : "status_transmission",
      * "status" : "success | failure"
      * }
      */
     static nlohmann::json serializeStatusTransmission(RequestStatus requestStatus);
-
+    /**
+     * @brief serialize a request to get a specific chat
+     * @param requester requester
+     * @param receiver receiver
+     * @return json of request as such
+     * {
+     * {"action", "object_request"},
+     * {"domain", "resource_request"},
+     * {"data_type", "chats"},
+     * {"sender", "flm"},
+     * {"receiver", "de_doc"},
+     * }
+     */
     static nlohmann::json serializeFriendChatRequest(const std::string &requester, const std::string &receiver);
-
+    /**
+     * @brief get request to game corresponding to gameID
+     * @param gameID gameId
+     * @return json of request as such
+     * {
+     * {"action", "object_request"},
+     * {"domain", "resource_request"},
+     * {"data_type", "game_ids"},
+     * {"game_id", 123123}
+     * }
+     */
     static nlohmann::json serializeRequestGameID(int gameID);
 };

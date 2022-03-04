@@ -43,6 +43,10 @@ public:
     UserList getFriendList() const noexcept;
     UserList getFriendRequestsSent() const noexcept;
     UserList getFriendRequestsReceived() const noexcept;
+    /**
+     * @brief Get cached IDs to which user is bound on DataBase
+     * @return m_cachedGameIDs games bound to user
+     */
     std::vector<int> getGameIDs() const noexcept;
 
     /**

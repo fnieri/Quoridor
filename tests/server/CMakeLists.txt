@@ -10,5 +10,5 @@ set(${test_suite}
 
 add_executable(${test_suite} ${${test_suite}})
 add_test(NAME ${test_suite} COMMAND ${test_suite})
-target_link_libraries(${test_suite} PRIVATE catch_main Catch2::Catch2 ${PREFIX}_server sockpp bsoncxx_shared mongocxx_shared)
+target_link_libraries(${test_suite} PRIVATE catch_main Catch2::Catch2 ${PREFIX}_server sockpp pthread bsoncxx_shared mongocxx_shared)
 
