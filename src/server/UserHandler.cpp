@@ -38,7 +38,6 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
 {
 }
 
-// TODO: Replace m_isFinished with UserSocket impl
 // TODO: add function to run when client is disconnected
 void UserHandler::handleRequests()
 {
@@ -164,9 +163,8 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     /*     data = json{m_userHandled->getGameIDs()}; */
     /* } */
 
-    // TODO: waiting serialize
-    /* auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data)}; */
-    /* send(answer); */
+    auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data).dump()};
+    send(answer);
 }
 
 void UserHandler::processGameSetup(const std::string &serRequest)
