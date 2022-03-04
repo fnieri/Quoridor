@@ -5,4 +5,5 @@ CPMAddPackage(
     OPTIONS
     "ENABLE_TESTS OFF"
     "BUILD_VERSION r3.7.0"
+    "CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/build/garbage/mongo-cxx-driver"
 )
