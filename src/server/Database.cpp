@@ -105,8 +105,8 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
     if (maybeResult) {
         // get password from user collection
         bsoncxx::document::view view = maybeResult->view();
-        std::string dbPassword = view["password"].get_utf8().value.to_string();
-        std::string saltKey = view["salt_key"].get_utf8().value.to_string();
+        std::string dbPassword = view["password"].get_string().value.to_string();
+        std::string saltKey = view["salt_key"].get_string().value.to_string();
 
         // compare password
         if (PasswordEncrypter::compareHash(password, saltKey, dbPassword)) {
@@ -147,7 +147,7 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
             if (maybeFriendResult) {
                 // add friend name to friend vector
                 bsoncxx::document::view friendView = maybeFriendResult->view();
-                friends.push_back(friendView["username"].get_utf8().value.to_string());
+                friends.push_back(friendView["username"].get_string().value.to_string());
             }
             i++;
         }
@@ -173,7 +173,7 @@ std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::strin
             if (maybeFriendResult) {
                 // add friend name to friend vector
                 bsoncxx::document::view friendView = maybeFriendResult->view();
-                sentFriendRequests.push_back(friendView["username"].get_utf8().value.to_string());
+                sentFriendRequests.push_back(friendView["username"].get_string().value.to_string());
             }
             i++;
         }
@@ -199,7 +199,7 @@ std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::s
             if (maybeFriendResult) {
                 // add friend name to friend vector
                 bsoncxx::document::view friendView = maybeFriendResult->view();
-                receivedFriendRequests.push_back(friendView["username"].get_utf8().value.to_string());
+                receivedFriendRequests.push_back(friendView["username"].get_string().value.to_string());
             }
             i++;
         }
