@@ -47,19 +47,22 @@ void UserHandler::handleRequests()
             if (hasReadActivity(1)) {
                 auto serRequest {receive()};
 
+                std::cerr << "Received : " << serRequest << m_userHandled->getUsername() << std::endl;
+
                 // Do not continue if the thread was terminated during or after the receive
                 if (m_isFinished || m_wasTerminated)
                     break;
 
                 processRequest(serRequest);
-
             }
         }
         // Client was disconnected
         // FIXME: unable to send may be thrown by another user
         catch (UnableToRead &) {
+            std::cerr << "Unable to read from " << m_userHandled->getUsername();
             m_isFinished = true;
         } catch (UnableToSend &) {
+            std::cerr << "Unable to send from " << m_userHandled->getUsername();
             m_isFinished = true;
         }
     }
@@ -79,14 +82,10 @@ void UserHandler::processRequest(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
-    std::cerr << request << std::endl << toJsonString(Domain::RELATIONS);
-    /* sleep(2); */
-
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
-        std::cerr << "in relations";
         processRelations(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
@@ -115,7 +114,6 @@ void UserHandler::processAuth(const std::string &serRequest)
     // Login was successful, bind the connection to its username
     if (answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS)) {
         m_userHandled->bindToUsername(request["username"]);
-        std::cerr << "in success" << isLoggedIn();
         m_userHandled->syncWithDB();
     }
 
@@ -236,6 +234,8 @@ void UserHandler::relayMessage(const std::string &serRequest)
 
     /* } */
 
+    std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
+
     send(serRequest);
 }
 
@@ -302,6 +302,7 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     }
     // In case the target disconnects during the writing
     catch (UnableToRead &) {
+
         // Should always be valid but who knows, better avoid them segfaults !
         if (receiver) {
             receiver->terminate();
