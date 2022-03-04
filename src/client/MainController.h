@@ -9,9 +9,10 @@
 
 #include "src/common/Observer.h"
 #include "src/common/RequestHandler.h"
-#include <sockpp/tcp_connector.h
 
-#include <queue>>
+#include <sockpp/tcp_connector.h>
+
+#include <queue>
 
 class MainController : public RequestHandler, public Subject
 {
@@ -20,6 +21,8 @@ private:
 
     bool m_isExchangingSynchronously;
     std::mutex m_receivingMutex;
+
+    std::mutex m_lastReqMutex;
 
     void handleRequests() override;
 

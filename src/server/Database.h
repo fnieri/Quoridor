@@ -18,11 +18,11 @@
 
 namespace database
 {
-const char kUsername[] {"louis"};
-constexpr char kPassword[] {"randompass456"};
+const char kUsername[] {"boris"};
+constexpr char kPassword[] {"pass1234"};
 // need to actually use username and password
-constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-constexpr char kDatabaseName[] {"testing"};
+constexpr char kMongoDbUri[] {"mongodb+srv://boris:pass1234@quoridor.2lgku.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
+constexpr char kDatabaseName[] {"Quoridor"};
 constexpr char kCollectionName[] {"TestCollection"};
 constexpr char kUserCollectionName[] {"UserCollection"};
 }

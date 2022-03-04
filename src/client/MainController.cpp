@@ -3,8 +3,8 @@
 #include "src/common/Exceptions.h"
 #include "src/common/Observer.h"
 #include "src/common/QuoridorEvent.h"
-#include <iostream>
 
+#include <iostream>
 #include <thread>
 
 std::string MainController::getSyncAnswer(const std::string &serRequest)
@@ -50,7 +50,10 @@ void MainController::handleRequests()
                     if (!isOpen())
                         break;
 
+                    m_lastReqMutex.lock();
                     m_lastRequests.push(serRequest);
+                    m_lastReqMutex.unlock();
+
                     notifyObservers();
                 }
             }
@@ -68,5 +71,10 @@ void MainController::handleRequests()
 
 std::string MainController::getLastAsyncRequest()
 {
-    return m_lastRequests.pop();
+    std::lock_guard<std::mutex> guard {m_lastReqMutex};
+
+    auto lastReq {m_lastRequests.front()};
+    m_lastRequests.pop();
+
+    return lastReq;
 }
