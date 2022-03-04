@@ -157,10 +157,39 @@ SCENARIO("Resources exchange")
     DatabaseHandler::deleteAccount("foo");
 
     TestConnector foo {"localhost", 12345};
-    createAndLogUser(foo, "foo", "12345");
 
-    /* auto eloReq {SerializableMessageFactory::serializeRequestExchange(DataType::).dump()}; */
-    /* auto resReq {SerializableMessageFactory::serializeRequestExchange(DataType::FRIENDS_LIST).dump()}; */
+    // The creation and the log in are done in two steps because the elo
+    // is cached on the server and is updated on certain occasions, including
+    // the log in. Setting the elo in the DB after the login, results in
+    // incorrect data because not updated on the server (only in the DB).
+    GIVEN("ELO")
+    {
+        createUser(foo, "foo", "12345");
+
+        DatabaseHandler::setELO("foo", 666);
+        REQUIRE(DatabaseHandler::getELO("foo") == 666);
+
+        logUser(foo, "foo", "12345");
+
+        auto eloReq {SerializableMessageFactory::serializeRequestExchange(DataType::ELO).dump()};
+        auto eloAns {getAnswer(foo, eloReq)};
+        auto elo {getResourceFromAnswer<int>(eloAns)};
+
+        REQUIRE(elo == 666);
+    }
+
+    GIVEN("Leaderboard")
+    {
+        createAndLogUser(foo, "foo", "12345");
+
+        DatabaseHandler::setELO("foo", 666);
+        REQUIRE(DatabaseHandler::getELO("foo") == 666);
+
+        auto leadReq {SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD).dump()};
+        auto leadAns {getAnswer(foo, leadReq)};
+    }
+
+    sleep(1);
 }
 
 SCENARIO("Relations")
