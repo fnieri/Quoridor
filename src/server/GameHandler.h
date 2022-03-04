@@ -42,8 +42,8 @@ public:
 
     void setConfiguration(const std::string &);
     void addPlayer(const std::string &);
-    void confirmPlayer(const std::string &);
-    void cancelPlayer(const std::string &);
+    void playerJoined(const std::string &);
+    void playerQuit(const std::string &);
     int numberOfConfirmedPlayers() const;
 
     bool areAllPlayersConfirmed() const;
