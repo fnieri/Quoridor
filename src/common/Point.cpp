@@ -45,6 +45,11 @@ bool Point::operator==(const Point &rhs) const noexcept
     return x() == rhs.x() && y() == rhs.y();
 }
 
+bool Point::operator!=(const Point &rhs) const noexcept
+{
+    return x() != rhs.x() || y() != rhs.y();
+}
+
 json Point::serialized()
 {
     json pointJson = {{"x", x()}, {"y", y()}};

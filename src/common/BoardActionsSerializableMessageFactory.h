@@ -3,8 +3,6 @@
  * @author Francesco Nieri
  * @brief MessageFactory for Player userActions
  * @date 2022-02-19
- *
- *
  */
 
 #pragma once

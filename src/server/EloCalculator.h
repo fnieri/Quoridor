@@ -1,5 +1,3 @@
-#pragma once
-
 /**
  * @file EloCalculator.h
  * @author Francesco Nieri
@@ -10,8 +8,8 @@
  *
  *
  */
+#pragma once
 
-/* #include "../common/User.h" */
 #include <vector>
 
 class EloCalculator
