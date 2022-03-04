@@ -28,7 +28,6 @@ inline const char *toJsonOutput(WallOrientation w)
  * @returns WallOrientation
  */
 
-
 /*WallOrientation jsonToOrientation(std::string jsonOrientation)
 {
     // Use if-else because switch can't be used on strings

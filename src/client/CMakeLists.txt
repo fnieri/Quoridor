@@ -4,10 +4,9 @@ add_library(${PREFIX}_client
     BoardComponent.cpp
     Cell.cpp
     Corridor.cpp
-    Point.cpp
-    Stringable.cpp
     Player.cpp
     PlayerAction.cpp
+    ServerBridge.cpp
     WallAction.cpp
     WallEnum.h
     PlayerAction.h
@@ -17,7 +16,9 @@ add_library(${PREFIX}_client
 
 target_link_libraries(${PREFIX}_client
     PUBLIC
-        nlohmann_json 
+        nlohmann_json
+        sockpp
+        pthread
 )
 
 target_include_directories(${PREFIX}_client
@@ -33,5 +34,6 @@ add_executable(client
 target_link_libraries(client
     PRIVATE
         ${PREFIX}_client
+        ${PREFIX}_common
 )
 target_compile_features(client PRIVATE cxx_std_17)

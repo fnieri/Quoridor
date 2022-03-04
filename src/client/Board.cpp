@@ -1,13 +1,24 @@
+/**
+ * @file Board.cpp
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
+ */
+
 #include "Board.h"
 #include "BoardComponent.h"
 #include "Cell.h"
 #include "Corridor.h"
 #include "Player.h"
-#include "Point.h"
+#include "src/common/Point.h"
+
 
 #include <iostream>
 #include <memory>
 #include <stack>
+
+using json = nlohmann::json;
 
 Board::Board()
 {
@@ -295,7 +306,7 @@ int Board::getCellSize()
 void Board::debugPrint()
 {
     auto m = getRotatedBoardMatrix(FinishLine::North);
-    
+
     for (int y = 0; y < MATRIX_SIZE; y++) {
         for (int x = 0; x < MATRIX_SIZE; x++) {
             if (isCell({x, y})) {
@@ -337,15 +348,88 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
             // copy over all the board components while rotating the matrix
             Point p = getRotatedMatrixPosition(Point {x, y}, rotation);
             rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
-            
+
             // make sure to rotate the direction of the walls when needed
             if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) {
                 auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y()));
-                
+
                 wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal);
             }
         }
     }
 
     return rotated;
+}
+
+json Board::serialized()
+{
+    json wallArray = json::array(), playerArray = json::array();
+    int NOfPlayers = 0;
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+            if (matrix.at(i).at(j)) { // Check if current looped boardComponent is non nullptr
+                if (matrix.at(i).at(j)->isOccupied()) { // Someone or a wall is in a corridor
+                    if (isCorridor({i, j})) {
+
+                        WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
+                        json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
+                        wallArray.push_back(wallJson);
+
+                    }
+                    // Case where the cell is occupied by a Player
+                    else if (isCell({i, j})) {
+                        NOfPlayers++;
+                        std::shared_ptr<Player> currentPlayer = std::dynamic_pointer_cast<Cell>(matrix.at(i).at(j))->getPlayer();
+                        // Get informations about player and serialize it
+                        PawnColors currentPlayerColor = currentPlayer->getColor();
+                        int currentPlayerNWalls = currentPlayer->nWalls();
+                        std::string currentPlayerUsername = currentPlayer->getUsername();
+                        FinishLine currentFinishLine = currentPlayer->getFinishLine();
+                        json playerJson = {{"player_id", static_cast<int>(currentPlayerColor)}, {"player_position", Point {i, j}.serialized()},
+                            {"remaining_walls", currentPlayerNWalls}, {"username", currentPlayerUsername},
+                            {"finish_line", static_cast<int>(currentFinishLine)}};
+                        playerArray.push_back(playerJson);
+                    } else {
+                        // This only concerns placement between 4 player cells
+                        WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
+                        json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
+                        wallArray.push_back(wallJson);
+                    }
+                }
+            }
+        }
+    }
+    json boardJson = {{"walls", wallArray}, {"players", playerArray}, {"n_of_players", NOfPlayers}};
+    return boardJson;
+}
+
+void Board::deserialized(const std::string &serializedBoard)
+{
+    auto boardJson(json::parse(serializedBoard));
+    json players = boardJson.at("players"), walls = boardJson.at("walls");
+
+    for (auto &player : players) {
+        // Build each player from serialized information
+        PawnColors currentColor = static_cast<PawnColors>(player.at("player_id").get<int>());
+        int currentPlayerNWalls = player.at("remaining_walls").get<int>();
+        int x = player.at("player_position").at("x").get<int>(), y = player.at("player_position").at("y").get<int>();
+        Point currentPosition {x, y};
+        FinishLine currentFinishLine = static_cast<FinishLine>(player.at("finish_line").get<int>());
+        std::string currentPlayerUsername = player.at("username").get<std::string>();
+        std::shared_ptr<Player> newPlayer
+            = std::make_shared<Player>(currentColor, currentPosition, currentPlayerNWalls, currentFinishLine, currentPlayerUsername);
+        spawnPlayer(newPlayer);
+    }
+
+    for (auto &wall : walls) {
+        // Build wall from serialized information
+        WallOrientation currentOrientation
+            = wall.at("wall_orientation").get<std::string>() == "wall_vertical" ? WallOrientation::Vertical : WallOrientation::Horizontal;
+        int x = wall.at("wall_position").at("x").get<int>(), y = wall.at("wall_position").at("y").get<int>();
+
+        auto corridor = std::make_shared<Corridor>(currentOrientation);
+        corridor->placeWall();
+
+        matrix.at(x).at(y) = corridor;
+    };
 }

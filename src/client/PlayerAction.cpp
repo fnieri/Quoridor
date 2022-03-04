@@ -1,3 +1,12 @@
+/**
+ * @file PlayerAction.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a potential pawn-move action to be performed by a Player.
+ * @date 2022-03-04
+ *
+ * @see WallAction for the analogous action for wall placement.
+ */
+
 #include "PlayerAction.h"
 
 #include "PlayerEnum.h"

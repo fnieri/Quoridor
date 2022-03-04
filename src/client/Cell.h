@@ -1,3 +1,11 @@
+/**
+ * @file Cell.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a Cell in a Board which can be occupied by a Player
+ * @date 2022-03-04
+ *
+ */
+
 #pragma once
 
 #include "BoardComponent.h"
@@ -39,7 +47,7 @@ public:
      * @returns std::shared_ptr<Player>
      */
     std::shared_ptr<Player> getPlayer();
-
+    PawnColors getPlayerColor();
     /**
      * Removes the Player currently occupying the cell.
      */

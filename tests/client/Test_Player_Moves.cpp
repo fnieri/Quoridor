@@ -1,4 +1,3 @@
-
 #include <catch2/catch.hpp>
 
 #include "src/client/Board.h"
@@ -11,7 +10,7 @@
 TEST_CASE("Valid Player Move")
 {
     std::shared_ptr<Board> b(new Board {});
-    std::shared_ptr<Player> player(new Player {PawnColors::Blue, Point {2, 3}, 99, FinishLine::North});
+    std::shared_ptr<Player> player(new Player {PawnColors::Blue, Point {2, 3}, 99, FinishLine::North, "a"});
 
     SECTION("Basic move")
     {
@@ -30,7 +29,7 @@ TEST_CASE("Valid Player Move")
     }
     SECTION("Jump Move with free way")
     {
-        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North, "b"});
 
         PlayerAction a5 {b, player, {3, 3}};
         PlayerAction a6 {b, player2, {3, 2}};
@@ -46,7 +45,7 @@ TEST_CASE("Valid Player Move")
     }
     SECTION("Diagonal move")
     {
-        std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {4, 2}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {4, 2}, 99, FinishLine::North, "c"});
         PlayerAction a8 {b, player2, {3, 2}};
         PlayerAction a9 {b, player, {3, 3}};
         REQUIRE(a8.isActionValid());
@@ -76,7 +75,7 @@ TEST_CASE("Valid Player Move")
             REQUIRE(a12.isActionValid());
             REQUIRE_FALSE(a11.isActionValid());
 
-            std::shared_ptr<Player> player3(new Player {PawnColors::Blue, Point {5, 3}, 99, FinishLine::North});
+            std::shared_ptr<Player> player3(new Player {PawnColors::Blue, Point {5, 3}, 99, FinishLine::North, "d"});
 
             PlayerAction a16 {b, player3, {4, 3}};
             REQUIRE(a16.isActionValid());
@@ -89,7 +88,7 @@ TEST_CASE("Valid Player Move")
 TEST_CASE("Player Move not valid")
 {
     std::shared_ptr<Board> b(new Board {});
-    std::shared_ptr<Player> player(new Player {PawnColors::Blue, Point {2, 3}, 99, FinishLine::North});
+    std::shared_ptr<Player> player(new Player {PawnColors::Blue, Point {2, 3}, 99, FinishLine::North, "e"});
 
     SECTION("Basic Move : invalid")
     {
@@ -106,15 +105,15 @@ TEST_CASE("Player Move not valid")
             REQUIRE(!a2.isActionValid());
         }
 
-        SECTION("Player doesn't move") 
+        SECTION("Player doesn't move")
         {
-            PlayerAction a3 {b, player, {2,3}};
+            PlayerAction a3 {b, player, {2, 3}};
             REQUIRE(!a3.isActionValid());
         }
-        
+
         SECTION("Move to an occupied cell")
         {
-            std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 3}, 99, FinishLine::North});
+            std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 3}, 99, FinishLine::North, "w"});
             PlayerAction a3 {b, p, {1, 3}};
             PlayerAction a4 {b, player, {1, 3}};
             REQUIRE(a3.isActionValid());
@@ -135,7 +134,7 @@ TEST_CASE("Player Move not valid")
     SECTION("Jump move : invalid")
     {
 
-        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Yellow, Point {4, 2}, 99, FinishLine::North, "t"});
 
         PlayerAction a5 {b, player, {3, 3}}; // Normal position = destination
         PlayerAction a6 {b, player2, {3, 2}};
@@ -169,7 +168,7 @@ TEST_CASE("Player Move not valid")
         }
         SECTION("Jump into occupied cell")
         {
-            std::shared_ptr<Player> player3(new Player {PawnColors::Green, Point {4, 1}, 99, FinishLine::North});
+            std::shared_ptr<Player> player3(new Player {PawnColors::Green, Point {4, 1}, 99, FinishLine::North, "g"});
             PlayerAction a12 {b, player3, {3, 1}};
             REQUIRE(a12.isActionValid());
             REQUIRE(a12.executeAction());
@@ -180,7 +179,7 @@ TEST_CASE("Player Move not valid")
 
     SECTION("Diagonal move : not valid")
     {
-        std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {5, 3}, 99, FinishLine::North});
+        std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {5, 3}, 99, FinishLine::North, "h"});
         PlayerAction a14 {b, player2, {4, 3}};
         PlayerAction a15 {b, player, {3, 3}};
         REQUIRE(a14.isActionValid());
@@ -211,10 +210,10 @@ TEST_CASE("Player Move not valid")
 TEST_CASE("Test isGameOver")
 {
     std::shared_ptr<Board> b(new Board {});
-    std::shared_ptr<Player> player1(new Player {PawnColors::Yellow, Point {5, 2}, 99, FinishLine::North});
-    std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {3, 6}, 99, FinishLine::South});
-    std::shared_ptr<Player> player3(new Player {PawnColors::Blue, Point {6, 5}, 99, FinishLine::East});
-    std::shared_ptr<Player> player4(new Player {PawnColors::Purple, Point {2, 3}, 99, FinishLine::West});
+    std::shared_ptr<Player> player1(new Player {PawnColors::Yellow, Point {5, 2}, 99, FinishLine::North, "h"});
+    std::shared_ptr<Player> player2(new Player {PawnColors::Green, Point {3, 6}, 99, FinishLine::South, "w"});
+    std::shared_ptr<Player> player3(new Player {PawnColors::Blue, Point {6, 5}, 99, FinishLine::East, "h"});
+    std::shared_ptr<Player> player4(new Player {PawnColors::Purple, Point {2, 3}, 99, FinishLine::West, "a"});
 
     PlayerAction a1 {b, player1, {5, 1}};
     PlayerAction a2 {b, player2, {3, 7}};

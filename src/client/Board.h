@@ -1,18 +1,27 @@
+/**
+ * @file Board.h
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
+ */
+
 #pragma once
 
+#include "../common/Point.h"
+#include "../common/Serializable.h"
 #include "BoardComponent.h"
 #include "Player.h"
-#include "Point.h"
 #include "WallEnum.h"
+#include <nlohmann/json.hpp>
 
 #include <memory>
 #include <vector>
 
-
 /**
  * Stores the data of the game board, notably wall and player positions.
  */
-class Board
+class Board : public Serializable
 {
 private:
     /**
@@ -176,8 +185,8 @@ public:
      * @warning the position is assumed to be a *player cell position*
      *
      * @note the orientation of the wall dictates its placement:
-     * - if orienation is WallOrientation::Vertical, the wall is placed to the right of cell and continues towards the bottom
-     * - if orienation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
+     * - if orientation is WallOrientation::Vertical, the wall is placed to the right of cell and continues towards the bottom
+     * - if orientation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
      */
     void placeWall(const Point &cell, const WallOrientation &direction);
 
@@ -289,4 +298,17 @@ public:
     void debugPrint();
 
     ~Board();
+
+    /**
+     * @brief Serialize player positions, wall positions and number of players in a board
+     * @return nlohmann::json Serialized json of current Board
+     */
+    nlohmann::json serialized() override;
+
+    /**
+     * @brief Construct board from a serialized json of a Board passed as string
+     * @param serializedBoard Board->serialized() as string
+     *
+     */
+    void deserialized(const std::string &serializedBoard);
 };

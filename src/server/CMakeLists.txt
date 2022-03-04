@@ -1,20 +1,26 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_server
     PasswordEncrypter.cpp
-    #AuthSerializableMessageFactory.cpp
-    #BoardActionsSerializableMessageFactory.cpp
-    SerializableMessageFactory.cpp
-    
-    # GameActionsSerializableMessageFactory.cpp
+    LandingPool.cpp
+    UserHandler.cpp
+    ServerUser.cpp
+    GameHandler.cpp
+    ChatBox.cpp
+    AuthHandler.cpp
+    RelationsHandler.cpp
+    Database.cpp
+    EloCalculator.cpp
     )
 
 target_link_libraries(${PREFIX}_server
     PUBLIC
-        nlohmann_json   
+        nlohmann_json
         sockpp
         ${PREFIX}_common
-        PRIVATE
-        cryptopp-shared 
+        bsoncxx_shared
+        mongocxx_shared
+    PRIVATE
+        cryptopp_shared
         pthread
 )
 
@@ -32,3 +38,5 @@ target_link_libraries(server
     PRIVATE
         ${PREFIX}_server
 )
+
+target_compile_features(server PRIVATE cxx_std_17)

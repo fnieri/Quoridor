@@ -28,3 +28,6 @@ PointerAlignment: Right
 
 # Always break after template declaration
 AlwaysBreakTemplateDeclarations: true
+
+---
+Language: JavaScript

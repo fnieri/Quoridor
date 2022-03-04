@@ -1,20 +1,25 @@
+/**
+ * @file PlayerAction.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a potential pawn-move action to be performed by a Player.
+ * @date 2022-03-04
+ *
+ * @see WallAction for the analogous action for wall placement.
+ */
+
 #pragma once
 
+#include "src/common/Serializable.h"
 #include "Board.h"
 #include "Player.h"
 #include "PlayerEnum.h"
-#include "Point.h"
+#include "src/common/Point.h"
 
 #include <nlohmann/json.hpp>
 
 #include <memory>
 #include <string>
 
-/**
- * Represents a potential pawn-move action to be performed by a Player.
- *
- * @see WallAction for the analogous action for wall placement.
- */
 class PlayerAction
 {
     /// A reference to the Board to perform the action on.

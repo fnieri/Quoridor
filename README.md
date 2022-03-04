@@ -1,5 +1,10 @@
 # Quoridor, for real
 
+# Documentation
+
+[View documentation](https://quoridor-doc.herokuapp.com/docs/html/index.html)
+
+
 # Compilation
 
 Pour compiler, exécutez ces commandes depuis la racine du repo git:
@@ -7,6 +12,45 @@ Pour compiler, exécutez ces commandes depuis la racine du repo git:
 ```bash
 make setup
 make
+```
+
+### IMPORTANT! 
+Avant d'exécuter le client il est nécessaire de mettre la taille du texte du terminal à 11 ou moins.
+
+# Compilation avec Docker (plus facile)
+
+Installation [Docker](https://docs.docker.com/get-docker/)
+
+Docker permet en gros de compiler et faire tourner le code dans un environment identique sur toutes les machines. 
+Le fichier compilé tourne dans un container avec l'argument run. Ce container redirige son port 1234 vers le port 1234.
+Si les commandes ne fonctionnent pas, il faut les exécuter avec sudo en prefix.
+```bash
+docker build -t quoridor .
+docker run --name quoridor_server -it -d --rm -p 1234:1234 quoridor
+```
+Pour voir les logs du container:
+```bash
+docker logs quoridor_server
+```
+Pour s'accrocher au container:
+```bash
+docker attach quoridor_server
+```
+Pour voir les containers en cours:
+```bash
+docker ps
+```
+Pour voir les images (ce que ```docker build``` crée):
+```bash
+docker images
+```
+Pour supprimer une image:
+```bash
+docker rmi image_name
+```
+Pour arrêter le container:
+```bash
+docker stop quoridor_server
 ```
 
 # Contributions
