@@ -406,8 +406,6 @@ void DatabaseHandler::setELO(const std::string &username, const int &elo)
 
 std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId)
 {
-    std::lock_guard<std::mutex> guard {m_dbMutex};
-
     std::string idStr1, idStr2;
     if (senderId < receiverId) {
         idStr1 = senderId.to_string();
@@ -560,8 +558,6 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
 
 void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
 {
-    std::lock_guard<std::mutex> guard {m_dbMutex};
-
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
