@@ -10,7 +10,7 @@ add_library(${PREFIX}_client
     WallAction.cpp
     WallEnum.h
     PlayerAction.h
-    )
+)
 
 target_link_libraries(${PREFIX}_client
     PUBLIC

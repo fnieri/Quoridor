@@ -13,6 +13,16 @@
 #include "Serializable.h"
 #include <nlohmann/json.hpp>
 
+template <typename T>
+T getResourceFromAnswer(const std::string &serRequest)
+{
+    nlohmann::json request(nlohmann::json::parse(serRequest));
+    nlohmann::json jsonData = request["serialized_data"];
+    T data = jsonData[0].get<T>();
+
+    return data;
+}
+
 class ObjectExchangesSerializableMessageFactory
 {
 public:
