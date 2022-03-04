@@ -23,8 +23,12 @@ DatabaseHandler::DatabaseHandler()
 {
 }
 
+std::mutex DatabaseHandler::m_dbMutex;
+
 void DatabaseHandler::quickTest()
 {
+    static std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // just ignore this unless you want to test the database
     // just a quick test to see if the database is working
     std::cout << "Sending test data" << std::endl;
@@ -47,6 +51,8 @@ void DatabaseHandler::quickTest()
 
 bool DatabaseHandler::createAccount(const std::string &username, const std::string &password)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // check if username already exists
     if (Instance()->doesUsernameExist(username)) {
         return false;
@@ -89,6 +95,8 @@ bool DatabaseHandler::doesUsernameExist(const std::string &username)
 
 bool DatabaseHandler::checkLogin(const std::string &username, const std::string &password)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // get user collection
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
 
@@ -110,6 +118,8 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
 
 void DatabaseHandler::deleteAccount(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // get user collection
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
 
@@ -119,6 +129,8 @@ void DatabaseHandler::deleteAccount(const std::string &username)
 
 std::vector<std::string> DatabaseHandler::getFriends(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     std::vector<std::string> friends;
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
@@ -145,6 +157,8 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
 
 std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     std::vector<std::string> sentFriendRequests;
@@ -169,6 +183,8 @@ std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::strin
 
 std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     std::vector<std::string> receivedFriendRequests;
@@ -191,11 +207,15 @@ std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::s
     return receivedFriendRequests;
 }
 
+// TODO : may cause issues with threads
 void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
     // verification just in case but this should not be necessary if everything is implemented correctly
     std::vector<std::string> sentFriendRequests = getSentFriendRequests(friendRequestSender);
     std::vector<std::string> receivedFriendRequests = getReceivedFriendRequests(friendRequestReceiver);
+
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     bool valid = false;
     for (auto &sentFriendRequest : sentFriendRequests) {
         if (sentFriendRequest == friendRequestReceiver) {
@@ -237,6 +257,8 @@ void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender
 
 void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // no need for verification bc if request doesn't exist, nothing will happen
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << friendRequestSender << finalize);
@@ -258,6 +280,8 @@ void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender
 
 void DatabaseHandler::addFriend(const std::string &username, const std::string &friendUsername)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     // wont be used since friends are added automatically when friend request is accepted
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
@@ -284,6 +308,8 @@ void DatabaseHandler::addFriend(const std::string &username, const std::string &
 
 void DatabaseHandler::removeFriend(const std::string &username, const std::string &friendUsername)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << friendUsername << finalize);
@@ -301,11 +327,16 @@ void DatabaseHandler::removeFriend(const std::string &username, const std::strin
     }
 }
 
+// TODO : may cause issues with threads
 void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
 {
+
     // check that they are not already friends. this verification should not be necessary if everything is implemented correctly
     std::vector<std::string> senderFriends = getFriends(friendRequestSender);
     std::vector<std::string> receiverFriends = getFriends(friendRequestReceiver);
+
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     for (auto &sentFriendRequest : senderFriends) {
         if (sentFriendRequest == friendRequestReceiver) {
             for (auto &receivedFriendRequest : receiverFriends) {
@@ -345,6 +376,8 @@ void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, 
 
 int DatabaseHandler::getELO(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     int elo = 0;
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
@@ -359,6 +392,8 @@ int DatabaseHandler::getELO(const std::string &username)
 
 void DatabaseHandler::setELO(const std::string &username, const int &elo)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // if user exists
@@ -371,6 +406,8 @@ void DatabaseHandler::setELO(const std::string &username, const int &elo)
 
 std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     std::string idStr1, idStr2;
     if (senderId < receiverId) {
         idStr1 = senderId.to_string();
@@ -385,6 +422,8 @@ std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid recei
 
 void DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeFriendResult = userColl.find_one(document {} << "username" << receiver << finalize);
@@ -407,6 +446,8 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
 
 std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     std::vector<std::vector<std::string>> messages;
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
@@ -445,6 +486,8 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::st
 
 void DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << sender << finalize);
     // check if usernames are contained in the collection
@@ -461,6 +504,8 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
 
 std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     std::vector<std::vector<std::string>> messages;
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
@@ -487,6 +532,8 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &ga
 
 void DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -500,6 +547,8 @@ void DatabaseHandler::addGameIdToUser(const std::string &username, const int &ga
 
 void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -511,6 +560,8 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
 
 void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -524,6 +575,8 @@ void DatabaseHandler::removeGameIdFromUser(const std::string &username, const in
 
 bool DatabaseHandler::isGameIdUsed(const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
     // check if gameId is contained in the collection
@@ -535,6 +588,8 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
 
 void DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     json playersJson;
     for (auto &player : players) {
@@ -547,6 +602,8 @@ void DatabaseHandler::createGame(const int &gameId, const std::vector<std::strin
 
 json DatabaseHandler::getGameBoardConfig(const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
     // check if gameId is contained in the collection
@@ -561,6 +618,8 @@ json DatabaseHandler::getGameBoardConfig(const int &gameId)
 
 json DatabaseHandler::getGameConfig(const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
     // check if gameId is contained in the collection
@@ -575,6 +634,8 @@ json DatabaseHandler::getGameConfig(const int &gameId)
 
 std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -594,6 +655,8 @@ std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
 
 std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &username)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -613,6 +676,8 @@ std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &user
 
 void DatabaseHandler::deleteGame(const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     // get players_username
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = gameColl.find_one(document {} << "game_id" << gameId << finalize);
@@ -633,6 +698,8 @@ void DatabaseHandler::deleteGame(const int &gameId)
 
 void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection gameColl = Instance()->db[database::kGameCollectionName];
     gameColl.update_one(document {} << "game_id" << gameId << finalize,
         document {} << "$set" << open_document << "board_config" << bsoncxx::from_json(boardConfig.dump()) << close_document << finalize);
