@@ -55,6 +55,8 @@ class DatabaseHandler
     static bool doesUsernameExist(const std::string &username);
     static std::string getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId);
     static void removeGameIdFromUser(const std::string &username, const int &gameId);
+
+    template <class K, class T> static void sortByKey(K * keys, T * data, size_t size);
     DatabaseHandler();
     static std::unique_ptr<DatabaseHandler> &Instance()
     {
@@ -234,4 +236,11 @@ public:
      * @note This method will also handle the deletion of the gameId appearance in all user's accepted and invited gameIds.
      */
     static void deleteGame(const int &gameId);
+
+    /**
+     * @brief Get the leaderboard with the n best players.
+     * @param int nPlayers
+     * @return json leaderboard with username and elo.
+     */
+    static json getLeaderboard(const int &nPlayers);
 };

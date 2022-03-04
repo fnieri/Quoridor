@@ -60,6 +60,11 @@ SCENARIO("Check ELO")
 
             REQUIRE(DatabaseHandler::getELO("testing") == 100);
         }
+
+        WHEN("Check leaderboard"){
+            DatabaseHandler::setELO("testingFriend", 180);
+            std::cout << DatabaseHandler::getLeaderboard(5) << std::endl;
+        }
     }
 }
 
