@@ -111,11 +111,10 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    // TODO wait for serialized request
-    /* auto startRequest {SerializableMessageFactory::getGameStarted(m_configuration)}; */
+    auto startRequest {SerializableMessageFactory::serializeGameStarted(getID(), json::parse(m_configuration))};
 
-    /* for (auto &p : m_players) */
-    /*     m_userHub->relayMessageTo(p, startRequest); */
+    for (auto &p : m_players)
+        m_userHub->relayMessageTo(p, startRequest);
 }
 
 void GameHandler::terminate()
@@ -284,14 +283,13 @@ void GameHub::processRequest(const std::string &serRequest)
 
     auto request(json::parse(serRequest));
 
-    // TODO see with serialized req
-    /* if (request["action"] == toJsonString(GameSetup::GAME_CREATE)) { */
-    /*     processGameCreation(serRequest); */
+    if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
+        processGameCreation(serRequest);
 
-    /* } else if (request["action"] == toJsonString(GameSetup::GAME_JOIN)) { */
-    /*     processGameJoin(serRequest); */
+    } else if (request["action"] == toJsonString(GameSetup::JOIN_GAME)) {
+        processGameJoin(serRequest);
 
-    /* } else if (request["action"] == toJsonString(GameSetup::GAME_QUIT)) { */
-    /*     processGameInvitationQuit(serRequest); */
-    /* } */
+    } else if (request["action"] == toJsonString(GameSetup::QUIT_GAME)) {
+        processGameQuit(serRequest);
+    }
 }

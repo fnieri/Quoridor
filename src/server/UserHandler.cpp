@@ -12,6 +12,7 @@
 #include "src/common/Exceptions.h"
 #include "src/common/SerializableMessageFactory.h"
 #include "src/server/ChatBox.h"
+#include "src/server/Database.h"
 
 #include <nlohmann/json.hpp>
 
@@ -69,9 +70,8 @@ void UserHandler::handleRequests()
     // Only run this if the connection was lost,
     // not if the server is shuting itself down.
     if (!m_wasTerminated && isInGame()) {
-        // TODO: wait for serialize
-        /* auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())}; */
-        /* processRequest(req.dump()); */
+        auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())};
+        processRequest(req.dump());
     }
 
     m_userHub->eraseFinished();
@@ -149,19 +149,23 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
         data = json {m_userHandled->getFriendRequestsReceived()};
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
+
+    } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
+        data = json {DatabaseHandler::getMessages(request["sender"], request["receiver"])};
+        dataType = DataType::CHATS;
+
+    } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
+        data = json {m_userHandled->getGameIDs()};
+        dataType = DataType::GAME_IDS;
+
+    } else if (request["data_type"] == toJsonString(DataType::ELO)) {
+        data = json {m_userHandled->getELO()};
+        dataType = DataType::ELO;
+
+    } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) {
+        data = json {DatabaseHandler::getLeaderboard(10)};
+        dataType = DataType::LEADERBOARD;
     }
-
-    // TODO: waiting serialize
-    /* } else if (request["data_type"] == toJsonString(DataType::CHATS)) { */
-    /*     data = json{DatabaseHandler::getChats(m_userHandled->getUsername())}; */
-    /*     dataType = DataType::CHATS; */
-
-    /* } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) { */
-    /*     data = json{DatabaseHandler::getLeaderboard()}; */
-    /*     dataType = DataType::LEADERBOARD; */
-    /* else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) { */
-    /*     data = json{m_userHandled->getGameIDs()}; */
-    /* } */
 
     auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data).dump()};
     send(answer);
@@ -219,18 +223,13 @@ void UserHandler::relayMessage(const std::string &serRequest)
     if (request["domain"] == toJsonString(Domain::RELATIONS)) {
         // Sync friend lists
         m_userHandled->syncWithDB();
+
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED) && request["action"] == toJsonString(GameAction::START_GAME)) {
+        m_activeGame = m_gameHub->getGame(request["game_id"]);
+
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED) && request["action"] == toJsonString(GameAction::END_GAME)) {
+        m_activeGame.reset();
     }
-
-    // TODO wait serialize
-    /* } else if (request["domain"] == Domain::GAME_ACTION */
-    /*         && request["action"] == GameSetup::GAME_STARTED) { */
-    /*     m_activeGame = m_gameHub->getGame(request["game_id"]); */
-
-    /* } else if (request["domain"] == Domain::GAME_ACTION */
-    /*         && request["action"] == GameSetup::GAME_ENDED) { */
-    /*     m_activeGame.reset();
-
-    /* } */
 
     std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
 
