@@ -124,8 +124,11 @@ void ViewController::movePlayer(int x, int y)
     //     isGameOver(true);
     */
 
+    // Rotate the point
+    Point rotP = board->getRotatedMatrixPosition(Point {x, y}, players.at(currentPlayerIndex)->getFinishLine(), true);
+
     // Louis' method :
-    PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
+    PlayerAction move {board, players.at(currentPlayerIndex), Point(rotP.x() / 2, rotP.y() / 2)};
     move.executeAction();
 }
 
@@ -137,18 +140,33 @@ void ViewController::placeWall(int x, int y, int orientation)
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers;
      */
 
-    // Louis' method :
-    WallOrientation wallOrientation = orientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal;
-    int wallX;
-    int wallY;
-    if (wallOrientation == WallOrientation::Horizontal) {
-        wallX = x / 2;
-        wallY = y / 2 + 1;
-    } else {
-        wallX = x / 2 + 1;
-        wallY = y / 2;
+    // Rotate the point, orientation and change position accordingly
+    FinishLine f = players.at(currentPlayerIndex)->getFinishLine();
+    Point rotP = board->getRotatedMatrixPosition(Point {x, y}, f, true);
+    int wallX = rotP.x() / 2;
+    int wallY = rotP.y() / 2;
+
+    switch (f) {
+    case FinishLine::South:
+        wallX++;
+        wallY++;
+        break;
+    case FinishLine::East:
+        wallY++;
+        orientation = (++orientation) % 2;
+        break;
+    case FinishLine::West:
+        wallX++;
+        orientation = (++orientation) % 2;
+        break;
+    case FinishLine::North:
+    default:
+        break;
     }
-    WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
+
+    WallOrientation wallOrientation = orientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal;
+
+    WallAction wallAction {board, players.at(currentPlayerIndex), Point(wallX, wallY), wallOrientation};
     wallAction.executeAction();
 }
 

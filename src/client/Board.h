@@ -275,6 +275,7 @@ public:
      *
      * @param p the point to rotate
      * @param f the finish line to dictate rotation
+     * @param invert wether to invert the result, i.e. to undo a previous rotation. Default is false
      * @return Point the rotated Point
      *
      * @warning both the given and returned point are assumed to have *proper matrix indices*
@@ -285,7 +286,7 @@ public:
      * - FinishLine::South is 180° rotation counter-clockwise
      * - FinishLine::West is 270° rotation counter-clockwise
      */
-    Point getRotatedMatrixPosition(Point p, FinishLine f);
+    Point getRotatedMatrixPosition(Point p, FinishLine f, bool invert = false);
 
     /**
      * Get the Board matrix, rotated depending on the given play finish line.

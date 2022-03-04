@@ -321,8 +321,18 @@ void Board::debugPrint()
     }
 }
 
-Point Board::getRotatedMatrixPosition(Point p, FinishLine f)
+Point Board::getRotatedMatrixPosition(Point p, FinishLine f, bool invert = false)
 {
+    if (invert) {
+        // Invert the rotation if requested
+        // North doesn't need changing at all, South is the inverse of itself,
+        // and East/West are the inverse of each other, so swap them around
+        if (f == FinishLine::East)
+            f = FinishLine::West;
+        else if (f == FinishLine::West)
+            f = FinishLine::East;
+    }
+
     switch (f) {
     case FinishLine::South:
         return Point {MATRIX_SIZE - p.x() - 1, MATRIX_SIZE - p.y() - 1};
