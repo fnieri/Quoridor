@@ -321,7 +321,7 @@ void Board::debugPrint()
     }
 }
 
-Point Board::getRotatedMatrixPosition(Point p, FinishLine f, bool invert = false)
+Point Board::getRotatedMatrixPosition(Point p, FinishLine f, bool invert)
 {
     if (invert) {
         // Invert the rotation if requested
@@ -356,7 +356,7 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
     for (int x = 0; x < MATRIX_SIZE; x++) {
         for (int y = 0; y < MATRIX_SIZE; y++) {
             // copy over all the board components while rotating the matrix
-            Point p = getRotatedMatrixPosition(Point {x, y}, rotation);
+            Point p = getRotatedMatrixPosition(Point {x, y}, rotation, false);
             rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
 
             // make sure to rotate the direction of the walls when needed
