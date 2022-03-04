@@ -56,7 +56,7 @@ json SerializableMessageFactory::serializeFriendRemove(const std::string &friend
 
 json SerializableMessageFactory::serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, const std::string &username, int ELO)
 {
-        return GameRelatedActionsSerializableMessageFactory::serializeQueueJoinRequest(queueAction, gameMode, username, ELO);
+    return GameRelatedActionsSerializableMessageFactory::serializeQueueJoinRequest(queueAction, gameMode, username, ELO);
 }
 
 json SerializableMessageFactory::serializeInGameRelatedRequest(GameAction gameAction, const std::string &username)

@@ -174,4 +174,5 @@ public:
     bool isConnected(const std::string &) const noexcept;
 
     int connectedUsers() const noexcept;
+    std::vector<std::string> namesOfConnectedUsers();
 };

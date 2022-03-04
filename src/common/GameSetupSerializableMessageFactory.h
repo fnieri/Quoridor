@@ -47,5 +47,4 @@ public:
      * }
      */
     static nlohmann::json serializeGameCreationRequest(const std::string &sender, std::vector<std::string> &receivers, nlohmann::json configuration);
-
 };

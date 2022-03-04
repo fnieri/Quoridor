@@ -41,23 +41,23 @@ public:
        return singleton;
    }
 
-    /**
-     * @brief Hash password given upon registering as salt key + password with SHA256, return salt key an to Database
-     * @see SHA256
-     * @see Salt key
-     * @see One-way encryption
-     * @param std::string passwordToEncrypt password input by user
-     * @param std::string username
-     * @return string Salt key and hash to store in database
-     * first parameter in vector is saltKey, second is the hash
-     */
-    static std::vector<std::string> registerEncryption(std::string passwordToEncrypt);
-    /**
-     * @brief Compare login password with saltKey and hash found in database
-     * @param passwordToEncrypt password input by user
-     * @param saltKey saltKey used upon registering, found in database
-     * @param databaseHash hash calculated upon registering, found in database
-     * @return bool check if saltedPassword hash matches hash in database
-     */
-    static bool compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash);
+   /**
+    * @brief Hash password given upon registering as salt key + password with SHA256, return salt key an to Database
+    * @see SHA256
+    * @see Salt key
+    * @see One-way encryption
+    * @param std::string passwordToEncrypt password input by user
+    * @param std::string username
+    * @return string Salt key and hash to store in database
+    * first parameter in vector is saltKey, second is the hash
+    */
+   static std::vector<std::string> registerEncryption(std::string passwordToEncrypt);
+   /**
+    * @brief Compare login password with saltKey and hash found in database
+    * @param passwordToEncrypt password input by user
+    * @param saltKey saltKey used upon registering, found in database
+    * @param databaseHash hash calculated upon registering, found in database
+    * @return bool check if saltedPassword hash matches hash in database
+    */
+   static bool compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash);
 };

@@ -1,10 +1,10 @@
 /**
-* @file BoardComponent.h
-* @author Nargis, Lèo, Anne-Marie
-* @brief Class representing a baord Component
-* @date 2022-03-04
-*
-*/
+ * @file BoardComponent.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a baord Component
+ * @date 2022-03-04
+ *
+ */
 
 #pragma once
 

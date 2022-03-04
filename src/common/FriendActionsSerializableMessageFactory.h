@@ -1,11 +1,10 @@
 /**
-* @file FriendActionsSerializableMessageFactory.h
-* @author Francesco Nieri
-* @brief Factory methods for friendActions serialized messages
-* @date 2022-03-04
-*
-*/
-
+ * @file FriendActionsSerializableMessageFactory.h
+ * @author Francesco Nieri
+ * @brief Factory methods for friendActions serialized messages
+ * @date 2022-03-04
+ *
+ */
 
 #pragma once
 

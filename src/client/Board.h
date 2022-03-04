@@ -1,11 +1,10 @@
 /**
-* @file Board.h
-* @author Nargis, Lèo, Anne-Marie, Francesco
-* @brief Class representing a Board in a game
-* @date 2022-03-04
-*
-*/
-
+ * @file Board.h
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
+ */
 
 #pragma once
 

@@ -1,14 +1,13 @@
 /**
-* @file EloCalculator.cpp
-* @author Francesco Nieri
-* @brief Calculate ELO at the end of a match
-* @note Look in SRD for precise step by step procedure of ELO calculation
-* Otherwise the source code might seem unreadable
-* @date 2022-02-20
-*
-*
-*/
-
+ * @file EloCalculator.cpp
+ * @author Francesco Nieri
+ * @brief Calculate ELO at the end of a match
+ * @note Look in SRD for precise step by step procedure of ELO calculation
+ * Otherwise the source code might seem unreadable
+ * @date 2022-02-20
+ *
+ *
+ */
 
 #include "EloCalculator.h"
 
@@ -73,7 +72,7 @@ float EloCalculator::calculateFourPlayerDenumerator(int player)
 
     float denumerator {0};
     float currentOmega;
-    //Calculate denumerator based on Omega between other players as in SRD
+    // Calculate denumerator based on Omega between other players as in SRD
     for (int currentPlayer = 0; currentPlayer < 4; currentPlayer++) {
         if (currentPlayer != player) {
             currentOmega = calculateOmega(startingELOs.at(player), startingELOs.at(currentPlayer));

@@ -1,11 +1,10 @@
 /**
-* @file GameRelatedActionsSerializableMessageFactory.h
-* @author Francesco Nieri
-* @brief Factory methods for gameRelated serialized messages
-* @date 2022-03-04
-*
+ * @file GameRelatedActionsSerializableMessageFactory.h
+ * @author Francesco Nieri
+ * @brief Factory methods for gameRelated serialized messages
+ * @date 2022-03-04
+ *
  */
-
 
 #pragma once
 

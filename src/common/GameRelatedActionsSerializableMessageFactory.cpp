@@ -23,7 +23,8 @@ json GameRelatedActionsSerializableMessageFactory::serializeInGameRelatedRequest
 
 json GameRelatedActionsSerializableMessageFactory::serializeGameStarted(int gameID, nlohmann::json configuration)
 {
-    json gameJson = {{"action", toJsonString(GameAction::START_GAME)}, {"domain", toJsonString(Domain::IN_GAME_RELATED)}, {"configuration", configuration}, {"game_id", gameID}};
+    json gameJson = {{"action", toJsonString(GameAction::START_GAME)}, {"domain", toJsonString(Domain::IN_GAME_RELATED)}, {"configuration", configuration},
+        {"game_id", gameID}};
     return gameJson;
 }
 

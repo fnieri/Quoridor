@@ -1,10 +1,10 @@
 /**
-* @file Cell.h
-* @author Nargis, Lèo, Anne-Marie
-* @brief Class representing a Cell in a Board which can be occupied by a Player
-* @date 2022-03-04
-*
-*/
+ * @file Cell.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a Cell in a Board which can be occupied by a Player
+ * @date 2022-03-04
+ *
+ */
 
 #pragma once
 

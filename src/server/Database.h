@@ -23,6 +23,7 @@
 
 #include <cstdint>
 #include <iostream>
+#include <mutex>
 
 using json = nlohmann::json;
 
@@ -41,6 +42,8 @@ constexpr char kGameCollectionName[] {"GameCollection"};
 
 class DatabaseHandler
 {
+    static std::mutex m_dbMutex;
+
     mongocxx::uri uri;
     mongocxx::client client;
     mongocxx::database db;

@@ -1,11 +1,10 @@
 /**
-* @file GameRelatedSerializableMessageFactory.cpp
-* @author Francesco
-* @brief Factory methods for gameRelated serialized messages
-* @date 2022-03-04
-*
+ * @file GameRelatedSerializableMessageFactory.cpp
+ * @author Francesco
+ * @brief Factory methods for gameRelated serialized messages
+ * @date 2022-03-04
+ *
  */
-
 
 #include "GameSetupSerializableMessageFactory.h"
 #include "MessageEnums/Domain.h"

@@ -1,12 +1,11 @@
 /**
-* @file Test_PasswordEncrypter.cpp
-* @author Francesco Nieri
-* @brief Test Password Encrypter
-* @date 2022-02-20
-*
-*
-*/
-
+ * @file Test_PasswordEncrypter.cpp
+ * @author Francesco Nieri
+ * @brief Test Password Encrypter
+ * @date 2022-02-20
+ *
+ *
+ */
 
 #include <catch2/catch.hpp>
 

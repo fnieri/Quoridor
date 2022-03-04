@@ -170,6 +170,10 @@ void ServerController::logOut()
     // send(to_send);
 }
 
+void ServerController::startGame()
+{
+}
+
 void ServerController::saveGame(std::string username)
 {
     json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::PROPOSE_SAVE, username);

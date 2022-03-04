@@ -1,11 +1,10 @@
 /**
-* @file Board.cpp
-* @author Nargis, Lèo, Anne-Marie, Francesco
-* @brief Class representing a Board in a game
-* @date 2022-03-04
-*
+ * @file Board.cpp
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
  */
-
 
 #include "Board.h"
 #include "BoardComponent.h"
@@ -390,8 +389,7 @@ json Board::serialized()
                             {"remaining_walls", currentPlayerNWalls}, {"username", currentPlayerUsername},
                             {"finish_line", static_cast<int>(currentFinishLine)}};
                         playerArray.push_back(playerJson);
-                    }
-                    else {
+                    } else {
                         // This only concerns placement between 4 player cells
                         WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
                         json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};

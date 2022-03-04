@@ -41,7 +41,7 @@ void GameHandler::setConfiguration(const std::string &configuration)
     auto config(json::parse(configuration));
     auto players = config.at("player");
     m_players.clear();
-    for (auto &player: players) {
+    for (auto &player : players) {
         addPlayer(player.at("username").get<std::string>()); // Add player by its username
     }
     m_confirmedPlayers.fill(false);
@@ -74,12 +74,12 @@ void GameHandler::setConfirmationState(const std::string &username, bool state)
     }
 }
 
-void GameHandler::confirmPlayer(const std::string &username)
+void GameHandler::playerJoined(const std::string &username)
 {
     setConfirmationState(username, true);
 }
 
-void GameHandler::cancelPlayer(const std::string &username)
+void GameHandler::playerQuit(const std::string &username)
 {
     setConfirmationState(username, false);
 }
@@ -218,7 +218,7 @@ void GameHub::processGameCreation(const std::string &serRequest)
 
     // This add the players to the game
     tmp->setConfiguration(request["game_configuration"]);
-    tmp->confirmPlayer(request["username_sending"]);
+    tmp->playerJoined(request["username_sending"]);
     tmp->saveToDB();
 
     m_games.push_back(tmp);
@@ -248,7 +248,7 @@ void GameHub::processGameJoin(const std::string &serRequest)
         targetGame = getGame(request["game_id"]);
     }
 
-    targetGame->confirmPlayer(request["username"]);
+    targetGame->playerJoined(request["username"]);
 
     if (targetGame->areAllPlayersConfirmed() && targetGame->areAllPlayersConnected() && targetGame->areAllPlayersNotInGame()) {
         targetGame->start();
@@ -260,7 +260,7 @@ void GameHub::processGameQuit(const std::string &serRequest)
     auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
 
-    targetGame->confirmPlayer(request["username"]);
+    targetGame->playerJoined(request["username"]);
 
     if (targetGame->numberOfConfirmedPlayers() == 0) {
         unloadGame(request["game_id"]);

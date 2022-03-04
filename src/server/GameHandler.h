@@ -10,9 +10,9 @@
 #include "UserHandler.h"
 #include "src/common/Observer.h"
 
-#include <vector>
 #include <memory>
 #include <mutex>
+#include <vector>
 
 class GameHub;
 
@@ -58,8 +58,8 @@ public:
      */
     void addPlayer(const std::string &);
 
-    void confirmPlayer(const std::string &);
-    void cancelPlayer(const std::string &);
+    void playerJoined(const std::string &);
+    void playerQuit(const std::string &);
     int numberOfConfirmedPlayers() const;
     /**
      * @brief Check if all players in a game have confirmed to want to play

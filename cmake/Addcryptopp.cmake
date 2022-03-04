@@ -425,7 +425,7 @@ if (cryptopp_ADDED)
     list(TRANSFORM cryptopp_SOURCES PREPEND ${cryptopp_SOURCE_DIR}/)
     list(TRANSFORM cryptopp_HEADERS PREPEND ${cryptopp_SOURCE_DIR}/)
 
-    add_library(cryptopp-shared ${cryptopp_SOURCES} ${cryptopp_HEADERS})
-    target_include_directories(cryptopp-shared PUBLIC $<BUILD_INTERFACE:${cryptopp_SOURCE_DIR}>)
+    add_library(cryptopp_shared ${cryptopp_SOURCES} ${cryptopp_HEADERS})
+    target_include_directories(cryptopp_shared PUBLIC $<BUILD_INTERFACE:${cryptopp_SOURCE_DIR}>)
 
 endif()
