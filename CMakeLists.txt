@@ -21,4 +21,4 @@ include(cmake/Addcryptopp.cmake)
 include(cmake/AddFTXUI.cmake)
 
 add_subdirectory(src)
-add_subdirectory(tests)
+#add_subdirectory(tests)

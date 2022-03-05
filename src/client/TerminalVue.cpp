@@ -265,7 +265,7 @@ auto TerminalVue::createChatRenderer()
         [&] {
             if (!message.empty()) {
                 addChatMessage(username, message);
-                sendMessageGame(message, currenGameId);
+                sendMessageGame(message, currentGameId);
             }
         },
         buttonOption);
@@ -539,7 +539,7 @@ void TerminalVue::handleFriendDelete(const std::string &friendUsername)
 
 void TerminalVue::handleFriendAdd(const std::string &friendUsername)
 {
-    gameController->sendFriendRequest(friendUsername);
+    gameController->sendFriendRequest(friendUsername, username);
 }
 
 // void TerminalVue::handleFriendRequestAccept()
@@ -556,10 +556,6 @@ void TerminalVue::loadFriendChats()
 }
 
 void TerminalVue::loadLeaderboard()
-{
-}
-
-void TerminalVue::registerUser()
 {
 }
 

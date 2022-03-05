@@ -184,7 +184,5 @@ public:
      */
     void processRequest(std::string message);
 
-    void update(QuoridorEvent) override{
-        
-    }
+    void update(QuoridorEvent) override;
 };

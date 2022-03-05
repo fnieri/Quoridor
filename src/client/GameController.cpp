@@ -174,7 +174,7 @@ void GameController::sendGroupMessage(std::string sender, std::string msg, int g
 
 void GameController::update(QuoridorEvent)
 {
-    auto lastRequest {mainController.getLastAsyncRequest()}
+    auto lastRequest {mainController.getLastAsyncRequest()};
 }
 
 // void GameController::processRequest(std::string serRequest)
