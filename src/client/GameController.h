@@ -158,15 +158,22 @@ public:
     void receiveDirectMessage(std::string msg);
 
     // Getters
-    nlohmann::json getLogInReceipts();
-    nlohmann::json getRegisterReceipts();
-    nlohmann::json getFriendsListReceipt();
-    nlohmann::json getFriendsRequestReceipts();
-    nlohmann::json getFriendsRequestSentList();
-    nlohmann::json getFriendsRequestReceivedList();
+    //  nlohmann::json getLogInReceipts();
+    //  nlohmann::json getRegisterReceipts();
+    // nlohmann::json getFriendsListReceipt();
+    // nlohmann::json getFriendsRequestReceipts();
+    // nlohmann::json getFriendsRequestSentList();
+    // nlohmann::json getFriendsRequestReceivedList();
     nlohmann::json getDirectMessage();
     nlohmann::json getGroupMessage();
+    nlohmann::json getLeaderboard();
+    nlohmann::json getFriendList();
+    nlohmann::json loadExistingGames();
 
+    void createGame(std::vector<std::string> &players);
+    void getFriendsChats();
+    void acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver);
+    void removeFriendRequest(const std::string &friendRemoveSender, const std::string &friendRemoveReceiver);
     // Booleans
     bool isDirectMessageReceived(bool received = false);
     bool isGroupMessageReceived(bool received = false);

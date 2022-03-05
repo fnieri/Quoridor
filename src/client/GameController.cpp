@@ -4,6 +4,8 @@
 
 #include "GameController.h"
 
+using json = nlohmann::json;
+
 GameController::GameController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
     , currentPlayerIndex(currentPlayerIndex)
@@ -175,6 +177,48 @@ void GameController::sendGroupMessage(std::string sender, std::string msg, int g
 void GameController::update(QuoridorEvent)
 {
     auto lastRequest {mainController.getLastAsyncRequest()};
+}
+
+json GameController::getLeaderboard()
+{
+    json leaderboardReq = SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD);
+    return leaderboardReq;
+}
+
+json GameController::getFriendList()
+{
+    json friendListReq = SerializableMessageFactory::serializeRequestExchange(DataType::FRIENDS_LIST);
+    return friendListReq;
+}
+
+void GameController::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+{
+    json requestJson = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, friendRequestSender, friendRequestReceiver);
+    mainController.sendAsync(requestJson.dump());
+}
+
+void GameController::removeFriendRequest(const std::string &friendRemoveSender, const std::string &friendRemoveReceiver)
+{
+    json removeJson = SerializableMessageFactory::serializeFriendRemove(friendRemoveSender, friendRemoveReceiver);
+    mainController.sendAsync(removeJson.dump());
+}
+
+void GameController::getFriendsChats()
+{
+    json chatJson = SerializableMessageFactory::serializeRequestExchange(DataType::CHATS);
+    mainController.sendAsync(chatJson.dump());
+}
+
+void GameController::createGame(std::vector<std::string> &players)
+{
+    json gameJson = SerializableMessageFactory::serializeGameSetup(GameMode::CLASSIC, players);
+    mainController.sendAsync(gameJson.dump());
+}
+
+json GameController::loadExistingGames()
+{
+    json gamesJson = SerializableMessageFactory : serializeRequestExchange(DataType::GAME_IDS);
+    return gamesJson;
 }
 
 // void GameController::processRequest(std::string serRequest)
