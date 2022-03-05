@@ -217,7 +217,7 @@ void GameController::createGame(std::vector<std::string> &players)
 
 json GameController::loadExistingGames()
 {
-    json gamesJson = SerializableMessageFactory : serializeRequestExchange(DataType::GAME_IDS);
+    json gamesJson = SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS);
     return gamesJson;
 }
 
