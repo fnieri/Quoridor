@@ -507,15 +507,18 @@ void TerminalVue::addFriend(std::string username)
 {
     friendsList.push_back(username);
     chatEntries.push_back(std::vector<std::string> {""});
+    notifications.push_back("Added: " + username);
     handleFriendAdd(username);
     searchField.clear();
 }
 
 void TerminalVue::deleteFriend()
 {
-    friendsList.erase(friendsList.begin() + friend_selected); // TODO: Have to modify for a dictionary
+    notifications.push_back("Deleted: " + friendsList[friend_selected]);
     chatEntries.erase(chatEntries.begin() + friend_selected);
     handleFriendDelete(friendsList[friend_selected]);
+    friendsList.erase(friendsList.begin() + friend_selected);
+    friend_selected -= 1;
 }
 
 void TerminalVue::registerUser()
