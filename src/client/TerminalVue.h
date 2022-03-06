@@ -104,6 +104,11 @@ class TerminalVue
         "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
 
+    int leader_selected = 0;
+    std::vector<std::string> leaders {"Hector", "Charlotte", "Nescafé", "Guy", "Auguste"};
+    std::vector<int> elos {1480, 1276, 920, 919, 874};
+    std::vector<std::string> listLeadersWithElo;
+
     std::vector<std::string> actionToggleEntries {
         "Move",
         "Wall",
@@ -133,8 +138,8 @@ class TerminalVue
     int currentGameId = 69;
     std::string errorLoginMessage = "";
     std::string registerMessage = "";
-    int homeTabIndex = 2;
-    int mainPageIndex = 1;
+    int homeTabIndex = 0;
+    int mainPageIndex = 0;
 
     /**
      * @brief Checks if it's someone's turn

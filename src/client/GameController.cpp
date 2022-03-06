@@ -56,7 +56,7 @@ void GameController::movePlayer(int x, int y)
     PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
     move.executeAction();
     json to_send = SerializableMessageFactory::serializePawnAction(move, currentPlayerIndex);
-    mainController.getSyncAnswer(to_send.dump());
+    mainController.sendAsync(to_send.dump());
 }
 
 void GameController::placeWall(int x, int y, int orientation)
