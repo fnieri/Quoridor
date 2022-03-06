@@ -36,10 +36,10 @@ class DummyReader
 {
 private:
     SocketUser *m_sockUser {nullptr};
-    int16_t m_port;
+    in_port_t m_port;
 
 public:
-    DummyReader(int16_t port = 12345)
+    DummyReader(in_port_t port = 12345)
         : m_port {port}
     {
     }

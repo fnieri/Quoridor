@@ -12,8 +12,10 @@ GameController::GameController(int nPlayers, int currentPlayerIndex, int gameId)
     , gameId(gameId)
 {
     std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
+    std::vector<FinishLine> finishLines {FinishLine::North, FinishLine::South, FinishLine::East, FinishLine::West};
     for (int i = 0; i < nPlayers; i++) {
-        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, FinishLine::North);
+        // TODO handle username
+        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, finishLines.at(i), "changeme");
 
         players.push_back(p);
 
@@ -78,7 +80,7 @@ void GameController::placeWall(int x, int y, int orientation)
 std::vector<std::vector<int>> GameController::getBoardAsIntMatrix()
 {
     std::vector<std::vector<int>> boardIntMatrix;
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getBoardMatrix();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < board->getCellSize(); y++) {
         boardIntMatrix.push_back(std::vector<int>());
@@ -101,7 +103,7 @@ std::vector<std::vector<int>> GameController::getBoardAsIntMatrix()
 void GameController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix)
 {
     boardIntMatrix.clear();
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &boardMatrix = board->getBoardMatrix();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;

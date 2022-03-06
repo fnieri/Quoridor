@@ -9,6 +9,7 @@
 
 #include "src/common/SerializableMessageFactory.h"
 #include "src/server/Database.h"
+#include "src/server/UserHandler.h"
 
 #include <nlohmann/json.hpp>
 
@@ -44,7 +45,7 @@ std::string AuthHandler::tryLogIn(const std::string &serRequest)
     json requestAnswer;
     auto request(json::parse(serRequest));
 
-    if (DatabaseHandler::checkLogin(request["username"], request["password"])) {
+    if (!m_userHub.isConnected(request["username"]) && DatabaseHandler::checkLogin(request["username"], request["password"])) {
         requestAnswer = SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT);
 
     } else {

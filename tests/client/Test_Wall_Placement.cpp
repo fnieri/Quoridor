@@ -12,7 +12,7 @@
 
 TEST_CASE("Valid wall placements")
 {
-    std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 99, FinishLine::North});
+    std::shared_ptr<Player> p(new Player {PawnColors::Blue, Point {0, 0}, 99, FinishLine::North, "a"});
     std::shared_ptr<Board> b(new Board {});
 
     SECTION("Vertical walls")
@@ -98,6 +98,7 @@ TEST_CASE("Valid wall placements")
         REQUIRE(action_z.executeAction());
 
         // b->debugPrint();
+        std::cout << b->serialized().dump();
     }
 
     // Reminder: since the walls are 2-long, the last row / column cannot have walls (o5 & o6)
@@ -133,7 +134,7 @@ TEST_CASE("Valid wall placements")
 
 TEST_CASE("Player out of walls")
 {
-    std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 1, FinishLine::North});
+    std::shared_ptr<Player> p(new Player {PawnColors::Green, Point {0, 0}, 1, FinishLine::North, "a"});
     std::shared_ptr<Board> b(new Board {});
 
     WallAction action_u {b, p, Point {0, 0}, WallOrientation::Horizontal};
@@ -152,10 +153,10 @@ TEST_CASE("Legal wall placements")
 
     SECTION("4-player scenario")
     {
-        std::shared_ptr<Player> pn(new Player {PawnColors::Purple, Point {4, 0}, 99, FinishLine::South});
-        std::shared_ptr<Player> pe(new Player {PawnColors::Yellow, Point {8, 4}, 99, FinishLine::West});
-        std::shared_ptr<Player> ps(new Player {PawnColors::Blue, Point {4, 8}, 99, FinishLine::North});
-        std::shared_ptr<Player> pw(new Player {PawnColors::Green, Point {0, 4}, 99, FinishLine::East});
+        std::shared_ptr<Player> pn(new Player {PawnColors::Purple, Point {4, 0}, 99, FinishLine::South, "a"});
+        std::shared_ptr<Player> pe(new Player {PawnColors::Yellow, Point {8, 4}, 99, FinishLine::West, "b"});
+        std::shared_ptr<Player> ps(new Player {PawnColors::Blue, Point {4, 8}, 99, FinishLine::North, "c"});
+        std::shared_ptr<Player> pw(new Player {PawnColors::Green, Point {0, 4}, 99, FinishLine::East, "d"});
 
         b->spawnPlayer(pn);
         b->spawnPlayer(pe);
@@ -244,7 +245,7 @@ TEST_CASE("Legal wall placements")
         }
         SECTION("Enclose player middle")
         {
-            std::shared_ptr<Player> pm(new Player {PawnColors::Blue, Point {4, 4}, 99, FinishLine::North});
+            std::shared_ptr<Player> pm(new Player {PawnColors::Blue, Point {4, 4}, 99, FinishLine::North, "a"});
             b->spawnPlayer(pm);
 
             WallAction w1 {b, pm, Point {4, 3}, WallOrientation::Horizontal};
@@ -265,8 +266,8 @@ TEST_CASE("Legal wall placements")
 
     SECTION("The great wall")
     {
-        std::shared_ptr<Player> ps(new Player {PawnColors::Blue, Point {4, 4}, 99, FinishLine::South});
-        std::shared_ptr<Player> pn(new Player {PawnColors::Blue, Point {4, 3}, 99, FinishLine::North});
+        std::shared_ptr<Player> ps(new Player {PawnColors::Blue, Point {4, 4}, 99, FinishLine::South, "b"});
+        std::shared_ptr<Player> pn(new Player {PawnColors::Blue, Point {4, 3}, 99, FinishLine::North, "c"});
 
         REQUIRE((WallAction {b, pn, Point {0, 3}, WallOrientation::Horizontal}).executeAction());
         REQUIRE((WallAction {b, pn, Point {2, 3}, WallOrientation::Horizontal}).executeAction());

@@ -57,9 +57,9 @@ std::string PasswordEncrypter::createDigest(std::string saltedPassword)
 bool PasswordEncrypter::compareHash(std::string passwordToEncrypt, std::string saltKey, std::string databaseHash)
 {
     std::string saltedPassword = saltKey + passwordToEncrypt;
-    if (Instance()->createDigest(saltedPassword) == databaseHash) {
+
+    if (Instance()->createDigest(saltedPassword) == databaseHash)
         return true;
-    }
     return false;
 }
 

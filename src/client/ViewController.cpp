@@ -17,21 +17,18 @@
 
 using json = nlohmann::json;
 
+ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers)
+    : serverController {serverController}
+    , nPlayers {nPlayers}
+{
+    // Player spawn moved to startGame()
+}
+
 ViewController::ViewController(int nPlayers, int currentPlayerIndex, int gameId)
     : nPlayers(nPlayers)
     , currentPlayerIndex(currentPlayerIndex)
     , gameId(gameId)
 {
-    std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
-    for (int i = 0; i < nPlayers; i++) {
-        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, FinishLine::North);
-
-        players.push_back(p);
-
-        board->spawnPlayer(p);
-    }
-    serverController = std::make_shared<ServerController>();
-    serverController->setViewController(this);
 }
 
 void ViewController::setBoard(std::shared_ptr<Board> theBoard)
@@ -47,7 +44,6 @@ void ViewController::setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
 void ViewController::setGameSetup(std::string gameS)
 {
     gameSetup = gameS;
-    serverController->sendGameSetup(gameS);
 }
 
 std::shared_ptr<Board> ViewController::getBoard()
@@ -58,8 +54,7 @@ std::shared_ptr<Board> ViewController::getBoard()
 void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix)
 {
     boardIntMatrix.clear();
-    FinishLine rot = players[currentPlayerIndex]->getFinishLine();
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(rot);
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
@@ -97,8 +92,7 @@ void ViewController::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIn
 std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
 {
     std::vector<std::vector<int>> boardIntMatrix;
-    FinishLine rot = players[currentPlayerIndex]->getFinishLine();
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(rot);
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = board->getRotatedBoardMatrix(players.at(currentPlayerIndex)->getFinishLine());
 
     for (int y = 0; y < board->getCellSize(); y++) {
         boardIntMatrix.push_back(std::vector<int>());
@@ -118,33 +112,8 @@ std::vector<std::vector<int>> ViewController::getBoardAsIntMatrix()
     return boardIntMatrix;
 };
 
-void ViewController::startGame()
-{
-    std::shared_ptr<Board> board = std::make_shared<Board>();
-    std::vector<std::shared_ptr<Player>> players;
-    std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
+/* To Game Model */
 
-    // loop for made by Léo
-    for (int i = 0; i < nPlayers; i++) {
-        // TODO: Change spawn position of players
-        Point pos {i, i};
-        auto p = std::make_shared<Player>(PawnColors(i), pos, 10, FinishLine(i));
-        p->setIndex(i);
-        players.push_back(p);
-
-        board->spawnPlayer(p);
-
-        // dictPlayer.insert(players[i]->getColor(), players[i]);
-    }
-
-    setBoard(board);
-    setPlayers(players);
-    serverController->setBoard(board);
-    serverController->setPlayers(players);
-    serverController->setDict(dictPlayer);
-}
-
-/*  Sending these to Model/Server  */
 void ViewController::movePlayer(int x, int y)
 {
     // Old method :
@@ -155,10 +124,12 @@ void ViewController::movePlayer(int x, int y)
     //     isGameOver(true);
     */
 
+    // Rotate the point
+    Point rotP = board->getRotatedMatrixPosition(Point {x, y}, players.at(currentPlayerIndex)->getFinishLine(), true);
+
     // Louis' method :
-    PlayerAction move {board, players.at(currentPlayerIndex), Point(x / 2, y / 2)};
-    if (move.executeAction())
-        serverController->sendPlayerAction(move, currentPlayerIndex);
+    PlayerAction move {board, players.at(currentPlayerIndex), Point(rotP.x() / 2, rotP.y() / 2)};
+    move.executeAction();
 }
 
 void ViewController::placeWall(int x, int y, int orientation)
@@ -169,61 +140,110 @@ void ViewController::placeWall(int x, int y, int orientation)
         currentPlayerIndex = (currentPlayerIndex + 1) % nPlayers;
      */
 
-    // Louis' method :
+    // Rotate the point, orientation and change position accordingly
+    FinishLine f = players.at(currentPlayerIndex)->getFinishLine();
+    Point rotP = board->getRotatedMatrixPosition(Point {x, y}, f, true);
+    int wallX = rotP.x() / 2;
+    int wallY = rotP.y() / 2;
+
+    switch (f) {
+    case FinishLine::South:
+        wallX++;
+        wallY++;
+        break;
+    case FinishLine::East:
+        wallY++;
+        orientation = (++orientation) % 2;
+        break;
+    case FinishLine::West:
+        wallX++;
+        orientation = (++orientation) % 2;
+        break;
+    case FinishLine::North:
+    default:
+        break;
+    }
 
     WallOrientation wallOrientation = orientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal;
-    int wallX;
-    int wallY;
-    if (wallOrientation == WallOrientation::Horizontal) {
-        wallX = x / 2;
-        wallY = y / 2 + 1;
-    } else {
-        wallX = x / 2 + 1;
-        wallY = y / 2;
+
+    WallAction wallAction {board, players.at(currentPlayerIndex), Point(wallX, wallY), wallOrientation};
+    wallAction.executeAction();
+}
+
+void ViewController::startGame()
+{
+    std::shared_ptr<Board> board = std::make_shared<Board>();
+    std::vector<std::shared_ptr<Player>> players;
+    std::map<PawnColors, std::shared_ptr<Player>> dictPlayer;
+
+    // Initialize and spawn the players
+    std::vector<Point> startPositions {{4, 8}, {4, 0}, {0, 4}, {8, 4}};
+    std::vector<FinishLine> finishLines {FinishLine::North, FinishLine::South, FinishLine::East, FinishLine::West};
+
+    for (int i = 0; i < nPlayers; i++) {
+        // FIXME NEEDS USERNAME!!
+        auto p = std::make_shared<Player>(PawnColors(i), startPositions.at(i), 10, finishLines.at(i), "asd");
+
+        players.push_back(p);
+
+        board->spawnPlayer(p);
     }
-    WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
-    if (wallAction.executeAction())
-        serverController->sendWallAction(wallAction, currentPlayerIndex);
+
+    setBoard(board);
+    setPlayers(players);
+    serverController->setBoard(board);
+    serverController->setPlayers(players);
+    serverController->setDict(dictPlayer);
 }
 
 void ViewController::saveGame(std::string username)
 {
-    serverController->sendSaveGameRequest(username);
+    serverController->saveGame(username);
 }
 
 void ViewController::pauseGame(std::string username)
 {
-    serverController->sendPauseRequest(username);
+    serverController->pauseGame(username);
 }
 
 void ViewController::registerPlayer(std::string username, std::string password)
 {
-    serverController->sendRegisterRequest(username, password);
+    serverController->registerPlayer(username, password);
 }
 
 void ViewController::logIn(std::string username, std::string password)
 {
-    serverController->sendLogInRequest(username, password);
+    serverController->logIn(username, password);
 }
 
-void ViewController::sendInvite(std::string aFriend)
+void ViewController::logOut()
 {
-    serverController->sendInvite(aFriend);
+    serverController->logOut();
 }
-/*
+
+void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
+{
+    serverController->sendInvite(aFriend, gameSetup);
+}
+
 void ViewController::joinGame(int gameId)
 {
     serverController->joinGame(gameId);
-}*/
+}
 
-void ViewController::sendFriendRequest(std::string sender, std::string receiver)
+void ViewController::askToPause(std::string aFriend)
 {
-    serverController->sendFriendRequest(sender, receiver);
+    serverController->askToPause(aFriend);
+}
+
+void ViewController::sendFriendRequest(std::string receiver)
+{
+    serverController->sendFriendRequest(receiver);
 }
 
 void ViewController::checkLeaderBoard()
 {
-    serverController->sendLeaderboardRequest();
+    serverController->checkLeaderBoard(); // or call immediatly ELO and give to the view ?
 }
 
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
@@ -236,12 +256,43 @@ void ViewController::sendGroupMessage(std::string sender, std::string msg, int g
     serverController->sendGroupMessage(sender, msg, gameId);
 }
 
-void ViewController::loadDirectMessages(std::string sender, std::string receiver)
+bool ViewController::isGroupMessageReceived(bool received)
 {
-    serverController->sendDMChatBoxRequest(sender, receiver);
+    if (serverController->isGroupMessageReceived())
+        return true;
+    else
+        return received;
 }
 
-// Booleans
+bool ViewController::isDirectMessageReceived(bool received)
+{
+    if (serverController->isDirectMessageReceived())
+        return true;
+    else
+        return received;
+}
+
+json ViewController::receiveGroupMessage(json msg)
+{
+    isGroupMessageReceived(true);
+    return msg;
+}
+
+json ViewController::receiveDirectMessage(json msg)
+{
+    isDirectMessageReceived(true);
+    return msg;
+}
+
+void ViewController::loadDirectMessages(std::string username)
+{
+    serverController->loadDirectMessages(username);
+}
+
+void ViewController::loadGroupMessages(int gameId)
+{
+    serverController->loadGroupMessages(gameId);
+}
 
 bool ViewController::isGameOver(bool over)
 {
@@ -262,138 +313,4 @@ bool ViewController::isWallValid(int x, int y, int orientation)
         return false;
     WallAction wallAction {board, players.at(currentPlayerIndex), Point(x / 2, y / 2), wallOrientation};
     return wallAction.isWallPlacementValid();
-}
-
-// Work of 03/03
-
-void ViewController::receiveGroupMessage(std::string msg)
-{
-    groupMessage = json::parse(msg);
-    isGroupMessageReceived(true);
-}
-
-void ViewController::receiveDirectMessage(std::string msg)
-{
-    directMessage = json::parse(msg);
-    isDirectMessageReceived(true);
-}
-
-void ViewController::logInReceipt(std::string msg)
-{
-    logInMessage = json::parse(msg);
-    isLogInReceived(true);
-}
-
-void ViewController::registerReceipt(std::string msg)
-{
-    registerMessage = json::parse(msg);
-    isRegisterReceived(true);
-}
-
-void ViewController::friendRequestReceipt(std::string msg)
-{
-    friendReqReceipt = json::parse(msg);
-    isFriendsRequestReceived(true);
-}
-
-void ViewController::sendFriendsList(std::string msg)
-{
-    friendsListReceipt = json::parse(msg);
-    isFriendsListReceived(true);
-}
-
-void ViewController::sendfriendsRequestSentList(std::string msg)
-{
-    friendsRequestSentList = json::parse(msg);
-    isFriendsRequestSentListReceived(true);
-}
-
-void ViewController::sendfriendsRequestReceivedList(std::string msg)
-{
-    friendsRequestReceivedList = json::parse(msg);
-    isFriendsRequestReceivedListReceived(true);
-}
-
-// Getters
-
-json ViewController::getLogInReceipts()
-{
-    return logInMessage;
-}
-
-json ViewController::getRegisterReceipts()
-{
-    return registerMessage;
-}
-
-json ViewController::getFriendsRequestReceipts()
-{
-    return friendReqReceipt;
-}
-
-json ViewController::getFriendsRequestSentList()
-{
-    return friendsRequestSentList;
-}
-
-json ViewController::getFriendsRequestReceivedList()
-{
-    return friendsRequestReceivedList;
-}
-
-json ViewController::getDirectMessage()
-{
-    return directMessage;
-}
-
-json ViewController::getGroupMessage()
-{
-    return groupMessage;
-}
-
-nlohmann::json ViewController::getFriendsListReceipt()
-{
-    return friendsListReceipt;
-}
-
-// Booleans : the view calls these consistently to check wether the server has sent sth
-
-bool ViewController::isGroupMessageReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isDirectMessageReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isLogInReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isRegisterReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isFriendsRequestReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isFriendsRequestSentListReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isFriendsRequestReceivedListReceived(bool received)
-{
-    return received;
-}
-
-bool ViewController::isFriendsListReceived(bool received)
-{
-    return received;
 }

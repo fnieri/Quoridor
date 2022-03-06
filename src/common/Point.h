@@ -1,15 +1,24 @@
+/**
+ * @file Point.h
+ * @author Boris Petrov
+ * @brief A position in a 2 dimentional grid
+ * @date 02/25/22
+ */
+
 #pragma once
 
+#include "../common/Serializable.h"
 #include "Stringable.h"
 #include <nlohmann/json.hpp>
 /**
  * Coordinate in the plan
  *
- * Since the x and y getters a expected to be used
+ * @note Since the x and y getters a expected to be used
  * very often, a short form was given for them to be less
  * verbose than, for instance, getX().
  */
-class Point : public Stringable
+
+class Point : public Stringable, public Serializable
 {
 public:
     constexpr Point(const int &_x = 0, const int &_y = 0)
@@ -44,8 +53,8 @@ public:
     Point operator/(const int &) const;
 
     bool operator==(const Point &) const noexcept;
+    nlohmann::json serialized();
     bool operator!=(const Point &) const noexcept;
-    nlohmann::json serialized() const;
 
 protected:
     int m_x;

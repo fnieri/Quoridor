@@ -28,10 +28,14 @@ private:
 
     /**
      * Save it in the db for future usage
+     *
+     * @param request json formatted request representing a message
      */
     void recordMessage(const std::string &);
     /**
      * Send it to connected users
+     *
+     * @param request json formatted request representing a message
      */
     void relayMessage(const std::string &);
 

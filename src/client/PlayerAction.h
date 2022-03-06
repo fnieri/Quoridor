@@ -43,8 +43,6 @@ public:
      */
     PlayerAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &_destination);
 
-    ~PlayerAction();
-
     /**
      * Check if the player move is valid according to the game rules.
      *

@@ -5,7 +5,7 @@
 		<Option title="Project"/>
 		<Option makefile_is_custom="1"/>
 		<Option compiler="gcc"/>
-		<Option virtualFolders="CMake Files\;CMake Files\client\;CMake Files\common\;"/>
+		<Option virtualFolders="CMake Files\;CMake Files\common\;CMake Files\server\;CMake Files\client\;"/>
 		<Build>
 			<Target title="all">
 				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug"/>
@@ -35,98 +35,6 @@
 					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="client">
-				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/client" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir=""/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
-					<Add directory="/usr/include/c++/9"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
-					<Add directory="/usr/include/c++/9/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 client"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="client/fast">
-				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/client" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir=""/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
-					<Add directory="/usr/include/c++/9"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
-					<Add directory="/usr/include/c++/9/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 client/fast"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="_client">
-				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
-					<Add directory="/usr/include/c++/9"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
-					<Add directory="/usr/include/c++/9/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 _client"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="_client/fast">
-				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client"/>
-				<Option object_output="./"/>
-				<Option type="2"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
-					<Add directory="/usr/include/c++/9"/>
-					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
-					<Add directory="/usr/include/c++/9/backward"/>
-					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/include/x86_64-linux-gnu"/>
-					<Add directory="/usr/include"/>
-				</Compiler>
-				<MakeCommands>
-					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 _client/fast"/>
-					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
 			<Target title="common">
@@ -221,38 +129,222 @@
 					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/common/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
+			<Target title="server">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir=""/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 server"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="server/fast">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/server" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir=""/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 server/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="_server">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/lib_server.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 _server"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="_server/fast">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/lib_server.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 _server/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/server/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir=""/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 client"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="client/fast">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/client" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir=""/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 client/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="_client">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 _client"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="_client/fast">
+				<Option output="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client"/>
+				<Option object_output="./"/>
+				<Option type="2"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add directory="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src"/>
+					<Add directory="/usr/include/c++/9"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/9"/>
+					<Add directory="/usr/include/c++/9/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/9/include"/>
+					<Add directory="/usr/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 _client/fast"/>
+					<CompileFile command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/usr/bin/make -j12 -f &quot;/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
 		</Build>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Board.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Board.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/BoardComponent.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/BoardComponent.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Cell.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Cell.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Corridor.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Corridor.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/GameController.cpp">
 			<Option target="_client"/>
@@ -267,16 +359,16 @@
 			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Player.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/Player.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/PlayerAction.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/PlayerAction.h">
 			<Option target="_client"/>
@@ -287,6 +379,12 @@
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerBridge.h">
 			<Option target="_client"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerController.cpp">
+			<Option target="_client"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/ServerController.h">
+			<Option target="_client"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/TerminalVue.cpp">
 			<Option target="_client"/>
 		</Unit>
@@ -294,12 +392,12 @@
 			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/WallAction.cpp">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/WallAction.h">
-			<Option target="_client"/>
 			<Option target="_common"/>
+			<Option target="_client"/>
 		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/WallEnum.h">
 			<Option target="_client"/>
@@ -394,14 +492,80 @@
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/main.cpp">
 			<Option target="common"/>
 		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/AuthHandler.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/AuthHandler.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/ChatBox.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/ChatBox.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/Database.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/Database.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/EloCalculator.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/EloCalculator.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/GameHandler.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/GameHandler.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/LandingPool.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/LandingPool.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/PasswordEncrypter.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/PasswordEncrypter.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/RelationsHandler.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/RelationsHandler.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/ServerUser.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/ServerUser.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/UserHandler.cpp">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/UserHandler.h">
+			<Option target="_server"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/main.cpp">
+			<Option target="server"/>
+		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
-		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/CMakeLists.txt">
-			<Option virtualFolder="CMake Files\client\"/>
-		</Unit>
 		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/common/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\common\"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/server/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\server\"/>
+		</Unit>
+		<Unit filename="/mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/client/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\client\"/>
 		</Unit>
 	</Project>
 </CodeBlocks_project_file>

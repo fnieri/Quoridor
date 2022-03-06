@@ -276,6 +276,21 @@ ServerBridge.s:
 .PHONY : ServerBridge.s
 
 # target to build an object file
+ServerController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.o
+.PHONY : ServerController.o
+
+# target to preprocess a source file
+ServerController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.i
+.PHONY : ServerController.i
+
+# target to generate assembly for a file
+ServerController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/ServerController.s
+.PHONY : ServerController.s
+
+# target to build an object file
 TerminalVue.o:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/TerminalVue.o
 .PHONY : TerminalVue.o
@@ -357,6 +372,9 @@ help:
 	@echo "... ServerBridge.o"
 	@echo "... ServerBridge.i"
 	@echo "... ServerBridge.s"
+	@echo "... ServerController.o"
+	@echo "... ServerController.i"
+	@echo "... ServerController.s"
 	@echo "... TerminalVue.o"
 	@echo "... TerminalVue.i"
 	@echo "... TerminalVue.s"

@@ -22,5 +22,9 @@ public:
      * queued players
      */
     void match();
+    /**
+     * @brief Add username to queue
+     * @param user Username of user to add to queue
+     */
     void queueUser(const std::string &);
 };

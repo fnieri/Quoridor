@@ -47,8 +47,3 @@ json PlayerAction::serialized()
     json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
 }
-
-
-PlayerAction::~PlayerAction()
-{
-}

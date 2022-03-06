@@ -1,3 +1,10 @@
+/**
+ * @file Player.h
+ * @author Nargis, Lèo, Anne-Marie
+ * @brief Class representing a Player in a game
+ * @date 2022-03-04
+ *
+ */
 #pragma once
 
 #include "PlayerEnum.h"
@@ -39,7 +46,7 @@ public:
      * @param nwalls the starting number of walls
      * @param finishLine the finish line objective of the player
      */
-    Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine);
+    Player(const PawnColors &color, const Point &position, const int &nwalls, const FinishLine &finishLine, const std::string &username);
     ~Player();
 
     /// Returns the x cell position

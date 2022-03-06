@@ -1,4 +1,24 @@
+/**
+ * @file Board.cpp
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
+ */
+
 #include "Board.h"
+#include "BoardComponent.h"
+#include "Cell.h"
+#include "Corridor.h"
+#include "Player.h"
+#include "src/common/Point.h"
+
+
+#include <iostream>
+#include <memory>
+#include <stack>
+
+using json = nlohmann::json;
 
 Board::Board()
 {
@@ -291,8 +311,8 @@ void Board::debugPrint()
         for (int x = 0; x < MATRIX_SIZE; x++) {
             if (isCell({x, y})) {
                 std::cout << "■";
-            } else if (matrix.at(x).at(y) && matrix.at(x).at(y)->isOccupied()) {
-                auto orientation = std::dynamic_pointer_cast<Corridor>(matrix.at(x).at(y))->getOrientation();
+            } else if (m.at(x).at(y) && m.at(x).at(y)->isOccupied()) {
+                auto orientation = std::dynamic_pointer_cast<Corridor>(m.at(x).at(y))->getOrientation();
                 std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");
             } else
                 std::cout << " ";
@@ -301,8 +321,18 @@ void Board::debugPrint()
     }
 }
 
-Point Board::getRotatedMatrixPosition(Point p, FinishLine f)
+Point Board::getRotatedMatrixPosition(Point p, FinishLine f, bool invert)
 {
+    if (invert) {
+        // Invert the rotation if requested
+        // North doesn't need changing at all, South is the inverse of itself,
+        // and East/West are the inverse of each other, so swap them around
+        if (f == FinishLine::East)
+            f = FinishLine::West;
+        else if (f == FinishLine::West)
+            f = FinishLine::East;
+    }
+
     switch (f) {
     case FinishLine::South:
         return Point {MATRIX_SIZE - p.x() - 1, MATRIX_SIZE - p.y() - 1};
@@ -326,7 +356,7 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
     for (int x = 0; x < MATRIX_SIZE; x++) {
         for (int y = 0; y < MATRIX_SIZE; y++) {
             // copy over all the board components while rotating the matrix
-            Point p = getRotatedMatrixPosition(Point {x, y}, rotation);
+            Point p = getRotatedMatrixPosition(Point {x, y}, rotation, false);
             rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
 
             // make sure to rotate the direction of the walls when needed
@@ -340,6 +370,76 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
 
     return rotated;
 }
-std::vector<std::vector<std::shared_ptr<BoardComponent>>> &Board::getBoardMatrix(){
-    return matrix;
+
+json Board::serialized()
+{
+    json wallArray = json::array(), playerArray = json::array();
+    int NOfPlayers = 0;
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+            if (matrix.at(i).at(j)) { // Check if current looped boardComponent is non nullptr
+                if (matrix.at(i).at(j)->isOccupied()) { // Someone or a wall is in a corridor
+                    if (isCorridor({i, j})) {
+
+                        WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
+                        json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
+                        wallArray.push_back(wallJson);
+
+                    }
+                    // Case where the cell is occupied by a Player
+                    else if (isCell({i, j})) {
+                        NOfPlayers++;
+                        std::shared_ptr<Player> currentPlayer = std::dynamic_pointer_cast<Cell>(matrix.at(i).at(j))->getPlayer();
+                        // Get informations about player and serialize it
+                        PawnColors currentPlayerColor = currentPlayer->getColor();
+                        int currentPlayerNWalls = currentPlayer->nWalls();
+                        std::string currentPlayerUsername = currentPlayer->getUsername();
+                        FinishLine currentFinishLine = currentPlayer->getFinishLine();
+                        json playerJson = {{"player_id", static_cast<int>(currentPlayerColor)}, {"player_position", Point {i, j}.serialized()},
+                            {"remaining_walls", currentPlayerNWalls}, {"username", currentPlayerUsername},
+                            {"finish_line", static_cast<int>(currentFinishLine)}};
+                        playerArray.push_back(playerJson);
+                    } else {
+                        // This only concerns placement between 4 player cells
+                        WallOrientation wallOrientation = std::dynamic_pointer_cast<Corridor>(matrix.at(i).at(j))->getOrientation();
+                        json wallJson = {{"wall_orientation", toJsonOutput(wallOrientation)}, {"wall_position", Point {i, j}.serialized()}};
+                        wallArray.push_back(wallJson);
+                    }
+                }
+            }
+        }
+    }
+    json boardJson = {{"walls", wallArray}, {"players", playerArray}, {"n_of_players", NOfPlayers}};
+    return boardJson;
+}
+
+void Board::deserialized(const std::string &serializedBoard)
+{
+    auto boardJson(json::parse(serializedBoard));
+    json players = boardJson.at("players"), walls = boardJson.at("walls");
+
+    for (auto &player : players) {
+        // Build each player from serialized information
+        PawnColors currentColor = static_cast<PawnColors>(player.at("player_id").get<int>());
+        int currentPlayerNWalls = player.at("remaining_walls").get<int>();
+        int x = player.at("player_position").at("x").get<int>(), y = player.at("player_position").at("y").get<int>();
+        Point currentPosition {x, y};
+        FinishLine currentFinishLine = static_cast<FinishLine>(player.at("finish_line").get<int>());
+        std::string currentPlayerUsername = player.at("username").get<std::string>();
+        std::shared_ptr<Player> newPlayer
+            = std::make_shared<Player>(currentColor, currentPosition, currentPlayerNWalls, currentFinishLine, currentPlayerUsername);
+        spawnPlayer(newPlayer);
+    }
+
+    for (auto &wall : walls) {
+        // Build wall from serialized information
+        WallOrientation currentOrientation
+            = wall.at("wall_orientation").get<std::string>() == "wall_vertical" ? WallOrientation::Vertical : WallOrientation::Horizontal;
+        int x = wall.at("wall_position").at("x").get<int>(), y = wall.at("wall_position").at("y").get<int>();
+
+        auto corridor = std::make_shared<Corridor>(currentOrientation);
+        corridor->placeWall();
+
+        matrix.at(x).at(y) = corridor;
+    };
 }

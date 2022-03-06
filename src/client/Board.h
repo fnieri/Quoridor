@@ -1,23 +1,27 @@
+/**
+ * @file Board.h
+ * @author Nargis, Lèo, Anne-Marie, Francesco
+ * @brief Class representing a Board in a game
+ * @date 2022-03-04
+ *
+ */
+
 #pragma once
 
-#include "BoardComponent.h"
-#include "WallEnum.h"
-#include "Cell.h"
-#include "Corridor.h"
-#include "Player.h"
 #include "../common/Point.h"
+#include "../common/Serializable.h"
+#include "BoardComponent.h"
 #include "Player.h"
+#include "WallEnum.h"
+#include <nlohmann/json.hpp>
 
-#include <iostream>
 #include <memory>
-#include <stack>
 #include <vector>
-
 
 /**
  * Stores the data of the game board, notably wall and player positions.
  */
-class Board
+class Board : public Serializable
 {
 private:
     /**
@@ -181,8 +185,8 @@ public:
      * @warning the position is assumed to be a *player cell position*
      *
      * @note the orientation of the wall dictates its placement:
-     * - if orienation is WallOrientation::Vertical, the wall is placed to the right of cell and continues towards the bottom
-     * - if orienation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
+     * - if orientation is WallOrientation::Vertical, the wall is placed to the right of cell and continues towards the bottom
+     * - if orientation is WallOrientation::Horizontal, the wall is placed under cell and continues towards the right
      */
     void placeWall(const Point &cell, const WallOrientation &direction);
 
@@ -271,6 +275,7 @@ public:
      *
      * @param p the point to rotate
      * @param f the finish line to dictate rotation
+     * @param invert wether to invert the result, i.e. to undo a previous rotation
      * @return Point the rotated Point
      *
      * @warning both the given and returned point are assumed to have *proper matrix indices*
@@ -281,7 +286,7 @@ public:
      * - FinishLine::South is 180° rotation counter-clockwise
      * - FinishLine::West is 270° rotation counter-clockwise
      */
-    Point getRotatedMatrixPosition(Point p, FinishLine f);
+    Point getRotatedMatrixPosition(Point p, FinishLine f, bool invert);
 
     /**
      * Get the Board matrix, rotated depending on the given play finish line.
@@ -291,9 +296,20 @@ public:
      */
     std::vector<std::vector<std::shared_ptr<BoardComponent>>> getRotatedBoardMatrix(FinishLine rotation);
 
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> &getBoardMatrix();
-
     void debugPrint();
 
     ~Board();
+
+    /**
+     * @brief Serialize player positions, wall positions and number of players in a board
+     * @return nlohmann::json Serialized json of current Board
+     */
+    nlohmann::json serialized() override;
+
+    /**
+     * @brief Construct board from a serialized json of a Board passed as string
+     * @param serializedBoard Board->serialized() as string
+     *
+     */
+    void deserialized(const std::string &serializedBoard);
 };

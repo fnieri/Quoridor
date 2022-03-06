@@ -71,7 +71,6 @@ public:
      */
     WallAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &destCell, const WallOrientation &orientation);
 
-    ~WallAction();
 
     /**
      * Checks if the wall placement of this action is *legal*, meaning it doesn't obstruct any Player from reaching their finish line.

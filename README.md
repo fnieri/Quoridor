@@ -14,10 +14,10 @@ make setup
 make
 ```
 
+### IMPORTANT! 
+Avant d'exécuter le client il est nécessaire de mettre la taille du texte du terminal à 11 ou moins.
+
 # Compilation avec Docker (plus facile)
-###TODO
-* Add MongoDB Dockerfile
-* Use DockerCompose
 
 Installation [Docker](https://docs.docker.com/get-docker/)
 

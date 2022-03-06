@@ -22,26 +22,26 @@ add_library(${PREFIX}_common
         Observer.cpp
         RequestHandler.cpp
         JoinGame.cpp
-        )
+)
 
 target_link_libraries(${PREFIX}_common
-        PUBLIC
+    PUBLIC
         nlohmann_json
-        PRIVATE
-        pthread
+    PRIVATE
         sockpp
-        )
+        pthread
+)
 
 target_include_directories(${PREFIX}_common
-        PUBLIC
+    PUBLIC
         ${CMAKE_SOURCE_DIR}
-        )
+)
 
-add_executable(common
-        main.cpp
-        )
+ add_executable(common
+     main.cpp
+ )
 
-target_link_libraries(common
-        PRIVATE
-        ${PREFIX}_common
-        )
+ target_link_libraries(common
+     PRIVATE
+     ${PREFIX}_common
+ )

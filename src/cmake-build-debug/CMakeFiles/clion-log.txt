@@ -83,7 +83,7 @@ CMake Warning (dev) at client/CMakeLists.txt:2 (add_library):
   an ALIAS target is missing?
 This warning is for project developers.  Use -Wno-dev to suppress it.
 
-CMake Warning (dev) at client/CMakeLists.txt:28 (add_executable):
+CMake Warning (dev) at common/CMakeLists.txt:40 (add_executable):
   Policy CMP0003 should be set before this line.  Add code such as
 
     if(COMMAND cmake_policy)
@@ -92,15 +92,13 @@ CMake Warning (dev) at client/CMakeLists.txt:28 (add_executable):
 
   as early as possible but after the most recent call to
   cmake_minimum_required or cmake_policy(VERSION).  This warning appears
-  because target "client" links to some libraries for which the linker must
+  because target "common" links to some libraries for which the linker must
   search:
 
-    ftxui::screen, ftxui::dom, ftxui::component, nlohmann_json, sockpp
-    pthread
+    nlohmann_json, sockpp, pthread
 
   and other libraries with known full path:
 
-    /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/client/lib_client.a
     /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug/common/lib_common.a
 
   CMake is adding directories in the second list to the linker search path in

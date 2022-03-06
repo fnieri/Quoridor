@@ -12,8 +12,9 @@
 #include "src/common/Exceptions.h"
 #include "src/common/SerializableMessageFactory.h"
 #include "src/server/ChatBox.h"
+#include "src/server/Database.h"
 
-#include <nlohmann/json.hpp> // TODO: maybe not the whole thing !?
+#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <thread>
@@ -38,7 +39,6 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
 {
 }
 
-// TODO: Replace m_isFinished with UserSocket impl
 // TODO: add function to run when client is disconnected
 void UserHandler::handleRequests()
 {
@@ -47,19 +47,22 @@ void UserHandler::handleRequests()
             if (hasReadActivity(1)) {
                 auto serRequest {receive()};
 
+                std::cerr << "Received : " << serRequest << m_userHandled->getUsername() << std::endl;
+
                 // Do not continue if the thread was terminated during or after the receive
                 if (m_isFinished || m_wasTerminated)
                     break;
 
                 processRequest(serRequest);
-
             }
         }
         // Client was disconnected
         // FIXME: unable to send may be thrown by another user
         catch (UnableToRead &) {
+            std::cerr << "Unable to read from " << m_userHandled->getUsername();
             m_isFinished = true;
         } catch (UnableToSend &) {
+            std::cerr << "Unable to send from " << m_userHandled->getUsername();
             m_isFinished = true;
         }
     }
@@ -67,9 +70,8 @@ void UserHandler::handleRequests()
     // Only run this if the connection was lost,
     // not if the server is shuting itself down.
     if (!m_wasTerminated && isInGame()) {
-        // TODO: wait for serialize
-        /* auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())}; */
-        /* processRequest(req.dump()); */
+        auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())};
+        processRequest(req.dump());
     }
 
     m_userHub->eraseFinished();
@@ -79,14 +81,10 @@ void UserHandler::processRequest(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
-    std::cerr << request << std::endl << toJsonString(Domain::RELATIONS);
-    /* sleep(2); */
-
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
-        std::cerr << "in relations";
         processRelations(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
@@ -115,8 +113,7 @@ void UserHandler::processAuth(const std::string &serRequest)
     // Login was successful, bind the connection to its username
     if (answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS)) {
         m_userHandled->bindToUsername(request["username"]);
-        std::cerr << "in success" << isLoggedIn();
-        /* m_userHandled->syncWithDB(); */
+        m_userHandled->syncWithDB();
     }
 
     relayMessage(serAnswer);
@@ -125,7 +122,7 @@ void UserHandler::processAuth(const std::string &serRequest)
 void UserHandler::processRelations(const std::string &serRequest)
 {
     m_relationsHandler->processRequest(serRequest);
-    /* m_userHandled->syncWithDB(); */
+    m_userHandled->syncWithDB();
 }
 
 void UserHandler::processChatbox(const std::string &serRequest)
@@ -152,23 +149,26 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
         data = json {m_userHandled->getFriendRequestsReceived()};
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
+
+    } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
+        data = json {DatabaseHandler::getMessages(request["sender"], request["receiver"])};
+        dataType = DataType::CHATS;
+
+    } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
+        data = json {m_userHandled->getGameIDs()};
+        dataType = DataType::GAME_IDS;
+
+    } else if (request["data_type"] == toJsonString(DataType::ELO)) {
+        data = json {m_userHandled->getELO()};
+        dataType = DataType::ELO;
+
+    } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) {
+        data = json {DatabaseHandler::getLeaderboard(10)};
+        dataType = DataType::LEADERBOARD;
     }
 
-    // TODO: waiting serialize
-    /* } else if (request["data_type"] == toJsonString(DataType::CHATS)) { */
-    /*     data = json{DatabaseHandler::getChats(m_userHandled->getUsername())}; */
-    /*     dataType = DataType::CHATS; */
-
-    /* } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) { */
-    /*     data = json{DatabaseHandler::getLeaderboard()}; */
-    /*     dataType = DataType::LEADERBOARD; */
-    /* else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) { */
-    /*     data = json{m_userHandled->getGameIDs()}; */
-    /* } */
-
-    // TODO: waiting serialize
-    /* auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data)}; */
-    /* send(answer); */
+    auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data).dump()};
+    send(answer);
 }
 
 void UserHandler::processGameSetup(const std::string &serRequest)
@@ -223,18 +223,15 @@ void UserHandler::relayMessage(const std::string &serRequest)
     if (request["domain"] == toJsonString(Domain::RELATIONS)) {
         // Sync friend lists
         m_userHandled->syncWithDB();
+
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED) && request["action"] == toJsonString(GameAction::START_GAME)) {
+        m_activeGame = m_gameHub->getGame(request["game_id"]);
+
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED) && request["action"] == toJsonString(GameAction::END_GAME)) {
+        m_activeGame.reset();
     }
 
-    // TODO wait serialize
-    /* } else if (request["domain"] == Domain::GAME_ACTION */
-    /*         && request["action"] == GameSetup::GAME_STARTED) { */
-    /*     m_activeGame = m_gameHub->getGame(request["game_id"]); */
-
-    /* } else if (request["domain"] == Domain::GAME_ACTION */
-    /*         && request["action"] == GameSetup::GAME_ENDED) { */
-    /*     m_activeGame.reset();
-
-    /* } */
+    std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
 
     send(serRequest);
 }
@@ -302,6 +299,7 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     }
     // In case the target disconnects during the writing
     catch (UnableToRead &) {
+
         // Should always be valid but who knows, better avoid them segfaults !
         if (receiver) {
             receiver->terminate();
@@ -330,4 +328,16 @@ int UserHub::connectedUsers() const noexcept
     std::lock_guard<std::mutex> guard {m_handlersMutex};
 
     return m_handlers.size();
+}
+
+std::vector<std::string> UserHub::namesOfConnectedUsers()
+{
+    std::lock_guard<std::mutex> guard {m_handlersMutex};
+
+    std::vector<std::string> names;
+
+    for (auto &i : m_handlers)
+        names.push_back(i->getUsername());
+
+    return names;
 }

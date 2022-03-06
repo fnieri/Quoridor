@@ -13,26 +13,25 @@ add_library(${PREFIX}_client
         GameController.cpp
         TerminalVue.cpp
         MainController.cpp
+        ServerController.cpp
         )
 
 target_link_libraries(${PREFIX}_client
         PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread ${PREFIX}_common
-)
+        )
 
 target_include_directories(${PREFIX}_client
-    PUBLIC
+        PUBLIC
         ${CMAKE_SOURCE_DIR}
-
-)
+        )
 
 add_executable(client
-    main.cpp
-)
+        main.cpp
+        )
 
 # Link the project libraries to the executable
 target_link_libraries(client
-    PRIVATE
+        PRIVATE
         ${PREFIX}_client
         )
-
 target_compile_features(client PRIVATE cxx_std_17)
