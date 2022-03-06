@@ -216,6 +216,21 @@ GameController.s:
 .PHONY : GameController.s
 
 # target to build an object file
+MainController.o:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/MainController.o
+.PHONY : MainController.o
+
+# target to preprocess a source file
+MainController.i:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/MainController.i
+.PHONY : MainController.i
+
+# target to generate assembly for a file
+MainController.s:
+	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/MainController.s
+.PHONY : MainController.s
+
+# target to build an object file
 Player.o:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/Player.o
 .PHONY : Player.o
@@ -291,171 +306,6 @@ WallAction.s:
 .PHONY : WallAction.s
 
 # target to build an object file
-__/common/AuthSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/AuthSerializableMessageFactory.o
-.PHONY : __/common/AuthSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/AuthSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/AuthSerializableMessageFactory.i
-.PHONY : __/common/AuthSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/AuthSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/AuthSerializableMessageFactory.s
-.PHONY : __/common/AuthSerializableMessageFactory.s
-
-# target to build an object file
-__/common/BoardActionsSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/BoardActionsSerializableMessageFactory.o
-.PHONY : __/common/BoardActionsSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/BoardActionsSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/BoardActionsSerializableMessageFactory.i
-.PHONY : __/common/BoardActionsSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/BoardActionsSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/BoardActionsSerializableMessageFactory.s
-.PHONY : __/common/BoardActionsSerializableMessageFactory.s
-
-# target to build an object file
-__/common/ChatBoxSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ChatBoxSerializableMessageFactory.o
-.PHONY : __/common/ChatBoxSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/ChatBoxSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ChatBoxSerializableMessageFactory.i
-.PHONY : __/common/ChatBoxSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/ChatBoxSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ChatBoxSerializableMessageFactory.s
-.PHONY : __/common/ChatBoxSerializableMessageFactory.s
-
-# target to build an object file
-__/common/FriendActionsSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/FriendActionsSerializableMessageFactory.o
-.PHONY : __/common/FriendActionsSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/FriendActionsSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/FriendActionsSerializableMessageFactory.i
-.PHONY : __/common/FriendActionsSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/FriendActionsSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/FriendActionsSerializableMessageFactory.s
-.PHONY : __/common/FriendActionsSerializableMessageFactory.s
-
-# target to build an object file
-__/common/GameRelatedActionsSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameRelatedActionsSerializableMessageFactory.o
-.PHONY : __/common/GameRelatedActionsSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/GameRelatedActionsSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameRelatedActionsSerializableMessageFactory.i
-.PHONY : __/common/GameRelatedActionsSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/GameRelatedActionsSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameRelatedActionsSerializableMessageFactory.s
-.PHONY : __/common/GameRelatedActionsSerializableMessageFactory.s
-
-# target to build an object file
-__/common/GameSetupSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameSetupSerializableMessageFactory.o
-.PHONY : __/common/GameSetupSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/GameSetupSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameSetupSerializableMessageFactory.i
-.PHONY : __/common/GameSetupSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/GameSetupSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/GameSetupSerializableMessageFactory.s
-.PHONY : __/common/GameSetupSerializableMessageFactory.s
-
-# target to build an object file
-__/common/ObjectExchangesSerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ObjectExchangesSerializableMessageFactory.o
-.PHONY : __/common/ObjectExchangesSerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/ObjectExchangesSerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ObjectExchangesSerializableMessageFactory.i
-.PHONY : __/common/ObjectExchangesSerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/ObjectExchangesSerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/ObjectExchangesSerializableMessageFactory.s
-.PHONY : __/common/ObjectExchangesSerializableMessageFactory.s
-
-# target to build an object file
-__/common/Point.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/Point.o
-.PHONY : __/common/Point.o
-
-# target to preprocess a source file
-__/common/Point.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/Point.i
-.PHONY : __/common/Point.i
-
-# target to generate assembly for a file
-__/common/Point.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/Point.s
-.PHONY : __/common/Point.s
-
-# target to build an object file
-__/common/RequestHandler.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/RequestHandler.o
-.PHONY : __/common/RequestHandler.o
-
-# target to preprocess a source file
-__/common/RequestHandler.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/RequestHandler.i
-.PHONY : __/common/RequestHandler.i
-
-# target to generate assembly for a file
-__/common/RequestHandler.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/RequestHandler.s
-.PHONY : __/common/RequestHandler.s
-
-# target to build an object file
-__/common/SerializableMessageFactory.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SerializableMessageFactory.o
-.PHONY : __/common/SerializableMessageFactory.o
-
-# target to preprocess a source file
-__/common/SerializableMessageFactory.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SerializableMessageFactory.i
-.PHONY : __/common/SerializableMessageFactory.i
-
-# target to generate assembly for a file
-__/common/SerializableMessageFactory.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SerializableMessageFactory.s
-.PHONY : __/common/SerializableMessageFactory.s
-
-# target to build an object file
-__/common/SocketUser.o:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SocketUser.o
-.PHONY : __/common/SocketUser.o
-
-# target to preprocess a source file
-__/common/SocketUser.i:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SocketUser.i
-.PHONY : __/common/SocketUser.i
-
-# target to generate assembly for a file
-__/common/SocketUser.s:
-	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/_client.dir/build.make client/CMakeFiles/_client.dir/__/common/SocketUser.s
-.PHONY : __/common/SocketUser.s
-
-# target to build an object file
 main.o:
 	cd /mnt/c/Users/louis/Documents/uni/repos/202122_INFOF209_5/src/cmake-build-debug && $(MAKE) -f client/CMakeFiles/client.dir/build.make client/CMakeFiles/client.dir/main.o
 .PHONY : main.o
@@ -495,6 +345,9 @@ help:
 	@echo "... GameController.o"
 	@echo "... GameController.i"
 	@echo "... GameController.s"
+	@echo "... MainController.o"
+	@echo "... MainController.i"
+	@echo "... MainController.s"
 	@echo "... Player.o"
 	@echo "... Player.i"
 	@echo "... Player.s"
@@ -510,39 +363,6 @@ help:
 	@echo "... WallAction.o"
 	@echo "... WallAction.i"
 	@echo "... WallAction.s"
-	@echo "... __/common/AuthSerializableMessageFactory.o"
-	@echo "... __/common/AuthSerializableMessageFactory.i"
-	@echo "... __/common/AuthSerializableMessageFactory.s"
-	@echo "... __/common/BoardActionsSerializableMessageFactory.o"
-	@echo "... __/common/BoardActionsSerializableMessageFactory.i"
-	@echo "... __/common/BoardActionsSerializableMessageFactory.s"
-	@echo "... __/common/ChatBoxSerializableMessageFactory.o"
-	@echo "... __/common/ChatBoxSerializableMessageFactory.i"
-	@echo "... __/common/ChatBoxSerializableMessageFactory.s"
-	@echo "... __/common/FriendActionsSerializableMessageFactory.o"
-	@echo "... __/common/FriendActionsSerializableMessageFactory.i"
-	@echo "... __/common/FriendActionsSerializableMessageFactory.s"
-	@echo "... __/common/GameRelatedActionsSerializableMessageFactory.o"
-	@echo "... __/common/GameRelatedActionsSerializableMessageFactory.i"
-	@echo "... __/common/GameRelatedActionsSerializableMessageFactory.s"
-	@echo "... __/common/GameSetupSerializableMessageFactory.o"
-	@echo "... __/common/GameSetupSerializableMessageFactory.i"
-	@echo "... __/common/GameSetupSerializableMessageFactory.s"
-	@echo "... __/common/ObjectExchangesSerializableMessageFactory.o"
-	@echo "... __/common/ObjectExchangesSerializableMessageFactory.i"
-	@echo "... __/common/ObjectExchangesSerializableMessageFactory.s"
-	@echo "... __/common/Point.o"
-	@echo "... __/common/Point.i"
-	@echo "... __/common/Point.s"
-	@echo "... __/common/RequestHandler.o"
-	@echo "... __/common/RequestHandler.i"
-	@echo "... __/common/RequestHandler.s"
-	@echo "... __/common/SerializableMessageFactory.o"
-	@echo "... __/common/SerializableMessageFactory.i"
-	@echo "... __/common/SerializableMessageFactory.s"
-	@echo "... __/common/SocketUser.o"
-	@echo "... __/common/SocketUser.i"
-	@echo "... __/common/SocketUser.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"

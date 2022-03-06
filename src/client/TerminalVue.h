@@ -75,6 +75,9 @@ class TerminalVue
     std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
     std::vector<std::string> friendsList {
         "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+    std::vector<std::string> testFriendList {
+        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+
     std::vector<std::vector<std::string>> chatEntries {
         {"Hello Hector"},
         {"On se fait", "une partie ?"},
@@ -92,11 +95,8 @@ class TerminalVue
         {""},
         {""},
     };
-    std::vector<bool *> friendsListStates {
-        new bool {false},
-        new bool {false},
-        new bool {false},
-    };
+    std::vector<CheckboxState> friendsListStates;
+//    std::vector<Component> playWithCheckbox;
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
     std::vector<std::string> notifications {
@@ -123,14 +123,18 @@ class TerminalVue
     };
     std::vector<Component> mainTabComponents;
     int mainTabSelect = 0, loginTabSelect = 0;
-    int rightSize = 40;
+    int rightSize = 0;
     int rightSizeFriends = 70;
-    bool isLoggedIn = false; // change this to true to stay logged in
+    bool isLoggedIn = true; // change this to true to stay logged in
     bool isGameStarted = false;
     bool isCreatingGame = false;
     InputOption passwordOption;
     int depth = 0;
     int currentGameId = 69;
+    std::string errorLoginMessage = "";
+    std::string registerMessage = "";
+    int homeTabIndex = 2;
+    int mainPageIndex = 1;
 
     /**
      * @brief Checks if it's someone's turn
@@ -372,6 +376,8 @@ class TerminalVue
     void sendMessageGame(std::string message, int gameId);
 
     void sendUserMessage(std::string message, std::string receiver);
+
+    void userCreateGame();
 
 public:
     void run();

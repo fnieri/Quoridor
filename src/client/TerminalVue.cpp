@@ -184,10 +184,38 @@ auto TerminalVue::createMainGameScreen()
     return Renderer(mainGameScreenContainer, [menu] { return vbox(text("Pick a game"), menu->Render()); });
 }
 
+auto TerminalVue::createChatRenderer()
+{
+    auto chatInput = createChatInput();
+
+    auto chatMenu = Menu(&chatElements, &chatSelected);
+    auto sendButton = Button(
+        "Send",
+        [&] {
+            if (!message.empty()) {
+                addChatMessage(username, message);
+                sendMessageGame(message, currentGameId);
+            }
+        },
+        &buttonOption);
+    auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
+    return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
+        return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+            hbox({text(">"), chatInput->Render(), sendButton->Render()})});
+    });
+}
+
 auto TerminalVue::createBoardRenderer()
 {
     auto actionToggle = createActionToggle();
     auto orientationToggle = createOrientationToggle();
+    auto pauseGameButton = Button(
+        "Pause",
+        [&] {
+            // TODO pause game
+            homeTabIndex = 0;
+        },
+        &buttonOption);
     auto boardCanvas = createCanvas();
     auto tabWithMouse = CatchEvent(boardCanvas, [&](Event e) {
         if (e.is_mouse()) {
@@ -205,78 +233,84 @@ auto TerminalVue::createBoardRenderer()
     });
 
     auto createGameBtn = Button(
-        "Create a Game", [&] { isCreatingGame = true; }, buttonOption);
+        "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
     auto joinGameBtn = Button(
-        "Join Game", [&] { isGameStarted = true; }, buttonOption);
-    auto inviteAndCreateGameBtn = Button(
-        "Create game",
-        [&] {
-            int friendSelected = 0;
-            for (bool *state : friendsListStates) {
-                if (*state) {
-                    friendSelected++;
-                }
-            }
-            if (friendSelected == 2 || friendSelected == 4) {
-                // TODO: create a game
-                isGameStarted = true;
-                isCreatingGame = false;
-            }
+        "Join Game",
+        [&] { // TODO join game
+            homeTabIndex = 2;
+            rightSize = 40;
         },
-        buttonOption);
+        &buttonOption);
+    auto inviteAndCreateGameBtn = Button(
+        "Create game", [&] { userCreateGame(); }, &buttonOption);
     auto cancelGameCreateGamme = Button(
-        "Cancel", [&] { isCreatingGame = false; }, buttonOption);
+        "Cancel", [&] { homeTabIndex = 0; }, &buttonOption);
     auto gamePickMenu = Menu(&gameList, &gameSelected);
-    Component friendsListContainer = Container::Vertical({});
 
+    Component playWithContainer = Container::Vertical({});
     for (int i = 0; i < friendsList.size(); ++i) {
-        friendsListContainer->Add(Checkbox(&friendsList[i], friendsListStates[i]));
+        friendsListStates.push_back(CheckboxState {false});
+    }
+    for (int i = 0; i < friendsList.size(); ++i) {
+        //        friendsListStates.push_back(CheckboxState {false});
+        playWithContainer->Add(Checkbox(&friendsList[i], &(friendsListStates[i].checked)));
     }
 
     auto boardContainer = Container::Vertical({tabWithMouse, actionToggle, orientationToggle, boardCanvas, createGameBtn, joinGameBtn, gamePickMenu,
-        friendsListContainer, inviteAndCreateGameBtn, cancelGameCreateGamme});
+        inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
 
-    return Renderer(boardContainer,
-        [&, actionToggle, boardCanvas, orientationToggle, createGameBtn, joinGameBtn, gamePickMenu, friendsListContainer, inviteAndCreateGameBtn,
-            cancelGameCreateGamme] {
-            if (isCreatingGame) {
-                return vbox(text("Pick friends to play with"),
-                    friendsListContainer->Render() | vscroll_indicator | frame | border | size(HEIGHT, LESS_THAN, 10), inviteAndCreateGameBtn->Render(),
-                    separator(), cancelGameCreateGamme->Render());
-            }
-            if (!isGameStarted) {
-                return vbox(text("Welcome to Quoridor!"), separator(), createGameBtn->Render(), separator(), text("Join an existing game"),
-                    gamePickMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, joinGameBtn->Render());
-            }
-
-            return vbox(boardCanvas->Render(), separator(), hbox(actionToggle->Render(), separator(), orientationToggle->Render()) | center);
-        });
-}
-
-auto TerminalVue::createChatRenderer()
-{
-    buttonOption.border = false;
-    passwordOption.password = true;
-    auto chatInput = createChatInput();
-
-    auto chatMenu = Menu(&chatElements, &chatSelected);
-    auto sendButton = Button(
-        "Send",
-        [&] {
-            if (!message.empty()) {
-                addChatMessage(username, message);
-                sendMessageGame(message, currentGameId);
-            }
-        },
-        buttonOption);
-    auto chatContainer = Container::Vertical({chatMenu, chatInput, sendButton});
-    return Renderer(chatContainer, [&, chatInput, chatMenu, sendButton] {
-        if (isGameStarted) {
-            return vbox({chatMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
-                hbox({text(">"), chatInput->Render(), sendButton->Render()})});
-        }
-        return vbox();
+    auto creatingGameContainer = Container::Vertical({
+        playWithContainer,
+        inviteAndCreateGameBtn,
+        cancelGameCreateGamme,
     });
+    auto creatingGameRender = Renderer(creatingGameContainer, [playWithContainer, inviteAndCreateGameBtn, cancelGameCreateGamme] {
+        return vbox(
+            {text("Create a game with friends"), separator(), playWithContainer->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border,
+                inviteAndCreateGameBtn->Render(), separator(), cancelGameCreateGamme->Render()});
+    });
+
+    auto homeScreenContainer = Container::Vertical({
+        createGameBtn,
+        joinGameBtn,
+        gamePickMenu,
+
+    });
+    auto homeScreenRender = Renderer(homeScreenContainer, [createGameBtn, joinGameBtn, gamePickMenu] {
+        return vbox({text("Welcome to Quoridor ! Join or create game"), separator(),
+            gamePickMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, joinGameBtn->Render(), separator(),
+            createGameBtn->Render()});
+    });
+
+    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
+    auto boardGameRender = Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton] {
+        return vbox({boardCanvas->Render(), separator(),
+            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
+    });
+
+    auto gameChat = createChatRenderer();
+    auto resizeContainer = boardGameRender;
+    resizeContainer = ResizableSplitRight(gameChat, resizeContainer, &rightSize);
+
+    auto homeTab = Container::Tab({homeScreenRender, creatingGameRender, resizeContainer}, &homeTabIndex);
+
+    return Renderer(homeTab, [homeTab] { return homeTab->Render(); });
+
+    //    return Renderer(boardContainer,
+    //        [&, actionToggle, boardCanvas, orientationToggle, createGameBtn, joinGameBtn, gamePickMenu, inviteAndCreateGameBtn, cancelGameCreateGamme,
+    //            playWithContainer] {
+    //            if (isCreatingGame) {
+    //                return vbox({text("Pick friends to play with"), playWithContainer->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10)
+    //                | border,
+    //                    inviteAndCreateGameBtn->Render(), separator(), cancelGameCreateGamme->Render()});
+    //            }
+    //            if (!isGameStarted) {
+    //                return vbox({text("Welcome to Quoridor!"), separator(), createGameBtn->Render(), separator(), text("Join an existing game"),
+    //                    gamePickMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, joinGameBtn->Render()});
+    //            }
+    //
+    //            return vbox({boardCanvas->Render(), separator(), hbox(actionToggle->Render(), separator(), orientationToggle->Render()) | center});
+    //        });
 }
 
 auto TerminalVue::createFriendsListRenderer()
@@ -292,7 +326,7 @@ auto TerminalVue::createFriendsListRenderer()
                 sendUserMessage(messageToFriend, friendsList[friend_selected]);
             }
         },
-        buttonOption);
+        &buttonOption);
 
     auto friendsListContainer = Container::Vertical({
         friendList,
@@ -330,7 +364,7 @@ auto TerminalVue::createFriendUtilitariesRenderer()
                 addFriend(searchField);
             }
         },
-        buttonOption);
+        &buttonOption);
 
     auto notifBox = Window("Notifications", Menu(&notifications, &notif_selected));
     auto utilitariesContainer = Container::Vertical({
@@ -361,7 +395,9 @@ auto TerminalVue::createLoginRenderer()
     auto loginButton = Button(
         "Login", [this] { loginUser(); }, &buttonOption);
     auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
-    return Renderer(loginFieldsContainer, [loginFieldsContainer] { return vbox({loginFieldsContainer->Render() | center}); });
+    return Renderer(loginFieldsContainer, [&, loginFieldsContainer] {
+        return vbox({loginFieldsContainer->Render() | center, color(Color::Red, text(errorLoginMessage))});
+    });
 }
 
 auto TerminalVue::createRegisterRenderer()
@@ -372,63 +408,62 @@ auto TerminalVue::createRegisterRenderer()
     auto registerButton = Button(
         "Register", [&] { registerUser(); }, &buttonOption);
     auto registerFieldsContainer = Container::Vertical({usernameInput, passwordInput, repeatPasswordInput, registerButton});
-    return Renderer(registerFieldsContainer, [registerFieldsContainer] { return vbox({registerFieldsContainer->Render() | center}); });
+    return Renderer(registerFieldsContainer, [&, registerFieldsContainer] {
+        return vbox({registerFieldsContainer->Render() | center, color(Color::Red, text(registerMessage))});
+    });
 }
 
 auto TerminalVue::createFriendsRenderer()
 {
-    auto friendsListRenderer = createFriendsListRenderer();
-    auto friendUtilitaries = createFriendUtilitariesRenderer();
-    // auto resizeFriendTab = friendsListRenderer;
-    // resizeFriendTab = ResizableSplitRight(friendUtilitaries, resizeFriendTab, &rightSizeFriends);
-    // auto friendsContainer = Container::Horizontal({friendsListRenderer, friendUtilitaries});
-
-    auto deleteSomeoneMenu = Menu(&friendsList, &friend_selected);
-    auto quitButton = Button("Cancel", [&] { depth = 0; });
-    auto wantToDelete = Button("Delete", [&] { depth = 2; }); // color(Color::Red, text("Deletion Menu"))
-    auto delButton = Button("Delete someone", [&] { depth = 1; });
-    auto confirmDelete = Button("Confirm", [&] {
-        deleteFriend();
-        depth = 0;
-    }); // Close all dialogs
-    auto cancelDelete = Button("Cancel", [&] { depth = 1; }); // returns to the selection of a person to delete from friendsList
-
-    auto friendContainer = Container::Vertical({
-        friendsListRenderer,
-        friendUtilitaries,
-        confirmDelete,
-        cancelDelete,
-        deleteSomeoneMenu,
-        wantToDelete,
-        quitButton,
-        delButton,
+    auto searchInput = Input(&searchField, "Add friend");
+    auto addButton = Button(
+        "Add", [&] { addFriend(searchField); }, &buttonOption);
+    auto friendsMenu = Menu(&friendsList, &friend_selected);
+    auto friendsChat = Menu(&chatEntry, &chat_message_selected);
+    auto friendMessageInput = Input(&messageToFriend, "Aa");
+    auto sendFriendMessageButton = Button(
+        "Send",
+        [&] {
+            sendUserMessage(messageToFriend, friendsList[friend_selected]); // fix this
+        },
+        &buttonOption);
+    auto removeFriendsButton = Button("Remove", [&] {
+        // delete friend
     });
 
-    return Renderer(
-        friendContainer, [&, friendsListRenderer, friendUtilitaries, confirmDelete, cancelDelete, deleteSomeoneMenu, wantToDelete, quitButton, delButton] {
-            Element v;
-            if (depth == 1) {
-                v = vbox(text("Delete a friend") | center, separator(),
-                    deleteSomeoneMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border, wantToDelete->Render(),
-                    quitButton->Render());
-            } else if (depth == 2) {
-                v = vbox(text("Are you sure to delete") | center, separator(), confirmDelete->Render(), cancelDelete->Render());
-            } else {
-                v = delButton->Render() | center;
-            }
-            return hbox(friendsListRenderer->Render(), friendUtilitaries->Render(), v);
+    auto friendContainer = Container::Vertical({
+        searchInput,
+        addButton,
+        friendsMenu,
+        friendsChat,
+        friendMessageInput,
+        sendFriendMessageButton,
+        removeFriendsButton,
+    });
+
+    return Renderer(friendContainer, [&, searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, removeFriendsButton] {
+        chatEntry = chatEntries[friend_selected]; // update chat entry with server
+        return vbox({
+            hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+                vbox({text("Chat                 "), separator(), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+                    hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})}),
+                separator(), vbox({text("Friend actions"), separator(), removeFriendsButton->Render()})}),
+            separator(),
+            hbox({searchInput->Render(), addButton->Render()}),
         });
+    });
 }
 
 auto TerminalVue::createMainTabContainer()
 {
-    auto chat = createChatRenderer();
-    auto boardTab = createBoardRenderer();
-    auto resizeContainer = boardTab;
-    resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
+    //    auto chat = createChatRenderer();
+    //    auto boardTab = createBoardRenderer();
+    //    auto resizeContainer = boardTab;
+    //    resizeContainer = ResizableSplitRight(chat, resizeContainer, &rightSize);
+    auto board = createBoardRenderer();
     auto friendRenderer = createFriendsRenderer();
     auto LeaderBoard = createLeaderBoardRenderer();
-    auto tabContainer = Container::Tab({resizeContainer, friendRenderer, LeaderBoard}, &mainTabSelect);
+    auto tabContainer = Container::Tab({board, friendRenderer, LeaderBoard}, &mainTabSelect);
     return tabContainer;
 }
 
@@ -439,31 +474,53 @@ auto TerminalVue::createMainRenderer()
     auto tabContainer = createMainTabContainer();
 
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
-    auto loginContainer = Container::Tab(
+    auto loginRenderer = createLoginRenderer();
+    auto registerRender = createRegisterRenderer();
+    auto loginRegisterContainer = Container::Tab(
         {
-            createLoginRenderer(),
-            createRegisterRenderer(),
+            loginRenderer,
+            registerRender,
         },
         &loginTabSelect);
+
+    auto loginRegisterToggleContainer = Container::Vertical({loginToggle, loginRegisterContainer});
+
+    auto loginRender = Renderer(loginRegisterToggleContainer, [loginRegisterContainer, loginToggle] {
+        return vbox({
+            loginToggle->Render(),
+            separator(),
+            loginRegisterContainer->Render(),
+        });
+    });
+
     auto mainContainer = Container::Vertical({
         tabToggle,
         tabContainer,
-        loginToggle,
-        loginContainer,
+    });
+    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer] {
+        return vbox({
+            tabToggle->Render(),
+            separator(),
+            tabContainer->Render(),
+        });
     });
 
-    return Renderer(mainContainer, [&, tabContainer, tabToggle, loginToggle, loginContainer] {
-        if (!this->isLoggedIn) {
-            return vbox({
-                       loginToggle->Render(),
-                       separator(),
-                       loginContainer->Render(),
-                   })
-                | border;
-        }
+    auto mainContainerTab = Container::Tab({loginRender, mainRender}, &mainPageIndex);
 
-        return vbox({tabToggle->Render(), separator(), tabContainer->Render()}) | border;
-    });
+    return Renderer(mainContainerTab, [mainContainerTab] { return mainContainerTab->Render() | border; });
+
+    //    return Renderer(mainContainer, [&, tabContainer, tabToggle, loginToggle, loginContainer] {
+    //        //        if (!this->isLoggedIn) {
+    //        //            return vbox({
+    //        //                       loginToggle->Render(),
+    //        //                       separator(),
+    //        //                       loginContainer->Render(),
+    //        //                   })
+    //        //                | border;
+    //        //        }
+    //
+    //        return vbox({tabToggle->Render(), separator(), tabContainer->Render()}) | border;
+    //    });
 };
 
 auto TerminalVue::createFinalContainer()
@@ -476,15 +533,24 @@ auto TerminalVue::createFinalContainer()
 void TerminalVue::loginUser()
 {
     if (username.empty() || password.empty()) {
+        errorLoginMessage = "Username and password cannot be empty";
         return;
     }
     // interact with server
     isLoggedIn = gameController->logIn(username, password);
+    if (!isLoggedIn) {
+        errorLoginMessage = "Wrong username or password";
+    } else {
+        errorLoginMessage = "";
+        mainPageIndex = 1;
+    }
     system("clear");
 }
 
 void TerminalVue::run()
 {
+    buttonOption.border = false;
+    passwordOption.password = true;
     auto mainRenderer = createFinalContainer();
     auto screen = ScreenInteractive::TerminalOutput();
     //    loginUser();
@@ -505,11 +571,13 @@ void TerminalVue::addChatFriendMessage(std::string username, std::string message
 
 void TerminalVue::addFriend(std::string username)
 {
-    friendsList.push_back(username);
-    chatEntries.push_back(std::vector<std::string> {""});
-    notifications.push_back("Added: " + username);
-    handleFriendAdd(username);
-    searchField.clear();
+    if (!searchField.empty()) {
+        friendsList.push_back(username);
+        chatEntries.push_back(std::vector<std::string> {""});
+        notifications.push_back("Added: " + username);
+        handleFriendAdd(username);
+        searchField.clear();
+    }
 }
 
 void TerminalVue::deleteFriend()
@@ -525,10 +593,14 @@ void TerminalVue::registerUser()
 {
     if (registerPassword == registerRepeatPassword && !registerUsername.empty() && !registerPassword.empty()) {
         if (gameController->registerPlayer(registerUsername, registerPassword)) {
-            isLoggedIn = true;
             username = registerUsername;
+            registerMessage = "Successfully registered. You can now log in.";
+        } else {
+            registerMessage = "Error creating account. Username probably already exists";
         }
         system("clear");
+    } else {
+        registerMessage = "Passwords don't match or username is empty";
     }
 }
 
@@ -546,6 +618,21 @@ void TerminalVue::handleFriendAdd(const std::string &friendUsername)
 // {
 
 // }
+
+void TerminalVue::userCreateGame()
+{
+    //    int friendSelected = 0;
+    //    for (bool &state : friendsListStates) {
+    //        if (state) {
+    //            friendSelected++;
+    //        }
+    //    }
+    //    if (friendSelected == 2 || friendSelected == 4) {
+    //        // TODO: create a game
+    //        isGameStarted = true;
+    //        isCreatingGame = false;
+    //    }
+}
 
 void TerminalVue::loadFriends()
 {

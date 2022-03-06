@@ -67,6 +67,9 @@ void MainController::handleRequests()
                 close();
         }
     }
+    system("clear");
+    std::cout << "Server not opened" << std::endl;
+    exit(1);
 }
 
 std::string MainController::getLastAsyncRequest()
