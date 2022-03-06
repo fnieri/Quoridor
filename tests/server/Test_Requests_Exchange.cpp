@@ -7,6 +7,7 @@
 #include "src/server/ServerUser.h"
 #include "src/server/UserHandler.h"
 
+#include <future>
 #include <iostream>
 #include <sockpp/tcp_connector.h>
 
@@ -256,3 +257,30 @@ SCENARIO("GameSetup")
 
     sleep(1);
 }
+
+/* TODO: find a way to make it work */
+/* SCENARIO("Sync and async requests") */
+/* { */
+/*     DatabaseHandler::deleteAccount("foo"); */
+/*     DatabaseHandler::deleteAccount("bar"); */
+
+/*     TestConnector foo {"localhost", 12345}; */
+/*     TestConnector bar {"localhost", 12345}; */
+
+/*     createAndLogUser(foo, "foo", "12345"); */
+/*     createAndLogUser(bar, "bar", "12345"); */
+
+/*     GIVEN("A sync request") */
+/*     { */
+/*         auto leadReq {SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD).dump()}; */
+/*         auto frndReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "bar", "foo").dump()}; */
+
+/*         bar.send(frndReq); */
+/*         sleep(1); */
+
+/*         std::future<std::string> leadAns = std::async(getAnswer, foo, leadReq); */
+/*         auto frndAns {foo.receive()}; */
+/*     } */
+
+/*     sleep(1); */
+/* } */

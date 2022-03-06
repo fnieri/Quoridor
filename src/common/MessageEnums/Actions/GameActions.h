@@ -13,6 +13,10 @@ inline const char *toJsonString(GameAction g)
         return "player_propose_save";
     case GameAction::ACCEPT_INVITE:
         return "player_accept_invite";
+    case GameAction::START_GAME:
+        return "game_start";
+    case GameAction::END_GAME:
+        return "game_end";
     }
     return "";
 }

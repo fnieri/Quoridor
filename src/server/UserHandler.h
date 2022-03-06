@@ -63,6 +63,8 @@ protected:
 
     std::shared_ptr<ServerUser> m_userHandled;
 
+    std::mutex m_syncRequest;
+
     /**
      * Receive messages from one user
      *
