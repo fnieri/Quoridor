@@ -14,10 +14,57 @@ make setup
 make
 ```
 
-### IMPORTANT! 
-Avant d'exécuter le client il est nécessaire de mettre la taille du texte du terminal à 11 ou moins.
+# Execution
+
+## Test
+
+Une fois le code compilé, il est intéressant de l'executé (ou sinon à quoi bon le compiler).
+Avant d'exécuter le code, il est recommandé d'executer les tests.
+
+```bash
+./build/bin/qrd_server_tests
+./build/bin/qrd_client_tests
+```
+
+A priori les tests client devraient tourner sans soucis. En revanche, il est possible que les tests serveur échouent. Ces échecs sont sûrement dûs à un de ces deux problèmes potentiels.
+
+1. La base de donnée n'est pas active dans quel cas il faut contacter le groupe (très peu probable).
+2. Le firewall bloque le port 47984 (plus probable).
+
+La base de donnée se situe à l'adresse ```46.101.255.42``` au port ```47984```. D'après nos tests, ce port n'est pas bloqué par Eduroam. Mais au cas où il suffit juste de nous informer pour que l'on mette à jour le port afin que la base de donnée soit accessible sur le réseau Eduroam. 
+
+Il faut aussi noter que c'est possible de faire tourner la base de donnée sur les machines du NO, mais cela est une perte de temps car la compilation de mongod prend particulièrement longtemps pour au final utilisé un programme identique à celui sur le serveur de notre base de donnée.
+
+Si vous souhaitez tout de même avoir une instance de la base de donnée en local, il suffit de suivre les instructions dans la tarball téléchargeable [ici](https://www.mongodb.com/try/download/community?tck=docs_server). 
+
+Ou sinon avec Docker: 
+```bash
+docker run -d -e MONGO_INITDB_ROOT_USERNAME=quoridor -e MONGO_INITDB_ROOT_PASSWORD=ulb123 -p 47984:27017 --name mongodb mongo:4.0.4
+```
+
+Bref c'est une perte de temps de faire tourner la base de donnée en local au NO, mais on peut.
+
+
+## Execution serveur
+
+```bash
+./build/bin/server
+```
+
+## Execution client
+
+### IMPORTANT !
+Avant d'exécuter le client il est nécessaire de mettre la taille de la police du texte du terminal à 11 ou moins.
+
+C'est mieux de faire tourner le client une fois que le serveur est actif (ou sinon ça ne marche pas).
+
+```bash
+./build/bin/client
+```
 
 # Compilation avec Docker (plus facile)
+
+### Warning! Docker n'est pas installé au NO.
 
 Installation [Docker](https://docs.docker.com/get-docker/)
 
