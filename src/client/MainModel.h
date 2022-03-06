@@ -98,7 +98,7 @@ private:
     int currentPlayerIdx {0};
 
 public:
-    GameModel(int, std::vector<std::string>, );
+    GameModel(int, std::vector<std::string>,);
 
     auto getCurrentPlayer() const noexcept -> *int;
 
