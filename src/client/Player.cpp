@@ -81,3 +81,13 @@ std::string Player::getUsername() const
 Player::~Player()
 {
 }
+
+void Player::setIndex(int ind)
+{
+    index = ind;
+}
+
+int Player::getIndex()
+{
+    return index;
+}

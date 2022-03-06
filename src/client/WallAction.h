@@ -1,20 +1,19 @@
 #pragma once
 
-#include "../common/Serializable.h"
 #include "Board.h"
 #include "Player.h"
 #include "WallEnum.h"
+
 #include <nlohmann/json.hpp>
 
 #include <memory>
 
-// Place a wall somewhere
-class WallAction : public Serializable
 /**
  * Represents a potential wall-place action to be performed by a Player.
  *
  * @see PlayerAction for the analogous action for pawn movement.
  */
+class WallAction
 {
 private:
     /// A reference to the Board to perform the action on.
@@ -72,7 +71,6 @@ public:
      */
     WallAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &destCell, const WallOrientation &orientation);
 
-    ~WallAction();
 
     /**
      * Checks if the wall placement of this action is *legal*, meaning it doesn't obstruct any Player from reaching their finish line.

@@ -54,8 +54,8 @@ void SocketUser::send(const std::string &msg)
 {
     std::lock_guard<std::mutex> guard {m_socketMutex};
 
-    // First send the size of the data to be sent
-    ssize_t sz {msg.size()};
+    // Firt send the size of the data to be sent
+    auto sz {msg.size()};
     if (m_socket.write_n(&sz, sizeof(sz)) < sizeof(sz))
         throw UnableToSend {};
 

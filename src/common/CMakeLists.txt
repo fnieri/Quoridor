@@ -1,27 +1,35 @@
 # Library of the project, can be linked to the tests
 add_library(${PREFIX}_common
-    AuthSerializableMessageFactory.cpp
-    BoardActionsSerializableMessageFactory.cpp
-    ChatBoxSerializableMessageFactory.cpp
-    FriendActionsSerializableMessageFactory.cpp
-    GameRelatedActionsSerializableMessageFactory.cpp
-    GameSetupSerializableMessageFactory.cpp
-    ObjectExchangesSerializableMessageFactory.cpp
-    Observer.cpp
-    Point.cpp
-    RequestHandler.cpp
-    Serializable.cpp
-    SerializableMessageFactory.cpp
-    SocketUser.cpp
-    Stringable.cpp
+        JoinGame.cpp
+        SerializableMessageFactory.cpp
+        AuthSerializableMessageFactory.cpp
+        BoardActionsSerializableMessageFactory.cpp
+        ChatBoxSerializableMessageFactory.cpp
+        FriendActionsSerializableMessageFactory.cpp
+        GameRelatedActionsSerializableMessageFactory.cpp
+        ObjectExchangesSerializableMessageFactory.cpp
+        GameSetupSerializableMessageFactory.cpp
+        Stringable.cpp
+        ../client/WallAction.cpp
+        ../client/PlayerAction.cpp
+        ../client/Board.cpp
+        ../client/Player.cpp
+        ../client/Corridor.cpp
+        ../client/BoardComponent.cpp
+        ../client/Cell.cpp
+        Point.cpp
+        SocketUser.cpp
+        Observer.cpp
+        RequestHandler.cpp
+        JoinGame.cpp
 )
 
 target_link_libraries(${PREFIX}_common
     PUBLIC
         nlohmann_json
     PRIVATE
-        ${PREFIX}_client  # wtf is this doing here
         sockpp
+        pthread
 )
 
 target_include_directories(${PREFIX}_common
@@ -29,11 +37,11 @@ target_include_directories(${PREFIX}_common
         ${CMAKE_SOURCE_DIR}
 )
 
-# add_executable(common
-#     main.cpp
-# )
+ add_executable(common
+     main.cpp
+ )
 
-# target_link_libraries(common
-#     PRIVATE
-#     ${PREFIX}_common
-# )
+ target_link_libraries(common
+     PRIVATE
+     ${PREFIX}_common
+ )

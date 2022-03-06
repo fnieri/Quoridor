@@ -1,12 +1,3 @@
-/**
- * @file PlayerAction.h
- * @author Nargis, Lèo, Anne-Marie
- * @brief Class representing a potential pawn-move action to be performed by a Player.
- * @date 2022-03-04
- *
- * @see WallAction for the analogous action for wall placement.
- */
-
 #include "PlayerAction.h"
 
 #include "PlayerEnum.h"
@@ -39,13 +30,12 @@ bool PlayerAction::isGameOver()
 
 bool PlayerAction::executeAction()
 {
-
     if (isActionValid()) {
         board->movePlayer(player, destination);
         player->setMatrixPosition(destination);
         return true;
-    } else
-        return false;
+    }
+    return false;
 }
 
 json PlayerAction::serialized()
@@ -56,8 +46,4 @@ json PlayerAction::serialized()
 
     json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
-}
-
-PlayerAction::~PlayerAction()
-{
 }

@@ -1,12 +1,3 @@
-/**
- * @file PlayerAction.h
- * @author Nargis, Lèo, Anne-Marie
- * @brief Class representing a potential pawn-move action to be performed by a Player.
- * @date 2022-03-04
- *
- * @see WallAction for the analogous action for wall placement.
- */
-
 #pragma once
 
 #include "src/common/Serializable.h"
@@ -20,6 +11,11 @@
 #include <memory>
 #include <string>
 
+/**
+ * Represents a potential pawn-move action to be performed by a Player.
+ *
+ * @see WallAction for the analogous action for wall placement.
+ */
 class PlayerAction
 {
     /// A reference to the Board to perform the action on.
@@ -46,8 +42,6 @@ public:
      * @warning the given destination is assumed to be *player cell position*
      */
     PlayerAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &_destination);
-
-    ~PlayerAction();
 
     /**
      * Check if the player move is valid according to the game rules.

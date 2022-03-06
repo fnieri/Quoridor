@@ -35,6 +35,8 @@ class Player
     /// The username of the Player.
     std::string username;
 
+    int index;
+
 public:
     /**
      * Construct a new Player
@@ -128,4 +130,9 @@ public:
      * @param newColor the new pawn color for the player.
      */
     void setColor(PawnColors newColor);
+
+    
+    int getIndex();
+    void setIndex(int ind);
+
 };

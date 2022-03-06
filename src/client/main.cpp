@@ -1,44 +1,37 @@
-/**
- * @file main.cpp
- * @author Kourieh Anne-Marie (and Gamboa Dos Santos Léo)
- * @brief main.cpp plays the game when the player clicks on start game (Idea but don't know how to call this)
- * @date 2022-02-25
- */
-
-#include "../common/Point.h"
-#include "Board.h"
-#include "Player.h"
-#include "PlayerAction.h"
-#include "ServerController.h"
-#include "ViewController.h"
-
+#include "TerminalVue.h"
+// #include "MainController.h"
+// #include "src/common/SerializableMessageFactory.h"
+#include <unistd.h>
 #include <iostream>
-#include <memory>
-#include <vector>
+
+
 int main()
 {
-    /*
-    std::shared_ptr<Board> board = std::make_shared<Board>();
-    std::shared_ptr<Board> board2 = std::make_shared<Board>();
+    // MainController controller {"localhost", 12345};
+    // controller.startHandling();
+    
+    // auto req {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "1245").dump()};
+    // // auto reqFriendReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "foo", "bar").dump()};
 
-    auto player = std::make_shared<Player>(PawnColors::Blue, Point{0,0}, 99, FinishLine::South, "pippo");
-    auto player2 = std::make_shared<Player>(PawnColors::Purple, Point{4,4}, 99, FinishLine::North, "topolino");
-    auto player3 = std::make_shared<Player>(PawnColors::Yellow, Point{2,2}, 99, FinishLine::East, "pluto");
+    // auto ans = controller.getSyncAnswer(req);
+    // std::cerr << ans << std::endl;
 
-    board->spawnPlayer(player);
-    board->spawnPlayer(player2);
-    board->spawnPlayer(player3);
-    board->placeWall(Point{1,1}, WallOrientation::Vertical);
-    WallAction action_v {board, player, Point {1, 1}, WallOrientation::Vertical};
+    // sleep(2);
 
-     //   action_v.executeAction();
+    // auto reqA {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "12345").dump()};
+    // // auto reqFriendReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "foo", "bar").dump()};
 
-  //  std::cout << board->serialized().dump(4);
+    
+    // auto ansA = controller.getSyncAnswer(reqA);
+    // std::cerr << ansA << std::endl;
 
-        std::string a = board->serialized().dump(4);
-        //std::cout << board->serialized().dump();
-        board2->deserialized(a);
-        board2->debugPrint();
-    */
+    system("clear");
+    TerminalVue vue; 
+    std::thread t1(&TerminalVue::run, &vue);
+    vue.addChatMessage("User", "Hello World !");
+    t1.join();
+
+    // sleep(15);
+
     return 0;
-}
+};

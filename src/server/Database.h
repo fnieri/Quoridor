@@ -29,11 +29,12 @@ using json = nlohmann::json;
 
 namespace database
 {
-const char kUsername[] {"louis"};
-constexpr char kPassword[] {"randompass456"};
+const char kUsername[] {"boris"};
+constexpr char kPassword[] {"pass1234"};
 // need to actually use username and password
-constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-constexpr char kDatabaseName[] {"testing"};
+//constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
+constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@46.101.255.42:47984"};
+constexpr char kDatabaseName[] {"Quoridor"};
 constexpr char kCollectionName[] {"TestCollection"};
 constexpr char kUserCollectionName[] {"UserCollection"};
 constexpr char kChatCollectionName[] {"ChatCollection"};

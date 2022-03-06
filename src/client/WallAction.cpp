@@ -17,10 +17,6 @@ WallAction::WallAction(shared_ptr<Board> board, shared_ptr<Player> player, const
 {
 }
 
-WallAction::~WallAction()
-{
-}
-
 Point WallAction::piece1()
 {
     if (orientation == WallOrientation::Vertical) {
