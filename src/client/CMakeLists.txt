@@ -11,8 +11,9 @@ add_library(${PREFIX}_client
         PlayerAction.h
         ServerBridge.cpp
         GameController.cpp
-        TerminalVue.cpp
         MainController.cpp
+        TerminalVue.cpp
+        ServerBridge.cpp
         ServerController.cpp
         )
 

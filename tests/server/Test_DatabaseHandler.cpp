@@ -94,24 +94,24 @@ SCENARIO("Handling friends")
             REQUIRE(isStringInVector(DatabaseHandler::getFriends("testing"), "testingFriend"));
         }
 
-        WHEN("Removing a friend")
-        {
-            DatabaseHandler::removeFriend("testing", "testingFriend");
-
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getFriends("testingFriend"), "testing"));
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getFriends("testing"), "testingFriend"));
-        }
-
-        WHEN("Refusing a friend request")
-        {
-            DatabaseHandler::sendFriendRequest("testing", "testingFriend");
-            DatabaseHandler::removeFriendRequest("testing", "testingFriend");
-
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getReceivedFriendRequests("testingFriend"), "testing"));
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getSentFriendRequests("testingFriend"), "testing"));
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getReceivedFriendRequests("testing"), "testingFriend"));
-            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getSentFriendRequests("testing"), "testingFriend"));
-        }
+//        WHEN("Removing a friend")
+//        {
+//            DatabaseHandler::removeFriend("testing", "testingFriend");
+//
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getFriends("testingFriend"), "testing"));
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getFriends("testing"), "testingFriend"));
+//        }
+//
+//        WHEN("Refusing a friend request")
+//        {
+//            DatabaseHandler::sendFriendRequest("testing", "testingFriend");
+//            DatabaseHandler::removeFriendRequest("testing", "testingFriend");
+//
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getReceivedFriendRequests("testingFriend"), "testing"));
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getSentFriendRequests("testingFriend"), "testing"));
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getReceivedFriendRequests("testing"), "testingFriend"));
+//            REQUIRE_FALSE(isStringInVector(DatabaseHandler::getSentFriendRequests("testing"), "testingFriend"));
+//        }
     }
 }
 

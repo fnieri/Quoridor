@@ -8,7 +8,7 @@
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
-#include "ServerController.h"
+#include "serverBridge.h"
 #include "WallAction.h"
 #include "WallEnum.h"
 
@@ -17,8 +17,8 @@
 
 using json = nlohmann::json;
 
-ViewController::ViewController(std::shared_ptr<ServerController> serverController, int nPlayers)
-    : serverController {serverController}
+ViewController::ViewController(std::shared_ptr<serverBridge> serverBridge, int nPlayers)
+    : serverBridge {serverBridge}
     , nPlayers {nPlayers}
 {
     // Player spawn moved to startGame()
@@ -191,74 +191,74 @@ void ViewController::startGame()
 
     setBoard(board);
     setPlayers(players);
-    serverController->setBoard(board);
-    serverController->setPlayers(players);
-    serverController->setDict(dictPlayer);
+    serverBridge->setBoard(board);
+    serverBridge->setPlayers(players);
+    serverBridge->setDict(dictPlayer);
 }
 
 void ViewController::saveGame(std::string username)
 {
-    serverController->saveGame(username);
+    serverBridge->saveGame(username);
 }
 
 void ViewController::pauseGame(std::string username)
 {
-    serverController->pauseGame(username);
+    serverBridge->pauseGame(username);
 }
 
 void ViewController::registerPlayer(std::string username, std::string password)
 {
-    serverController->registerPlayer(username, password);
+    serverBridge->registerPlayer(username, password);
 }
 
 void ViewController::logIn(std::string username, std::string password)
 {
-    serverController->logIn(username, password);
+    serverBridge->logIn(username, password);
 }
 
 void ViewController::logOut()
 {
-    serverController->logOut();
+    serverBridge->logOut();
 }
 
 void ViewController::sendInvite(std::string aFriend, std::string gameSetup)
 {
-    serverController->sendInvite(aFriend, gameSetup);
+    serverBridge->sendInvite(aFriend, gameSetup);
 }
 
 void ViewController::joinGame(int gameId)
 {
-    serverController->joinGame(gameId);
+    serverBridge->joinGame(gameId);
 }
 
 void ViewController::askToPause(std::string aFriend)
 {
-    serverController->askToPause(aFriend);
+    serverBridge->askToPause(aFriend);
 }
 
 void ViewController::sendFriendRequest(std::string receiver)
 {
-    serverController->sendFriendRequest(receiver);
+    serverBridge->sendFriendRequest(receiver);
 }
 
 void ViewController::checkLeaderBoard()
 {
-    serverController->checkLeaderBoard(); // or call immediatly ELO and give to the view ?
+    serverBridge->checkLeaderBoard(); // or call immediatly ELO and give to the view ?
 }
 
 void ViewController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
 {
-    serverController->sendDirectMessage(sender, receiver, msg);
+    serverBridge->sendDirectMessage(sender, receiver, msg);
 }
 
 void ViewController::sendGroupMessage(std::string sender, std::string msg, int gameId)
 {
-    serverController->sendGroupMessage(sender, msg, gameId);
+    serverBridge->sendGroupMessage(sender, msg, gameId);
 }
 
 bool ViewController::isGroupMessageReceived(bool received)
 {
-    if (serverController->isGroupMessageReceived())
+    if (serverBridge->isGroupMessageReceived())
         return true;
     else
         return received;
@@ -266,7 +266,7 @@ bool ViewController::isGroupMessageReceived(bool received)
 
 bool ViewController::isDirectMessageReceived(bool received)
 {
-    if (serverController->isDirectMessageReceived())
+    if (serverBridge->isDirectMessageReceived())
         return true;
     else
         return received;
@@ -286,17 +286,17 @@ json ViewController::receiveDirectMessage(json msg)
 
 void ViewController::loadDirectMessages(std::string username)
 {
-    serverController->loadDirectMessages(username);
+    serverBridge->loadDirectMessages(username);
 }
 
 void ViewController::loadGroupMessages(int gameId)
 {
-    serverController->loadGroupMessages(gameId);
+    serverBridge->loadGroupMessages(gameId);
 }
 
 bool ViewController::isGameOver(bool over)
 {
-    serverController->isGameOver(over);
+    serverBridge->isGameOver(over);
     return over;
 }
 

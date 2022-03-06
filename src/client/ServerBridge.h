@@ -20,6 +20,14 @@ public:
      */
     ServerBridge(const std::string &, int16_t);
 
+    
+    /**
+     * @param serRequest request to send to the server
+     *
+     * @note No immediate answer should be expected as this is asynchronously.
+     */
+    void sendAsync(const std::string &);
+
 private:
     /* SeverController *m_serverController; */
 

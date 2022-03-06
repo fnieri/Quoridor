@@ -35,7 +35,9 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
+#include "src/common/Point.h"
 #include "GameController.h"
+#include "MainModel.h"
 //#include "ViewController.h"
 //#include "ServerController.h"
 
@@ -52,6 +54,7 @@ struct CheckboxState {
 class TerminalVue
 {
     GameController *gameController = new GameController {2, 0, 1};
+    MainModel mainModel;
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -75,11 +78,9 @@ class TerminalVue
     std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
     std::vector<std::string> friendsList {
         "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
-    std::vector<std::string> testFriendList {
-        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
 
     std::vector<std::vector<std::string>> chatEntries {
-        {"Hello Hector"},
+        {"Hector: Hello Hector", "Louis: my message"},
         {"On se fait", "une partie ?"},
         {"Salut", "comment ça va", "Bernard?"},
         {"Salut", "comment ça va", "utilisateur 3?"},
@@ -103,6 +104,11 @@ class TerminalVue
         "User1 wants to add you!   (A)ccept or (D)eny ?",
         "UserTest2 wants to add you!   (A)ccept or (D)eny ?",
     };
+
+    int leader_selected = 0;
+    std::vector<std::string> leaders {"Hector", "Charlotte", "Nescafé", "Guy", "Auguste"};
+    std::vector<int> elos {1480, 1276, 920, 919, 874};
+    std::vector<std::string> listLeadersWithElo;
 
     std::vector<std::string> actionToggleEntries {
         "Move",

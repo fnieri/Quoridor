@@ -1,83 +1,92 @@
 #include "MainController.h"
 
-#include "src/common/Exceptions.h"
-#include "src/common/Observer.h"
-#include "src/common/QuoridorEvent.h"
-
-#include <iostream>
-#include <thread>
-
-std::string MainController::getSyncAnswer(const std::string &serRequest)
+void MainController::processRequest(const std::string& serRequest)
 {
-    m_isExchangingSynchronously = true;
-    std::lock_guard<std::mutex> guard {m_receivingMutex};
-
-    send(serRequest);
-    auto answer {receive()};
-
-    m_isExchangingSynchronously = false;
-
-    return answer;
+    json request(json::parse(serRequest));
+    if (request["domain"] == toJsonString(Domain::AUTH)) {
+        processAuth(serRequest);
+    } else if (request["domain"] == toJsonString(Domain::RELATIONS)) {
+        processRelations(serRequest);
+    } else if (request["domain"] == toJsonString(Domain::CHAT)) {
+        processChatbox(serRequest);
+    } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
+        processResourceRequest(serRequest);
+    } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
+        processGameAction(serRequest);
+    } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
+        processGameSetup(serRequest);
+    }
 }
 
-void MainController::sendAsync(const std::string &serRequest)
+void MainController::processResourceRequest(const std::string &)
 {
-    send(serRequest);
+    json request(json::parse(serRequest));
+
+    if (request.at("action") == toJsonString(DataType::LEADERBOARD)) {
+        std::vector<std::pair<std::string, float> leaderboard;
+        for (auto it = request.at("serialized_data").begin(); it != request.at("serialized_data").end(); it++)
+            leaderboard.push_back(std::pair<std::string, float>(request.at("username"), request.at("elo")));
+        mainModel.sendLeadeboard(leaderboard);
+    }else if (request.at("action") == toJsonString(DataType::FRIENDS_LIST)) {
+
+    }else if (request.at("action") == toJsonString(DataType::GAME_CONFIG)) {
+
+    }else if (request.at("action") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
+
+    }else if (request.at("action") == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
+
+    }else if (request.at("action") == toJsonString(DataType::GAME_IDS)) {
+
+    }else if (request.at("action") == toJsonString(DataType::CHATS)) {
+
+    }else if (request.at("action") == toJsonString(DataType::ELO)) {
+
+    }
 }
 
-MainController::MainController(const std::string &address, int16_t port)
+
+void MainController::processAuth(const std::string& serRequest)
 {
-    sockpp::tcp_connector connector;
-    connector.connect(sockpp::inet_address(address, port));
-    setSocket(std::move(connector));
-}
-
-void MainController::handleRequests()
-{
-    while (isOpen()) {
-        try {
-            if (hasReadActivity(1)) {
-
-                // Wait until the sync request is done
-                if (m_isExchangingSynchronously) {
-                    std::lock_guard<std::mutex> guard {m_receivingMutex};
-
-                    // If not expecting sync answer, accept the async one
-                } else {
-                    auto serRequest {receive()};
-
-                    // Do not continue if the thread was terminated during or after the receive
-                    if (!isOpen())
-                        break;
-
-                    m_lastReqMutex.lock();
-                    m_lastRequests.push(serRequest);
-                    m_lastReqMutex.unlock();
-
-                    notifyObservers();
-                }
-            }
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(ClientAuthAction::LOGIN)) {
+        if (request.at("status") == toJsonString(Status::SUCCESS)) {
+            mainModel.loginSuccessful(request.at("username"));
         }
-        // Client was disconnected
-        catch (UnableToRead &) {
-            if (!isOpen())
-                close();
-        } catch (UnableToSend &) {
-            if (!isOpen())
-                close();
+        else if (request.at("status") == toJsonString(Status::FAILURE)) {
+            mainModel.loginNotSuccessful(request.at("username"))
         }
     }
-    system("clear");
-    std::cout << "Server not opened" << std::endl;
-    exit(1);
 }
 
-std::string MainController::getLastAsyncRequest()
+void MainController::processRelations(const std::string& serRequest)
 {
-    std::lock_guard<std::mutex> guard {m_lastReqMutex};
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(FriendAction::FRIEND_REMOVE)) {
+        mainModel.removeFriend(request.at("friend_rm_receiver"));
+    }
+    else if (request.at("action") == toJsonString(FriendAction::FRIEND_ACCEPT)) {
+        mainModel.addFriend(request.at("friend_req_receiver"));
+    }
+    else if (request.at("action") == toJsonString(FriendAction::FRIEND_REQUEST)) {
+        mainModel.addFriendRequest(request.at("friend_req_sender"));
+    }
+    else if (request.at("action") == toJsonString(FriendAction::FRIEND_REFUSE)) {
+        mainModel.removeFriendRequest(request.at("friend_req_sender"));
+    }
+}
 
-    auto lastReq {m_lastRequests.front()};
-    m_lastRequests.pop();
+void MainController::processChatbox(const std::string& serRequest)
+{
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
+        mainModel.addFriendMessage(request.at("sender"), request.at("receiver"), request.at("message"));
+    }
+    if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
+        MainModel.addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>());
+    }
+}
 
-    return lastReq;
+void MainController::processGameSetup(const std::string& serRequest)
+{
+
 }

@@ -1,32 +1,38 @@
 #include "TerminalVue.h"
 // #include "MainController.h"
 // #include "src/common/SerializableMessageFactory.h"
-#include <unistd.h>
+#include "GameController.h"
 #include <iostream>
+#include <unistd.h>
+#include <stdlib.h>
 
-
-int main()
+int main(int argc, char* argv[])
 {
-    // MainController controller {"localhost", 12345};
-    // controller.startHandling();
-    
-    // auto req {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "1245").dump()};
-    // // auto reqFriendReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "foo", "bar").dump()};
+    if (argc < 2) {
+        std::cerr << "Missing arguments. Use --help for information" << std::endl;
+        return 1;
+    } else if (strcmp(argv[1], "--help") == 0) {
+        std::cout << "Usage: ./client [--help] [--server=<server_ip>]" << std::endl;
+        return 0;
+    }
+    else if (strcmp(argv[1], "--server") == 0) {
+        if (argc != 3) {
+            std::cerr << "Missing arguments. Use --help for information" << std::endl;
+            return 1;
+        }
+        setenv("SERVER_IP", argv[2], 1);
+        std::cout << "Server started" << std::endl;
+    }
 
-    // auto ans = controller.getSyncAnswer(req);
-    // std::cerr << ans << std::endl;
+    // GameController gameController {2, 0, 1};
 
-    // sleep(2);
+    // gameController.logIn("testing", "testingPassword");
 
-    // auto reqA {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "12345").dump()};
-    // // auto reqFriendReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "foo", "bar").dump()};
-
-    
-    // auto ansA = controller.getSyncAnswer(reqA);
-    // std::cerr << ansA << std::endl;
+    // std::cout << gameController.getLeaderboard() << std::endl;
+    // std::cout << gameController.getFriendList() << std::endl;
 
     system("clear");
-    TerminalVue vue; 
+    TerminalVue vue;
     std::thread t1(&TerminalVue::run, &vue);
     vue.addChatMessage("User", "Hello World !");
     t1.join();

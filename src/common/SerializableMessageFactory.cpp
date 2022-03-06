@@ -8,9 +8,9 @@ json SerializableMessageFactory::serializeUserRequest(ClientAuthAction action, c
     return AuthSerializableMessageFactory::serializeUserRequest(action, username, password);
 }
 
-json SerializableMessageFactory::serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn)
+json SerializableMessageFactory::serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn, const std::string& username)
 {
-    return AuthSerializableMessageFactory::serializeServerAnswer(action, status, authReturn);
+    return AuthSerializableMessageFactory::serializeServerAnswer(action, status, authReturn, username);
 }
 
 json SerializableMessageFactory::serializePawnAction(PlayerAction &pawnAction, int playerID)

@@ -36,3 +36,8 @@ void ServerBridge::handleRequests()
         }
     }
 }
+
+void ServerBridge::sendAsync(const std::string& serRequest)
+{
+    send(serRequest);
+}
