@@ -700,141 +700,25 @@ void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardCon
     gameColl.update_one(document {} << "game_id" << gameId << finalize,
         document {} << "$set" << open_document << "board_config" << bsoncxx::from_json(boardConfig.dump()) << close_document << finalize);
 }
-template <class K, class T>
-void sortByKey(K * keys, T * data, size_t size){
-    std::vector<size_t> p(size,0);
-    std::vector<size_t> rp(size);
-    std::vector<bool> sorted(size, false);
-    size_t i = 0;
-
-    // Sort
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-        [&](size_t i, size_t j){ return keys[i] < keys[j]; });
-
-    // ----------- Apply permutation in-place ---------- //
-
-    // Get reverse permutation item>position
-    for (i = 0; i < size; ++i){
-        rp[p[i]] = i;
-    }
-
-    i = 0;
-    K savedKey;
-    T savedData;
-    while ( i < size){
-        size_t pos = i;
-        // Save This element;
-        if ( ! sorted[pos] ){
-            savedKey = keys[p[pos]];
-            savedData = data[p[pos]];
-        }
-        while ( ! sorted[pos] ){
-            // Hold item to be replaced
-            K heldKey  = keys[pos];
-            T heldData = data[pos];
-            // Save where it should go
-            size_t heldPos = rp[pos];
-
-            // Replace
-            keys[pos] = savedKey;
-            data[pos] = savedData;
-
-            // Get last item to be the pivot
-            savedKey = heldKey;
-            savedData = heldData;
-
-            // Mark this item as sorted
-            sorted[pos] = true;
-
-            // Go to the held item proper location
-            pos = heldPos;
-        }
-        ++i;
-    }
-}
-
-template <class K, class T>
-void DatabaseHandler::sortByKey(K * keys, T * data, size_t size){
-    std::vector<size_t> p(size,0);
-    std::vector<size_t> rp(size);
-    std::vector<bool> sorted(size, false);
-    size_t i = 0;
-
-    // Sort
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-        [&](size_t i, size_t j){ return keys[i] < keys[j]; });
-
-    // ----------- Apply permutation in-place ---------- //
-
-    // Get reverse permutation item>position
-    for (i = 0; i < size; ++i){
-        rp[p[i]] = i;
-    }
-
-    i = 0;
-    K savedKey;
-    T savedData;
-    while ( i < size){
-        size_t pos = i;
-        // Save This element;
-        if ( ! sorted[pos] ){
-            savedKey = keys[p[pos]];
-            savedData = data[p[pos]];
-        }
-        while ( ! sorted[pos] ){
-            // Hold item to be replaced
-            K heldKey  = keys[pos];
-            T heldData = data[pos];
-            // Save where it should go
-            size_t heldPos = rp[pos];
-
-            // Replace
-            keys[pos] = savedKey;
-            data[pos] = savedData;
-
-            // Get last item to be the pivot
-            savedKey = heldKey;
-            savedData = heldData;
-
-            // Mark this item as sorted
-            sorted[pos] = true;
-
-            // Go to the held item proper location
-            pos = heldPos;
-        }
-        ++i;
-    }
-}
 
 json DatabaseHandler::getLeaderboard(const int &nPlayers)
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
-    // get all user's elo
-    auto cursor = userColl.find(document {} << finalize);
-    std::vector<int> elo;
-    std::vector<std::string> username;
+
+    auto order = document {} << "elo" << -1 << finalize;
+    auto opts = mongocxx::options::find {};
+    opts.limit(nPlayers);
+    opts.sort(order.view());
+    auto cursor = userColl.find({}, opts);
+
+
+    json leaderboard;
     for (auto doc : cursor) {
         auto usersViewBson = bsoncxx::to_json(doc);
         json usersViewJson = json::parse(usersViewBson);
-        elo.push_back(usersViewJson["elo"]);
-        username.push_back(usersViewJson["username"]);
-    }
-
-    // sort by elo
-    sortByKey(&elo[0], &username[0], elo.size());
-
-    json leaderboard;
-    int j = 0;
-    for (int i = (int) elo.size()-1; j < nPlayers; --i) {
-        if (i > -1)
-            leaderboard.push_back(json {{"username", username[i]}, {"elo", elo[i]}});
-        else
-            break;
-        ++j;
+        leaderboard.push_back(json {{"username", usersViewJson["username"]}, {"elo", usersViewJson["elo"]}});
     }
 
     return leaderboard;

@@ -5,7 +5,7 @@ set(${test_suite}
      Test_DatabaseHandler
     # Test_PasswordEncrypter
     # Test_LandingPool
-    Test_Requests_Exchange
+#    Test_Requests_Exchange
 )
 
 add_executable(${test_suite} ${${test_suite}})

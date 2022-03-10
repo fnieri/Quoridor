@@ -1,9 +1,16 @@
+#pragma once
+
 #include "src/common/Observer.h"
 #include "src/client/Board.h"
+#include "src/client/Corridor.h"
+#include "src/common/MessageEnums/Domain.h"
+#include "src/common/MessageEnums/DataTypes.h"
 
 #include <memory>
 #include <vector>
 #include <map>
+
+using json = nlohmann::json;
 
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
@@ -37,25 +44,24 @@ private:
     SPtrToVec<std::pair<std::string, float>> m_leaderboard;
 
 public:
-    MainModel();
-
     // Getters
-    auto getUsername() const noexcept -> const *std::string;
-    auto getELO() const noexcept -> const *float;
+    auto getUsername() const noexcept -> std::string*;
+    auto getELO() const noexcept -> const float*;
     auto isLoggedIn() const noexcept -> bool;
 
-    auto getFriendList() const noexcept -> const *std::vector<std::string>>;
-    auto getFriendRequestsSent() const noexcept -> const *std::vector<std::string>;
-    auto getFriendRequestsReceived() const noexcept -> const *std::vector<std::string>;
+    auto getFriendList() const noexcept -> const std::vector<std::string>*;
+    auto getFriendRequestsSent() const noexcept -> const std::vector<std::string>*;
+    auto getFriendRequestsReceived() const noexcept -> const std::vector<std::string>*;
 
-    auto getChatWith(const std::string &) const noexcept -> const *std::vector<std::string>;
+    auto getChatWith(const std::string &) const noexcept -> const std::vector<std::string>*;
 
-    auto getGameIDs() const noexcept -> const *std::vector<int>;
+    auto getGameIDs() const noexcept -> const std::vector<int>*;
 
     auto isInGame() const noexcept -> bool;
-    auto getCurrentGame() const noexcept -> const *GameModel;
+//    auto getCurrentGame() const noexcept -> const GameModel*;
+    auto isPlayerTurn() const noexcept -> bool;
 
-    auto getLeaderboard() const noexcept -> const *std::vector<std::pair<std::string, float>>;
+    auto getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>>*;
 
     // Setters
     /**
@@ -69,7 +75,7 @@ public:
     auto loginSuccessful(const std::string &) -> void;
 
     auto setFriendList(const std::vector<std::string> &) -> void;
-    auto addFriend(const std::string &);
+    auto addFriend(const std::string &) -> void;
 
     auto setFriendRequestsSent(const std::vector<std::string> &) -> void;
     auto addFriendRequestSent(const std::string &) -> void;
@@ -77,11 +83,23 @@ public:
     auto setFriendRequestsReceived(const std::vector<std::string> &) -> void;
     auto addFriendRequestReceived(const std::string &) -> void;
 
+    auto refuseFriendRequest(const std::string &) -> void;
+
+    auto removeFriend(const std::string &) -> void;
+
     /**
      * @param username friend participating in the chat
      * @param message content of the message
      */
-    auto addMessageToChat(const std::string &, const std::string &);
+    auto addFriendMessage(const std::string &, const std::string &) -> void;
+
+    /**
+     * @param username friend participating in the chat
+     * @param message content of the message
+     */
+//    auto addGameMessage(const std::string &, const std::vector<std::string> &, const std::string &) -> void;
+
+    auto setLeaderboard(const std::vector<std::pair<std::string, float>> &) -> void;
 };
 
 /**
@@ -94,19 +112,18 @@ class GameModel
 private:
     std::shared_ptr<Board> m_board;
     int m_gameId;
-
     int currentPlayerIdx {0};
 
 public:
-    GameModel(int, std::vector<std::string>,);
+    GameModel(int, std::vector<std::string>, std::shared_ptr<Board>);
 
-    auto getCurrentPlayer() const noexcept -> *int;
+    auto getCurrentPlayer() const noexcept -> int*;
 
     auto isMoveValid(const Point &) const noexcept -> bool;
     auto isWallValid(const Point &) const noexcept -> bool;
 
     auto movePlayer(const Point &) const noexcept -> void;
-    auto placeWall(const Wall &) const noexcept -> void;
+//    auto placeWall(const Wall &) const noexcept -> void;
 
     auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>;
     auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;

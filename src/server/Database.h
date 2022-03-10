@@ -29,12 +29,11 @@ using json = nlohmann::json;
 
 namespace database
 {
-const char kUsername[] {"boris"};
-constexpr char kPassword[] {"pass1234"};
 // need to actually use username and password
 //constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
 constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@46.101.255.42:47984"};
-constexpr char kDatabaseName[] {"Quoridor"};
+//constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@localhost:47984"};
+constexpr char kDatabaseName[] {"testing"};
 constexpr char kCollectionName[] {"TestCollection"};
 constexpr char kUserCollectionName[] {"UserCollection"};
 constexpr char kChatCollectionName[] {"ChatCollection"};
@@ -57,7 +56,6 @@ class DatabaseHandler
     static std::string getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId);
     static void removeGameIdFromUser(const std::string &username, const int &gameId);
 
-    template <class K, class T> static void sortByKey(K * keys, T * data, size_t size);
     DatabaseHandler();
     static std::unique_ptr<DatabaseHandler> &Instance()
     {

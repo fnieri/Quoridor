@@ -1,17 +1,20 @@
 #pragma once
 
 #include <string>
+#include <iostream>
+
 #include "MainModel.h"
-#include "../common/MessageEnums/Actions/AuthActions.h"
-#include "../common/MessageEnums/Actions/FriendActions.h.h"
-#include "../common/MessageEnums/Actions/ChatBoxActions.h.h"
-#include "../common/MessageEnums/Actions/.h"
+#include "src/common/MessageEnums/Actions/AuthActions.h"
+#include "src/common/MessageEnums/Actions/FriendActions.h"
+#include "src/common/MessageEnums/Actions/ChatBoxActions.h"
+#include "src/common/MessageEnums/Status.h"
 
 class MainController
 {
 private:
     MainModel m_mainModel;
 public:
+    MainModel *getMainModel();
 
     void processRequest(const std::string &);
 

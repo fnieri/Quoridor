@@ -12,8 +12,10 @@
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Server started" << std::endl;
-    UserHub userHub;
-    LandingPool entryDoor {12345, userHub};
-    return entryDoor.openToConnections();
+    std::cout << DatabaseHandler::getLeaderboard(3) << std::endl;
+
+//    std::cout << "Server started" << std::endl;
+//    UserHub userHub;
+//    LandingPool entryDoor {12345, userHub};
+//    return entryDoor.openToConnections();
 }

@@ -36,7 +36,7 @@
 #include "ftxui/util/ref.hpp"
 
 #include "src/common/Point.h"
-#include "GameController.h"
+//#include "GameController.h"
 #include "MainModel.h"
 //#include "ViewController.h"
 //#include "ServerController.h"
@@ -53,7 +53,7 @@ struct CheckboxState {
  */
 class TerminalVue
 {
-    GameController *gameController = new GameController {2, 0, 1};
+//    GameController *gameController = new GameController {2, 0, 1};
     MainModel mainModel;
     std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
