@@ -73,8 +73,9 @@ auto MainModel::loginNotSuccessful() -> void
     m_isLoggedIn = false;
 }
 
-auto MainModel::loginSuccessful(const std::string &) -> void
+auto MainModel::loginSuccessful(const std::string & username) -> void
 {
+    m_username = std::make_shared<std::string>(username); // added A-M
     m_isLoggedIn = true;
 }
 
