@@ -31,20 +31,20 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    // return gameController->isMoveValid(x, y);
+    //     return gameController->isMoveValid(x, y);
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    // return gameController->isWallValid(x, y, wallOrientation);
+    //     return gameController->isWallValid(x, y, wallOrientation);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        GameModel *gameModel = mainModel.getCurrentGame();
-        gameModel->updateBoardIntMatrix(boardIntMatrix);
+        //        GameModel *gameModel = mainModel.getCurrentGame();
+        //        gameController->updateBoardIntMatrix(boardIntMatrix);
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
         auto c = Canvas(200, 200);
@@ -128,13 +128,13 @@ auto TerminalVue::createCanvas()
 void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
-    gameController->movePlayer(Point{x, y});
+    //    gameController->movePlayer(Point{x, y});
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
-    gameController->placeWall(Point{x, y}, wallOrientation);
+    //    gameController->placeWall(Point{x, y}, wallOrientation);
 }
 
 auto TerminalVue::createChatInput()
@@ -372,22 +372,36 @@ auto TerminalVue::createFriendUtilitariesRenderer()
 
 auto TerminalVue::createLeaderBoardRenderer()
 {
-    // TODO load actual leaderboard
-    for (int i = 0; i < leaders.size(); i++) {
-        listLeadersWithElo.push_back(std::to_string(i + 1) + ". " + leaders[i] + " (" + std::to_string(elos[i]) + ")");
+    // TODO: remove this
+    std::vector<std::pair<std::string, float>> testLeaderboard {
+        {"test1", 1.0f},
+        {"test2", 2.0f},
+        {"test3", 3.0f},
+        {"test4", 4.0f},
+        {"test5", 5.0f},
+        {"test6", 6.0f},
+        {"test7", 7.0f},
+        {"test8", 8.0f},
+        {"test9", 9.0f},
+        {"test10", 10.0f},
+    };
+    mainModel.setLeaderboard(testLeaderboard);
+    mainModel.setElo(92);
+
+    auto userElo = mainModel.getELO();
+    auto leaderboard = mainModel.getLeaderboard();
+    for (auto &leader : *leaderboard) {
+        listLeadersWithElo.push_back(leader.first + " : " + std::to_string(leader.second));
     }
 
-    int elo = 42; // TODO get elo
-    auto userElo = text("Your Elo : " + std::to_string(elo));
     auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
     auto leaderBoardContainer = Container::Vertical({
         listLeaders,
-        userElo,
     });
 
     return Renderer(leaderBoardContainer, [listLeaders, userElo] {
-        return vbox({// text("LeaderBoard") | center,
-                   color(Color::YellowLight, text("Best players of the moment")), separator(), listLeaders->Render(), separator(), userElo})
+        return vbox({text("LeaderBoard") | center, color(Color::YellowLight, text("Best players of the moment")), separator(), listLeaders->Render(),
+                   separator(), text("Your Elo : " + std::to_string(*userElo))})
             | center;
     });
 }
@@ -422,7 +436,7 @@ auto TerminalVue::createFriendsRenderer()
     auto searchInput = Input(&searchField, "Add friend");
     auto addButton = Button(
         "Add", [&] { addFriend(searchField); }, &buttonOption);
-    auto friendsMenu = Menu(&friendsList, &friend_selected);
+    auto friendsMenu = Menu(mainModel.getFriendList(), &friend_selected);
     auto friendsChat = Menu(&chatEntry, &chat_message_selected);
     auto friendMessageInput = Input(&messageToFriend, "Aa");
     auto sendFriendMessageButton = Button(
@@ -457,7 +471,8 @@ auto TerminalVue::createFriendsRenderer()
 
     return Renderer(friendContainer,
         [&, searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, removeFriendsButton, notificationContainer] {
-            chatEntry = chatEntries[friend_selected]; // update chat entry with server
+            //            chatEntry = chatEntries[friend_selected]; // update chat entry with server
+            updateChatEntries();
             return vbox({
                 hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
                     vbox({text("Chat                 "), separator(), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10),
@@ -547,6 +562,8 @@ void TerminalVue::loginUser()
 
 void TerminalVue::run()
 {
+    mainModel.setFriendList({"test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"});
+    mainModel.addFriendMessage("test1", "test message");
     buttonOption.border = false;
     passwordOption.password = true;
     auto mainRenderer = createFinalContainer();
@@ -667,4 +684,14 @@ void TerminalVue::sendUserMessage(std::string mess, std::string receiver)
 {
     //
     //    gameController->sendUserMessage(mess, receiver);
+}
+void TerminalVue::updateChatEntries()
+{
+    auto friendList = mainModel.getFriendList();
+    auto friendChatEntries = mainModel.getChatWith((*friendList)[friend_selected]);
+    chatEntry.clear();
+    for (auto &chat : *friendChatEntries) {
+        std::string mess = chat.sender + ": " + chat.sentMessage;
+        chatEntry.push_back(mess);
+    }
 }

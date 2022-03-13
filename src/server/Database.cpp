@@ -152,6 +152,9 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
             i++;
         }
     }
+
+
+
     return friends;
 }
 
@@ -712,7 +715,6 @@ json DatabaseHandler::getLeaderboard(const int &nPlayers)
     opts.limit(nPlayers);
     opts.sort(order.view());
     auto cursor = userColl.find({}, opts);
-
 
     json leaderboard;
     for (auto doc : cursor) {

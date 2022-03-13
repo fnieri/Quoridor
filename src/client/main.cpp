@@ -1,13 +1,18 @@
-//#include "TerminalVue.h"
+#include "TerminalVue.h"
 // #include "MainController.h"
 // #include "src/common/SerializableMessageFactory.h"
 #include <iostream>
 #include <unistd.h>
 #include <cstdlib>
+//#include "src/client/MainController.h"
+//#include "src/client/MainModel.h"
+#include "src/common/SerializableMessageFactory.h"
 
 int main(int argc, char* argv[])
 {
-
+//MainModel model;
+//std::vector<std::pair<std::string, float>> testLeaderBoard{};
+//model.setLeaderboard(std::vector<std::string>);
 
 //    if (argc < 2) {
 //        std::cerr << "Missing arguments. Use --help for information" << std::endl;
@@ -32,11 +37,11 @@ int main(int argc, char* argv[])
     // std::cout << gameController.getLeaderboard() << std::endl;
     // std::cout << gameController.getFriendList() << std::endl;
 
-//    system("clear");
-//    TerminalVue vue;
-//    std::thread t1(&TerminalVue::run, &vue);
-//    vue.addChatMessage("User", "Hello World !");
-//    t1.join();
+    system("clear");
+    TerminalVue vue;
+    std::thread t1(&TerminalVue::run, &vue);
+    vue.addChatMessage("User", "Hello World !");
+    t1.join();
 
     // sleep(15);
 

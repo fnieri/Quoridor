@@ -47,7 +47,7 @@ class GameController : public Observer
     std::string gameSetup;
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
               occupiedHorizontalQuoridor = 7;
-    MainController mainController {"localhost", 12345}; // TODO choose server ip
+    MainController mainController; // TODO choose server ip
 
 public:
     GameController(int nPlayers, int currentPlayerIndex, int gameId);

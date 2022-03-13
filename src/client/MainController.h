@@ -3,11 +3,11 @@
 #include <string>
 #include <iostream>
 
-#include "MainModel.h"
 #include "src/common/MessageEnums/Actions/AuthActions.h"
 #include "src/common/MessageEnums/Actions/FriendActions.h"
 #include "src/common/MessageEnums/Actions/ChatBoxActions.h"
 #include "src/common/MessageEnums/Status.h"
+#include "src/client/MainModel.h"
 
 class MainController
 {

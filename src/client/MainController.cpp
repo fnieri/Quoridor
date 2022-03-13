@@ -21,30 +21,38 @@ void MainController::processRequest(const std::string &serRequest)
 void MainController::processResourceRequest(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
+    std::cout << request.at("serialized_data") << std::endl;
 
     if (request.at("action") == toJsonString(DataType::LEADERBOARD)) {
         std::vector<std::pair<std::string, float>> leaderboard;
         for (auto it = request.at("serialized_data").begin(); it != request.at("serialized_data").end(); it++)
-            leaderboard.push_back(std::pair<std::string, float>(request.at("username"), request.at("elo")));
+            leaderboard.emplace_back(request.at("username"), request.at("elo"));
         m_mainModel.setLeaderboard(leaderboard);
     } else if (request.at("action") == toJsonString(DataType::FRIENDS_LIST)) {
         std::vector<std::string> friendsList;
-        for (auto userFriend : request.at("serialized_data"))
+        for (const auto &userFriend : request.at("serialized_data"))
             friendsList.push_back(userFriend.get<std::string>());
         m_mainModel.setFriendList(friendsList);
-        std::cout << request.at("serialized_data") << std::endl;
     } else if (request.at("action") == toJsonString(DataType::GAME_CONFIG)) {
-        std::cout << request.at("serialized_data") << std::endl;
     } else if (request.at("action") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
-        std::cout << request.at("serialized_data") << std::endl;
+        std::vector<std::string> friendRequestsSent;
+        for (const auto &userFriend : request.at("serialized_data"))
+            friendRequestsSent.push_back(userFriend.get<std::string>());
+        m_mainModel.setFriendRequestsSent(friendRequestsSent);
     } else if (request.at("action") == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
-        std::cout << request.at("serialized_data") << std::endl;
+        std::vector<std::string> friendRequestsReceived;
+        for (const auto &userFriend : request.at("serialized_data"))
+            friendRequestsReceived.push_back(userFriend.get<std::string>());
+        m_mainModel.setFriendRequestsReceived(friendRequestsReceived);
     } else if (request.at("action") == toJsonString(DataType::GAME_IDS)) {
-        std::cout << request.at("serialized_data") << std::endl;
+        std::vector<int> gameIds;
+        for (const auto &gameId : request.at("serialized_data"))
+            gameIds.push_back(gameId.get<int>());
+        m_mainModel.setGameIds(gameIds);
     } else if (request.at("action") == toJsonString(DataType::CHATS)) {
-        std::cout << request.at("serialized_data") << std::endl;
     } else if (request.at("action") == toJsonString(DataType::ELO)) {
-        std::cout << request.at("serialized_data") << std::endl;
+        float elo = request.at("serialized_data").get<float>();
+        m_mainModel.setElo(elo);
     }
 }
 
@@ -81,12 +89,16 @@ void MainController::processChatBox(const std::string &serRequest)
         m_mainModel.addFriendMessage(request.at("sender"), request.at("message"));
     }
     if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
-//        m_mainModel.addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));
+        //        m_mainModel.addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));
     }
 }
 
 void MainController::processGameSetup(const std::string &serRequest)
 {
+//    json request(json::parse(serRequest));
+//    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
+//     m_mainModel.loadGame();
+//    }
 }
 
 MainModel *MainController::getMainModel()

@@ -36,6 +36,7 @@
 #include "ftxui/util/ref.hpp"
 
 #include "src/common/Point.h"
+#include "src/common/Message.h"
 //#include "GameController.h"
 #include "MainModel.h"
 //#include "ViewController.h"
@@ -128,6 +129,7 @@ class TerminalVue
         "Register",
     };
     std::vector<Component> mainTabComponents;
+    void updateChatEntries();
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 0;
     int rightSizeFriends = 70;
