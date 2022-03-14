@@ -13,6 +13,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
+#include <utility>
+
 
 using json = nlohmann::json;
 
@@ -33,78 +35,73 @@ SCENARIO("Testing requests")
 
     /* ---------- RELATION REQUEST ---------- */
 
-    /* 1. Sending a friend request : Bob asks John as friend */
-    /*
+    /* 1. Sending a friend request : John asks Bob as friend */
     json friend_request = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "Bob", "John");
     controller.processRequest(friend_request.dump());
     bool is_found = false;
-    std::vector<std::string> friendsRequestSentList = *(model->getFriendRequestsSent());
-    for (auto &aFriend : friendsRequestSentList) {
-        if (aFriend == "Bob")
-            is_found = true;
-    }
+    std::vector<std::string> friendsRequestReceivedList = *(model->getFriendRequestsReceived());
+    for (auto &aFriend : friendsRequestReceivedList) if (std::string(aFriend) == std::string("Bob")) is_found = true;
     REQUIRE(is_found);
-    */
+
 
     /* 2. Accept a friend request : John accepts Bob */
-    /*
-    json msg2 = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, "Bob", "John");
-    controller.processRequest(msg2.dump());
     // How do we check from Bob's pov that he got the request
+
+    json friend_made = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, "John", "Bob");
+    controller.processRequest(friend_made.dump());
 
     // Checking if Bob is in John's friend list
     is_found = false;
     std::vector<std::string> friendsList = *(model->getFriendList());
-    for (auto& aFriend: friendsList) { if (aFriend == "Bob") is_found=true;}
+    for (auto& aFriend: friendsList)  if (std::string(aFriend) == std::string("Bob")) is_found = true;
     REQUIRE(is_found);
-    */
+
 
     /* 3. Remove Friend : John removes Bob of his friends */
-    /*
-    json msg3 = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REMOVE, "John", "Bob");
-    controller.processRequest(msg3.dump());
+
+    json friend_remove = SerializableMessageFactory::serializeFriendRemove("John", "Bob");
+    controller.processRequest(friend_remove.dump());
     is_found = false;
     std::vector<std::string> friendsListUpdate = *(model->getFriendList());
-    for (auto &aFriend : friendsListUpdate) {
-        if (aFriend == "Bob")
-            is_found = true;
-    }
+    for (auto &aFriend : friendsListUpdate) if (std::string(aFriend) == std::string("Bob")) is_found = true;
     REQUIRE(!is_found);
-    */
 
-    /* 4. Refuse Friend Request */
-    /*
+
+    /* 4. Refuse Friend Request : John asks Laura but she refuses */
     json msg = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "John", "Laura");
     controller.processRequest(msg.dump());
     json msg2 = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REFUSE, "Laura", "John");
     controller.processRequest(msg2.dump());
 
-    // REQUIRE()    // what is required here ? we cant get Lauras friend request list ?
+    is_found = false;
+    std::vector<std::string> friendsRequestReceivedList2 = *(model->getFriendRequestsReceived());
+    for (auto &aFriend : friendsRequestReceivedList2) if (std::string(aFriend) == std::string("Laura")) is_found = true;
+    REQUIRE(!is_found);
 
-    */
 
 
     /* ---------- CHAT BOX Request ---------- */
 
     /* 1. Sending Direct Messages */
-    /*
+
     // Bob sends a message to John
-    json request = SerializableMessageFactory::serializeFriendMessage("Bob", "John", "Hello it's Bob");
-    controller.processRequest(request.dump());
+    json msg_sending = SerializableMessageFactory::serializeFriendMessage("Bob", "John", "Hello it's Bob");
+    controller.processRequest(msg_sending.dump());
 
     // Searching for the message sent
-    bool is_found = false;
-    std::vector<std::string> bobsChat = *(model->getChatWith("Bob"));
+    is_found = false;
+    std::vector<Message> bobsChat = *(model->getChatWith("Bob"));
     for (auto &aMsg : bobsChat) {
-        if (aMsg == "Hello it's Bob")
+        if (std::string(aMsg.sentMessage) == std::string("Hello it's Bob"))
             is_found = true;
     }
     REQUIRE(is_found);
 
+    /* I dont think this is useful
     // Searching for a message not sent (should be false)
     is_found = false;
     for (auto &aMsg : bobsChat) {
-        if (aMsg == "Should we start a game ?")
+        if (std::string(aMsg.sentMessage) == "Should we start a game ?")
             is_found = true;
     }
     REQUIRE(!is_found);
@@ -117,54 +114,40 @@ SCENARIO("Testing requests")
 
 
     /* ---------- RESOURCE_REQUEST Request ---------- */
+    // these tests only set a resource then ask for it with serializeRequestExchange, and then checks the value set... but in the end were only testing the model not the controller (cout)
 
     /* 1. Leaderboard Request */
-    /*
-    // We have to make the Leaderboard ? and make it a serializable data ?
     std::vector<std::pair<std::string, float>> leaderBoard{std::make_pair("John", 2.0), std::make_pair("Lucia", 29.0), std::make_pair("Bob", 0.0)};
-    json request = SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD);
-    // json request = SerializableMessageFactory::serializeAnswerExchange(DataType::LEADERBOARD, ???);
-    controller.processRequest(request.dump());
+    model->setLeaderboard(leaderBoard);
+    json ldb_request = SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD);
+    controller.processRequest(ldb_request.dump());
     std::vector<std::pair<std::string, float>> leaderBoardReceived = *model->getLeaderboard();
     REQUIRE(leaderBoard == leaderBoardReceived);
-    */
+
 
     /* 2. All Friends List Request */
-    /*
-    // Sending the request
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "John", "Bob").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "John", "Lucia").dump());
-
-    controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_SENT).dump());
-
     std::vector<std::string> friendsRequestSentList{"Bob", "Lucia"};
+    model->setFriendRequestsSent(friendsRequestSentList);
+    controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_SENT).dump());
     REQUIRE(friendsRequestSentList == *model->getFriendRequestsSent());
-    std::vector<std::string> wrongFriendsRequestSentList{"Lucia"};
-    REQUIRE(wrongFriendsRequestSentList != *model->getFriendRequestsSent());
+
+    // dont think this is useful either when we're checking for the wrong list
+    REQUIRE(std::vector<std::string>{"Lucia"} != *model->getFriendRequestsSent());
 
     // Friends accept, so are supposedly in the friend's list now
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, "Lucia", "John").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, "Bob", "John").dump());
-
+    model->setFriendList(friendsRequestSentList);
     controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::FRIENDS_LIST).dump());
 
-    std::vector<std::string> friendsList{"Bob", "Lucia"};
-    REQUIRE(friendsList == *model->getFriendList());
-    std::vector<std::string> wrongFriendsList{"Lucia"};
-    REQUIRE(wrongFriendsList != *model->getFriendList());
+    REQUIRE(friendsRequestSentList == *model->getFriendList());
+    REQUIRE(std::vector<std::string>{"Lucia"} != *model->getFriendList());
 
     // Some people send invite (only checking request lists)
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "Mustafa", "John").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "Patrick", "John").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "Lola", "John").dump());
-
+    model->setFriendRequestsReceived(std::vector<std::string>{"Mustafa", "Patrick", "Lola"});
     controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_RECEIVED).dump());
 
-    std::vector<std::string> friendsRequestReceivedList{"Mustafa", "Patrick", "Lola"};
-    REQUIRE(friendsRequestReceivedList == *model->getFriendRequestsReceived());
-    std::vector<std::string> wrongFriendsRequestReceivedList{"Patrick"};
-    REQUIRE(wrongFriendsRequestReceivedList != *model->getFriendRequestsReceived());
-    */
+    REQUIRE(std::vector<std::string>{"Mustafa", "Patrick", "Lola"} == *model->getFriendRequestsReceived());
+    REQUIRE(std::vector<std::string>{"Patrick"} != *model->getFriendRequestsReceived());
+
 
     /* 3. Game Configuration Request */
     /*
@@ -179,24 +162,24 @@ SCENARIO("Testing requests")
     */
 
     /* 5. Chats Request */
-    /*
-    controller.processRequest(SerializableMessageFactory::serializeFriendMessage("Bob", "John", "Hello it's Bob").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendMessage("John", "Bob", "Hello how are you").dump());
-    controller.processRequest(SerializableMessageFactory::serializeFriendMessage("Bob", "John", "Find let's play a game").dump());
+    model->addFriend("Sarah");
+    controller.processRequest((SerializableMessageFactory::serializeFriendMessage("Sarah", "John", "Hello it's Bob")).dump());
+    controller.processRequest((SerializableMessageFactory::serializeFriendMessage("Sarah", "John", "Fine let's play a game")).dump());
 
-    // how do we ask for the chats between Bob and John
-    controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::CHATS).dump());
+    controller.processRequest((SerializableMessageFactory::serializeRequestExchange(DataType::CHATS)).dump());
 
-    // REQUIRE();
-    */
+    std::vector<Message> chats{Message{"Sarah", "Hello it's Bob"}, Message{"Sarah", "Fine let's play a game"}};
+    std::vector<Message> BJ_chats = *model->getChatWith("Sarah");
+    REQUIRE(chats == BJ_chats);
+
 
     /* 6. ELO Request */
-    /*
+
     float johnsELO = 12;
-    model->setELO(12);
+    model->setElo(12);
     controller.processRequest(SerializableMessageFactory::serializeRequestExchange(DataType::ELO).dump());
-    // REQUIRE(12 == *model->getELO());     // also doesnt make sense
-    */
+    REQUIRE(johnsELO == *model->getELO());     // also doesnt make sense
+
 
 
     /* ---------- IN_GAME_RELATED Request ---------- */

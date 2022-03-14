@@ -1,5 +1,17 @@
 #include "MainModel.h"
 
+#include <utility>
+
+template <typename P, typename V>
+auto MainModel::updatePtrValue(P &ptr, V value) const noexcept -> void
+{
+    if (ptr) {
+        *ptr = value;
+    } else {
+        ptr = std::make_shared<V>(value);
+    }
+}
+
 auto MainModel::getUsername() const noexcept -> std::string *
 {
     return m_username.get();
@@ -30,9 +42,9 @@ auto MainModel::getFriendRequestsReceived() const noexcept -> const std::vector<
     return m_friendRequestsReceived.get();
 }
 
-auto MainModel::getChatWith(const std::string &username) const noexcept -> const std::vector<std::string> *
+auto MainModel::getChatWith(const std::string &username) const noexcept -> const SPtrToVec<Message>
 {
-    return m_chats.at(username).get();
+    return m_chats.at(username);
 }
 
 auto MainModel::getGameIDs() const noexcept -> const std::vector<int> *
@@ -62,36 +74,39 @@ auto MainModel::isInGame() const noexcept -> bool
 
 auto MainModel::setUsername(const std::string &username) -> void
 {
-    m_username.reset(new std::string(username));
+    updatePtrValue(m_username, username);
+    m_isLoggedIn = true;
 }
-auto MainModel::setELO(const int &elo) -> void
+auto MainModel::setElo(const float &elo) -> void
 {
-    m_elo.reset(new float((float)elo));
+    updatePtrValue(m_elo, elo);
 }
 auto MainModel::loginNotSuccessful() -> void
 {
     m_isLoggedIn = false;
 }
 
-auto MainModel::loginSuccessful(const std::string & username) -> void
+auto MainModel::loginSuccessful(const std::string &username) -> void
 {
-    m_username = std::make_shared<std::string>(username); // added A-M
     m_isLoggedIn = true;
+    setUsername(username);
 }
 
 auto MainModel::setFriendList(const std::vector<std::string> &friendList) -> void
 {
-    m_friendList.reset(new std::vector<std::string>(friendList));
+    updatePtrValue(m_friendList, friendList);
+    updateFriendsChatMap();
 }
 
 auto MainModel::addFriend(const std::string &friendUsername) -> void
 {
     m_friendList->push_back(friendUsername);
+    updateFriendsChatMap();
 }
 
 auto MainModel::setFriendRequestsSent(const std::vector<std::string> &friendRequestsSent) -> void
 {
-    m_friendRequestsSent.reset(new std::vector<std::string>(friendRequestsSent));
+    updatePtrValue(m_friendRequestsSent, friendRequestsSent);
 }
 
 auto MainModel::addFriendRequestSent(const std::string &friendRequestSent) -> void
@@ -101,7 +116,7 @@ auto MainModel::addFriendRequestSent(const std::string &friendRequestSent) -> vo
 
 auto MainModel::setFriendRequestsReceived(const std::vector<std::string> &friendRequestsReceived) -> void
 {
-    m_friendRequestsReceived.reset(new std::vector<std::string>(friendRequestsReceived));
+    updatePtrValue(m_friendRequestsReceived, friendRequestsReceived);
 }
 
 auto MainModel::addFriendRequestReceived(const std::string &friendRequestReceived) -> void
@@ -119,16 +134,51 @@ auto MainModel::removeFriend(const std::string &friendToRemove) -> void
 {
     m_friendList->erase(std::remove(m_friendList->begin(), m_friendList->end(), friendToRemove), m_friendList->end());
 }
+
 auto MainModel::addFriendMessage(const std::string &friendUsername, const std::string &message) -> void
 {
-    m_chats[friendUsername]->push_back(message);
+    m_chats.at(friendUsername)->push_back({friendUsername, message});
 }
 
-// auto MainModel::addGameMessage(const std::string &, const std::vector<std::string> &, const std::string &) -> void
+// auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void
 //{
+//     m_chats[riendUsername]->push_back({friendUsername, message});
 //
 // }
+
 auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> &leaderboard) -> void
 {
-    m_leaderboard.reset(new std::vector<std::pair<std::string, float>>(leaderboard));
+    updatePtrValue(m_leaderboard, leaderboard);
+}
+
+auto MainModel::setGameIds(const std::vector<int> &gameIDs) -> void
+{
+    updatePtrValue(m_gameIDs, gameIDs);
+}
+
+auto MainModel::updateFriendsChatMap() noexcept -> void
+{
+    for (auto &friendUsername : *m_friendList) {
+        if (m_chats.find(friendUsername) == m_chats.end()) {
+            m_chats[friendUsername] = std::make_shared<std::vector<Message>>();
+        }
+    }
+}
+
+GameModel::GameModel(int gameId, std::vector<std::string> players, std::shared_ptr<Board> board)
+    : m_gameId(gameId)
+    , m_players(std::move(players))
+    , m_board(std::move(board))
+{
+}
+
+auto GameModel::getCurrentPlayer() noexcept -> int *
+{
+    return &currentPlayerIdx;
+}
+
+auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool
+{
+    //    PlayerAction move {board, players.at(currentPlayerIndex), movePoint/2};
+    //    return move.isActionValid();
 }

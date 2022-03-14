@@ -1,15 +1,14 @@
 #pragma once
 
-#include "User.h"
-#include <chrono>
-#include <memory>
 #include <string>
-#include <vector>
 
 // struct use for message info
 struct Message {
-    time_t timeSent;
-    User sender;
-    User receiver;
+    //    time_t timeSent;
+    std::string sender;
     std::string sentMessage;
+    bool operator==(const Message& b) const
+    {
+        return (this->sender == b.sender) && (this->sentMessage == b.sentMessage);
+    }
 };
