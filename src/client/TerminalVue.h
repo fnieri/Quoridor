@@ -339,6 +339,7 @@ class TerminalVue
      */
     void loginUser();
     
+    auto createFriendRequestRenderer();
 
     void handleFriendDelete(const std::string &friendUsername);
 

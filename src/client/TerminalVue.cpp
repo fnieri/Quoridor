@@ -351,6 +351,35 @@ auto TerminalVue::createFriendUtilitariesRenderer()
     });
 }
 
+/*auto TerminalVue::createFriendRequestRenderer(){
+    auto addFriendRequest = Button(
+        "Add",
+        [&] {addFriend(friendRequest);
+        depth = 0;},
+    );
+
+    auto denyFriendRequest = Button(
+        "Add",
+        [&] {depth = 0;},
+    );
+
+    auto utilitariesContainer = Container::Vertical({
+        
+        addFriendRequest,
+        denyFriendRequest,
+    });
+
+    return Renderer(utilitariesContainer, [&, addFriendRequest]{
+        return (vbox({
+            text("User :"Username" wants to become your friend")
+            addFriendRequest->Render(),
+        });
+
+        );
+    });
+
+}*/
+
 auto TerminalVue::createLeaderBoardRenderer()
 {  
 
