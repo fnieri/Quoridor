@@ -37,10 +37,8 @@
 
 #include "src/common/Point.h"
 #include "src/common/Message.h"
-//#include "GameController.h"
 #include "MainModel.h"
-//#include "ViewController.h"
-//#include "ServerController.h"
+#include "ServerController.h"
 
 using namespace ftxui;
 
@@ -54,9 +52,13 @@ struct CheckboxState {
  */
 class TerminalVue
 {
-//    GameController *gameController = new GameController {2, 0, 1};
-    MainModel mainModel;
-    std::string message, searchField, messageToFriend, username = "TestUser", password, registerUsername, registerPassword, registerRepeatPassword;
+    MainController mainController;
+
+    MainModel *mainModel = mainController.getMainModel();
+//    MainModel *mainModel;
+    ServerController *serverController = new ServerController{&mainController};
+
+    std::string message, searchField, messageToFriend, username = "testing", password="testingPassword", registerUsername, registerPassword, registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
     int mouse_y = 0;
@@ -139,10 +141,10 @@ class TerminalVue
     InputOption passwordOption;
     int depth = 0;
     int currentGameId = 69;
-    std::string errorLoginMessage = "";
-    std::string registerMessage = "";
-    int homeTabIndex = 2;
-    int mainPageIndex = 1;
+    std::string errorLoginMessage;
+    std::string registerMessage;
+    int homeTabIndex = 0;
+    int mainPageIndex = 0;
 
     /**
      * @brief Checks if it's someone's turn
@@ -383,7 +385,7 @@ class TerminalVue
 
     void sendMessageGame(std::string message, int gameId);
 
-    void sendUserMessage(std::string message, std::string receiver);
+    void sendUserMessage(const std::string& message, const std::string& receiver);
 
     void userCreateGame();
 

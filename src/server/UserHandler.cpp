@@ -139,31 +139,31 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     json data;
 
     if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST)) {
-        data = json {m_userHandled->getFriendList()};
+        for (auto &f: m_userHandled->getFriendList()) data.push_back(f);
         dataType = DataType::FRIENDS_LIST;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
-        data = json {m_userHandled->getFriendRequestsSent()};
+        for (auto &f: m_userHandled->getFriendRequestsSent()) data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_SENT;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
-        data = json {m_userHandled->getFriendRequestsReceived()};
+        for (auto &f: m_userHandled->getFriendRequestsReceived()) data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
 
     } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
-        data = json {DatabaseHandler::getMessages(request["sender"], request["receiver"])};
+        for (auto &m: DatabaseHandler::getMessages(request["sender"], request["receiver"])) data.push_back(m);
         dataType = DataType::CHATS;
 
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
-        data = json {m_userHandled->getGameIDs()};
+        for (auto &g: m_userHandled->getGameIDs()) data.push_back(g);
         dataType = DataType::GAME_IDS;
 
     } else if (request["data_type"] == toJsonString(DataType::ELO)) {
-        data = json {m_userHandled->getELO()};
+        data = m_userHandled->getELO();
         dataType = DataType::ELO;
 
     } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) {
-        data = json {DatabaseHandler::getLeaderboard(10)};
+        data = DatabaseHandler::getLeaderboard(10);
         dataType = DataType::LEADERBOARD;
     }
 

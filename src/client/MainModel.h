@@ -14,13 +14,10 @@
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
 #include "ServerBridge.h"
-//#include "MainController.h"
 #include "WallAction.h"
 #include "WallEnum.h"
-#include "src/common/Observer.h"
 #include "src/common/Point.h"
 #include "src/common/SerializableMessageFactory.h"
-
 
 #include <map>
 #include <memory>
@@ -30,16 +27,15 @@ using json = nlohmann::json;
 
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
-//using SPtrToVec2 = std::make_shared<std::vector<T>()>;
 
 class GameModel;
 
-class MainModel : public Subject
+class MainModel
 {
 private:
     // User information
     std::shared_ptr<std::string> m_username;
-    std::shared_ptr<float> m_elo;
+    std::shared_ptr<float> m_elo = std::make_shared<float>(0);
     bool m_isLoggedIn;
 
     SPtrToVec<std::string> m_friendList = std::make_shared<std::vector<std::string>>();
@@ -57,7 +53,7 @@ private:
     std::unique_ptr<int> m_currentPlayer;
 
     // General information
-    SPtrToVec<std::pair<std::string, float>> m_leaderboard;
+    SPtrToVec<std::pair<std::string, float>> m_leaderboard = std::make_shared<std::vector<std::pair<std::string, float>>>();
 
 public:
     template <typename P, typename V>

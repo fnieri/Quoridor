@@ -9,10 +9,8 @@ add_library(${PREFIX}_client
         WallAction.cpp
         WallEnum.h
         PlayerAction.h
-        ServerBridge.cpp
-        MainController.cpp
         MainModel.cpp
-#        GameController.cpp
+        MainController.cpp
         TerminalVue.cpp
         ServerBridge.cpp
         ServerController.cpp

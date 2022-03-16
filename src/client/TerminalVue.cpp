@@ -372,34 +372,20 @@ auto TerminalVue::createFriendUtilitariesRenderer()
 
 auto TerminalVue::createLeaderBoardRenderer()
 {
-    // TODO: remove this
-    std::vector<std::pair<std::string, float>> testLeaderboard {
-        {"test1", 1.0f},
-        {"test2", 2.0f},
-        {"test3", 3.0f},
-        {"test4", 4.0f},
-        {"test5", 5.0f},
-        {"test6", 6.0f},
-        {"test7", 7.0f},
-        {"test8", 8.0f},
-        {"test9", 9.0f},
-        {"test10", 10.0f},
-    };
-    mainModel.setLeaderboard(testLeaderboard);
-    mainModel.setElo(92);
-
-    auto userElo = mainModel.getELO();
-    auto leaderboard = mainModel.getLeaderboard();
-    for (auto &leader : *leaderboard) {
-        listLeadersWithElo.push_back(leader.first + " : " + std::to_string(leader.second));
-    }
-
     auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
     auto leaderBoardContainer = Container::Vertical({
         listLeaders,
     });
 
-    return Renderer(leaderBoardContainer, [listLeaders, userElo] {
+    return Renderer(leaderBoardContainer, [&, listLeaders] {
+    auto userElo = mainModel->getELO();
+        auto leaderboard = mainModel->getLeaderboard();
+        listLeadersWithElo.clear();
+        if (!leaderboard->empty()) {
+            for (auto &leader : *leaderboard) {
+                listLeadersWithElo.push_back(leader.first + " : " + std::to_string(leader.second));
+            }
+        }
         return vbox({text("LeaderBoard") | center, color(Color::YellowLight, text("Best players of the moment")), separator(), listLeaders->Render(),
                    separator(), text("Your Elo : " + std::to_string(*userElo))})
             | center;
@@ -436,7 +422,7 @@ auto TerminalVue::createFriendsRenderer()
     auto searchInput = Input(&searchField, "Add friend");
     auto addButton = Button(
         "Add", [&] { addFriend(searchField); }, &buttonOption);
-    auto friendsMenu = Menu(mainModel.getFriendList(), &friend_selected);
+    auto friendsMenu = Menu(mainModel->getFriendList(), &friend_selected);
     auto friendsChat = Menu(&chatEntry, &chat_message_selected);
     auto friendMessageInput = Input(&messageToFriend, "Aa");
     auto sendFriendMessageButton = Button(
@@ -450,8 +436,10 @@ auto TerminalVue::createFriendsRenderer()
     });
 
     auto notificationContainer = Container::Vertical({});
-    // TODO switch to real data
-    for (int i = 0; i < 3; i++) {
+
+    auto friendRequestsReceived = mainModel->getFriendRequestsReceived();
+
+    for (auto &friendRequest : *friendRequestsReceived) {
         auto friendsRequestAcceptBtn = Button("Accept", [&] {
             // TODO accept friend request
         });
@@ -460,9 +448,8 @@ auto TerminalVue::createFriendsRenderer()
             // TODO decline friend request
         });
         auto requestsBtnContainer = Container::Vertical({friendsRequestAcceptBtn, friendsRequestDeclineBtn});
-        notificationContainer->Add(Renderer(requestsBtnContainer, [friendsRequestAcceptBtn, friendsRequestDeclineBtn] {
-            // TODO change text
-            return hbox({text("Test friend request"), friendsRequestAcceptBtn->Render(), friendsRequestDeclineBtn->Render()});
+        notificationContainer->Add(Renderer(requestsBtnContainer, [friendsRequestAcceptBtn, friendsRequestDeclineBtn, friendRequest] {
+            return hbox({text(friendRequest + " sent you a friend request"), friendsRequestAcceptBtn->Render(), friendsRequestDeclineBtn->Render()});
         }));
     }
 
@@ -551,9 +538,10 @@ void TerminalVue::loginUser()
     }
     // TODO interact with server
     // isLoggedIn = gameController->logIn(username, password);
-    if (!isLoggedIn) {
+    if (!serverController->login(username, password)) {
         errorLoginMessage = "Wrong username or password";
     } else {
+        serverController->fetchData();
         errorLoginMessage = "";
         mainPageIndex = 1;
     }
@@ -562,8 +550,10 @@ void TerminalVue::loginUser()
 
 void TerminalVue::run()
 {
-    mainModel.setFriendList({"test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"});
-    mainModel.addFriendMessage("test1", "test message");
+    //    mainModel = mainController.getMainModel();
+    //    mainModel->setFriendList({"test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"});
+    //    mainModel->addFriendMessage("test1", "test message");
+    //    mainModel->addFriendRequestReceived("aTestFriend");
     buttonOption.border = false;
     passwordOption.password = true;
     auto mainRenderer = createFinalContainer();
@@ -605,17 +595,17 @@ void TerminalVue::deleteFriend()
 
 void TerminalVue::registerUser()
 {
-    // if (registerPassword == registerRepeatPassword && !registerUsername.empty() && !registerPassword.empty()) {
-    //     if (gameController->registerPlayer(registerUsername, registerPassword)) {
-    //         username = registerUsername;
-    //         registerMessage = "Successfully registered. You can now log in.";
-    //     } else {
-    //         registerMessage = "Error creating account. Username probably already exists";
-    //     }
-    //     system("clear");
-    // } else {
-    //     registerMessage = "Passwords don't match or username is empty";
-    // }
+    if (registerPassword == registerRepeatPassword && !registerUsername.empty() && !registerPassword.empty()) {
+        if (serverController->registerUser(registerUsername, registerPassword)) {
+            username = registerUsername;
+            registerMessage = "Successfully registered. You can now log in.";
+        } else {
+            registerMessage = "Error creating account. Username probably already exists";
+        }
+        system("clear");
+    } else {
+        registerMessage = "Passwords don't match or username is empty";
+    }
 }
 
 void TerminalVue::handleFriendDelete(const std::string &friendUsername)
@@ -680,15 +670,16 @@ void TerminalVue::sendMessageGame(std::string mess, int gameId)
 {
 }
 
-void TerminalVue::sendUserMessage(std::string mess, std::string receiver)
+void TerminalVue::sendUserMessage(const std::string& mess, const std::string& receiver)
 {
+    serverController->sendFriendMessage(*mainModel->getUsername(), receiver, mess);
     //
     //    gameController->sendUserMessage(mess, receiver);
 }
 void TerminalVue::updateChatEntries()
 {
-    auto friendList = mainModel.getFriendList();
-    auto friendChatEntries = mainModel.getChatWith((*friendList)[friend_selected]);
+    auto friendList = mainModel->getFriendList();
+    auto friendChatEntries = mainModel->getChatWith((*friendList)[friend_selected]);
     chatEntry.clear();
     for (auto &chat : *friendChatEntries) {
         std::string mess = chat.sender + ": " + chat.sentMessage;
