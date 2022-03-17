@@ -125,12 +125,16 @@ void GameHandler::terminate()
 
 void GameHandler::deleteFromDB()
 {
-    /* DatabaseHandler::deleteGame(getID()); */
+    DatabaseHandler::deleteGame(getID());
 }
 
 void GameHandler::saveToDB()
 {
-    /* DatabaseHandler::saveGame(getID(), m_players, m_players.size(), json::parse(m_configuration)); */
+    for (auto i_player : m_players) {
+        DatabaseHandler::addGameIdToUser(i_player, getID());
+    }
+
+    DatabaseHandler::setGameBoardConfig(getID(), m_configuration);
 }
 
 void GameHandler::updateELO(const std::string &winner)
@@ -156,17 +160,15 @@ void GameHandler::processRequest(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
-    /* if (request["action"] == toJsonString(
-     *
-     * GameAction::SURRENDER)) { */
+    if (request["action"] == toJsonString(GameAction::SURRENDER)) {
 
-    /* } else if (request["action"] == toJsonString(GameAction::SAVE_GAME)) { */
-    /*     m_isFinished = true; */
+    } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
+        m_isFinished = true;
 
-    /* } else if (request["action"] == toJsonString(GameAction::GAME_ENDED)) { */
-    /*     updateELO(request["winner"]); */
-    /*     m_isFinished = true; */
-    /* } */
+    } else if (request["action"] == toJsonString(GameAction::END_GAME)) {
+        updateELO(request["winner"]);
+        m_isFinished = true;
+    }
 
     for (auto &p : m_players)
         if (p != request["sender"])
