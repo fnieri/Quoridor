@@ -22,6 +22,7 @@ public:
     auto sendFriendRequest(const std::string &sender, const std::string &receiver) -> void;
     auto acceptFriendRequest(const std::string &sender, const std::string &receiver) -> void;
     auto declineFriendRequest(const std::string &sender, const std::string &receiver) -> void;
+    auto removeFriend(const std::string &sender, const std::string &receiver) -> void;
 
     auto fetchData() -> void;
     auto fetchFriends() -> void;

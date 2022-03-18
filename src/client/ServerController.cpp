@@ -33,7 +33,6 @@ auto ServerController::registerUser(const std::string &username, const std::stri
 auto ServerController::sendFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void
 {
     sendJson(SerializableMessageFactory::serializeFriendMessage(sender, receiver, message));
-    fetchFriendMessages(sender, receiver);
 }
 
 auto ServerController::sendFriendRequest(const std::string &sender, const std::string &receiver) -> void
@@ -61,6 +60,7 @@ auto ServerController::fetchData() -> void
     fetchFriends();
     fetchElo();
     fetchLeaderboard();
+    fetchFriendRequestsReceived();
 }
 
 auto ServerController::fetchFriends() -> void
@@ -85,5 +85,10 @@ auto ServerController::fetchElo() -> void
 
 auto ServerController::fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void
 {
-    sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester,receiver));
+    sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester, receiver));
+}
+
+auto ServerController::removeFriend(const std::string &sender, const std::string &receiver) -> void
+{
+    sendJson(SerializableMessageFactory::serializeFriendRemove(sender, receiver));
 }

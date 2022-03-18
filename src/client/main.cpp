@@ -14,23 +14,18 @@ int main(int argc, char *argv[])
 //    MainController mainController;
 //    ServerController serverController {&mainController};
 //    serverController.login("testing", "testingPassword");
-//    serverController.fetchFriendMessages("testing", "testingFriend");
 //    auto model = mainController.getMainModel();
-//    auto mess = model->getChatWith("testingFriend");
-//    while (true) {
-//        std::cout << "ahhhh" << std::endl;
-//        for (const auto &m : *mess) {
-//            std::cout << m.sentMessage << std::endl;
-//            return 0;
-//        }
-//        sleep(0.1);
-//    }
-//    sleep(2);
-    //    serverController.fetchLeaderboard();
-    //    serverController.fetchFriends();
-    //    serverController.fetchElo();
-    //    //        auto leaderboard = ;
-    //    std::cout << *(model->getELO()) << std::endl;
+//
+////    serverController.sendFriendRequest("test", "testing");
+////    serverController.sendFriendRequest("hi", "testing");
+////    serverController.sendFriendRequest("fooo", "testing");
+//    serverController.fetchFriendRequestsReceived();
+////
+//    sleep(10);
+//
+
+
+
 
     system("clear");
     TerminalVue vue;

@@ -137,21 +137,6 @@ void TerminalVue::handleWallAdd(int x, int y)
     //    gameController->placeWall(Point{x, y}, wallOrientation);
 }
 
-auto TerminalVue::createChatInput()
-{
-    return Input(&message, "Aa");
-}
-
-auto TerminalVue::createSearchInput()
-{
-    return Input(&searchField, "Search a friend...");
-}
-
-auto TerminalVue::createChatFriendInput()
-{
-    return Input(&messageToFriend, "Type a message...");
-}
-
 auto TerminalVue::createActionToggle()
 {
     actionToggleOption.style_selected = color(Color::Blue);
@@ -188,7 +173,7 @@ auto TerminalVue::createMainGameScreen()
 
 auto TerminalVue::createChatRenderer()
 {
-    auto chatInput = createChatInput();
+    auto chatInput = Input(&message, "Aa");
 
     auto chatMenu = Menu(&chatElements, &chatSelected);
     auto sendButton = Button(
@@ -196,7 +181,6 @@ auto TerminalVue::createChatRenderer()
         [&] {
             // TODO send message
             if (!message.empty()) {
-                addChatMessage(username, message);
                 sendMessageGame(message, currentGameId);
             }
         },
@@ -299,77 +283,6 @@ auto TerminalVue::createBoardRenderer()
     return Renderer(homeTab, [homeTab] { return homeTab->Render(); });
 }
 
-auto TerminalVue::createFriendsListRenderer()
-{
-    auto friendList = Window("Friends List", Menu(&friendsList, &friend_selected));
-    auto friendChat = Menu(&chatEntry, &chat_message_selected);
-    auto chatToFriendInput = createChatFriendInput();
-    auto sendChatToFriendButton = Button(
-        "Send",
-        [&] {
-            // TODO send friend chat
-            if (!messageToFriend.empty()) {
-                addChatFriendMessage(username, messageToFriend);
-                sendUserMessage();
-            }
-        },
-        &buttonOption);
-
-    auto friendsListContainer = Container::Vertical({
-        friendList,
-        friendChat,
-        chatToFriendInput,
-        sendChatToFriendButton,
-    });
-
-    return Renderer(friendsListContainer, [&, friendList, friendChat, chatToFriendInput, sendChatToFriendButton] {
-        chatEntry = chatEntries[friend_selected];
-        return hbox({
-            vbox({
-                friendList->Render() | frame | size(HEIGHT, LESS_THAN, 15),
-            }) | xflex,
-            separator(),
-            vbox({
-                text("Chat") | center,
-                separator(),
-                friendChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 15),
-                separator(),
-                hbox({text(">"), chatToFriendInput->Render(), sendChatToFriendButton->Render()}),
-            }) | yframe
-                | yflex | xflex,
-        });
-    });
-}
-
-auto TerminalVue::createFriendUtilitariesRenderer()
-{
-    auto searchInput = createSearchInput();
-    auto addButton = Button(
-        "Add",
-        [&] {
-            if (!searchField.empty()) {
-                addFriend(searchField);
-            }
-        },
-        &buttonOption);
-
-    auto notifBox = Window("Notifications", Menu(&notifications, &notif_selected));
-    auto utilitariesContainer = Container::Vertical({
-        searchInput,
-        addButton,
-        notifBox,
-    });
-
-    return Renderer(utilitariesContainer, [&, searchInput, addButton, notifBox] {
-        return vbox({
-            hbox({text(">"), searchInput->Render(), addButton->Render()}),
-            separator(),
-
-            notifBox->Render() | yflex,
-        });
-    });
-}
-
 auto TerminalVue::createLeaderBoardRenderer()
 {
     auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
@@ -421,46 +334,49 @@ auto TerminalVue::createFriendsRenderer()
 {
     auto searchInput = Input(&searchField, "Add friend");
     auto addButton = Button(
-        "Add", [&] { addFriend(searchField); }, &buttonOption);
+        "Add", [&] { sendFriendRequest(); }, &buttonOption);
     auto friendsMenu = Menu(mainModel->getFriendList(), &friend_selected);
     auto friendsChat = Menu(&chatEntry, &chat_message_selected);
     auto friendMessageInput = Input(&messageToFriend, "Aa");
     auto sendFriendMessageButton = Button(
         "Send", [&] { sendUserMessage(); }, &buttonOption);
-    auto removeFriendsButton = Button("Remove", [&] {
-        // TODO delete friend
-    });
+    auto removeFriendsButton = Button("Remove", [&] { friendDeleteIndex = 1; });
+    auto confirmFriendDeleteButton = Button("Confirm", [&] { deleteFriend(); });
+    auto cancelFriendDeleteButton = Button("Cancel", [&] { friendDeleteIndex = 0; });
 
-    auto notificationContainer = Container::Vertical({});
+    auto confirmDeleteFriendContainer = Container::Horizontal({confirmFriendDeleteButton, cancelFriendDeleteButton});
+
+    auto deleteFriendTabContainer = Container::Tab({removeFriendsButton, confirmDeleteFriendContainer}, &friendDeleteIndex);
+
+    auto friendsRequestAcceptBtn = Button("Accept", [&] { acceptFriendRequest(); });
+    auto friendsRequestDeclineBtn = Button("Decline", [&] { declineFriendRequest(); });
+    auto friendsRequestButtonsContainer = Container::Horizontal({friendsRequestAcceptBtn, friendsRequestDeclineBtn});
+    auto friendRequestButtonsTabContainer
+        = Container::Tab({friendsRequestButtonsContainer, Renderer([] { return text("No friend request received"); })}, &friendRequestIndex);
 
     auto friendRequestsReceived = mainModel->getFriendRequestsReceived();
 
-    for (auto &friendRequest : *friendRequestsReceived) {
-        auto friendsRequestAcceptBtn = Button("Accept", [&] {
-            // TODO accept friend request
-        });
+    auto notificationMenu = Menu(friendRequestsReceived, &friendRequestSelected);
 
-        auto friendsRequestDeclineBtn = Button("Decline", [&] {
-            // TODO decline friend request
-        });
-        auto requestsBtnContainer = Container::Vertical({friendsRequestAcceptBtn, friendsRequestDeclineBtn});
-        notificationContainer->Add(Renderer(requestsBtnContainer, [friendsRequestAcceptBtn, friendsRequestDeclineBtn, friendRequest] {
-            return hbox({text(friendRequest + " sent you a friend request"), friendsRequestAcceptBtn->Render(), friendsRequestDeclineBtn->Render()});
-        }));
-    }
-
-    auto friendContainer = Container::Vertical(
-        {searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, removeFriendsButton, notificationContainer});
+    auto friendContainer = Container::Vertical({searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton,
+        deleteFriendTabContainer, notificationMenu, friendRequestButtonsTabContainer});
 
     return Renderer(friendContainer,
-        [&, searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, removeFriendsButton, notificationContainer] {
-            //            chatEntry = chatEntries[friend_selected]; // update chat entry with server
+        [&, searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, deleteFriendTabContainer, notificationMenu,
+            friendRequestButtonsTabContainer] {
             updateChatEntries();
+
+            if (mainModel->getFriendRequestsReceived()->empty()) friendRequestIndex = 1;
+            else friendRequestIndex = 0;
+
             return vbox({
                 hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
-                    vbox({text("Chat                 "), separator(), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10),
-                        separator(), hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})}),
-                    separator(), vbox({text("Friend actions"), separator(), removeFriendsButton->Render(), separator(), notificationContainer->Render()})}),
+                    vbox({window(text("Chat"), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10)),
+                        hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})}),
+                    separator(),
+                    vbox({window(text("Friend actions"), deleteFriendTabContainer->Render()), separator(),
+                        window(
+                            text("Friend request received"), vbox({notificationMenu->Render(), separator(), friendRequestButtonsTabContainer->Render()}))})}),
                 separator(),
                 hbox({searchInput->Render(), addButton->Render()}),
             });
@@ -532,8 +448,7 @@ void TerminalVue::loginUser()
         errorLoginMessage = "Username and password cannot be empty";
         return;
     }
-    // TODO interact with server
-    // isLoggedIn = gameController->logIn(username, password);
+
     if (!serverController->login(username, password)) {
         errorLoginMessage = "Wrong username or password";
     } else {
@@ -544,49 +459,21 @@ void TerminalVue::loginUser()
     system("clear");
 }
 
-void TerminalVue::run()
-{
-    //    mainModel = mainController.getMainModel();
-    //    mainModel->setFriendList({"test1", "test2", "test3", "test4", "test5", "test6", "test7", "test8", "test9", "test10"});
-    //    mainModel->addFriendMessage("test1", "test message");
-    //    mainModel->addFriendRequestReceived("aTestFriend");
-    buttonOption.border = false;
-    passwordOption.password = true;
-    auto mainRenderer = createFinalContainer();
-    auto screen = ScreenInteractive::TerminalOutput();
-    screen.Loop(mainRenderer);
-}
-
-void TerminalVue::addChatMessage(std::string username, std::string messagetosend)
-{
-    chatElements.push_back(std::string(username + ": " + messagetosend));
-    message.clear();
-}
-
-void TerminalVue::addChatFriendMessage(std::string username, std::string message)
-{
-    chatEntries[friend_selected].push_back(std::string(username + ": " + message));
-    messageToFriend.clear();
-}
-
-void TerminalVue::addFriend(std::string username)
+void TerminalVue::sendFriendRequest()
 {
     if (!searchField.empty()) {
-        friendsList.push_back(username);
-        chatEntries.push_back(std::vector<std::string> {""});
-        notifications.push_back("Added: " + username);
-        handleFriendAdd(username);
+        serverController->sendFriendRequest(*mainModel->getUsername(), searchField);
         searchField.clear();
     }
 }
 
 void TerminalVue::deleteFriend()
 {
-    notifications.push_back("Deleted: " + friendsList[friend_selected]);
-    chatEntries.erase(chatEntries.begin() + friend_selected);
-    handleFriendDelete(friendsList[friend_selected]);
-    friendsList.erase(friendsList.begin() + friend_selected);
-    friend_selected -= 1;
+    auto friendList = mainModel->getFriendList();
+    auto friendToDelete = (*friendList)[friend_selected];
+    serverController->removeFriend(*mainModel->getUsername(), friendToDelete);
+    serverController->fetchFriends();
+    friendDeleteIndex = 0;
 }
 
 void TerminalVue::registerUser()
@@ -604,21 +491,6 @@ void TerminalVue::registerUser()
     }
 }
 
-void TerminalVue::handleFriendDelete(const std::string &friendUsername)
-{
-    // gameController->deleteFriend(friendUsername);
-}
-
-void TerminalVue::handleFriendAdd(const std::string &friendUsername)
-{
-    // gameController->sendFriendRequest(friendUsername, username);
-}
-
-// void TerminalVue::handleFriendRequestAccept()
-// {
-
-// }
-
 void TerminalVue::userCreateGame()
 {
     //    int friendSelected = 0;
@@ -633,7 +505,7 @@ void TerminalVue::userCreateGame()
     //    }
 }
 
-void TerminalVue::sendMessageGame(std::string mess, int gameId)
+void TerminalVue::sendMessageGame(const std::string &mess, int gameId)
 {
 }
 
@@ -643,6 +515,7 @@ void TerminalVue::sendUserMessage()
     auto receiver = (*friendList)[friend_selected];
     serverController->sendFriendMessage(*mainModel->getUsername(), receiver, messageToFriend);
     messageToFriend.clear();
+    serverController->fetchFriendMessages(*mainModel->getUsername(), receiver);
 }
 
 void TerminalVue::updateChatEntries()
@@ -659,4 +532,26 @@ void TerminalVue::updateChatEntries()
         std::string mess = chat.sender + ": " + chat.sentMessage;
         chatEntry.push_back(mess);
     }
+}
+
+void TerminalVue::run()
+{
+    buttonOption.border = false;
+    passwordOption.password = true;
+    auto mainRenderer = createFinalContainer();
+    auto screen = ScreenInteractive::TerminalOutput();
+    screen.Loop(mainRenderer);
+}
+
+void TerminalVue::acceptFriendRequest()
+{
+    serverController->acceptFriendRequest((*mainModel->getFriendRequestsReceived())[friendRequestSelected], *mainModel->getUsername());
+    serverController->fetchFriendRequestsReceived();
+    serverController->fetchFriends();
+}
+
+void TerminalVue::declineFriendRequest()
+{
+    serverController->declineFriendRequest((*mainModel->getFriendRequestsReceived())[friendRequestSelected], *mainModel->getUsername());
+    serverController->fetchFriendRequestsReceived();
 }

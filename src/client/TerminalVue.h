@@ -75,30 +75,13 @@ class TerminalVue
     ButtonOption addButtonOption;
     int chatSelected = 0;
     std::vector<std::string> chatElements;
-    int friend_selected = 0, previousFriendSelected = -1;
+    int friend_selected = 0, previousFriendSelected = -1, friendRequestSelected = 0;
     int chat_message_selected = 0;
     int gameSelected = 0;
     std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
     std::vector<std::string> friendsList {
         "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
 
-    std::vector<std::vector<std::string>> chatEntries {
-        {"Hector: Hello Hector", "Louis: my message"},
-        {"On se fait", "une partie ?"},
-        {"Salut", "comment ça va", "Bernard?"},
-        {"Salut", "comment ça va", "utilisateur 3?"},
-        {"Salut", "comment ça va", "utilisateur 4?"},
-        {"Salut", "comment ça va", "utilisateur 5?"},
-        {""},
-        {""},
-        {""},
-        {""},
-        {""},
-        {""},
-        {""},
-        {""},
-        {""},
-    };
     std::vector<CheckboxState> friendsListStates;
 //    std::vector<Component> playWithCheckbox;
     std::vector<std::string> chatEntry;
@@ -131,11 +114,8 @@ class TerminalVue
         "Register",
     };
     std::vector<Component> mainTabComponents;
-    void updateChatEntries();
     int mainTabSelect = 0, loginTabSelect = 0;
     int rightSize = 0;
-    int rightSizeFriends = 70;
-    bool isLoggedIn = true; // change this to true to stay logged in
     bool isGameStarted = false;
     bool isCreatingGame = false;
     InputOption passwordOption;
@@ -143,8 +123,9 @@ class TerminalVue
     int currentGameId = 69;
     std::string errorLoginMessage;
     std::string registerMessage;
-    int homeTabIndex = 0;
-    int mainPageIndex = 0;
+    int homeTabIndex = 0, mainPageIndex = 0, friendDeleteIndex = 0, friendRequestIndex = 0;
+
+    void updateChatEntries();
 
     /**
      * @brief Checks if it's someone's turn
@@ -234,26 +215,6 @@ class TerminalVue
      */
     void handleWallAdd(int x, int y);
 
-    /**
-     * @brief Create a Chat Input object for the game on
-     *
-     * @return Input
-     */
-    auto createChatInput();
-
-    /**
-     * @brief Create a Search field Input object to find someone to add to your friends list
-     *
-     * @return Input
-     */
-    auto createSearchInput();
-
-    /**
-     * @brief Create a Chat Input object to talk with a friend
-     *
-     * @return Input
-     */
-    auto createChatFriendInput();
 
     /**
      * @brief Create a Action Toggle object, to chose either to Move or place a Wall
@@ -289,21 +250,6 @@ class TerminalVue
      * @return Renderer
      */
     auto createChatRenderer();
-
-    /**
-     * @brief Create a Friends List Renderer object; renders the friends list
-     *  and a chat window to communicate with any of them
-     *
-     * @return Renderer
-     */
-    auto createFriendsListRenderer();
-
-    /**
-     * @brief create Renderer of the container of notifications and the friend searchbar
-     *
-     * @return Renderer
-     */
-    auto createFriendUtilitariesRenderer();
 
     /**
      * @brief Create a LeaderBoard Renderer object
@@ -355,57 +301,20 @@ class TerminalVue
      */
     void loginUser();
 
-    void handleFriendDelete(const std::string &friendUsername);
-
-    void handleFriendAdd(const std::string &friendUsername);
-
-    /**
-     * @brief Creates Wraper window object that renders a rounded box shape with a title
-     *
-     * @param title Text that will be shown above the rendered window
-     * @param component Component that has to be shown within the window
-     * @return Renderer
-     */
-    Component Window(std::string title, Component component)
-    {
-        return Renderer(component, [component, title] { //
-            return window(text(title), component->Render()) | flex;
-        });
-    }
-
-    void loadFriends();
-
-    void loadFriendChats();
-
-    void loadLeaderboard();
-
     void registerUser();
 
-    void loadMessages();
-
-    void sendMessageGame(std::string message, int gameId);
+    void sendMessageGame(const std::string& message, int gameId);
 
     void sendUserMessage();
 
     void userCreateGame();
-
-public:
-    void run();
-
-    /**
-     * @brief Add a message to the in-game chat window
-     * @param username String of the sender's username
-     * @param message String of user's typing
-     *
-     */
-    void addChatMessage(std::string username, std::string message);
 
     /**
      * @brief Add a friend to your friends list
      * @param username String of the user you want to add to your friends
      *
      */
-    void addFriend(std::string username);
+    void sendFriendRequest();
 
     /**
      * @brief Delete a friend from your friends list
@@ -413,11 +322,11 @@ public:
      */
     void deleteFriend();
 
-    /**
-     * @brief Add a message to the conversation you have with your friend
-     *
-     * @param username String of the sender's username
-     * @param message String of the user's typing
-     */
-    void addChatFriendMessage(std::string username, std::string message);
+    void acceptFriendRequest();
+
+    void declineFriendRequest();
+public:
+    void run();
+
+
 };
