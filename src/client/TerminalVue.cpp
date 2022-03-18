@@ -310,7 +310,7 @@ auto TerminalVue::createFriendsListRenderer()
             // TODO send friend chat
             if (!messageToFriend.empty()) {
                 addChatFriendMessage(username, messageToFriend);
-                sendUserMessage(messageToFriend, friendsList[friend_selected]);
+                sendUserMessage();
             }
         },
         &buttonOption);
@@ -378,7 +378,7 @@ auto TerminalVue::createLeaderBoardRenderer()
     });
 
     return Renderer(leaderBoardContainer, [&, listLeaders] {
-    auto userElo = mainModel->getELO();
+        auto userElo = mainModel->getELO();
         auto leaderboard = mainModel->getLeaderboard();
         listLeadersWithElo.clear();
         if (!leaderboard->empty()) {
@@ -426,11 +426,7 @@ auto TerminalVue::createFriendsRenderer()
     auto friendsChat = Menu(&chatEntry, &chat_message_selected);
     auto friendMessageInput = Input(&messageToFriend, "Aa");
     auto sendFriendMessageButton = Button(
-        "Send",
-        [&] {
-            sendUserMessage(messageToFriend, friendsList[friend_selected]); // fix this
-        },
-        &buttonOption);
+        "Send", [&] { sendUserMessage(); }, &buttonOption);
     auto removeFriendsButton = Button("Remove", [&] {
         // TODO delete friend
     });
@@ -637,51 +633,29 @@ void TerminalVue::userCreateGame()
     //    }
 }
 
-void TerminalVue::loadFriends()
-{
-    // json friendsListJson = gameController->getFriendsList()[0];
-    // friendsList.clear();
-    // for (auto &friendL : friendsListJson) {
-    //     friendsList.push_back(friendL["username"]);
-    // }
-}
-
-void TerminalVue::loadFriendChats()
-{
-    // json friendChatsJson = gameController->getFriendChats()[0];
-    // chatEntries.clear();
-    // for (auto &friendChat : friendChatsJson) {
-    //     chatEntries.push_back(std::vector<std::string> {});
-    //     for (auto &m : friendChat["messages"]) {
-    //         chatEntries.back().push_back(m["username"] + ": " + m["message"]);
-    //     }
-    // }
-}
-
-void TerminalVue::loadLeaderboard()
-{
-}
-
-void TerminalVue::loadMessages()
-{
-}
-
 void TerminalVue::sendMessageGame(std::string mess, int gameId)
 {
 }
 
-void TerminalVue::sendUserMessage(const std::string& mess, const std::string& receiver)
+void TerminalVue::sendUserMessage()
 {
-    serverController->sendFriendMessage(*mainModel->getUsername(), receiver, mess);
-    //
-    //    gameController->sendUserMessage(mess, receiver);
+    auto friendList = mainModel->getFriendList();
+    auto receiver = (*friendList)[friend_selected];
+    serverController->sendFriendMessage(*mainModel->getUsername(), receiver, messageToFriend);
+    messageToFriend.clear();
 }
+
 void TerminalVue::updateChatEntries()
 {
     auto friendList = mainModel->getFriendList();
-    auto friendChatEntries = mainModel->getChatWith((*friendList)[friend_selected]);
+    auto friendChatToGet = (*friendList)[friend_selected];
+    auto friendChatEntries = mainModel->getChatWith(friendChatToGet);
+    if (friend_selected != previousFriendSelected) {
+        previousFriendSelected = friend_selected;
+        serverController->fetchFriendMessages(*mainModel->getUsername(), friendChatToGet);
+    }
     chatEntry.clear();
-    for (auto &chat : *friendChatEntries) {
+    for (const auto &chat : *friendChatEntries) {
         std::string mess = chat.sender + ": " + chat.sentMessage;
         chatEntry.push_back(mess);
     }

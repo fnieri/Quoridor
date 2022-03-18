@@ -33,6 +33,7 @@ auto ServerController::registerUser(const std::string &username, const std::stri
 auto ServerController::sendFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void
 {
     sendJson(SerializableMessageFactory::serializeFriendMessage(sender, receiver, message));
+    fetchFriendMessages(sender, receiver);
 }
 
 auto ServerController::sendFriendRequest(const std::string &sender, const std::string &receiver) -> void
@@ -80,4 +81,9 @@ auto ServerController::fetchFriendRequestsReceived() -> void
 auto ServerController::fetchElo() -> void
 {
     sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::ELO));
+}
+
+auto ServerController::fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void
+{
+    sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester,receiver));
 }

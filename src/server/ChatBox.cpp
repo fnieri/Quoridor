@@ -23,30 +23,34 @@ ChatBox::ChatBox(UserHub &userHub)
 void ChatBox::processRequest(const std::string &serMessage)
 {
     recordMessage(serMessage);
+    std::cout << "ChatBox::processRequest" << std::endl;
     relayMessage(serMessage);
 }
 
 void ChatBox::recordMessage(const std::string &serRequest)
 {
-    auto request(json::parse(serRequest));
+    std::cout <<  serRequest << std::endl;
+    auto request = json::parse(serRequest);
 
-    std::string sender {request["sender"]};
-    std::string message {request["message"]};
+    std::string sender = request["sender"];
+    std::string message = request["message"];
 
+    std::cout << "ChatBox::recordMessage" << std::endl;
     if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
-        std::string receiver {request["receiver"]};
+        std::string receiver = request["receiver"];
         DatabaseHandler::recordMessage(sender, receiver, message);
 
     } else if (request["action"] == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
-        int game_id {request["game_id"]};
+        int game_id = request["game_id"];
         DatabaseHandler::recordMessage(sender, message, game_id);
     }
 }
 
 void ChatBox::relayMessage(const std::string &serRequest)
 {
-    auto request(json::parse(serRequest));
+    auto request=  json::parse(serRequest);
 
     // Works only for one to one conversations
-    m_userHub.relayMessageTo(request["receiver"], serRequest);
+    std::string receiver = request["receiver"];
+    m_userHub.relayMessageTo(receiver, serRequest);
 }

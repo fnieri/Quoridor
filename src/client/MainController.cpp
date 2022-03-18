@@ -7,7 +7,7 @@ MainController::MainController()
 
 void MainController::processRequest(const std::string &serRequest)
 {
-//    std::cout << serRequest << std::endl;
+    //    std::cout << serRequest << std::endl;
     json request(json::parse(serRequest));
 
     if (request["domain"] == toJsonString(Domain::AUTH)) {
@@ -31,12 +31,12 @@ void MainController::processResourceRequest(const std::string &serRequest)
 
     if (request.at("data_type") == toJsonString(DataType::LEADERBOARD)) {
         std::vector<std::pair<std::string, float>> leaderboard;
-        for (auto &leader: request.at("serialized_data"))
+        for (auto &leader : request.at("serialized_data"))
             leaderboard.emplace_back(leader.at("username"), leader.at("elo"));
         m_mainModel->setLeaderboard(leaderboard);
     } else if (request.at("data_type") == toJsonString(DataType::FRIENDS_LIST)) {
         std::vector<std::string> friendsList;
-        for (const auto &userFriend : request.at("serialized_data")){
+        for (const auto &userFriend : request.at("serialized_data")) {
             friendsList.push_back(userFriend.get<std::string>());
         }
         m_mainModel->setFriendList(friendsList);
@@ -57,6 +57,15 @@ void MainController::processResourceRequest(const std::string &serRequest)
             gameIds.push_back(gameId.get<int>());
         m_mainModel->setGameIds(gameIds);
     } else if (request.at("data_type") == toJsonString(DataType::CHATS)) {
+        auto data = request.at("serialized_data");
+        auto friendUsername = data.at("friend").get<std::string>();
+        m_mainModel->clearFriendMessages(friendUsername);
+        for (auto &chat : data.at("chats")) {
+            auto sender = chat[0].get<std::string>();
+            auto message = chat[1].get<std::string>();
+            Message msg {sender, message};
+            m_mainModel->addFriendMessage(friendUsername, msg);
+        }
     } else if (request.at("data_type") == toJsonString(DataType::ELO)) {
         float elo = request.at("serialized_data").get<float>();
         m_mainModel->setElo(elo);
@@ -93,7 +102,7 @@ void MainController::processChatBox(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
     if (request.at("action") == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
-        m_mainModel->addFriendMessage(request.at("sender"), request.at("message"));
+        //        m_mainModel->addFriendMessage(request.at("sender"), request.at("message"));
     }
     if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
         //        m_mainModel->addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));

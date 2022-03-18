@@ -69,7 +69,7 @@ public:
     auto getFriendRequestsSent() const noexcept -> const std::vector<std::string> *;
     auto getFriendRequestsReceived() const noexcept -> const std::vector<std::string> *;
 
-    auto getChatWith(const std::string &) const noexcept -> const SPtrToVec<Message>;
+    auto getChatWith(const std::string &) noexcept -> SPtrToVec<Message>;
 
     auto getGameIDs() const noexcept -> const std::vector<int> *;
 
@@ -103,11 +103,12 @@ public:
 
     auto removeFriend(const std::string &) -> void;
 
+    auto clearFriendMessages(const std::string &) -> void;
     /**
      * @param username friend participating in the chat
      * @param message content of the message
      */
-    auto addFriendMessage(const std::string &, const std::string &) -> void;
+    auto addFriendMessage(const std::string &, const Message &) -> void;
 
     /**
      * @param username friend participating in the chat

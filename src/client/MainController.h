@@ -8,6 +8,7 @@
 #include "src/common/MessageEnums/Actions/ChatBoxActions.h"
 #include "src/common/MessageEnums/Actions/FriendActions.h"
 #include "src/common/MessageEnums/Status.h"
+#include "src/common/Message.h"
 
 class MainModel;
 

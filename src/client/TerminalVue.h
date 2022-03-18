@@ -75,7 +75,7 @@ class TerminalVue
     ButtonOption addButtonOption;
     int chatSelected = 0;
     std::vector<std::string> chatElements;
-    int friend_selected = 0;
+    int friend_selected = 0, previousFriendSelected = -1;
     int chat_message_selected = 0;
     int gameSelected = 0;
     std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
@@ -385,7 +385,7 @@ class TerminalVue
 
     void sendMessageGame(std::string message, int gameId);
 
-    void sendUserMessage(const std::string& message, const std::string& receiver);
+    void sendUserMessage();
 
     void userCreateGame();
 

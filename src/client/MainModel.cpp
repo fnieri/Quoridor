@@ -42,8 +42,11 @@ auto MainModel::getFriendRequestsReceived() const noexcept -> const std::vector<
     return m_friendRequestsReceived.get();
 }
 
-auto MainModel::getChatWith(const std::string &username) const noexcept -> const SPtrToVec<Message>
+auto MainModel::getChatWith(const std::string &username) noexcept -> SPtrToVec<Message>
 {
+    if (m_chats.find(username) == m_chats.end()) {
+        m_chats.insert({username, std::make_shared<std::vector<Message>>()});
+    }
     return m_chats.at(username);
 }
 
@@ -135,9 +138,12 @@ auto MainModel::removeFriend(const std::string &friendToRemove) -> void
     m_friendList->erase(std::remove(m_friendList->begin(), m_friendList->end(), friendToRemove), m_friendList->end());
 }
 
-auto MainModel::addFriendMessage(const std::string &friendUsername, const std::string &message) -> void
+auto MainModel::addFriendMessage(const std::string &friendUsername, const Message &msg) -> void
 {
-    m_chats.at(friendUsername)->push_back({friendUsername, message});
+    if (m_chats.find(friendUsername) == m_chats.end()) {
+        m_chats.insert({friendUsername, std::make_shared<std::vector<Message>>()});
+    }
+    m_chats.at(friendUsername)->push_back(msg);
 }
 
 // auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void
@@ -162,6 +168,12 @@ auto MainModel::updateFriendsChatMap() noexcept -> void
         if (m_chats.find(friendUsername) == m_chats.end()) {
             m_chats[friendUsername] = std::make_shared<std::vector<Message>>();
         }
+    }
+}
+auto MainModel::clearFriendMessages(const std::string &friendUsername) -> void
+{
+    if (m_chats.find(friendUsername) != m_chats.end()) {
+        m_chats.erase(friendUsername);
     }
 }
 

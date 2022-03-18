@@ -28,6 +28,6 @@ json ChatBoxSerializableMessageFactory::serializeInGameMessage(
 json ChatBoxSerializableMessageFactory::serializeFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message)
 {
     json messageJson = {{"action", toJsonString(ChatInteraction::FRIEND_MESSAGE)}, {"domain", toJsonString(Domain::CHAT)}, {"sender", sender},
-        {"receivers", receiver}, {"message", message}};
+        {"receiver", receiver}, {"message", message}};
     return messageJson;
 }

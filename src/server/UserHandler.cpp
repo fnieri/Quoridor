@@ -151,7 +151,10 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
 
     } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
-        for (auto &m: DatabaseHandler::getMessages(request["sender"], request["receiver"])) data.push_back(m);
+        json chats;
+        for (auto &m: DatabaseHandler::getMessages(request["sender"], request["receiver"])) chats.push_back(m);
+        data["friend"] = request["receiver"];
+        data["chats"] = chats;
         dataType = DataType::CHATS;
 
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
