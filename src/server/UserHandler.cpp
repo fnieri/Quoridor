@@ -47,7 +47,7 @@ void UserHandler::handleRequests()
             if (hasReadActivity(1)) {
                 auto serRequest {receive()};
 
-                std::cerr << "Received : " << serRequest << m_userHandled->getUsername() << std::endl;
+                std::cerr << "Received : " << serRequest << " from : " << m_userHandled->getUsername() << std::endl;
 
                 // Do not continue if the thread was terminated during or after the receive
                 if (m_isFinished || m_wasTerminated)
@@ -171,6 +171,7 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     }
 
     auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data).dump()};
+    std::cout << "Sending answer: " << answer << std::endl;
     send(answer);
 }
 

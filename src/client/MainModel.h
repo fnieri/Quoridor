@@ -34,7 +34,7 @@ class MainModel
 {
 private:
     // User information
-    std::shared_ptr<std::string> m_username;
+    std::shared_ptr<std::string> m_username = std::make_shared<std::string>("");
     std::shared_ptr<float> m_elo = std::make_shared<float>(0);
     bool m_isLoggedIn;
 

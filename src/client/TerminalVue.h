@@ -35,10 +35,10 @@
 #include "ftxui/screen/color.hpp" // for Color
 #include "ftxui/util/ref.hpp"
 
-#include "src/common/Point.h"
-#include "src/common/Message.h"
 #include "MainModel.h"
 #include "ServerController.h"
+#include "src/common/Message.h"
+#include "src/common/Point.h"
 
 using namespace ftxui;
 
@@ -55,10 +55,10 @@ class TerminalVue
     MainController mainController;
 
     MainModel *mainModel = mainController.getMainModel();
-//    MainModel *mainModel;
-    ServerController *serverController = new ServerController{&mainController};
+    ServerController *serverController = new ServerController {&mainController};
 
-    std::string message, searchField, messageToFriend, username = "testing", password="testingPassword", registerUsername, registerPassword, registerRepeatPassword;
+    std::string message, searchField, messageToFriend, username = "testing", password = "testingPassword", registerUsername, registerPassword,
+                                                       registerRepeatPassword;
     int actionToggleSelected = 0;
     int mouse_x = 0;
     int mouse_y = 0;
@@ -83,7 +83,7 @@ class TerminalVue
         "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
 
     std::vector<CheckboxState> friendsListStates;
-//    std::vector<Component> playWithCheckbox;
+    //    std::vector<Component> playWithCheckbox;
     std::vector<std::string> chatEntry;
     int notif_selected = 0;
     std::vector<std::string> notifications {
@@ -123,7 +123,7 @@ class TerminalVue
     int currentGameId = 69;
     std::string errorLoginMessage;
     std::string registerMessage;
-    int homeTabIndex = 0, mainPageIndex = 0, friendDeleteIndex = 0, friendRequestIndex = 0;
+    int homeTabIndex = 0, mainPageIndex = 0, friendDeleteIndex = 0, friendRequestIndex = 0, friendChatIndex = 0;
 
     void updateChatEntries();
 
@@ -215,7 +215,6 @@ class TerminalVue
      */
     void handleWallAdd(int x, int y);
 
-
     /**
      * @brief Create a Action Toggle object, to chose either to Move or place a Wall
      *
@@ -303,7 +302,7 @@ class TerminalVue
 
     void registerUser();
 
-    void sendMessageGame(const std::string& message, int gameId);
+    void sendMessageGame(const std::string &message, int gameId);
 
     void sendUserMessage();
 
@@ -325,8 +324,7 @@ class TerminalVue
     void acceptFriendRequest();
 
     void declineFriendRequest();
+
 public:
     void run();
-
-
 };

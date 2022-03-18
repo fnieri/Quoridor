@@ -358,23 +358,44 @@ auto TerminalVue::createFriendsRenderer()
 
     auto notificationMenu = Menu(friendRequestsReceived, &friendRequestSelected);
 
-    auto friendContainer = Container::Vertical({searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton,
-        deleteFriendTabContainer, notificationMenu, friendRequestButtonsTabContainer});
+    auto friendListAndChatContainer = Container::Vertical({friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton});
+    auto friendListAndChatTabContainer
+        = Container::Tab({Renderer(friendListAndChatContainer,
+                              [friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton] {
+                                  return hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
+                                      vbox({window(text("Chat"), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10)),
+                                          hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})})});
+                              }),
+                             Renderer([] { return text("You do not have any friends rip"); })},
+            &friendChatIndex);
 
-    return Renderer(friendContainer,
-        [&, searchInput, addButton, friendsMenu, friendsChat, friendMessageInput, sendFriendMessageButton, deleteFriendTabContainer, notificationMenu,
-            friendRequestButtonsTabContainer] {
+    auto friendActionTabContainer = Container::Tab({Renderer(deleteFriendTabContainer,
+                                                        [deleteFriendTabContainer] {
+                                                            return vbox({window(text("Friend actions"), deleteFriendTabContainer->Render()), separator()});
+                                                        }),
+                                                       Renderer([] { return vbox(); })},
+        &friendChatIndex);
+
+    auto friendContainer = Container::Vertical(
+        {searchInput, addButton, friendListAndChatContainer, friendActionTabContainer, notificationMenu, friendRequestButtonsTabContainer});
+
+    return Renderer(
+        friendContainer, [&, searchInput, addButton, friendListAndChatContainer, friendActionTabContainer, notificationMenu, friendRequestButtonsTabContainer] {
             updateChatEntries();
 
-            if (mainModel->getFriendRequestsReceived()->empty()) friendRequestIndex = 1;
-            else friendRequestIndex = 0;
+            if (mainModel->getFriendList()->empty())
+                friendChatIndex = 1;
+            else
+                friendChatIndex = 0;
+
+            if (mainModel->getFriendRequestsReceived()->empty())
+                friendRequestIndex = 1;
+            else
+                friendRequestIndex = 0;
 
             return vbox({
-                hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(),
-                    vbox({window(text("Chat"), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10)),
-                        hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})}),
-                    separator(),
-                    vbox({window(text("Friend actions"), deleteFriendTabContainer->Render()), separator(),
+                hbox({friendListAndChatContainer->Render(), separator(),
+                    vbox({friendActionTabContainer->Render(),
                         window(
                             text("Friend request received"), vbox({notificationMenu->Render(), separator(), friendRequestButtonsTabContainer->Render()}))})}),
                 separator(),
