@@ -22,6 +22,26 @@ void MainController::processResourceRequest(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
 
+    // FOR TESTING
+    /// the "action" of a resource exchange is solely : "object_answer"
+    if (request.at("action") == toJsonString(Exchange::OBJECT_ANSWER)) {
+        if (request.at("data_type") == toJsonString(DataType::FRIENDS_LIST)) {
+            std::vector<std::string> friendsList;
+            for (auto userFriend : request.at("serialized_data"))
+                friendsList.push_back(userFriend.get<std::string>());
+            m_mainModel.setFriendList(friendsList);
+        }
+        else if (request.at("data_type") == toJsonString(DataType::LEADERBOARD)) {
+            std::vector<std::pair<std::string, float>> leaderboard;
+            for (auto it = request.at("serialized_data").begin(); it != request.at("serialized_data").end(); it++)
+                leaderboard.push_back(std::pair<std::string, float>(it->at("username"), it->at("elo")));
+            m_mainModel.setLeaderboard(leaderboard);
+        }
+    }
+
+
+
+    /// these are never run because the 'action' of a Exchange is either 'object_answer' or 'object_request' or ....
     if (request.at("action") == toJsonString(DataType::LEADERBOARD)) {
         std::vector<std::pair<std::string, float>> leaderboard;
         for (auto it = request.at("serialized_data").begin(); it != request.at("serialized_data").end(); it++)
