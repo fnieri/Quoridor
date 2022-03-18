@@ -41,6 +41,7 @@ private:
     SPtrToVec<std::string> m_friendList = std::make_shared<std::vector<std::string>>();
     SPtrToVec<std::string> m_friendRequestsSent = std::make_shared<std::vector<std::string>>();
     SPtrToVec<std::string> m_friendRequestsReceived  = std::make_shared<std::vector<std::string>>();
+    bool hasFriends;
 
     SPtrToVec<int> m_gameIDs;
 
@@ -68,6 +69,7 @@ public:
     auto getFriendList() const noexcept -> const std::vector<std::string> *;
     auto getFriendRequestsSent() const noexcept -> const std::vector<std::string> *;
     auto getFriendRequestsReceived() const noexcept -> const std::vector<std::string> *;
+    auto getHasFriends() const noexcept -> bool;
 
     auto getChatWith(const std::string &) noexcept -> SPtrToVec<Message>;
 
@@ -91,6 +93,7 @@ public:
     auto loginSuccessful(const std::string &) -> void;
 
     auto setFriendList(const std::vector<std::string> &) -> void;
+    auto setHasFriends(const bool &) -> void;
     auto addFriend(const std::string &) -> void;
 
     auto setFriendRequestsSent(const std::vector<std::string> &) -> void;

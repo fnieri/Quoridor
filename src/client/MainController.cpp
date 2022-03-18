@@ -39,7 +39,13 @@ void MainController::processResourceRequest(const std::string &serRequest)
         for (const auto &userFriend : request.at("serialized_data")) {
             friendsList.push_back(userFriend.get<std::string>());
         }
-        m_mainModel->setFriendList(friendsList);
+        if (friendsList.empty()) {
+            m_mainModel->setFriendList({"No friends"});
+            m_mainModel->setHasFriends(false);
+        } else {
+            m_mainModel->setFriendList(friendsList);
+            m_mainModel->setHasFriends(true);
+        }
     } else if (request.at("data_type") == toJsonString(DataType::GAME_CONFIG)) {
     } else if (request.at("data_type") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
         std::vector<std::string> friendRequestsSent;
@@ -102,7 +108,8 @@ void MainController::processChatBox(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
     if (request.at("action") == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
-        //        m_mainModel->addFriendMessage(request.at("sender"), request.at("message"));
+        Message msg {request.at("sender"), request.at("message")};
+        m_mainModel->addFriendMessage(request.at("sender"), msg);
     }
     if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
         //        m_mainModel->addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));

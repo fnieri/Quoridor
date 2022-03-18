@@ -176,6 +176,15 @@ auto MainModel::clearFriendMessages(const std::string &friendUsername) -> void
         m_chats.erase(friendUsername);
     }
 }
+auto MainModel::getHasFriends() const noexcept -> bool
+{
+    return hasFriends;
+}
+
+auto MainModel::setHasFriends(const bool &val) -> void
+{
+    hasFriends = val;
+}
 
 GameModel::GameModel(int gameId, std::vector<std::string> players, std::shared_ptr<Board> board)
     : m_gameId(gameId)
