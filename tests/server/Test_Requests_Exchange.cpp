@@ -7,7 +7,6 @@
 #include "src/server/ServerUser.h"
 #include "src/server/UserHandler.h"
 
-#include <future>
 #include <iostream>
 #include <sockpp/tcp_connector.h>
 
@@ -113,7 +112,7 @@ SCENARIO("Authentification")
 
             auto ansSuccess {getAnswer(test, req)};
             auto expAnsSuccess {
-                SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+                SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo").dump()};
 
             REQUIRE(ansSuccess == expAnsSuccess);
 
@@ -121,7 +120,7 @@ SCENARIO("Authentification")
             {
                 auto ansFail {getAnswer(test, req)};
                 auto expAnsFail {SerializableMessageFactory::serializeServerAnswer(
-                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE)
+                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE, "foo")
                                      .dump()};
                 REQUIRE(ansFail == expAnsFail);
             }
@@ -134,7 +133,7 @@ SCENARIO("Authentification")
                     auto reqLogSuccess {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "12345").dump()};
                     auto ansLogSuccess {getAnswer(test, reqLogSuccess)};
                     auto expAnsLogSuccess {
-                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo").dump()};
                     REQUIRE(ansLogSuccess == expAnsLogSuccess);
                 }
 
@@ -143,7 +142,7 @@ SCENARIO("Authentification")
                     auto reqLogFail {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "54321").dump()};
                     auto ansLogFail {getAnswer(test, reqLogFail)};
                     auto expAnsLogFail {SerializableMessageFactory::serializeServerAnswer(
-                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME)
+                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME, "foo")
                                             .dump()};
 
                     REQUIRE(ansLogFail == expAnsLogFail);
@@ -257,30 +256,3 @@ SCENARIO("GameSetup")
 
     sleep(1);
 }
-
-/* TODO: find a way to make it work */
-/* SCENARIO("Sync and async requests") */
-/* { */
-/*     DatabaseHandler::deleteAccount("foo"); */
-/*     DatabaseHandler::deleteAccount("bar"); */
-
-/*     TestConnector foo {"localhost", 12345}; */
-/*     TestConnector bar {"localhost", 12345}; */
-
-/*     createAndLogUser(foo, "foo", "12345"); */
-/*     createAndLogUser(bar, "bar", "12345"); */
-
-/*     GIVEN("A sync request") */
-/*     { */
-/*         auto leadReq {SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD).dump()}; */
-/*         auto frndReq {SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, "bar", "foo").dump()}; */
-
-/*         bar.send(frndReq); */
-/*         sleep(1); */
-
-/*         std::future<std::string> leadAns = std::async(getAnswer, foo, leadReq); */
-/*         auto frndAns {foo.receive()}; */
-/*     } */
-
-/*     sleep(1); */
-/* } */

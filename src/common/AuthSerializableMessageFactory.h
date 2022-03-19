@@ -37,5 +37,5 @@ public:
      * @param authReturn Return which auth error occured
      * @return nlohmann::json
      */
-    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
+    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn, const std::string& username);
 };
