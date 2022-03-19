@@ -286,12 +286,11 @@ auto TerminalVue::createBoardRenderer()
 auto TerminalVue::createLeaderBoardRenderer()
 {
     auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
-    auto refreshBtn = Button("Refresh", [&] { serverController->fetchLeaderboard(); }, &buttonOption);
-    auto leaderBoardContainer = Container::Vertical({
-        listLeaders, refreshBtn
-    });
+    auto refreshBtn = Button(
+        "Refresh", [&] { serverController->fetchLeaderboard(); }, &buttonOption);
+    auto leaderBoardContainer = Container::Vertical({listLeaders, refreshBtn});
 
-    return Renderer(leaderBoardContainer, [&, listLeaders,refreshBtn] {
+    return Renderer(leaderBoardContainer, [&, listLeaders, refreshBtn] {
         auto userElo = mainModel->getELO();
         auto leaderboard = mainModel->getLeaderboard();
         listLeadersWithElo.clear();
@@ -363,7 +362,7 @@ auto TerminalVue::createFriendsRenderer()
     auto friendChatTabContainer
         = Container::Tab({Renderer(friendChatContainer,
                               [friendsChat, friendMessageInput, sendFriendMessageButton] {
-                                  return vbox({window(text("Chat"), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10)),
+                                  return vbox({window(text("Chat"), friendsChat->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | xflex),
                                       hbox({friendMessageInput->Render(), sendFriendMessageButton->Render()})});
                               }),
                              Renderer([] { return vbox(); })},
@@ -394,7 +393,7 @@ auto TerminalVue::createFriendsRenderer()
                 friendRequestIndex = 0;
 
             return vbox({
-                hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), friendChatTabContainer->Render(),
+                hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), friendChatTabContainer->Render() | xflex,
                     separator(),
                     vbox({friendActionTabContainer->Render(),
                         window(
@@ -416,9 +415,23 @@ auto TerminalVue::createMainTabContainer()
 
 auto TerminalVue::createMainRenderer()
 {
-    auto tabToggle = createMainTab();
-
+    auto tabToggle = Toggle(&mainTabValues, &mainTabSelect);
     auto tabContainer = createMainTabContainer();
+
+    auto exitButton = Button(
+        "Exit",
+        [&] {
+            auto f {screen->ExitLoopClosure()};
+            f();
+        },
+        &buttonOption);
+    auto loginExit = Button(
+        "Exit",
+        [&] {
+            auto f {screen->ExitLoopClosure()};
+            f();
+        },
+        &buttonOption);
 
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
@@ -430,11 +443,11 @@ auto TerminalVue::createMainRenderer()
         },
         &loginTabSelect);
 
-    auto loginRegisterToggleContainer = Container::Vertical({loginToggle, loginRegisterContainer});
+    auto loginRegisterToggleContainer = Container::Vertical({loginToggle, loginRegisterContainer, loginExit});
 
-    auto loginRender = Renderer(loginRegisterToggleContainer, [loginRegisterContainer, loginToggle] {
+    auto loginRender = Renderer(loginRegisterToggleContainer, [&, loginRegisterContainer, loginToggle, loginExit] {
         return vbox({
-            loginToggle->Render(),
+            hbox({loginToggle->Render(), filler(), loginExit->Render()}),
             separator(),
             loginRegisterContainer->Render(),
         });
@@ -443,10 +456,11 @@ auto TerminalVue::createMainRenderer()
     auto mainContainer = Container::Vertical({
         tabToggle,
         tabContainer,
+        exitButton,
     });
-    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer] {
+    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton] {
         return vbox({
-            tabToggle->Render(),
+            hbox({tabToggle->Render(), filler(), exitButton->Render()}),
             separator(),
             tabContainer->Render(),
         });
@@ -556,15 +570,6 @@ void TerminalVue::updateChatEntries()
     }
 }
 
-void TerminalVue::run()
-{
-    buttonOption.border = false;
-    passwordOption.password = true;
-    auto mainRenderer = createFinalContainer();
-    auto screen = ScreenInteractive::TerminalOutput();
-    screen.Loop(mainRenderer);
-}
-
 void TerminalVue::acceptFriendRequest()
 {
     serverController->acceptFriendRequest((*mainModel->getFriendRequestsReceived())[friendRequestSelected], *mainModel->getUsername());
@@ -576,4 +581,14 @@ void TerminalVue::declineFriendRequest()
 {
     serverController->declineFriendRequest((*mainModel->getFriendRequestsReceived())[friendRequestSelected], *mainModel->getUsername());
     serverController->fetchFriendRequestsReceived();
+}
+
+void TerminalVue::run()
+{
+    buttonOption.border = false;
+    passwordOption.password = true;
+    auto mainRenderer = createFinalContainer();
+    auto _screen = ScreenInteractive::TerminalOutput();
+    screen = &_screen;
+    screen->Loop(mainRenderer);
 }

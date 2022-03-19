@@ -53,9 +53,10 @@ struct CheckboxState {
 class TerminalVue
 {
     MainController mainController;
-
     MainModel *mainModel = mainController.getMainModel();
     ServerController *serverController = new ServerController {&mainController};
+
+    ScreenInteractive *screen;
 
     std::string message, searchField, messageToFriend, username = "testing", password = "testingPassword", registerUsername, registerPassword,
                                                        registerRepeatPassword;
