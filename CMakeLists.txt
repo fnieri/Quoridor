@@ -7,6 +7,8 @@ project(Quoridor
 
 option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
 
+option(BUILD_SHARED_LIBS "Build libraries as shared as opposed to static" ON)
+
 enable_testing()
 
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -std=c++1y") # -std=c++1y probably isn't mandatory

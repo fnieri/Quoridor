@@ -39,12 +39,19 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
 {
 }
 
+// TODO: make requests sync mutexes
+
 // TODO: add function to run when client is disconnected
 void UserHandler::handleRequests()
 {
     while (!m_isFinished && !m_wasTerminated) {
         try {
             if (hasReadActivity(1)) {
+
+                // To be unlocked depending on whether it is
+                // sync request or async.
+                m_syncRequest.lock();
+
                 auto serRequest {receive()};
 
                 std::cerr << "Received : " << serRequest << " from : " << m_userHandled->getUsername() << std::endl;
@@ -81,22 +88,30 @@ void UserHandler::processRequest(const std::string &serRequest)
 {
     auto request(json::parse(serRequest));
 
+    // Sync requests, mutex is unlocked after the request was processed
     if (request["domain"] == toJsonString(Domain::AUTH)) {
         processAuth(serRequest);
-
-    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
-        processRelations(serRequest);
-
-    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
-        processChatbox(serRequest);
+        m_syncRequest.unlock();
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
         processResourceRequest(serRequest);
+        m_syncRequest.unlock();
+
+        // Async requests, mutex is unlocked before
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::RELATIONS)) {
+        m_syncRequest.unlock();
+        processRelations(serRequest);
+
+    } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::CHAT)) {
+        m_syncRequest.unlock();
+        processChatbox(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
+        m_syncRequest.unlock();
         processGameAction(serRequest);
 
     } else if (isLoggedIn() && request["domain"] == toJsonString(Domain::GAME_SETUP)) {
+        m_syncRequest.unlock();
         processGameSetup(serRequest);
     }
 }
@@ -116,7 +131,7 @@ void UserHandler::processAuth(const std::string &serRequest)
         m_userHandled->syncWithDB();
     }
 
-    relayMessage(serAnswer);
+    send(serAnswer);
 }
 
 void UserHandler::processRelations(const std::string &serRequest)
@@ -237,6 +252,11 @@ void UserHandler::relayMessage(const std::string &serRequest)
 
     std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
 
+    // This mutex is to avoid sending the message
+    // if a sync request is in the process. That is a request
+    // expecting an answer that is not the answer from
+    // this function.
+    std::lock_guard<std::mutex> guard {m_syncRequest};
     send(serRequest);
 }
 
