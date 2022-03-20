@@ -53,8 +53,10 @@ public:
     Point operator/(const int &) const;
 
     bool operator==(const Point &) const noexcept;
-    nlohmann::json serialized();
     bool operator!=(const Point &) const noexcept;
+
+    nlohmann::json serialized();
+    static Point deserialized(const std::string &);
 
 protected:
     int m_x;

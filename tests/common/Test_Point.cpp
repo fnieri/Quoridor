@@ -2,6 +2,8 @@
 
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <string>
 
 SCENARIO("Basic operations")
@@ -39,4 +41,12 @@ SCENARIO("Basic operations")
 SCENARIO("String representation")
 {
     REQUIRE(static_cast<std::string>(Point {8, 2}) == "(8, 2)");
+}
+
+SCENARIO("Serialization and deserialization")
+{
+    Point a {7, 9};
+
+    REQUIRE(a.serialized() == nlohmann::json {{"x", 7}, {"y", 9}});
+    REQUIRE(Point::deserialized(a.serialized().dump()) == a);
 }
