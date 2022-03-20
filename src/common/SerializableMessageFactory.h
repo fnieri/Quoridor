@@ -41,7 +41,7 @@ public:
     /**
      * Look in SerializableMessageFactory for explanation
      */
-    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
+    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn, const std::string &username);
     /*---------------------
      * BoardActions
      *---------------------*/

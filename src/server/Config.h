@@ -1,32 +1,32 @@
 /**
  * @file config.h
  * @author Sacha Testaert
- * @brief Creates maps of user and server config
+ * @brief Creates maps of client and server config
  * @date 2022-03-18
  */
 
-#include <iostream>
-#include <map> 
 #include <fstream> // to open and read in a given file
-#include <memory>
+#include <iostream>
 #include <map>
+#include <map>
+#include <memory>
 
 class ConfigHandler
 {
 public:
     /**
      * @brief Get the Server Config map
-     * 
-     * @return map< string,  string> 
+     *
+     * @return map< string,  string>
      */
     static std::map<std::string, std::string> getServerConfig();
 
     /**
      * @brief Get the Client Config map
-     * 
+     *
      * @return map< string, string>
      */
-    static  std::map<std::string, std::string> getClientConfig();
+    static std::map<std::string, std::string> getClientConfig();
     ConfigHandler();
 
 private:
@@ -39,11 +39,11 @@ private:
     }
     /**
      * @brief Get the Map object of a config file
-     * 
+     *
      * @param filename
-     * @return map<string,  string> 
+     * @return map<string,  string>
      */
-    static std::map<std::string, std::string> getMapFromConfigFile(const std::string& filename);
+    static std::map<std::string, std::string> getMapFromConfigFile(const std::string &filename);
 
     /**
      * @brief Get the Key Value object
@@ -52,5 +52,5 @@ private:
      * @param line
      * @return pair<string, string>
      */
-    static  std::pair< std::string, std::string> getKeyValue(const std::string& line);
-}; 
+    static std::pair<std::string, std::string> getKeyValue(const std::string &line);
+};

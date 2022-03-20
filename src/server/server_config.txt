@@ -1,2 +1,2 @@
-BDD_ADDRESS=mongodb://quoridor:ulb123@46.101.255.42:47984
-SERVER_PORT=12345
+bdd_address=mongodb://quoridor:ulb123@46.101.255.42:47984
+server_port=12345

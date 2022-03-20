@@ -1,29 +1,33 @@
 /**
  * @file config.h
  * @author Sacha Testaert
- * @brief Creates maps of user and server config
+ * @brief Creates maps of client and server config
  * @date 2022-03-18
  */
 
 #include "Config.h"
 
-ConfigHandler::ConfigHandler() {}
+ConfigHandler::ConfigHandler()
+{
+}
 
-std::pair< std::string,  std::string> ConfigHandler::getKeyValue(const std::string& line){
+std::pair<std::string, std::string> ConfigHandler::getKeyValue(const std::string &line)
+{
     auto equal_index = line.std::string::find('=');
     std::string key = line.std::string::substr(0, equal_index);
     std::string value = line.std::string::substr(equal_index + 1);
-    return  std::make_pair(key, value);
+    return std::make_pair(key, value);
 }
 
-std::map<std::string, std::string> ConfigHandler::getMapFromConfigFile(const std::string& config_file){
-    std::ifstream file (config_file);
+std::map<std::string, std::string> ConfigHandler::getMapFromConfigFile(const std::string &config_file)
+{
+    std::ifstream file(config_file);
     std::string line;
     std::pair<std::string, std::string> tup;
     std::map<std::string, std::string> extractedValues;
-    if (file.std::ifstream::is_open()){
+    if (file.std::ifstream::is_open()) {
 
-        while(std::getline(file, line)){
+        while (std::getline(file, line)) {
             tup = Instance()->getKeyValue(line);
             extractedValues.insert(tup);
         }
@@ -33,10 +37,12 @@ std::map<std::string, std::string> ConfigHandler::getMapFromConfigFile(const std
     return extractedValues;
 }
 
-std::map<std::string, std::string> ConfigHandler::getServerConfig(){
+std::map<std::string, std::string> ConfigHandler::getServerConfig()
+{
     return Instance()->getMapFromConfigFile("server_config.txt");
 };
 
-std::map<std::string, std::string> ConfigHandler::getClientConfig(){
+std::map<std::string, std::string> ConfigHandler::getClientConfig()
+{
     return Instance()->getMapFromConfigFile("client_config.txt");
 };
