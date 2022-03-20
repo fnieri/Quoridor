@@ -8,43 +8,49 @@
 #include <iostream>
 #include <map> 
 #include <fstream> // to open and read in a given file
-
+#include <memory>
+#include <map>
 
 class ConfigHandler
 {
 public:
-    ConfigHandler();
     /**
      * @brief Get the Server Config map
      * 
      * @return map< string,  string> 
      */
-    static  std::map< std::string,  std::string> getServerConfig();
+    static std::map<std::string, std::string> getServerConfig();
 
     /**
      * @brief Get the Client Config map
      * 
-     * @return map< string,  string> 
+     * @return map< string, string>
      */
-    static  std::map< std::string,  std::string> getClientConfig();
+    static  std::map<std::string, std::string> getClientConfig();
+    ConfigHandler();
 
 private:
-    
+    static std::unique_ptr<ConfigHandler> &Instance()
+    {
+        static std::unique_ptr<ConfigHandler> singleton;
+        if (!singleton)
+            singleton = std::move(std::unique_ptr<ConfigHandler> {new ConfigHandler});
+        return singleton;
+    }
     /**
      * @brief Get the Map object of a config file
      * 
      * @param filename
      * @return map<string,  string> 
      */
-    static  std::map< std::string,  std::string> getMapFromConfigFile(std::string filename);
+    static std::map<std::string, std::string> getMapFromConfigFile(const std::string& filename);
 
     /**
      * @brief Get the Key Value object
-     * [@details Gets the key value from separating each side of a line from an equal symbal "=";
+     * @details Gets the key value from separating each side of a line from an equal symbal "=";
      * Is called within the getMapFromConfigFile(string) method]
      * @param line
-     * @return pair< string,  string> 
+     * @return pair<string, string>
      */
-    static  std::pair< std::string,  std::string> getKeyValue(std::string line);
-
-};
+    static  std::pair< std::string, std::string> getKeyValue(const std::string& line);
+}; 
