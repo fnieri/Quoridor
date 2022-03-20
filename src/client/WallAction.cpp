@@ -91,6 +91,6 @@ bool WallAction::executeAction()
 json WallAction::serialized()
 {
     int playerID = (int)player->getColor();
-    json wallJson = {{"wall_cell", destCell.serialized()}, {"wall_orientation", toJsonOutput(orientation)}, {"player_id", playerID}};
+    json wallJson = {{"action_type", "wall"}, {"wall_cell", destCell.serialized()}, {"wall_orientation", toJsonOutput(orientation)}, {"player_id", playerID}};
     return wallJson;
 }
