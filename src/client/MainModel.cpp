@@ -170,6 +170,7 @@ auto MainModel::updateFriendsChatMap() noexcept -> void
         }
     }
 }
+
 auto MainModel::clearFriendMessages(const std::string &friendUsername) -> void
 {
     if (m_chats.find(friendUsername) != m_chats.end()) {
@@ -184,22 +185,4 @@ auto MainModel::getHasFriends() const noexcept -> bool
 auto MainModel::setHasFriends(const bool &val) -> void
 {
     hasFriends = val;
-}
-
-GameModel::GameModel(int gameId, std::vector<std::string> players, std::shared_ptr<Board> board)
-    : m_gameId(gameId)
-    , m_players(std::move(players))
-    , m_board(std::move(board))
-{
-}
-
-auto GameModel::getCurrentPlayer() noexcept -> int *
-{
-    return &currentPlayerIdx;
-}
-
-auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool
-{
-    //    PlayerAction move {board, players.at(currentPlayerIndex), movePoint/2};
-    //    return move.isActionValid();
 }

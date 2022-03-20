@@ -14,6 +14,7 @@ add_library(${PREFIX}_client
         TerminalVue.cpp
         ServerBridge.cpp
         ServerController.cpp
+        GameModel.cpp
         )
 
 target_link_libraries(${PREFIX}_client

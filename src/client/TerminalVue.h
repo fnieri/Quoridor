@@ -124,7 +124,7 @@ class TerminalVue
     int currentGameId = 69;
     std::string errorLoginMessage;
     std::string registerMessage;
-    int homeTabIndex = 0, mainPageIndex = 0, friendDeleteIndex = 0, friendRequestIndex = 0, friendChatIndex = 0;
+    int homeTabIndex = 0, mainPageIndex = 0, friendDeleteIndex = 0, friendRequestIndex = 0, friendChatIndex = 0, notificationTabIndex = 1;
 
     void updateChatEntries();
 
@@ -325,6 +325,8 @@ class TerminalVue
     void acceptFriendRequest();
 
     void declineFriendRequest();
+
+    void updateFriendTabsIndex();
 
 public:
     void run();

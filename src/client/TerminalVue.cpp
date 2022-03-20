@@ -381,16 +381,7 @@ auto TerminalVue::createFriendsRenderer()
     return Renderer(friendContainer,
         [&, searchInput, addButton, friendsMenu, friendChatTabContainer, friendActionTabContainer, notificationMenu, friendRequestButtonsTabContainer] {
             updateChatEntries();
-
-            if (mainModel->getHasFriends())
-                friendChatIndex = 0;
-            else
-                friendChatIndex = 1;
-
-            if (mainModel->getFriendRequestsReceived()->empty())
-                friendRequestIndex = 1;
-            else
-                friendRequestIndex = 0;
+            updateFriendTabsIndex();
 
             return vbox({
                 hbox({friendsMenu->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10), separator(), friendChatTabContainer->Render() | xflex,
@@ -402,6 +393,19 @@ auto TerminalVue::createFriendsRenderer()
                 hbox({searchInput->Render(), addButton->Render()}),
             });
         });
+}
+
+void TerminalVue::updateFriendTabsIndex()
+{
+    if (mainModel->getHasFriends())
+        friendChatIndex = 0;
+    else
+        friendChatIndex = 1;
+
+    if (mainModel->getFriendRequestsReceived()->empty())
+        friendRequestIndex = 1;
+    else
+        friendRequestIndex = 0;
 }
 
 auto TerminalVue::createMainTabContainer()
@@ -433,6 +437,9 @@ auto TerminalVue::createMainRenderer()
         },
         &buttonOption);
 
+    auto notificationTabContainer
+        = Container::Tab({Renderer([] { return vbox(); }), Renderer([] { return text("New notification*"); })}, &notificationTabIndex);
+
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
     auto registerRender = createRegisterRenderer();
@@ -457,10 +464,11 @@ auto TerminalVue::createMainRenderer()
         tabToggle,
         tabContainer,
         exitButton,
+        notificationTabContainer,
     });
-    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton] {
+    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton, notificationTabContainer] {
         return vbox({
-            hbox({tabToggle->Render(), filler(), exitButton->Render()}),
+            hbox({tabToggle->Render(), filler(), notificationTabContainer->Render(), filler(), exitButton->Render()}),
             separator(),
             tabContainer->Render(),
         });
@@ -559,7 +567,7 @@ void TerminalVue::updateChatEntries()
     auto friendList = mainModel->getFriendList();
     auto friendChatToGet = (*friendList)[friend_selected];
     auto friendChatEntries = mainModel->getChatWith(friendChatToGet);
-    if (friend_selected != previousFriendSelected) {
+    if (mainModel->getHasFriends() && friend_selected != previousFriendSelected) {
         previousFriendSelected = friend_selected;
         serverController->fetchFriendMessages(*mainModel->getUsername(), friendChatToGet);
     }
