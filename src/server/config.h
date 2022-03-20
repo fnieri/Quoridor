@@ -22,11 +22,11 @@ public:
     static  std::map< std::string,  std::string> getServerConfig();
 
     /**
-     * @brief Get the User Config map
+     * @brief Get the Client Config map
      * 
      * @return map< string,  string> 
      */
-    static  std::map< std::string,  std::string> getUserConfig();
+    static  std::map< std::string,  std::string> getClientConfig();
 
 private:
     

@@ -36,7 +36,7 @@ std::map<std::string, std::string> ConfigHandler::getServerConfig(){
     };
 
 std::map<std::string, std::string> ConfigHandler::getUserConfig(){
-    return getMapFromConfigFile("user_config.txt");
+    return getMapFromConfigFile("client_config.txt");
 };
 
 
