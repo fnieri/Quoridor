@@ -328,6 +328,8 @@ class TerminalVue
 
     void updateFriendTabsIndex();
 
+    void updateNotifications();
+
 public:
     void run();
 };

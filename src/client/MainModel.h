@@ -16,6 +16,7 @@
 #include "ServerBridge.h"
 #include "WallAction.h"
 #include "WallEnum.h"
+#include "GameModel.h"
 
 #include <map>
 #include <memory>
@@ -26,7 +27,6 @@ using json = nlohmann::json;
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
 
-class GameModel;
 
 class MainModel
 {
@@ -46,13 +46,15 @@ private:
     std::map<std::string, SPtrToVec<Message>> m_chats;
 
     // Current game
-    std::shared_ptr<Board> m_currentGame;
+    std::shared_ptr<GameModel> m_currentGame;
 
-    bool m_isPlayerTurn;
-    std::unique_ptr<int> m_currentPlayer;
+//    bool m_isPlayerTurn;
+//    std::unique_ptr<int> m_currentPlayer;
 
     // General information
     SPtrToVec<std::pair<std::string, float>> m_leaderboard = std::make_shared<std::vector<std::pair<std::string, float>>>();
+
+    bool m_friendNotification = false, m_gameNotification = false;
 
 public:
     template <typename P, typename V>
@@ -74,10 +76,14 @@ public:
     auto getGameIDs() const noexcept -> const std::vector<int> *;
 
     auto isInGame() const noexcept -> bool;
-    //    auto getCurrentGame() const noexcept -> const GameModel*;
-    auto isPlayerTurn() const noexcept -> bool;
+    auto getCurrentGame() const noexcept -> const GameModel*;
+    auto loadGame(const int &) noexcept -> void;
+//    auto isPlayerTurn() const noexcept -> bool;
 
     auto getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>> *;
+
+    auto hasFriendNotification() const noexcept -> bool;
+    auto hasGameNotification() const noexcept -> bool;
 
     // Setters
     /**
@@ -121,6 +127,7 @@ public:
 
     auto setGameIds(const std::vector<int> &) -> void;
 
-//    auto loadGame
+    auto setFriendNotification(const bool &) -> void;
+    auto setGameNotification(const bool &) -> void;
 };
 

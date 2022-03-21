@@ -437,8 +437,8 @@ auto TerminalVue::createMainRenderer()
         },
         &buttonOption);
 
-    auto notificationTabContainer
-        = Container::Tab({Renderer([] { return vbox(); }), Renderer([] { return text("New notification*"); })}, &notificationTabIndex);
+    // TODO handle notifications. need a new value in model that is updated when a notification is received.
+    auto notificationTabContainer = Container::Tab({Renderer([] { return vbox(); }), Renderer([] { return text(""); })}, &notificationTabIndex);
 
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
@@ -467,6 +467,7 @@ auto TerminalVue::createMainRenderer()
         notificationTabContainer,
     });
     auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton, notificationTabContainer] {
+        updateNotifications();
         return vbox({
             hbox({tabToggle->Render(), filler(), notificationTabContainer->Render(), filler(), exitButton->Render()}),
             separator(),
@@ -575,6 +576,20 @@ void TerminalVue::updateChatEntries()
     for (const auto &chat : *friendChatEntries) {
         std::string mess = chat.sender + ": " + chat.sentMessage;
         chatEntry.push_back(mess);
+    }
+}
+
+void TerminalVue::updateNotifications()
+{
+    if (mainTabSelect != 1 && mainModel->hasFriendNotification()) {
+        mainTabValues[1] = "Friends*";
+    } else {
+        mainTabValues[1] = "Friends";
+    }
+    if (mainTabSelect != 0 && mainModel->hasGameNotification()) {
+        mainTabValues[0] = "Games*";
+    } else {
+        mainTabValues[0] = "Games";
     }
 }
 

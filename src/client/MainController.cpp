@@ -99,6 +99,7 @@ void MainController::processRelations(const std::string &serRequest)
         m_mainModel->addFriend(request.at("friend_req_receiver"));
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REQUEST)) {
         m_mainModel->addFriendRequestReceived(request.at("friend_req_sender"));
+        m_mainModel->setFriendNotification(true);
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REFUSE)) {
         m_mainModel->refuseFriendRequest(request.at("friend_req_sender"));
     }
@@ -110,6 +111,7 @@ void MainController::processChatBox(const std::string &serRequest)
     if (request.at("action") == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
         Message msg {request.at("sender"), request.at("message")};
         m_mainModel->addFriendMessage(request.at("sender"), msg);
+        m_mainModel->setFriendNotification(true);
     }
     if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
         //        m_mainModel->addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));
