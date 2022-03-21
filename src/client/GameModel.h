@@ -1,6 +1,10 @@
-//
-// Created by louis on 3/19/22.
-//
+/**
+ * @file GameModel.cpp
+ * @author Louis Vanstappen
+ * @author Boris Petrov
+ * @brief Game Model
+ * @date 02/25/22
+ */
 
 #pragma once
 
@@ -18,6 +22,9 @@ using json = nlohmann::json;
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
 
+class WallAction;
+class PlayerAction;
+
 /**
  * @param gameID the identifier of the game
  * @param players players in the game
@@ -26,28 +33,56 @@ using SPtrToVec = std::shared_ptr<std::vector<T>>;
 class GameModel
 {
 private:
+    int m_gameId {-1};
+
     std::shared_ptr<Board> m_board;
-    int m_gameId;
-    int currentPlayerIdx {0};
-    // std::vector<std::string> m_players;
-    std::vector<std::shared_ptr<Player>> players;
-    std::map<std::string, SPtrToVec<Message>> m_gameChats;
+    std::vector<std::shared_ptr<Player>> m_players;
+
+    std::string m_winner {""};
+
+    int m_currentPlayerIdx {0};
+
+    auto addPlayer(PawnColors, const Point &, int, FinishLine, const std::string &) -> void;
+
+    auto getWallActionFromSer(const std::string &) -> WallAction;
+    auto getPlayerActionFromSer(const std::string &) -> PlayerAction;
+
+    /* std::map<std::string, SPtrToVec<Message>> m_gameChats; */
 
 public:
-    GameModel(int, std::vector<std::string>, std::shared_ptr<Board>);
+    /**
+     * @brief New game, with default config
+     * @param players vector of their usernames
+     */
+    GameModel(const std::vector<std::string> &);
+    /**
+     * @brief Existing game, from an existent conf
+     * @param players vector of their usernames
+     */
+    GameModel(const std::string &);
 
-    auto getCurrentPlayer() noexcept -> int *;
+    /**
+     * @note Winner can be established.
+     */
+    auto processAction(const std::string &) -> void;
 
-    auto isMoveValid(const Point &) const noexcept -> bool;
-    auto isWallValid(const Point &) const noexcept -> bool;
+    auto getCurrentPlayer() noexcept -> const int *;
 
-    auto movePlayer(const Point &) const noexcept -> void;
-    //    auto placeWall(const Wall &) const noexcept -> void;
+    /* auto isMoveValid(const Point &) const noexcept -> bool; */
+    /* auto isWallValid(const Point &, WallOrientation) const noexcept -> bool; */
 
-    auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>;
-    auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;
-
-    auto addGameMessage(const std::string &, const Message &) -> void;
+    auto getPlayerAction(const Point &) const noexcept -> PlayerAction;
+    auto getWallAction(const Point &, WallOrientation) const noexcept -> WallAction;
 
     auto hasWinner() const -> bool;
+    auto getWinner() const -> std::string;
+
+    /**
+     * @note Winner can be established.
+     */
+    auto playerSurrendered(const std::string &) -> void;
+
+    /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
+    /* auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void; */
+    /* auto addGameMessage(const std::string &, const Message &) -> void; */
 };
