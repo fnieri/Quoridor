@@ -18,7 +18,6 @@
 class ConfigHandler
 {
 public:
-    ConfigHandler();
     /**
      * @brief Return a client property from config file
      * @param ClientProperty Requested client config
@@ -41,6 +40,8 @@ public:
         return singleton;
     }
 private:
+
+    ConfigHandler();
     /**
      * @brief Get the Map object of a config file
      *
