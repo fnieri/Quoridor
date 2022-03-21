@@ -3,26 +3,23 @@
 //
 #include <catch2/catch.hpp>
 
+#include "src/server/Config.h"
 #include "src/server/Database.h"
 #include <cstdlib>
+#include <iostream>
 #include <nlohmann/json.hpp>
 #include <unistd.h>
-#include <iostream>
 
 using json = nlohmann::json;
 
 bool isStringInVector(std::vector<std::string> vector, std::string string)
 {
-    for (auto &s : vector) {
-        if (s == string) {
-            return true;
-        }
-    }
-    return false;
+    return std::any_of(vector.begin(), vector.end(), [&string](std::string &s) { return s == string; });
 }
 
 SCENARIO("Creating and login into an account")
 {
+    ConfigHandler::Instance()->getServerProperty(ServerProperty::DB_ADDRESS);
     GIVEN("Username and password")
     {
         WHEN("Creating an account")

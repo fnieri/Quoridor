@@ -29,17 +29,7 @@ using json = nlohmann::json;
 
 namespace database
 {
-#include <iostream>
-// need to actually use username and password
-constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-//constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@46.101.255.42:47984"};
-//constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@localhost:47984"};
-
-//This below should be the proper way to init the kMongoDbUri, but it returns
-//   Invalid URI Schema, expecting 'mongodb://' or 'mongodb+srv://': an invalid
-//   MongoDB URI was provided
-// Even though schema follows
-// const std::string kMongoDbUri = ConfigHandler::Instance()->getServerProperty(ServerProperty::DB_ADDRESS);
+const std::string kMongoDbUri = ConfigHandler::Instance()->getServerProperty(ServerProperty::DB_ADDRESS);
 constexpr char kDatabaseName[] {"testing"};
 constexpr char kCollectionName[] {"TestCollection"};
 constexpr char kUserCollectionName[] {"UserColl ection"};

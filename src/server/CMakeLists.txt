@@ -20,6 +20,7 @@ target_link_libraries(${PREFIX}_server
         ${PREFIX}_common
         bsoncxx_shared
         mongocxx_shared
+        stdc++fs
     PRIVATE
         cryptopp_shared
         pthread

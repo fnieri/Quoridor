@@ -35,13 +35,14 @@ public:
     {
         static std::unique_ptr<ConfigHandler> singleton;
         if (!singleton) {
-            singleton = std::move(std::make_unique<ConfigHandler> ());
+            singleton = std::move(std::unique_ptr<ConfigHandler> {new ConfigHandler});
         }
         return singleton;
     }
-private:
 
+private:
     ConfigHandler();
+
     /**
      * @brief Get the Map object of a config file
      *
@@ -72,5 +73,4 @@ private:
      * @return map< string, string>
      */
     auto getClientConfig() -> std::map<std::string, std::string>;
-
 };

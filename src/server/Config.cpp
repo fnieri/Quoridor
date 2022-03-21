@@ -7,6 +7,23 @@
 
 #include "Config.h"
 
+// Filesystem
+
+#ifndef __has_include
+static_assert(false, "__has_include not supported");
+#else
+#if __cplusplus >= 201703L && __has_include(<filesystem>)
+#include <filesystem>
+namespace fs = std::filesystem;
+#elif __has_include(<experimental/filesystem>)
+#include <experimental/filesystem>
+namespace fs = std::experimental::filesystem;
+#elif __has_include(<boost/filesystem.hpp>)
+#include <boost/filesystem.hpp>
+namespace fs = boost::filesystem;
+#endif
+#endif
+
 ConfigHandler::ConfigHandler()
 {
 }
@@ -39,13 +56,13 @@ std::map<std::string, std::string>
 auto ConfigHandler::getServerConfig() ->
 std::map<std::string, std::string>
 {
-    return Instance()->getMapFromConfigFile("src/server/server_config.txt");
-};
+    return Instance()->getMapFromConfigFile(std::string(fs::current_path()) + "/configs/server_config.txt");
+}
 
 auto ConfigHandler::getClientConfig() -> std::map<std::string, std::string>
 {
-    return Instance()->getMapFromConfigFile("src/server/client_config.txt");
-};
+    return Instance()->getMapFromConfigFile(std::string(fs::current_path()) + "/configs/client_config.txt");
+}
 
 auto ConfigHandler::getClientProperty(ClientProperty c) -> std::string
 {
