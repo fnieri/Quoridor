@@ -7,6 +7,7 @@
 #include <cstdlib>
 #include <nlohmann/json.hpp>
 #include <unistd.h>
+#include <iostream>
 
 using json = nlohmann::json;
 

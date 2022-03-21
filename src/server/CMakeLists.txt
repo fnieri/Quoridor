@@ -9,6 +9,7 @@ add_library(${PREFIX}_server
     AuthHandler.cpp
     RelationsHandler.cpp
     Database.cpp
+    Config.cpp
     EloCalculator.cpp
     )
 

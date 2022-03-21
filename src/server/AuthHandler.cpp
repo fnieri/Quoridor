@@ -24,7 +24,7 @@ AuthHandler::AuthHandler(UserHub &userHub)
 {
 }
 
-std::string AuthHandler::tryRegister(const std::string &serRequest)
+auto AuthHandler::tryRegister(const std::string &serRequest) -> std::string
 {
     json requestAnswer;
     auto request(json::parse(serRequest));
@@ -40,7 +40,7 @@ std::string AuthHandler::tryRegister(const std::string &serRequest)
     return requestAnswer.dump();
 }
 
-std::string AuthHandler::tryLogIn(const std::string &serRequest)
+auto AuthHandler::tryLogIn(const std::string &serRequest) -> std::string
 {
     json requestAnswer;
     auto request(json::parse(serRequest));
@@ -57,7 +57,7 @@ std::string AuthHandler::tryLogIn(const std::string &serRequest)
     return requestAnswer.dump();
 }
 
-std::string AuthHandler::processRequest(const std::string &serRequest)
+auto AuthHandler::processRequest(const std::string &serRequest) -> std::string
 {
     std::string requestAnswer;
     auto request(json::parse(serRequest));

@@ -31,13 +31,13 @@ private:
      *
      * @param request json formatted request representing a message
      */
-    void recordMessage(const std::string &);
+    auto recordMessage(const std::string &) -> void;
     /**
      * Send it to connected users
      *
      * @param request json formatted request representing a message
      */
-    void relayMessage(const std::string &);
+    auto relayMessage(const std::string &) -> void;
 
 public:
     ChatBox(UserHub &);
@@ -47,5 +47,5 @@ public:
      *
      * @param message message to be processed
      */
-    void processRequest(const std::string &);
+    auto processRequest(const std::string &) -> void;
 };

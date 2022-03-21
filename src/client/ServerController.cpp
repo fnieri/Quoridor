@@ -1,10 +1,11 @@
 #include "ServerController.h"
 
+#include "src/server/Config.h"
+
 ServerController::ServerController(MainController *mainController)
 {
-    // TODO use an external server config (f.e. parameter)
-    bridge = std::make_unique<ServerBridge>("localhost", 12346, mainController);
-
+    std::string serverIP = ConfigHandler::Instance()->getClientProperty(ClientProperty::SERVER_IP);
+    bridge = std::make_unique<ServerBridge>(serverIP, 12346, mainController);
     bridge->startHandling();
 }
 
