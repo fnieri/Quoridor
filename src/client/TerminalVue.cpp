@@ -437,9 +437,6 @@ auto TerminalVue::createMainRenderer()
         },
         &buttonOption);
 
-    // TODO handle notifications. need a new value in model that is updated when a notification is received.
-    auto notificationTabContainer = Container::Tab({Renderer([] { return vbox(); }), Renderer([] { return text(""); })}, &notificationTabIndex);
-
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
     auto registerRender = createRegisterRenderer();
@@ -464,12 +461,11 @@ auto TerminalVue::createMainRenderer()
         tabToggle,
         tabContainer,
         exitButton,
-        notificationTabContainer,
     });
-    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton, notificationTabContainer] {
+    auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton] {
         updateNotifications();
         return vbox({
-            hbox({tabToggle->Render(), filler(), notificationTabContainer->Render(), filler(), exitButton->Render()}),
+            hbox({tabToggle->Render(), exitButton->Render()}),
             separator(),
             tabContainer->Render(),
         });
