@@ -43,7 +43,8 @@ json PlayerAction::serialized()
 
     int playerID = (int)player->getColor();
 
-    json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
+    json actionJson
+        = {{"action_type", "player"}, {"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
 }
 

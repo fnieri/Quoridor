@@ -187,6 +187,12 @@ void Board::spawnPlayer(std::shared_ptr<Player> player)
     std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
 }
 
+void Board::removePlayer(std::shared_ptr<Player> player)
+{
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->removePlayer();
+}
+
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
     std::dynamic_pointer_cast<Corridor>(matrix.at(firstHalf.x()).at(firstHalf.y()))->placeWall();

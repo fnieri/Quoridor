@@ -175,6 +175,13 @@ public:
     void spawnPlayer(std::shared_ptr<Player> player);
 
     /**
+     * Removes the given player from the board.
+     *
+     * @param player the Player to remove
+     */
+    void removePlayer(std::shared_ptr<Player> player);
+
+    /**
      * Sets a full wall into the board.
      * DO NOT CALL THIS FUNCTION DIRECTLY!
      * Create a WallAction and call WallAction::executeAction() instead.
