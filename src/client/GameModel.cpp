@@ -59,6 +59,7 @@ GameModel::GameModel(const std::string &p_conf)
     }
 
     m_board->putSerializedWalls(conf["walls"]);
+    m_currentPlayerIdx = conf["current_player_id"];
 }
 
 auto GameModel::addPlayer(PawnColors color, const Point &pos, int remWalls, FinishLine finishLine, const std::string &username) -> void
@@ -204,8 +205,9 @@ auto GameModel::serialized() -> json
     }
 
     auto serGame(json {
-        {"walls",   wallPos  },
-        {"players", playerPos},
+        {"current_player_id", m_currentPlayerIdx},
+        {"walls",             wallPos           },
+        {"players",           playerPos         },
     });
 
     return serGame;
