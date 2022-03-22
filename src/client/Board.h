@@ -306,6 +306,9 @@ public:
 
     void debugPrint();
 
+    auto getSerializedWalls() -> nlohmann::json;
+    auto putSerializedWalls(nlohmann::json wallPos) -> void;
+
     ~Board();
 
     /**
