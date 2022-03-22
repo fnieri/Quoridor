@@ -31,10 +31,8 @@ bool SocketUser::isOpen() const
 
 void SocketUser::close()
 {
+    std::lock_guard<std::mutex> guard {m_socketMutex};
     m_socket.close();
-    system("clear");
-    std::cout << "Unable to connect to server" << std::endl;
-    exit(1);
 }
 
 bool SocketUser::hasReadActivity(time_t seconds)
