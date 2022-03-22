@@ -24,7 +24,6 @@ bool PlayerAction::isActionValid()
 
 bool PlayerAction::isGameOver()
 {
-
     return board->isPositionOnFinishLine(player->getMatrixPosition(), player->getFinishLine());
 }
 
@@ -46,4 +45,9 @@ json PlayerAction::serialized()
 
     json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
+}
+
+Point PlayerAction::getDestination() const
+{
+    return destination;
 }

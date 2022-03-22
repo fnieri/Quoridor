@@ -13,7 +13,6 @@
 #include "Player.h"
 #include "src/common/Point.h"
 
-
 #include <iostream>
 #include <memory>
 #include <stack>
@@ -306,11 +305,21 @@ int Board::getCellSize()
 void Board::debugPrint()
 {
     auto m = getRotatedBoardMatrix(FinishLine::North);
+    auto players = findPlayers();
 
     for (int y = 0; y < MATRIX_SIZE; y++) {
         for (int x = 0; x < MATRIX_SIZE; x++) {
-            if (isCell({x, y})) {
-                std::cout << "■";
+            int isPlayer = false;
+            for (auto &player : players) {
+                if (player->getPosition() == Point {x, y}) {
+                    isPlayer = true;
+                    break;
+                }
+            }
+            if (isPlayer) {
+                std::cout << "X";
+            } else if (isCell({x, y})) {
+                std::cout << ".";
             } else if (m.at(x).at(y) && m.at(x).at(y)->isOccupied()) {
                 auto orientation = std::dynamic_pointer_cast<Corridor>(m.at(x).at(y))->getOrientation();
                 std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");

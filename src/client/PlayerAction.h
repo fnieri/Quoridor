@@ -64,6 +64,8 @@ public:
      */
     bool executeAction();
 
+    Point getDestination() const;
+
     /**
      * Serialize the PlayerAction to json format.
      *
