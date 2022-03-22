@@ -23,7 +23,12 @@ GameModel::GameModel(const std::vector<std::string> &p_players)
 {
     assert(p_players.size() == 2 || p_players.size() == 4);
 
-    const std::array<Point, 4> defaultPos {Point {4, 0}, Point {4, 8}, Point {0, 4}, Point {8, 4}};
+    const std::array<Point, 4> defaultPos {
+        Point {4, 0},
+         Point {4, 8},
+         Point {0, 4},
+         Point {8, 4}
+    };
 
     for (int i = 0; i < p_players.size(); ++i) {
 
@@ -44,14 +49,16 @@ GameModel::GameModel(const std::string &p_conf)
 
     for (auto &i_plr : conf["players"]) {
 
-        auto color {static_cast<PawnColors>(i_plr["player_id"])};
-        auto pos {Point::deserialized(i_plr["player_position"].dump())};
+        auto color {static_cast<PawnColors>(i_plr["id"])};
+        auto pos {Point::deserialized(i_plr["position"].dump())};
         auto remWalls {static_cast<int>(i_plr["remaining_walls"])};
         auto finishLine {static_cast<FinishLine>(i_plr["finish_line"])};
         auto username {static_cast<std::string>(i_plr["username"])};
 
         addPlayer(color, pos, remWalls, finishLine, username);
     }
+
+    m_board->putSerializedWalls(conf["walls"]);
 }
 
 auto GameModel::addPlayer(PawnColors color, const Point &pos, int remWalls, FinishLine finishLine, const std::string &username) -> void
@@ -66,7 +73,7 @@ auto GameModel::getWallActionFromSer(const std::string &ser) -> WallAction
 
     auto player {m_players[deser["player_id"]]};
     auto destCell {Point::deserialized(deser["wall_cell"].dump())};
-    auto wallOri {static_cast<WallOrientation>(deser["wall_orientation"])};
+    auto wallOri {deser["wall_orientation"] == toJsonOutput(WallOrientation::Horizontal) ? WallOrientation::Horizontal : WallOrientation::Vertical};
 
     return WallAction {m_board, player, destCell, wallOri};
 }
@@ -137,7 +144,7 @@ auto GameModel::getWallAction(const Point &dest, WallOrientation orientation) co
 
 auto GameModel::hasWinner() const -> bool
 {
-    return m_winner.empty();
+    return !m_winner.empty();
 }
 
 auto GameModel::getWinner() const -> std::string
@@ -169,14 +176,38 @@ auto GameModel::rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shar
     return m_board->getRotatedBoardMatrix(fl);
 }
 
-auto GameModel::serializedBoard() -> json
-{
-    return m_board->serialized();
-}
-
 auto GameModel::debugPrintBoard() -> void
 {
     m_board->debugPrint();
 }
 
+auto GameModel::serialized() -> json
+{
+    auto playerPos(json::array());
+    auto wallPos(m_board->getSerializedWalls());
+
+    for (auto &i_player : m_players) {
+
+        auto playerID {static_cast<int>(i_player->getColor())};
+        auto finiLine {static_cast<int>(i_player->getFinishLine())};
+        auto username {i_player->getUsername()};
+        auto position {i_player->getPosition()};
+        auto remWalls {i_player->nWalls()};
+
+        playerPos.push_back({
+            {"id",              playerID             },
+            {"finish_line",     finiLine             },
+            {"username",        username             },
+            {"position",        position.serialized()},
+            {"remaining_walls", remWalls             },
+        });
+    }
+
+    auto serGame(json {
+        {"walls",   wallPos  },
+        {"players", playerPos},
+    });
+
+    return serGame;
+}
 /* auto GameModel::addGameMessage(const std::string &, const Message &) -> void */
