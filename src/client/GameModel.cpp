@@ -14,6 +14,7 @@
 #include <iostream>
 
 GameModel::GameModel(const std::vector<std::string> &p_players)
+    : m_board {std::make_shared<Board>()}
 {
     const std::array<Point, 4> defaultPos {Point {4, 0}, Point {4, 8}, Point {0, 4}, Point {8, 4}};
 
@@ -30,6 +31,7 @@ GameModel::GameModel(const std::vector<std::string> &p_players)
 }
 
 GameModel::GameModel(const std::string &p_conf)
+    : m_board {std::make_shared<Board>()}
 {
     auto conf(json::parse(p_conf));
 
