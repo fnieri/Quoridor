@@ -317,7 +317,7 @@ void Board::debugPrint()
         for (int x = 0; x < MATRIX_SIZE; x++) {
             int isPlayer = false;
             for (auto &player : players) {
-                if (player->getPosition() == Point {x, y}) {
+                if (player->getPosition()*2 == Point {x, y}) {
                     isPlayer = true;
                     break;
                 }

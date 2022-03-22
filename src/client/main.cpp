@@ -33,12 +33,15 @@ void gameLoop()
     aiPlayer ai {};
     while (!aiPlayer::isGameOver(board, players.at(0)) && !aiPlayer::isGameOver(board, players.at(1))) {
         board->debugPrint();
-        auto playerPosition = players.at(0)->getPosition();
-        std::cout << "Player position: " << playerPosition.x() << " " << playerPosition.y() << std::endl;
-        //                aiPlayer::play(board, players.at(0));
+        std::cout << "--------------------------------" << std::endl;
         ai.play(board, players.at(0), players.at(1));
         sleep(1);
+        board->debugPrint();
+        std::cout << "--------------------------------" << std::endl;
+        ai.play(board, players.at(1), players.at(0));
+        sleep(1);
     }
+    board->debugPrint();
 }
 
 int main(int argc, char *argv[])
