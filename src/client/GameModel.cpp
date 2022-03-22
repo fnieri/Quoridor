@@ -11,7 +11,12 @@
 #include "src/client/PlayerAction.h"
 #include "src/client/WallAction.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
+#include <cassert>
+
+using json = nlohmann::json;
 
 GameModel::GameModel(const std::vector<std::string> &p_players)
     : m_board {std::make_shared<Board>()}

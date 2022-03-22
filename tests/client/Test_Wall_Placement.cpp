@@ -98,7 +98,7 @@ TEST_CASE("Valid wall placements")
         REQUIRE(action_z.executeAction());
 
         // b->debugPrint();
-        std::cout << b->serialized().dump();
+        /* std::cout << b->serialized().dump(); */
     }
 
     // Reminder: since the walls are 2-long, the last row / column cannot have walls (o5 & o6)

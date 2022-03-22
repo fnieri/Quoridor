@@ -11,7 +11,7 @@
 #include "MessageEnums/Actions/ChatBoxActions.h"
 #include "SerializableMessageFactory.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class ChatBoxSerializableMessageFactory
 {

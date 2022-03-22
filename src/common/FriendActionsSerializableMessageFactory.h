@@ -9,7 +9,8 @@
 #pragma once
 
 #include "MessageEnums/Actions/FriendActions.h"
-#include <nlohmann/json.hpp>
+
+#include <nlohmann/json_fwd.hpp>
 #include <string>
 
 class FriendActionsSerializableMessageFactory

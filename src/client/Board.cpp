@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 #include <memory>
 #include <stack>

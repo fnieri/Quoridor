@@ -9,6 +9,8 @@
 #include "GameSetupSerializableMessageFactory.h"
 #include "MessageEnums/Domain.h"
 
+#include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
 json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> &players)

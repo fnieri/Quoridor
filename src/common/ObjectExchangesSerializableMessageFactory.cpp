@@ -1,7 +1,20 @@
 #include "ObjectExchangesSerializableMessageFactory.h"
 
 #include "MessageEnums/Domain.h"
+
+#include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
+
+template <typename T>
+T getResourceFromAnswer(const std::string &serRequest)
+{
+    nlohmann::json request(nlohmann::json::parse(serRequest));
+    nlohmann::json jsonData = request["serialized_data"];
+    T data = jsonData[0].get<T>();
+
+    return data;
+}
 
 json ObjectExchangesSerializableMessageFactory::serializeRequestExchange(DataType dataType)
 {

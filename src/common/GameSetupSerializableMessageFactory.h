@@ -2,7 +2,7 @@
 
 #include "MessageEnums/Actions/GameActions.h"
 #include "MessageEnums/Modes/GameModes.h"
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class GameSetupSerializableMessageFactory
 {

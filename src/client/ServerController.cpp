@@ -1,5 +1,7 @@
 #include "ServerController.h"
 
+#include <nlohmann/json.hpp>
+
 ServerController::ServerController(MainController *mainController)
 {
     // TODO use an external server config (f.e. parameter)

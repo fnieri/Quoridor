@@ -13,7 +13,8 @@
 #include "BoardComponent.h"
 #include "Player.h"
 #include "WallEnum.h"
-#include <nlohmann/json.hpp>
+
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 #include <vector>

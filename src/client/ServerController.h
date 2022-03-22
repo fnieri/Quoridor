@@ -4,6 +4,8 @@
 #include "src/client/ServerBridge.h"
 #include "src/common/SerializableMessageFactory.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 class ServerController
 {
     std::unique_ptr<ServerBridge> bridge;

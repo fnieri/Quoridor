@@ -13,6 +13,8 @@
 #include "src/common/Point.h"
 #include "src/common/Message.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <map>
 #include <memory>
 #include <vector>

@@ -2,6 +2,8 @@
 
 #include "PlayerEnum.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 #include <memory>
 

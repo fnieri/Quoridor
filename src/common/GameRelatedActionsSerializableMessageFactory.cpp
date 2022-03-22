@@ -2,6 +2,8 @@
 
 #include "MessageEnums/Domain.h"
 
+#include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
 json GameRelatedActionsSerializableMessageFactory::serializeQueueJoinRequest(QueueAction queueAction, GameMode gameMode, const std::string &username, int ELO)

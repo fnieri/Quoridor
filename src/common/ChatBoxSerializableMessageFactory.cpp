@@ -7,6 +7,9 @@
  */
 
 #include "ChatBoxSerializableMessageFactory.h"
+
+#include <nlohmann/json.hpp>
+
 #include "MessageEnums/Domain.h"
 
 #include <string>
