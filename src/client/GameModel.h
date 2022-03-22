@@ -84,6 +84,10 @@ public:
      */
     auto playerSurrendered(const std::string &) -> void;
 
+    auto rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>;
+    auto serializedBoard() -> nlohmann::json;
+    auto debugPrintBoard() -> void;
+
     /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
     /* auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void; */
     /* auto addGameMessage(const std::string &, const Message &) -> void; */

@@ -13,14 +13,16 @@
 
 #include <nlohmann/json.hpp>
 
-#include <iostream>
 #include <cassert>
+#include <iostream>
 
 using json = nlohmann::json;
 
 GameModel::GameModel(const std::vector<std::string> &p_players)
     : m_board {std::make_shared<Board>()}
 {
+    assert(p_players.size() == 2 || p_players.size() == 4);
+
     const std::array<Point, 4> defaultPos {Point {4, 0}, Point {4, 8}, Point {0, 4}, Point {8, 4}};
 
     for (int i = 0; i < p_players.size(); ++i) {
@@ -162,6 +164,19 @@ auto GameModel::playerSurrendered(const std::string &p_username) -> void
     }
 }
 
+auto GameModel::rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>
+{
+    return m_board->getRotatedBoardMatrix(fl);
+}
+
+auto GameModel::serializedBoard() -> json
+{
+    return m_board->serialized();
+}
+
+auto GameModel::debugPrintBoard() -> void
+{
+    m_board->debugPrint();
+}
+
 /* auto GameModel::addGameMessage(const std::string &, const Message &) -> void */
-/* { */
-/* } */
