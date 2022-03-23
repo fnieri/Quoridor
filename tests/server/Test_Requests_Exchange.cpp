@@ -112,8 +112,9 @@ SCENARIO("Authentification")
             auto req {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, "foo", "12345").dump()};
 
             auto ansSuccess {getAnswer(test, req)};
-            auto expAnsSuccess {
-                SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+            auto expAnsSuccess {SerializableMessageFactory::serializeServerAnswer(
+                ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo")
+                                    .dump()};
 
             REQUIRE(ansSuccess == expAnsSuccess);
 
@@ -121,7 +122,7 @@ SCENARIO("Authentification")
             {
                 auto ansFail {getAnswer(test, req)};
                 auto expAnsFail {SerializableMessageFactory::serializeServerAnswer(
-                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE)
+                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE, "foo")
                                      .dump()};
                 REQUIRE(ansFail == expAnsFail);
             }
@@ -134,7 +135,7 @@ SCENARIO("Authentification")
                     auto reqLogSuccess {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "12345").dump()};
                     auto ansLogSuccess {getAnswer(test, reqLogSuccess)};
                     auto expAnsLogSuccess {
-                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo").dump()};
                     REQUIRE(ansLogSuccess == expAnsLogSuccess);
                 }
 
@@ -143,7 +144,7 @@ SCENARIO("Authentification")
                     auto reqLogFail {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "54321").dump()};
                     auto ansLogFail {getAnswer(test, reqLogFail)};
                     auto expAnsLogFail {SerializableMessageFactory::serializeServerAnswer(
-                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME)
+                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME, "foo")
                                             .dump()};
 
                     REQUIRE(ansLogFail == expAnsLogFail);

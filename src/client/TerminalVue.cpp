@@ -31,20 +31,24 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    //     return gameController->isMoveValid(x, y);
+    return gameModel->isMoveValid(Point(x, y));
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    //     return gameController->isWallValid(x, y, wallOrientation);
+    return gameModel->isWallValid(Point(x, y), wallOrientation == 0 ? WallOrientation::Horizontal : WallOrientation::Vertical);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        //        GameModel *gameModel = mainModel.getCurrentGame();
+        gameModel = mainModel->getCurrentGame();
+        if (!gameModel) {
+            return text("Loading game...");
+        }
         //        gameController->updateBoardIntMatrix(boardIntMatrix);
+        gameModel->updateBoardIntMatrix(boardIntMatrix);
         const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                   occupiedHorizontalQuoridor = 7;
         auto c = Canvas(200, 200);
@@ -61,65 +65,65 @@ auto TerminalVue::createCanvas()
         }
         // TODO get game data
         c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
-        c.DrawText(0, 190, "Player's turn: " + std::to_string(playerTurn), playerTurn == player ? Color::Green : Color::Red);
+        c.DrawText(0, 190, "Player's turn: " + std::to_string(*gameModel->getCurrentPlayer()), playerTurn == player ? Color::Green : Color::Red);
         c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
 
         // dx and dy represent the distance between cells
         int dy = 10;
-        for (int i = 0; i < boardIntMatrix.size(); i++) {
-            int dx = 10;
-            for (int j = 0; j < boardIntMatrix[i].size(); j++) {
-                int gridValue = boardIntMatrix[i][j];
-                switch (gridValue) {
-                case freeCell:
-                    // draw a free cell
-                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
-                        // if mouse is pressed on this cell/quoridor
-                        c.DrawText(dx, dy, "\u25A0");
-                        handleCellClick(j, i);
-                    } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
-                        // if mouse is pressed on this cell/quoridor
-                        c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
-                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
-                    } else {
-                        c.DrawText(dx, dy, "\u25A1");
-                    }
-                    break;
-
-                case emptyQuoridor:
-                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
-                        std::vector<int> direction = quoridorDirection[wallOrientation];
-                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                        handleWallAdd(j, i);
-                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
-                        std::vector<int> direction = quoridorDirection[wallOrientation];
-                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
-                    }
-                    // don't draw anything otherwise
-                    break;
-
-                case occupiedVerticalQuoridor:
-                case occupiedHorizontalQuoridor: {
-                    std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
-                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                    break;
-                }
-
-                case playerOne:
-                case playerTwo:
-                case playerThree:
-                case playerFour:
-                    // draw a player one cell
-                    c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
-                    break;
-
-                default:
-                    break;
-                }
-                dx += 10;
-            }
-            dy += 10;
-        }
+//        for (int i = 0; i < boardIntMatrix.size(); i++) {
+//            int dx = 10;
+//            for (int j = 0; j < boardIntMatrix[i].size(); j++) {
+//                int gridValue = boardIntMatrix[i][j];
+//                switch (gridValue) {
+//                case freeCell:
+//                    // draw a free cell
+//                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
+//                        // if mouse is pressed on this cell/quoridor
+//                        c.DrawText(dx, dy, "\u25A0");
+//                        handleCellClick(j, i);
+//                    } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
+//                        // if mouse is pressed on this cell/quoridor
+//                        c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+//                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
+//                    } else {
+//                        c.DrawText(dx, dy, "\u25A1");
+//                    }
+//                    break;
+//
+//                case emptyQuoridor:
+//                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
+//                        std::vector<int> direction = quoridorDirection[wallOrientation];
+//                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+//                        handleWallAdd(j, i);
+//                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
+//                        std::vector<int> direction = quoridorDirection[wallOrientation];
+//                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
+//                    }
+//                    // don't draw anything otherwise
+//                    break;
+//
+//                case occupiedVerticalQuoridor:
+//                case occupiedHorizontalQuoridor: {
+//                    std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
+//                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+//                    break;
+//                }
+//
+//                case playerOne:
+//                case playerTwo:
+//                case playerThree:
+//                case playerFour:
+//                    // draw a player one cell
+//                    c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
+//                    break;
+//
+//                default:
+//                    break;
+//                }
+//                dx += 10;
+//            }
+//            dy += 10;
+//        }
 
         return canvas(std::move(c));
     });
@@ -129,12 +133,16 @@ void TerminalVue::handleCellClick(int x, int y)
 {
     // interact with controller
     //    gameController->movePlayer(Point{x, y});
+    auto playerAction = gameModel->getPlayerAction(Point{x, y});
+    gameModel->processAction(playerAction.serialized().dump());
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     // interact with controller
     //    gameController->placeWall(Point{x, y}, wallOrientation);
+    auto wallAction = gameModel->getWallAction(Point{x, y}, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    gameModel->processAction(wallAction.serialized().dump());
 }
 
 auto TerminalVue::createActionToggle()
@@ -192,7 +200,7 @@ auto TerminalVue::createChatRenderer()
     });
 }
 
-auto TerminalVue::createBoardRenderer()
+auto TerminalVue::createBoardGameRenderer()
 {
     auto actionToggle = createActionToggle();
     auto orientationToggle = createOrientationToggle();
@@ -218,6 +226,39 @@ auto TerminalVue::createBoardRenderer()
         }
         return false;
     });
+    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
+    return Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse] {
+        return vbox({boardCanvas->Render(), separator(),
+            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
+    });
+}
+
+auto TerminalVue::createBoardRenderer()
+{
+    //    auto actionToggle = createActionToggle();
+    //    auto orientationToggle = createOrientationToggle();
+    //    auto pauseGameButton = Button(
+    //        "Pause",
+    //        [&] {
+    //            // TODO pause game
+    //            homeTabIndex = 0;
+    //        },
+    //        &buttonOption);
+    //    auto boardCanvas = createCanvas();
+    //    auto tabWithMouse = CatchEvent(boardCanvas, [&](Event e) {
+    //        if (e.is_mouse()) {
+    //            mouse_x = (e.mouse().x - 1) * 2;
+    //            mouse_y = (e.mouse().y - 2) * 4 - 2;
+    //            if (e.mouse().button == Mouse::Left) {
+    //                if (e.mouse().motion == Mouse::Pressed) {
+    //                    mousePressed = true;
+    //                } else if (e.mouse().motion == Mouse::Released) {
+    //                    mousePressed = false;
+    //                }
+    //            }
+    //        }
+    //        return false;
+    //    });
 
     auto createGameBtn = Button(
         "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
@@ -243,8 +284,7 @@ auto TerminalVue::createBoardRenderer()
         playWithContainer->Add(Checkbox(&friendsList[i], &(friendsListStates[i].checked)));
     }
 
-    auto boardContainer = Container::Vertical({tabWithMouse, actionToggle, orientationToggle, boardCanvas, createGameBtn, joinGameBtn, gamePickMenu,
-        inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
+    auto boardContainer = Container::Vertical({createGameBtn, joinGameBtn, gamePickMenu, inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
 
     auto creatingGameContainer = Container::Vertical({
         playWithContainer,
@@ -268,11 +308,12 @@ auto TerminalVue::createBoardRenderer()
             createGameBtn->Render()});
     });
 
-    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
-    auto boardGameRender = Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton] {
-        return vbox({boardCanvas->Render(), separator(),
-            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
-    });
+    //    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
+    //    auto boardGameRender = Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton] {
+    //        return vbox({boardCanvas->Render(), separator(),
+    //            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
+    //    });
+    auto boardGameRender = createBoardGameRenderer();
 
     auto gameChat = createChatRenderer();
     auto resizeContainer = boardGameRender;
@@ -315,6 +356,14 @@ auto TerminalVue::createLoginRenderer()
     return Renderer(loginFieldsContainer, [&, loginFieldsContainer] {
         return vbox({loginFieldsContainer->Render() | center, color(Color::Red, text(errorLoginMessage))});
     });
+}
+
+auto TerminalVue::createTrainingRenderer()
+{
+    auto boardRender = createBoardGameRenderer();
+
+    auto trainingContainer = Container::Vertical({boardRender});
+    return Renderer(trainingContainer, [&, boardRender] { return vbox({text("Training"), boardRender->Render()}); });
 }
 
 auto TerminalVue::createRegisterRenderer()
@@ -440,16 +489,22 @@ auto TerminalVue::createMainRenderer()
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
     auto registerRender = createRegisterRenderer();
+    auto trainingRender = createTrainingRenderer();
     auto loginRegisterContainer = Container::Tab(
         {
             loginRenderer,
             registerRender,
+            trainingRender,
         },
         &loginTabSelect);
 
     auto loginRegisterToggleContainer = Container::Vertical({loginToggle, loginRegisterContainer, loginExit});
 
     auto loginRender = Renderer(loginRegisterToggleContainer, [&, loginRegisterContainer, loginToggle, loginExit] {
+        if (loginTabSelect == 2 && !mainModel->getCurrentGame()) {
+            // create ai game
+            mainModel->createAiGame();
+        }
         return vbox({
             hbox({loginToggle->Render(), filler(), loginExit->Render()}),
             separator(),

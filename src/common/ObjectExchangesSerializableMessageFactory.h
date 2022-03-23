@@ -18,7 +18,7 @@ T getResourceFromAnswer(const std::string &serRequest)
 {
     nlohmann::json request(nlohmann::json::parse(serRequest));
     nlohmann::json jsonData = request["serialized_data"];
-    T data = jsonData[0].get<T>();
+    T data = jsonData.get<T>();
 
     return data;
 }

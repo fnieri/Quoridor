@@ -8,6 +8,8 @@
 
 #include "GameModel.h"
 
+#include "Cell.h"
+#include "Corridor.h"
 #include "src/client/PlayerAction.h"
 #include "src/client/WallAction.h"
 
@@ -104,17 +106,17 @@ auto GameModel::getCurrentPlayer() noexcept -> const int *
     return &m_currentPlayerIdx;
 }
 
-/* auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool */
-/* { */
-/*     PlayerAction action {m_board, m_players.at(m_currentPlayerIdx), movePoint/2}; */
-/*     return action.isActionValid(); */
-/* } */
+auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool
+{
+    PlayerAction action {m_board, m_players.at(m_currentPlayerIdx), movePoint / 2};
+    return action.isActionValid();
+}
 
-/* auto GameModel::isWallValid(const Point &dest, WallOrientation ori) const noexcept -> bool */
-/* { */
-/*     WallAction action {m_board, m_players.at(m_currentPlayerIdx), dest, ori}; */
-/*     return action.isWallPlacementLegal() && action.isWallPlacementValid(); */
-/* } */
+auto GameModel::isWallValid(const Point &dest, WallOrientation ori) const noexcept -> bool
+{
+    WallAction action {m_board, m_players.at(m_currentPlayerIdx), dest, ori};
+    return action.isWallPlacementLegal() && action.isWallPlacementValid();
+}
 
 auto GameModel::getPlayerAction(const Point &dest) const noexcept -> PlayerAction
 {
@@ -154,7 +156,59 @@ auto GameModel::playerSurrendered(const std::string &p_username) -> void
         m_winner = m_players.front()->getUsername();
     }
 }
+auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void
+{
+    const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+              occupiedHorizontalQuoridor = 7;
+    boardIntMatrix.clear();
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = m_board->getRotatedBoardMatrix(m_players.at(m_currentPlayerIdx)->getFinishLine());
+
+    for (int y = 0; y < boardMatrix.size(); y++) {
+        std::vector<int> row;
+        for (int x = 0; x < boardMatrix[y].size(); x++) {
+            if (m_board->isCell({x, y})) {
+                if (m_board->isFree({x, y}))
+                    row.push_back(freeCell);
+                else {
+                    auto playerCell = (std::dynamic_pointer_cast<Cell>(boardMatrix.at(x).at(y)));
+                    switch (playerCell->getPlayer()->getColor()) {
+                    case PawnColors::Yellow:
+                        row.push_back(playerOne);
+                        break;
+                    case PawnColors::Green:
+                        row.push_back(playerTwo);
+                        break;
+                    case PawnColors::Blue:
+                        row.push_back(playerThree);
+                        break;
+                    case PawnColors::Purple:
+                        row.push_back(playerFour);
+                        break;
+                    }
+                }
+            } else if (boardMatrix.at(x).at(y) && boardMatrix.at(x).at(y)->isOccupied()) {
+                auto orientation = std::dynamic_pointer_cast<Corridor>(boardMatrix.at(x).at(y))->getOrientation();
+                row.push_back((orientation == WallOrientation::Vertical ? occupiedVerticalQuoridor : occupiedHorizontalQuoridor));
+            } else
+                row.push_back(emptyQuoridor);
+        }
+        boardIntMatrix.push_back(row);
+    }
+}
 
 /* auto GameModel::addGameMessage(const std::string &, const Message &) -> void */
 /* { */
 /* } */
+AiGameModel::AiGameModel(const std::vector<std::string> &p_players)
+    : GameModel(p_players)
+{
+}
+auto AiGameModel::processAction(const std::string &p_action) -> void
+{
+    GameModel::processAction(p_action);
+
+    // ai plays
+//    auto aiPlay = m_aiPlayer.findAction(m_board, m_players.at((m_currentPlayerIdx + 1) % m_players.size()), m_players.at(m_currentPlayerIdx));
+//    auto aiPlayJsonStr = aiPlay.serialized().dump();
+//    GameModel::processAction(aiPlayJsonStr);
+}

@@ -10,8 +10,9 @@
 
 #include "Board.h"
 #include "BoardComponent.h"
-#include "src/common/Point.h"
 #include "src/common/Message.h"
+#include "src/common/Point.h"
+#include "src/common/aiPlayer.h"
 
 #include <map>
 #include <memory>
@@ -35,12 +36,7 @@ class GameModel
 private:
     int m_gameId {-1};
 
-    std::shared_ptr<Board> m_board;
-    std::vector<std::shared_ptr<Player>> m_players;
-
     std::string m_winner {""};
-
-    int m_currentPlayerIdx {0};
 
     auto addPlayer(PawnColors, const Point &, int, FinishLine, const std::string &) -> void;
 
@@ -48,6 +44,13 @@ private:
     auto getPlayerActionFromSer(const std::string &) -> PlayerAction;
 
     /* std::map<std::string, SPtrToVec<Message>> m_gameChats; */
+
+protected:
+    std::shared_ptr<Board> m_board;
+
+    std::vector<std::shared_ptr<Player>> m_players;
+
+    int m_currentPlayerIdx {0};
 
 public:
     /**
@@ -64,12 +67,12 @@ public:
     /**
      * @note Winner can be established.
      */
-    auto processAction(const std::string &) -> void;
+    virtual auto processAction(const std::string &) -> void;
 
     auto getCurrentPlayer() noexcept -> const int *;
 
-    /* auto isMoveValid(const Point &) const noexcept -> bool; */
-    /* auto isWallValid(const Point &, WallOrientation) const noexcept -> bool; */
+    auto isMoveValid(const Point &) const noexcept -> bool;
+    auto isWallValid(const Point &, WallOrientation) const noexcept -> bool;
 
     auto getPlayerAction(const Point &) const noexcept -> PlayerAction;
     auto getWallAction(const Point &, WallOrientation) const noexcept -> WallAction;
@@ -83,6 +86,15 @@ public:
     auto playerSurrendered(const std::string &) -> void;
 
     /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
-    /* auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void; */
+    auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;
     /* auto addGameMessage(const std::string &, const Message &) -> void; */
+};
+
+class AiGameModel : public GameModel
+{
+    aiPlayer m_aiPlayer {};
+
+public:
+    AiGameModel(const std::vector<std::string> &);
+    auto processAction(const std::string &) -> void override;
 };

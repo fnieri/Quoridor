@@ -54,6 +54,7 @@ class TerminalVue
 {
     MainController mainController;
     MainModel *mainModel = mainController.getMainModel();
+    GameModel *gameModel;
     ServerController *serverController = new ServerController {&mainController};
 
     ScreenInteractive *screen;
@@ -113,9 +114,10 @@ class TerminalVue
     std::vector<std::string> loginTabValues {
         "Login",
         "Register",
+        "Training",
     };
     std::vector<Component> mainTabComponents;
-    int mainTabSelect = 0, loginTabSelect = 0;
+    int mainTabSelect = 0, loginTabSelect = 2;
     int rightSize = 0;
     bool isGameStarted = false;
     bool isCreatingGame = false;
@@ -222,6 +224,9 @@ class TerminalVue
      * @return Toggle
      */
     auto createActionToggle();
+
+    auto createTrainingRenderer();
+    auto createBoardGameRenderer();
 
     /**
      * @brief Create a Orientation Toggle object, to chose in which direction you place your wall

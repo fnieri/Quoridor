@@ -76,8 +76,9 @@ public:
     auto getGameIDs() const noexcept -> const std::vector<int> *;
 
     auto isInGame() const noexcept -> bool;
-    auto getCurrentGame() const noexcept -> const GameModel*;
+    auto getCurrentGame() const noexcept -> GameModel*;
     auto loadGame(const int &) noexcept -> void;
+    auto createAiGame() noexcept -> void;
 //    auto isPlayerTurn() const noexcept -> bool;
 
     auto getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>> *;

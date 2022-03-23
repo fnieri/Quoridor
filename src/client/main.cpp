@@ -64,12 +64,12 @@ int main(int argc, char *argv[])
     //    for (const auto& f : *friendRequestsReceived) {
     //        std::cout << f << std::endl;
     //    }
-    gameLoop();
+//    gameLoop();
 
     //    system("clear");
-    //    TerminalVue vue;
-    //    vue.run();
-    //
+        TerminalVue vue;
+        vue.run();
+
     //        std::thread t1(&TerminalVue::run, &vue);
     //        t1.join();
 
