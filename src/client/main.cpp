@@ -1,7 +1,7 @@
-#include "TerminalVue.h"
 #include <cstdlib>
 #include <iostream>
 #include <map>
+#include <string>
 #include <unistd.h>
 #include <vector>
 
@@ -9,7 +9,9 @@
 #include "MainController.h"
 #include "MainModel.h"
 #include "Player.h"
+#include "QtVue.h"
 #include "ServerController.h"
+#include "TerminalVue.h"
 #include "src/common/aiPlayer.h"
 
 void gameLoop()
@@ -44,6 +46,24 @@ void gameLoop()
     board->debugPrint();
 }
 
+int startNoGui()
+{
+    system("clear");
+    TerminalVue vue;
+    vue.run();
+
+    // std::thread t1(&TerminalVue::run, &vue);
+    // t1.join();
+
+    return 0;
+}
+
+int startGui(int argc, char *argv[])
+{
+    QtVue vue(argc, argv);
+    return vue.run();
+}
+
 int main(int argc, char *argv[])
 {
     //    MainController mainController;
@@ -64,14 +84,12 @@ int main(int argc, char *argv[])
     //    for (const auto& f : *friendRequestsReceived) {
     //        std::cout << f << std::endl;
     //    }
-    gameLoop();
+    // gameLoop();
 
-    //    system("clear");
-    //    TerminalVue vue;
-    //    vue.run();
-    //
-    //        std::thread t1(&TerminalVue::run, &vue);
-    //        t1.join();
+    for (int i = 1; i < argc; ++i) {
+        if (std::string(argv[i]) == "-no-gui")
+            return startNoGui();
+    }
 
-    return 0;
+    return startGui(argc, argv);
 };
