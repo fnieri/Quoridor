@@ -14,13 +14,13 @@
 #include "src/client/WallAction.h"
 
 #include <iostream>
+#include <memory>
 
 GameModel::GameModel(const std::vector<std::string> &p_players)
 {
     const std::array<Point, 4> defaultPos {Point {4, 0}, Point {4, 8}, Point {0, 4}, Point {8, 4}};
 
     for (int i = 0; i < p_players.size(); ++i) {
-
         auto color {static_cast<PawnColors>(i)};
         auto pos {defaultPos[i]};
         auto remWalls {10};
@@ -49,6 +49,9 @@ GameModel::GameModel(const std::string &p_conf)
 
 auto GameModel::addPlayer(PawnColors color, const Point &pos, int remWalls, FinishLine finishLine, const std::string &username) -> void
 {
+//    auto p = std::make_shared<Player>(color, pos, remWalls, finishLine, username);
+//    m_players.push_back(p);
+//    m_board->spawnPlayer(p);
     m_players.push_back(std::make_shared<Player>(color, pos, remWalls, finishLine, username));
     m_board->spawnPlayer(m_players.back());
 }
@@ -78,7 +81,7 @@ auto GameModel::getPlayerActionFromSer(const std::string &ser) -> PlayerAction
 
 auto GameModel::processAction(const std::string &p_action) -> void
 {
-    auto action(json::parse(p_action));
+    auto action= json::parse(p_action);
 
     if (action["action_type"] == "wall") {
         auto specAction {getWallActionFromSer(action.dump())};
@@ -143,7 +146,7 @@ auto GameModel::playerSurrendered(const std::string &p_username) -> void
     auto playerIt {std::find_if(m_players.begin(), m_players.end(), [p_username](auto &p) { return p->getUsername() == p_username; })};
 
     if (playerIt == m_players.end()) {
-        std::cerr << "The players doesn't exist!\n";
+        std::cerr << "The players don't exist!\n";
         return;
     }
 
@@ -161,11 +164,12 @@ auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatr
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
               occupiedHorizontalQuoridor = 7;
     boardIntMatrix.clear();
+    if (m_players.empty()) return;
     std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = m_board->getRotatedBoardMatrix(m_players.at(m_currentPlayerIdx)->getFinishLine());
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
-        for (int x = 0; x < boardMatrix[y].size(); x++) {
+        for (int x = 0; x < boardMatrix.at(y).size(); x++) {
             if (m_board->isCell({x, y})) {
                 if (m_board->isFree({x, y}))
                     row.push_back(freeCell);
@@ -203,6 +207,7 @@ AiGameModel::AiGameModel(const std::vector<std::string> &p_players)
     : GameModel(p_players)
 {
 }
+
 auto AiGameModel::processAction(const std::string &p_action) -> void
 {
     GameModel::processAction(p_action);

@@ -46,11 +46,19 @@ void gameLoop()
 
 int main(int argc, char *argv[])
 {
-    //    MainController mainController;
+        MainController mainController;
     //    ServerController serverController {&mainController};
     //    //    serverController.login("testing", "testingPassword");
     //    serverController.login("ok", "k");
-    //    auto model = mainController.getMainModel();
+        auto model = mainController.getMainModel();
+        model->createAiGame();
+        auto game = model->getCurrentGame();
+        if (game) {
+
+            auto playerAction = game->getPlayerAction(Point {8, 2});
+            game->processAction(playerAction.serialized().dump());
+            return 0;
+        }
     //
     //    serverController.fetchData();
     //    model->getUsername();
@@ -66,7 +74,7 @@ int main(int argc, char *argv[])
     //    }
 //    gameLoop();
 
-    //    system("clear");
+//        system("clear");
         TerminalVue vue;
         vue.run();
 

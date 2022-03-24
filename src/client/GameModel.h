@@ -46,9 +46,9 @@ private:
     /* std::map<std::string, SPtrToVec<Message>> m_gameChats; */
 
 protected:
-    std::shared_ptr<Board> m_board;
+    std::shared_ptr<Board> m_board = std::make_shared<Board>();
 
-    std::vector<std::shared_ptr<Player>> m_players;
+    std::vector<std::shared_ptr<Player>> m_players{};
 
     int m_currentPlayerIdx {0};
 

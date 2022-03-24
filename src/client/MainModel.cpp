@@ -187,7 +187,7 @@ auto MainModel::setHasFriends(const bool &val) -> void
     hasFriends = val;
 }
 
-auto MainModel::getCurrentGame() const noexcept -> GameModel *
+auto MainModel::getCurrentGame() -> GameModel *
 {
     return m_currentGame.get();
 }
@@ -224,6 +224,7 @@ auto MainModel::setGameNotification(const bool &val) -> void
 
 auto MainModel::createAiGame() noexcept -> void
 {
-    std::vector<std::string> p_players;
-    m_currentGame = std::make_shared<AiGameModel>(p_players);
+    std::vector<std::string> p_players {"player", "ai"};
+    //    m_currentGame = new GameModel(p_players);
+    updatePtrValue(m_currentGame, GameModel {p_players});
 }

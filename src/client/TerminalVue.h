@@ -54,7 +54,7 @@ class TerminalVue
 {
     MainController mainController;
     MainModel *mainModel = mainController.getMainModel();
-    GameModel *gameModel;
+    GameModel *gameModel = mainModel->getCurrentGame();
     ServerController *serverController = new ServerController {&mainController};
 
     ScreenInteractive *screen;

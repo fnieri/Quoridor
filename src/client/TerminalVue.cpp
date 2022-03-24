@@ -43,105 +43,102 @@ bool TerminalVue::isWallPlacementValid(int x, int y)
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        gameModel = mainModel->getCurrentGame();
-        if (!gameModel) {
-            return text("Loading game...");
-        }
-        //        gameController->updateBoardIntMatrix(boardIntMatrix);
-        gameModel->updateBoardIntMatrix(boardIntMatrix);
-        const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
-                  occupiedHorizontalQuoridor = 7;
-        auto c = Canvas(200, 200);
-        std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
-        std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
+        //        auto gModel = *mainModel->getCurrentGame()
+        if (gameModel) {
+            gameModel->updateBoardIntMatrix(boardIntMatrix);
+            const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+                      occupiedHorizontalQuoridor = 7;
+            auto c = Canvas(200, 200);
+            std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
+            std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
 
-        c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
+            c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
 
-        std::string remainingWallsText;
-        for (int player = 0; player < remainingWalls.size(); ++player) {
-            if (remainingWalls[player] > 0) {
-                remainingWallsText += "Player " + std::to_string(player + 1) + ": " + std::to_string(remainingWalls[player]) + ", ";
+            // TODO get game data
+            std::string remainingWallsText;
+            for (int p = 0; p < remainingWalls.size(); ++p) {
+                if (remainingWalls[p] > 0) {
+                    remainingWallsText += "Player " + std::to_string(p + 1) + ": " + std::to_string(remainingWalls[p]) + ", ";
+                }
             }
+            c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
+            c.DrawText(0, 190, "Player's turn: " + std::to_string(*gameModel->getCurrentPlayer()), playerTurn == player ? Color::Green : Color::Red);
+            c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
+
+            // dx and dy represent the distance between cells
+            int dy = 10;
+            for (int i = 0; i < boardIntMatrix.size(); i++) {
+                int dx = 10;
+                for (int j = 0; j < boardIntMatrix[i].size(); j++) {
+                    int gridValue = boardIntMatrix[i][j];
+                    switch (gridValue) {
+                    case freeCell:
+                        // draw a free cell
+                        if (isClickValid(dx, dy) && isMoveValid(j, i)) {
+                            // if mouse is pressed on this cell/quoridor
+                            c.DrawText(dx, dy, "\u25A0");
+                            handleCellClick(j, i);
+                        } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
+                            // if mouse is pressed on this cell/quoridor
+                            c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+                            c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
+                        } else {
+                            c.DrawText(dx, dy, "\u25A1");
+                        }
+                        break;
+
+                    case emptyQuoridor:
+                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
+                            std::vector<int> direction = quoridorDirection[wallOrientation];
+                            c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                            handleWallAdd(j, i);
+                        } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
+                            std::vector<int> direction = quoridorDirection[wallOrientation];
+                            c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
+                        }
+                        // don't draw anything otherwise
+                        break;
+
+                    case occupiedVerticalQuoridor:
+                    case occupiedHorizontalQuoridor: {
+                        std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
+                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                        break;
+                    }
+
+                    case playerOne:
+                    case playerTwo:
+                    case playerThree:
+                    case playerFour:
+                        // draw a player one cell
+                        c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
+                        break;
+
+                    default:
+                        break;
+                    }
+                    dx += 10;
+                }
+                dy += 10;
+            }
+
+            return canvas(std::move(c));
         }
-        // TODO get game data
-        c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
-        c.DrawText(0, 190, "Player's turn: " + std::to_string(*gameModel->getCurrentPlayer()), playerTurn == player ? Color::Green : Color::Red);
-        c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
 
-        // dx and dy represent the distance between cells
-        int dy = 10;
-//        for (int i = 0; i < boardIntMatrix.size(); i++) {
-//            int dx = 10;
-//            for (int j = 0; j < boardIntMatrix[i].size(); j++) {
-//                int gridValue = boardIntMatrix[i][j];
-//                switch (gridValue) {
-//                case freeCell:
-//                    // draw a free cell
-//                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
-//                        // if mouse is pressed on this cell/quoridor
-//                        c.DrawText(dx, dy, "\u25A0");
-//                        handleCellClick(j, i);
-//                    } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
-//                        // if mouse is pressed on this cell/quoridor
-//                        c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
-//                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
-//                    } else {
-//                        c.DrawText(dx, dy, "\u25A1");
-//                    }
-//                    break;
-//
-//                case emptyQuoridor:
-//                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
-//                        std::vector<int> direction = quoridorDirection[wallOrientation];
-//                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-//                        handleWallAdd(j, i);
-//                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
-//                        std::vector<int> direction = quoridorDirection[wallOrientation];
-//                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
-//                    }
-//                    // don't draw anything otherwise
-//                    break;
-//
-//                case occupiedVerticalQuoridor:
-//                case occupiedHorizontalQuoridor: {
-//                    std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
-//                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-//                    break;
-//                }
-//
-//                case playerOne:
-//                case playerTwo:
-//                case playerThree:
-//                case playerFour:
-//                    // draw a player one cell
-//                    c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
-//                    break;
-//
-//                default:
-//                    break;
-//                }
-//                dx += 10;
-//            }
-//            dy += 10;
-//        }
-
-        return canvas(std::move(c));
+        gameModel = mainModel->getCurrentGame();
+        return text("Loading...");
     });
 }
 
 void TerminalVue::handleCellClick(int x, int y)
 {
-    // interact with controller
-    //    gameController->movePlayer(Point{x, y});
-    auto playerAction = gameModel->getPlayerAction(Point{x, y});
+    auto playerAction = gameModel->getPlayerAction(Point {x, y});
     gameModel->processAction(playerAction.serialized().dump());
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
-    // interact with controller
-    //    gameController->placeWall(Point{x, y}, wallOrientation);
-    auto wallAction = gameModel->getWallAction(Point{x, y}, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    auto wallAction = gameModel->getWallAction(Point {x, y}, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
     gameModel->processAction(wallAction.serialized().dump());
 }
 
