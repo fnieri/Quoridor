@@ -15,6 +15,7 @@ add_library(${PREFIX}_client
         ServerBridge.cpp
         ServerController.cpp
         GameModel.cpp
+        TimerMode.cpp
         )
 
 target_link_libraries(${PREFIX}_client

@@ -10,6 +10,7 @@
 
 #include "Board.h"
 #include "BoardComponent.h"
+#include "TimerMode.h"
 #include "src/common/Message.h"
 #include "src/common/Point.h"
 #include "src/common/aiPlayer.h"
@@ -93,7 +94,7 @@ public:
     auto rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>;
     auto debugPrintBoard() -> void;
 
-    auto serialized() -> nlohmann::json;
+    virtual auto serialized() -> nlohmann::json;
 
     /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
     auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;
@@ -107,4 +108,22 @@ class AiGameModel : public GameModel
 public:
     AiGameModel(const std::vector<std::string> &);
     auto processAction(const std::string &) -> void override;
+};
+
+class TimerGameModel : public GameModel
+{
+    TimerMode m_timerMode;
+
+public:
+    TimerGameModel(const std::string &);
+    TimerGameModel(const std::vector<std::string> &);
+    auto processAction(const std::string &) -> void override;
+    auto serialized() -> nlohmann::json override;
+};
+
+class BlindingWallGameModel : public GameModel
+{
+
+public:
+    BlindingWallGameModel(const std::vector<std::string> &);
 };

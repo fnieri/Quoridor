@@ -271,6 +271,7 @@ auto GameModel::getPlayersRemainingWalls() noexcept -> std::map<std::string, int
 /* auto GameModel::addGameMessage(const std::string &, const Message &) -> void */
 /* { */
 /* } */
+
 AiGameModel::AiGameModel(const std::vector<std::string> &p_players)
     : GameModel(p_players)
 {
@@ -284,4 +285,27 @@ auto AiGameModel::processAction(const std::string &p_action) -> void
     auto aiPlay = m_aiPlayer.findAction(m_board, m_players.at((m_currentPlayerIdx) % m_players.size()), m_players.at(m_currentPlayerIdx));
     auto aiPlayJsonStr = aiPlay.serialized().dump();
     GameModel::processAction(aiPlayJsonStr);
+}
+
+TimerGameModel::TimerGameModel(const std::string &player)
+    : GameModel(player)
+    , m_timerMode {2, 30, 120}
+{
+}
+
+TimerGameModel::TimerGameModel(const std::vector<std::string> &players)
+    : GameModel(players)
+    , m_timerMode {(int)players.size(), 30, 120}
+{
+}
+
+auto TimerGameModel::processAction(const std::string &action) -> void
+{
+    GameModel::processAction(action);
+    // Mettre à jour le timer
+}
+
+auto TimerGameModel::serialized() -> json
+{
+    return json::array();
 }
