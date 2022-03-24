@@ -13,7 +13,8 @@
 #include "BoardComponent.h"
 #include "Player.h"
 #include "WallEnum.h"
-#include <nlohmann/json.hpp>
+
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 #include <vector>
@@ -304,6 +305,9 @@ public:
     std::vector<std::vector<std::shared_ptr<BoardComponent>>> getRotatedBoardMatrix(FinishLine rotation);
 
     void debugPrint();
+
+    auto getSerializedWalls() -> nlohmann::json;
+    auto putSerializedWalls(nlohmann::json wallPos) -> void;
 
     ~Board();
 

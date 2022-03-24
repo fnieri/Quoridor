@@ -6,7 +6,7 @@
 #include "PlayerEnum.h"
 #include "src/common/Point.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 #include <string>

@@ -1,4 +1,6 @@
 #include <catch2/catch.hpp>
+#include "nlohmann/json.hpp"
+#include <nlohmann/json_fwd.hpp>
 
 #include "src/common/SerializableMessageFactory.h"
 #include "src/common/SocketUser.h"

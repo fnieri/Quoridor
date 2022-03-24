@@ -4,6 +4,7 @@
 #include <map>
 #include <unistd.h>
 #include <vector>
+#include "nlohmann/json.hpp"
 
 #include "Board.h"
 #include "MainController.h"
@@ -50,15 +51,16 @@ int main(int argc, char *argv[])
     //    ServerController serverController {&mainController};
     //    //    serverController.login("testing", "testingPassword");
     //    serverController.login("ok", "k");
-        auto model = mainController.getMainModel();
-        model->createAiGame();
-        auto game = model->getCurrentGame();
-        if (game) {
-
-            auto playerAction = game->getPlayerAction(Point {8, 2});
-            game->processAction(playerAction.serialized().dump());
-            return 0;
-        }
+//        auto model = mainController.getMainModel();
+//        model->createAiGame();
+//        auto game = model->getCurrentGame();
+//        if (game) {
+//            game->debugPrintBoard();
+//            auto playerAction = game->getPlayerAction(Point {8, 2});
+//            game->processAction(playerAction.serialized().dump());
+//            game->debugPrintBoard();
+//            return 0;
+//        }
     //
     //    serverController.fetchData();
     //    model->getUsername();

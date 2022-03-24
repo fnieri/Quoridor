@@ -19,7 +19,7 @@
 #include <mongocxx/instance.hpp>
 #include <mongocxx/stdx.hpp>
 #include <mongocxx/uri.hpp>
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <cstdint>
 #include <iostream>

@@ -65,8 +65,8 @@ class TerminalVue
     int mouse_x = 0;
     int mouse_y = 0;
     bool mousePressed = false;
-    int player = 1; // indicate which player the client is
-    int playerTurn = 1; // indicate which player's turn it is
+    int player = -1; // indicate which player the client is
+    const int *playerTurn; // indicate which player's turn it is
     int wallOrientation = 0; // indicate the orientation of the wall
     std::vector<int> remainingWalls {1, 2, -1, -1}; // each index represents a player. if -1, then player is not in game.
     std::vector<std::vector<int>> testCanvasGrid {{0, 5, 0, 5, 0, 5, 0, 6, 0}, {5, 5, 7, 7, 7, 5, 5, 6, 5}, {0, 5, 0, 5, 0, 5, 0, 6, 0},
@@ -136,7 +136,7 @@ class TerminalVue
      * @return true
      * @return false
      */
-    bool isPlayerTurn();
+    bool isPlayerTurn() const;
 
     /**
      * @brief Checks if move is actually valid
@@ -190,7 +190,7 @@ class TerminalVue
      * @return true
      * @return false
      */
-    bool mouseInCell(int x, int y);
+    bool mouseInCell(int x, int y) const;
 
     /**
      * @brief Checks if mouse is targeting a corridor
@@ -200,7 +200,7 @@ class TerminalVue
      * @return true
      * @return false
      */
-    bool mouseInQuoridor(int x, int y);
+    bool mouseInQuoridor(int x, int y) const;
 
     /**
      * @brief view method that interacts with controller to handle a Cell click

@@ -225,6 +225,6 @@ auto MainModel::setGameNotification(const bool &val) -> void
 auto MainModel::createAiGame() noexcept -> void
 {
     std::vector<std::string> p_players {"player", "ai"};
-    //    m_currentGame = new GameModel(p_players);
-    updatePtrValue(m_currentGame, GameModel {p_players});
+    setUsername(p_players[0]);
+    updatePtrValue(m_currentGame, AiGameModel {p_players});
 }

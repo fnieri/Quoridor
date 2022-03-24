@@ -1,5 +1,7 @@
 #include "MainController.h"
 
+#include <nlohmann/json.hpp>
+
 MainController::MainController()
 {
     m_mainModel = new MainModel();

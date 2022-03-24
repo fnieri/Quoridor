@@ -14,6 +14,8 @@
 #include "src/common/Point.h"
 #include "src/common/aiPlayer.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <map>
 #include <memory>
 #include <vector>
@@ -77,6 +79,9 @@ public:
     auto getPlayerAction(const Point &) const noexcept -> PlayerAction;
     auto getWallAction(const Point &, WallOrientation) const noexcept -> WallAction;
 
+    auto getPlayerIdx(const std::string &) const noexcept -> int;
+    auto getPlayersRemainingWalls() noexcept -> std::map<std::string, int>;
+
     auto hasWinner() const -> bool;
     auto getWinner() const -> std::string;
 
@@ -84,6 +89,11 @@ public:
      * @note Winner can be established.
      */
     auto playerSurrendered(const std::string &) -> void;
+
+    auto rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>;
+    auto debugPrintBoard() -> void;
+
+    auto serialized() -> nlohmann::json;
 
     /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
     auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;

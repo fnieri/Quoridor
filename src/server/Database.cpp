@@ -6,6 +6,8 @@
 
 #include "PasswordEncrypter.h"
 
+#include <nlohmann/json.hpp>
+
 // avoids having long namespaces
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;

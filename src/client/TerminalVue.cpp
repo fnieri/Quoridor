@@ -3,24 +3,26 @@
 //
 
 #include "TerminalVue.h"
+#include "nlohmann/json.hpp"
+#include <nlohmann/json_fwd.hpp>
 
-bool TerminalVue::mouseInCell(int x, int y)
+bool TerminalVue::mouseInCell(int x, int y) const
 {
     if (actionToggleSelected != 0)
         return false;
     return abs(x - mouse_x) <= 3 && abs(y - mouse_y) <= 3;
 }
 
-bool TerminalVue::mouseInQuoridor(int x, int y)
+bool TerminalVue::mouseInQuoridor(int x, int y) const
 {
     if (actionToggleSelected != 1)
         return false;
     return abs(x - mouse_x) <= (wallOrientation == 0 ? 3 : 15) && abs(y - mouse_y) <= (wallOrientation == 0 ? 15 : 3);
 }
 
-bool TerminalVue::isPlayerTurn()
+bool TerminalVue::isPlayerTurn() const
 {
-    return playerTurn == player;
+    return *playerTurn == player;
 }
 
 bool TerminalVue::isClickValid(int x, int y)
@@ -31,20 +33,26 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return gameModel->isMoveValid(Point(x, y));
+    return gameModel->isMoveValid(Point {x, y});
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return gameModel->isWallValid(Point(x, y), wallOrientation == 0 ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    return gameModel->isWallValid(Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal);
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        //        auto gModel = *mainModel->getCurrentGame()
         if (gameModel) {
+            if (gameModel->hasWinner()) {
+                return text("Player " + gameModel->getWinner() + " has won!");
+            }
+            if (player == -1) {
+                player = gameModel->getPlayerIdx(*mainModel->getUsername());
+                playerTurn = gameModel->getCurrentPlayer();
+            }
             gameModel->updateBoardIntMatrix(boardIntMatrix);
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
@@ -54,15 +62,14 @@ auto TerminalVue::createCanvas()
 
             c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
 
-            // TODO get game data
             std::string remainingWallsText;
-            for (int p = 0; p < remainingWalls.size(); ++p) {
-                if (remainingWalls[p] > 0) {
-                    remainingWallsText += "Player " + std::to_string(p + 1) + ": " + std::to_string(remainingWalls[p]) + ", ";
-                }
+            auto remainingWallsMap = gameModel->getPlayersRemainingWalls();
+            for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
+                remainingWallsText += playerUsername + ": " + std::to_string(remainingWalls) + ", ";
             }
+
             c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
-            c.DrawText(0, 190, "Player's turn: " + std::to_string(*gameModel->getCurrentPlayer()), playerTurn == player ? Color::Green : Color::Red);
+            c.DrawText(0, 190, "Player's turn: " + std::to_string(*playerTurn), *playerTurn == player ? Color::Green : Color::Red);
             c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
 
             // dx and dy represent the distance between cells
@@ -138,7 +145,7 @@ void TerminalVue::handleCellClick(int x, int y)
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
-    auto wallAction = gameModel->getWallAction(Point {x, y}, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    auto wallAction = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
     gameModel->processAction(wallAction.serialized().dump());
 }
 

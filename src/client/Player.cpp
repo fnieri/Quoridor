@@ -16,6 +16,7 @@ Player::Player(const PawnColors &color, const Point &position, const int &nwalls
     , finishLine {finishLine}
     , username {username}
 {
+    index = static_cast<int>(color);
 }
 
 int Player::x() const

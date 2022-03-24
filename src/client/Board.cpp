@@ -13,6 +13,8 @@
 #include "Player.h"
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 #include <memory>
 #include <stack>
@@ -384,6 +386,47 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
     }
 
     return rotated;
+}
+
+auto Board::getSerializedWalls() -> json
+{
+    auto wallPos(json::array());
+
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+
+            auto comp {matrix.at(i).at(j)};
+            auto position {
+                Point {i, j}
+            };
+
+            if (comp && comp->isOccupied() && !isCell(position)) {
+
+                auto orientation {std::dynamic_pointer_cast<Corridor>(comp)->getOrientation()};
+
+                wallPos.push_back({
+                    {"orientation", orientation          },
+                    {"position",    position.serialized()},
+                });
+            }
+        }
+    }
+
+    return wallPos;
+}
+
+auto Board::putSerializedWalls(json wallPos) -> void
+{
+    for (auto &i_wall : wallPos) {
+
+        auto ori {static_cast<WallOrientation>(i_wall["orientation"])};
+        auto pos {Point::deserialized(i_wall["position"].dump())};
+
+        auto corridor {std::make_shared<Corridor>(ori)};
+        corridor->placeWall();
+
+        matrix.at(pos.x()).at(pos.y()) = corridor;
+    }
 }
 
 json Board::serialized()

@@ -12,7 +12,7 @@
 #include "MessageEnums/Modes/GameModes.h"
 #include "SerializableMessageFactory.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 

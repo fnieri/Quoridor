@@ -11,7 +11,8 @@
 #include "MessageEnums/DataTypes.h"
 #include "MessageEnums/Status.h"
 #include "Serializable.h"
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
+#include "nlohmann/json.hpp"
 
 template <typename T>
 T getResourceFromAnswer(const std::string &serRequest)
