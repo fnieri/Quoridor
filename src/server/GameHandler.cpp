@@ -38,8 +38,9 @@ void GameHandler::setConfiguration(const std::string &configuration)
 {
     m_configuration = configuration;
 
-    auto config(json::parse(configuration));
-    auto players = config.at("player");
+    auto config= json::parse(configuration);
+    std::cout << config << std::endl;
+    auto players = config.at("players");
     m_players.clear();
     for (auto &player : players) {
         addPlayer(player.at("username").get<std::string>()); // Add player by its username
@@ -221,12 +222,12 @@ void GameHub::processGameCreation(const std::string &serRequest)
 
     // This add the players to the game
     tmp->setConfiguration(request["game_configuration"]);
-    tmp->playerJoined(request["username_sending"]);
+    tmp->playerJoined(request["sender"]);
     tmp->saveToDB();
 
     m_games.push_back(tmp);
 
-    for (auto &i_user : request["username_receiving"]) {
+    for (auto &i_user : request["receivers"]) {
         m_userHub->relayMessageTo(i_user, serRequest);
     }
 }
@@ -283,17 +284,19 @@ void GameHub::unloadGame(int gameID)
 void GameHub::processRequest(const std::string &serRequest)
 {
     // Mutex when operating on game creation
+    std::cout << "GameHub: processing request" << std::endl;
     std::lock_guard<std::mutex> guard {m_gamesMutex};
+    std::cout << "GameHub: request processed" << std::endl;
 
-    auto request(json::parse(serRequest));
-
-    if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
-        processGameCreation(serRequest);
-
-    } else if (request["action"] == toJsonString(GameSetup::JOIN_GAME)) {
-        processGameJoin(serRequest);
-
-    } else if (request["action"] == toJsonString(GameSetup::QUIT_GAME)) {
-        processGameQuit(serRequest);
-    }
+//    auto request= json::parse(serRequest);
+//
+//    if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
+//        processGameCreation(serRequest);
+//
+//    } else if (request["action"] == toJsonString(GameSetup::JOIN_GAME)) {
+//        processGameJoin(serRequest);
+//
+//    } else if (request["action"] == toJsonString(GameSetup::QUIT_GAME)) {
+//        processGameQuit(serRequest);
+//    }
 }

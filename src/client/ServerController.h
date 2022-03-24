@@ -34,4 +34,6 @@ public:
     auto fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void;
     auto fetchLeaderboard() -> void;
     auto fetchElo() -> void;
+
+    auto createGame(const std::string &username, const std::vector<std::string> &players) -> void;
 };

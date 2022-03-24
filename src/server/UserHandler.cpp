@@ -192,6 +192,7 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
 
 void UserHandler::processGameSetup(const std::string &serRequest)
 {
+    std::cout << "Processing game setup request" << std::endl;
     m_gameHub->processRequest(serRequest);
 }
 

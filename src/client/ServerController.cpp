@@ -94,3 +94,11 @@ auto ServerController::removeFriend(const std::string &sender, const std::string
 {
     sendJson(SerializableMessageFactory::serializeFriendRemove(sender, receiver));
 }
+
+auto ServerController::createGame(const std::string &username, const std::vector<std::string> &players) -> void
+{
+    GameModel defaultGameModel {players};
+    defaultGameModel.serialized();
+    sendJson(
+        SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
+}

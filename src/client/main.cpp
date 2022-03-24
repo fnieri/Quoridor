@@ -1,10 +1,10 @@
 #include "TerminalVue.h"
+#include "nlohmann/json.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <map>
 #include <unistd.h>
 #include <vector>
-#include "nlohmann/json.hpp"
 
 #include "Board.h"
 #include "MainController.h"
@@ -47,20 +47,22 @@ void gameLoop()
 
 int main(int argc, char *argv[])
 {
-        MainController mainController;
-    //    ServerController serverController {&mainController};
-    //    //    serverController.login("testing", "testingPassword");
+    MainController mainController;
+    ServerController serverController {&mainController};
+    serverController.login("testing", "testingPassword");
+    serverController.createGame("testing", {"testing", "testingFriend"});
+    return 0;
     //    serverController.login("ok", "k");
-//        auto model = mainController.getMainModel();
-//        model->createAiGame();
-//        auto game = model->getCurrentGame();
-//        if (game) {
-//            game->debugPrintBoard();
-//            auto playerAction = game->getPlayerAction(Point {8, 2});
-//            game->processAction(playerAction.serialized().dump());
-//            game->debugPrintBoard();
-//            return 0;
-//        }
+    //        auto model = mainController.getMainModel();
+    //        model->createAiGame();
+    //        auto game = model->getCurrentGame();
+    //        if (game) {
+    //            game->debugPrintBoard();
+    //            auto playerAction = game->getPlayerAction(Point {8, 2});
+    //            game->processAction(playerAction.serialized().dump());
+    //            game->debugPrintBoard();
+    //            return 0;
+    //        }
     //
     //    serverController.fetchData();
     //    model->getUsername();
@@ -74,11 +76,11 @@ int main(int argc, char *argv[])
     //    for (const auto& f : *friendRequestsReceived) {
     //        std::cout << f << std::endl;
     //    }
-//    gameLoop();
+    //    gameLoop();
 
-//        system("clear");
-        TerminalVue vue;
-        vue.run();
+    //        system("clear");
+    TerminalVue vue;
+    vue.run();
 
     //        std::thread t1(&TerminalVue::run, &vue);
     //        t1.join();

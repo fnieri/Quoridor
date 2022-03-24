@@ -39,8 +39,8 @@ json GameSetupSerializableMessageFactory::serializeGameCreationRequest(
         receiversArray.push_back(player);
 
     json creationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(GameSetup::CREATE_GAME)}, {"sender", sender},
-        {"receivers", receiversArray}, {"configuration", configuration}};
-    return receiversArray;
+        {"receivers", receiversArray}, {"game_configuration", configuration}};
+    return creationJson;
 }
 /*
 json GameSetupSerializableMessageFactory::serializeGameSetup(

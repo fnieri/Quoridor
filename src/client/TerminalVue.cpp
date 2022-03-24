@@ -239,31 +239,6 @@ auto TerminalVue::createBoardGameRenderer()
 
 auto TerminalVue::createBoardRenderer()
 {
-    //    auto actionToggle = createActionToggle();
-    //    auto orientationToggle = createOrientationToggle();
-    //    auto pauseGameButton = Button(
-    //        "Pause",
-    //        [&] {
-    //            // TODO pause game
-    //            homeTabIndex = 0;
-    //        },
-    //        &buttonOption);
-    //    auto boardCanvas = createCanvas();
-    //    auto tabWithMouse = CatchEvent(boardCanvas, [&](Event e) {
-    //        if (e.is_mouse()) {
-    //            mouse_x = (e.mouse().x - 1) * 2;
-    //            mouse_y = (e.mouse().y - 2) * 4 - 2;
-    //            if (e.mouse().button == Mouse::Left) {
-    //                if (e.mouse().motion == Mouse::Pressed) {
-    //                    mousePressed = true;
-    //                } else if (e.mouse().motion == Mouse::Released) {
-    //                    mousePressed = false;
-    //                }
-    //            }
-    //        }
-    //        return false;
-    //    });
-
     auto createGameBtn = Button(
         "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
     auto joinGameBtn = Button(
@@ -279,15 +254,6 @@ auto TerminalVue::createBoardRenderer()
         "Cancel", [&] { homeTabIndex = 0; }, &buttonOption);
     auto gamePickMenu = Menu(&gameList, &gameSelected);
 
-    Component playWithContainer = Container::Vertical({});
-    for (int i = 0; i < friendsList.size(); ++i) {
-        friendsListStates.push_back(CheckboxState {false});
-    }
-    for (int i = 0; i < friendsList.size(); ++i) {
-        //        friendsListStates.push_back(CheckboxState {false});
-        playWithContainer->Add(Checkbox(&friendsList[i], &(friendsListStates[i].checked)));
-    }
-
     auto boardContainer = Container::Vertical({createGameBtn, joinGameBtn, gamePickMenu, inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
 
     auto creatingGameContainer = Container::Vertical({
@@ -295,7 +261,7 @@ auto TerminalVue::createBoardRenderer()
         inviteAndCreateGameBtn,
         cancelGameCreateGamme,
     });
-    auto creatingGameRender = Renderer(creatingGameContainer, [playWithContainer, inviteAndCreateGameBtn, cancelGameCreateGamme] {
+    auto creatingGameRender = Renderer(creatingGameContainer, [&, inviteAndCreateGameBtn, cancelGameCreateGamme] {
         return vbox(
             {text("Create a game with friends"), separator(), playWithContainer->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border,
                 inviteAndCreateGameBtn->Render(), separator(), cancelGameCreateGamme->Render()});
@@ -312,11 +278,6 @@ auto TerminalVue::createBoardRenderer()
             createGameBtn->Render()});
     });
 
-    //    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
-    //    auto boardGameRender = Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton] {
-    //        return vbox({boardCanvas->Render(), separator(),
-    //            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
-    //    });
     auto boardGameRender = createBoardGameRenderer();
 
     auto gameChat = createChatRenderer();
@@ -325,7 +286,10 @@ auto TerminalVue::createBoardRenderer()
 
     auto homeTab = Container::Tab({homeScreenRender, creatingGameRender, resizeContainer}, &homeTabIndex);
 
-    return Renderer(homeTab, [homeTab] { return homeTab->Render(); });
+    return Renderer(homeTab, [&, homeTab] {
+        updateFriendsListCheckboxes();
+        return homeTab->Render();
+    });
 }
 
 auto TerminalVue::createLeaderBoardRenderer()
@@ -365,9 +329,12 @@ auto TerminalVue::createLoginRenderer()
 auto TerminalVue::createTrainingRenderer()
 {
     auto boardRender = createBoardGameRenderer();
+    auto restartBtn = Button("Restart", [this]() { mainModel->createAiGame(); });
 
-    auto trainingContainer = Container::Vertical({boardRender});
-    return Renderer(trainingContainer, [&, boardRender] { return vbox({text("Training"), boardRender->Render()}); });
+    auto trainingContainer = Container::Vertical({boardRender, restartBtn});
+    return Renderer(trainingContainer, [&, boardRender, restartBtn] {
+        return vbox({text("Training"), boardRender->Render(), separator(), restartBtn->Render()});
+    });
 }
 
 auto TerminalVue::createRegisterRenderer()
@@ -524,7 +491,7 @@ auto TerminalVue::createMainRenderer()
     auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton] {
         updateNotifications();
         return vbox({
-            hbox({tabToggle->Render(), exitButton->Render()}),
+            hbox({tabToggle->Render(), filler(), exitButton->Render()}),
             separator(),
             tabContainer->Render(),
         });
@@ -593,16 +560,17 @@ void TerminalVue::registerUser()
 
 void TerminalVue::userCreateGame()
 {
-    //    int friendSelected = 0;
-    //    for (bool &state : friendsListStates) {
-    //        if (state) {
-    //            friendSelected++;
-    //        }
-    //    }
-    //    if (friendSelected == 2 || friendSelected == 4) {
-    //        // TODO: create a game
-    //        homeTabIndex = 2;
-    //    }
+
+    std::vector<std::string> invitedPlayers {*mainModel->getUsername()};
+
+    for (const auto &state : friendsListStates) {
+        if (state.checked) {
+            invitedPlayers.push_back(state.username);
+        }
+    }
+    if (invitedPlayers.size() == 2 || invitedPlayers.size() == 4) {
+        serverController->createGame(*mainModel->getUsername(), invitedPlayers);
+    }
 }
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)
@@ -646,6 +614,20 @@ void TerminalVue::updateNotifications()
     } else {
         mainTabValues[0] = "Games";
     }
+}
+
+void TerminalVue::updateFriendsListCheckboxes()
+{
+    if (homeTabIndex == 1 && previousHomeTabIndex != homeTabIndex) {
+        auto friendsList = mainModel->getFriendList();
+        for (const auto &i : *friendsList) {
+            friendsListStates.push_back(CheckboxState {false, i});
+        }
+        for (int i = 0; i < friendsList->size(); ++i) {
+            playWithContainer->Add(Checkbox(&friendsList->at(i), &(friendsListStates[i].checked)));
+        }
+    }
+    previousHomeTabIndex = homeTabIndex;
 }
 
 void TerminalVue::acceptFriendRequest()
