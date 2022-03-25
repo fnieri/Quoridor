@@ -17,6 +17,7 @@
 
 #include <cassert>
 #include <iostream>
+#include <thread>
 
 using json = nlohmann::json;
 
@@ -166,6 +167,7 @@ auto GameModel::playerSurrendered(const std::string &p_username) -> void
         m_winner = m_players.front()->getUsername();
     }
 }
+
 auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void
 {
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
@@ -302,7 +304,8 @@ TimerGameModel::TimerGameModel(const std::vector<std::string> &players)
 auto TimerGameModel::processAction(const std::string &action) -> void
 {
     GameModel::processAction(action);
-    // Mettre à jour le timer
+
+    // std::thread P1Thread(&TimerMode::switchPlayer, &m_timerMode, 0);
 }
 
 auto TimerGameModel::serialized() -> json

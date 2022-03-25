@@ -13,6 +13,8 @@
 #include "ServerController.h"
 #include "src/common/aiPlayer.h"
 
+#include <nlohmann/json.hpp>
+
 void gameLoop()
 {
     // load everything
@@ -45,6 +47,7 @@ void gameLoop()
     board->debugPrint();
 }
 
+/*
 int main(int argc, char *argv[])
 {
     MainController mainController;
@@ -87,3 +90,9 @@ int main(int argc, char *argv[])
 
     return 0;
 };
+*/
+
+int main()
+{
+    return 0;
+}

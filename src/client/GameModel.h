@@ -120,10 +120,3 @@ public:
     auto processAction(const std::string &) -> void override;
     auto serialized() -> nlohmann::json override;
 };
-
-class BlindingWallGameModel : public GameModel
-{
-
-public:
-    BlindingWallGameModel(const std::vector<std::string> &);
-};

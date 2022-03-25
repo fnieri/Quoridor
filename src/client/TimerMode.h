@@ -4,14 +4,16 @@
 
 #include <nlohmann/json.hpp>
 
+#include <atomic>
+#include <mutex>
 #include <string>
 #include <vector>
 
 class TimerMode : public Serializable
 {
-    std::vector<float> m_timers;
-    const int c_increment; // number of total seconds
-    bool m_stopTimer = false;
+    std::vector<std::atomic<float>> m_timers;
+    int c_increment; // number of total seconds
+    std::atomic<bool> m_stopTimer = false;
 
 public:
     /**
@@ -29,7 +31,9 @@ public:
      * @param std::vector<float> timers, the timers of all players
      * @throw AssertionError If timers is not of length 2 or 4
      */
-    TimerMode(int increment, std::vector<float> timers);
+    TimerMode(int increment, std::vector<float> &timers);
+
+    explicit TimerMode(const std::string &);
 
     /**
      * @brief Switch player's turn in timer
@@ -41,16 +45,10 @@ public:
     auto switchPlayer(int newPlayer) -> void;
 
     /**
-     * @brief Start a new game's player 1 (0) timer
-     *
-     */
-    auto startGame() -> void;
-
-    /**
      * @brief Saves the timer if game is paused
      *
      */
-    auto serialized() -> nlohmann::json;
+    auto serialized() -> nlohmann::json override;
 
     /**
      * @brief Calculate how much time a user spent to make a move
@@ -80,4 +78,8 @@ public:
      *
      */
     auto setStopTimer(bool) -> void;
+
+    auto saveGame() -> nlohmann::json;
+
+    auto getTimeLeft(int playerID) -> int;
 };
