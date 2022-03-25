@@ -1635,7 +1635,7 @@ void QtVue::setupGameUI()
 
     mainStacked->setCurrentIndex(0);
     gameMainStacked->setCurrentIndex(1);
-    filtersNumberChoices->setCurrentIndex(-1);
+    filtersNumberChoices->setCurrentIndex(1);
     filtersModeChoices->setCurrentIndex(0);
 
     QMetaObject::connectSlotsByName(gameMainWidget);
