@@ -73,7 +73,7 @@ public:
 
     auto getChatWith(const std::string &) noexcept -> SPtrToVec<Message>;
 
-    auto getGameIDs() const noexcept -> const std::vector<int> *;
+    auto getGameIDs() noexcept -> const std::vector<int> *;
 
     auto isInGame() const noexcept -> bool;
     auto getCurrentGame() -> GameModel *;

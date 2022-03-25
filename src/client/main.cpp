@@ -47,13 +47,22 @@ void gameLoop()
 
 int main(int argc, char *argv[])
 {
-    MainController mainController;
-    ServerController serverController {&mainController};
-    serverController.login("testing", "testingPassword");
-    serverController.createGame("testing", {"testing", "testingFriend"});
-    return 0;
+//    MainController mainController;
+//    ServerController serverController {&mainController};
+//    serverController.login("testing", "testingPassword");
+//        serverController.createGame("testing", {"testing", "a"});
+////    sleep(1);
+//
+//    serverController.fetchGameIds();
+//    sleep(1);
+//    auto model = mainController.getMainModel();
+//    auto gameIds = model->getGameIDs();
+//    for (auto gameId : *gameIds) {
+//        std::cout << "Game ID: " << gameId << std::endl;
+//    }
+//    return 0;
+
     //    serverController.login("ok", "k");
-    //        auto model = mainController.getMainModel();
     //        model->createAiGame();
     //        auto game = model->getCurrentGame();
     //        if (game) {
@@ -78,7 +87,7 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-    //        system("clear");
+            system("clear");
     TerminalVue vue;
     vue.run();
 

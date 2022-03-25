@@ -63,6 +63,7 @@ auto ServerController::fetchData() -> void
     fetchElo();
     fetchLeaderboard();
     fetchFriendRequestsReceived();
+    fetchGameIds();
 }
 
 auto ServerController::fetchFriends() -> void
@@ -90,6 +91,11 @@ auto ServerController::fetchFriendMessages(const std::string &requester, const s
     sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester, receiver));
 }
 
+auto ServerController::fetchGameIds() -> void
+{
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS));
+}
+
 auto ServerController::removeFriend(const std::string &sender, const std::string &receiver) -> void
 {
     sendJson(SerializableMessageFactory::serializeFriendRemove(sender, receiver));
@@ -99,6 +105,6 @@ auto ServerController::createGame(const std::string &username, const std::vector
 {
     GameModel defaultGameModel {players};
     defaultGameModel.serialized();
-    sendJson(
+    sendSyncJson(
         SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
 }

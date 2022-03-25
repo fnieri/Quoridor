@@ -244,8 +244,7 @@ auto TerminalVue::createBoardRenderer()
     auto joinGameBtn = Button(
         "Join Game",
         [&] { // TODO join game
-            homeTabIndex = 2;
-            rightSize = 40;
+
         },
         &buttonOption);
     auto inviteAndCreateGameBtn = Button(
@@ -288,6 +287,7 @@ auto TerminalVue::createBoardRenderer()
 
     return Renderer(homeTab, [&, homeTab] {
         updateFriendsListCheckboxes();
+        updateGameIds();
         return homeTab->Render();
     });
 }
@@ -560,7 +560,6 @@ void TerminalVue::registerUser()
 
 void TerminalVue::userCreateGame()
 {
-
     std::vector<std::string> invitedPlayers {*mainModel->getUsername()};
 
     for (const auto &state : friendsListStates) {
@@ -570,7 +569,15 @@ void TerminalVue::userCreateGame()
     }
     if (invitedPlayers.size() == 2 || invitedPlayers.size() == 4) {
         serverController->createGame(*mainModel->getUsername(), invitedPlayers);
+        homeTabIndex = 2;
     }
+}
+
+void TerminalVue::joinGame()
+{
+
+    homeTabIndex = 2;
+    rightSize = 40;
 }
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)
@@ -628,6 +635,19 @@ void TerminalVue::updateFriendsListCheckboxes()
         }
     }
     previousHomeTabIndex = homeTabIndex;
+}
+
+void TerminalVue::updateGameIds()
+{
+    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
+//                serverController->fetchGameIds();
+        //        gameList.clear();
+        auto gameIds = mainModel->getGameIDs();
+        for (auto &i : *gameIds) {
+            gameList.push_back(std::to_string(i));
+        }
+    }
+    //    previousHomeTabIndex = homeTabIndex;
 }
 
 void TerminalVue::acceptFriendRequest()
