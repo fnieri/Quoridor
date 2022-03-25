@@ -2,6 +2,7 @@
 #include "QtVue.h"
 
 #include <QPushButton>
+#include <iostream>
 
 QtVue::QtVue(int argc, char *argv[])
     : app(new QApplication(argc, argv))
@@ -323,9 +324,31 @@ void QtVue::setupLoginUI()
     loginButton->setText("LOGIN");
     registerLabel->setText("Not registered yet ?");
     registerButtonLogin->setText("REGISTER");
+
+    QObject::connect(loginButton, &QPushButton::clicked, [this]() { this->loginButtonPressed(); });
 }
 
 /* === Game Window === */
 void QtVue::setupGameUI()
+{
+    // POUR LES AUTRES: Copy paste le code de qt ici en une seule fonction, SANS le MainWindow, et changer les translate() avec setText()
+    // Pour référence regardez dans setupLoginUI() et setupRegisterUI()
+}
+
+/* Slots */
+void QtVue::loginButtonPressed()
+{
+    std::cout << "login pressed!" << std::endl;
+}
+
+void QtVue::registerButtonPressed()
+{
+}
+
+void QtVue::loginFieldsUpdated()
+{
+}
+
+void QtVue::registerFieldsUpdated()
 {
 }

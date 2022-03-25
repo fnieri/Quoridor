@@ -18,6 +18,8 @@
 
 class QtVue
 {
+
+private:
     MainController mainController;
     MainModel *mainModel = mainController.getMainModel();
     ServerController *serverController = new ServerController {&mainController};
@@ -65,11 +67,19 @@ class QtVue
     void setupLoginUI();
 
     /* === Game Window === */
+    
     void setupGameUI();
 
 public:
     QtVue(int argc, char *argv[]);
-    ~QtVue();
+    virtual ~QtVue();
 
     int run();
+
+public slots:
+    void loginButtonPressed();
+    void registerButtonPressed();
+
+    void loginFieldsUpdated();
+    void registerFieldsUpdated();
 };
