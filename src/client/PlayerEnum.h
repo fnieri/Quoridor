@@ -4,4 +4,4 @@
 enum class PawnColors { Yellow, Green, Blue, Purple };
 
 /// The possible borders of the board for players to reach to win.
-enum class FinishLine { North, East, South, West };
+enum class FinishLine { North, South, East, West };

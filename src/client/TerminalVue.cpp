@@ -613,11 +613,17 @@ void TerminalVue::updateNotifications()
 {
     if (mainTabSelect != 1 && mainModel->hasFriendNotification()) {
         mainTabValues[1] = "Friends*";
+    } else if (mainTabSelect == 1 && mainModel->hasFriendNotification()) {
+        mainModel->setFriendNotification(false);
+        mainTabValues[1] = "Friends";
     } else {
         mainTabValues[1] = "Friends";
     }
     if (mainTabSelect != 0 && mainModel->hasGameNotification()) {
         mainTabValues[0] = "Games*";
+    } else if (mainTabSelect == 0 && mainModel->hasGameNotification()) {
+        mainModel->setGameNotification(false);
+        mainTabValues[0] = "Games";
     } else {
         mainTabValues[0] = "Games";
     }
@@ -640,7 +646,7 @@ void TerminalVue::updateFriendsListCheckboxes()
 void TerminalVue::updateGameIds()
 {
     if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
-//                serverController->fetchGameIds();
+        //                serverController->fetchGameIds();
         //        gameList.clear();
         auto gameIds = mainModel->getGameIDs();
         for (auto &i : *gameIds) {
