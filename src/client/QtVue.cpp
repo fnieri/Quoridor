@@ -18,12 +18,34 @@ int QtVue::run()
     setupRegisterUI();
     setupLoginUI();
     setupGameUI();
-
-    // registerMainWidget->show();
-    // loginMainWidget->show();
-    gameMainWidget->show();
+    setupMainUI();
+    
+    appMainWidget->show();
+    gotoLoginWindow();
 
     return app->exec();
+}
+
+/* === Main Window === */
+void QtVue::setupMainUI(){
+    appMainWidget = new QWidget();
+    if (appMainWidget->objectName().isEmpty())
+        appMainWidget->setObjectName(QStringLiteral("appMainWidget"));
+    appMainWidget->resize(1280, 720);
+    gridLayout = new QGridLayout(appMainWidget);
+    gridLayout->setSpacing(0);
+    gridLayout->setObjectName(QStringLiteral("gridLayout"));
+    gridLayout->setContentsMargins(0, 0, 0, 0);
+    appMainStacked = new QStackedWidget(appMainWidget);
+    appMainStacked->setObjectName(QStringLiteral("appMainStacked"));
+    
+    appMainStacked->addWidget(registerMainWidget);
+    appMainStacked->addWidget(loginMainWidget);
+    appMainStacked->addWidget(gameMainWidget);
+
+    gridLayout->addWidget(appMainStacked, 0, 0, 1, 1);
+    
+    appMainWidget->setWindowTitle("Quoridor");
 }
 
 /* === Register Window === */
@@ -31,7 +53,6 @@ void QtVue::setupRegisterUI()
 {
     registerMainWidget = new QWidget();
     registerMainWidget->setObjectName(QStringLiteral("registerMainWidget"));
-    registerMainWidget->resize(1280, 720);
     horizontalLayout_r1 = new QHBoxLayout(registerMainWidget);
     horizontalLayout_r1->setObjectName(QStringLiteral("horizontalLayout_r1"));
     registerGroupBox = new QGroupBox(registerMainWidget);
@@ -171,6 +192,8 @@ void QtVue::setupRegisterUI()
     confirmPasswordLabel->setText("Confirm password");
     confirmPasswordLineEdit->setText("");
     registerButton->setText("REGISTER");
+    
+    QObject::connect(registerButton, &QPushButton::clicked, [this]() { this->registerButtonPressed(); });
 }
 
 /* === Login Window === */
@@ -178,7 +201,6 @@ void QtVue::setupLoginUI()
 {
     loginMainWidget = new QWidget();
     loginMainWidget->setObjectName(QStringLiteral("loginMainWidget"));
-    loginMainWidget->resize(1280, 720);
     horizontalLayout_l1 = new QHBoxLayout(loginMainWidget);
     horizontalLayout_l1->setObjectName(QStringLiteral("horizontalLayout_l1"));
     loginGroupBox = new QGroupBox(loginMainWidget);
@@ -328,6 +350,7 @@ void QtVue::setupLoginUI()
     registerButtonLogin->setText("REGISTER");
 
     QObject::connect(loginButton, &QPushButton::clicked, [this]() { this->loginButtonPressed(); });
+    QObject::connect(registerButtonLogin, &QPushButton::clicked, [this]() { this->gotoRegisterWindow(); });
 }
 
 /* === Game Window === */
@@ -335,7 +358,6 @@ void QtVue::setupGameUI()
 {
 	gameMainWidget = new QWidget();
     gameMainWidget->setObjectName(QStringLiteral("gameMainWidget"));
-    gameMainWidget->resize(1086, 541);
     gameMainWidget->setStyleSheet(QStringLiteral(""));
     verticalLayout = new QVBoxLayout(gameMainWidget);
     verticalLayout->setSpacing(20);
@@ -1714,7 +1736,23 @@ void QtVue::setupGameUI()
     QObject::connect(leaderboardButton, &QPushButton::clicked, [this]() { this->leaderboardButtonPressed(); });
 } // setupUi
 
-/* Slots */
+void QtVue::gotoRegisterWindow()
+{
+    appMainStacked->setCurrentIndex(0);
+}
+
+void QtVue::gotoLoginWindow()
+{
+    appMainStacked->setCurrentIndex(1);
+}
+
+void QtVue::gotoGameWindow()
+{
+    appMainStacked->setCurrentIndex(2);
+}
+
+
+
 void QtVue::loginButtonPressed()
 {
     std::cout << "login pressed!" << std::endl;
@@ -1722,6 +1760,7 @@ void QtVue::loginButtonPressed()
 
 void QtVue::registerButtonPressed()
 {
+    std::cout << "register pressed!" << std::endl;
 }
 
 void QtVue::loginFieldsUpdated()

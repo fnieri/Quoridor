@@ -31,6 +31,13 @@ private:
     ServerController *serverController = new ServerController {&mainController};
 
     QScopedPointer<QApplication> app;
+    
+    /* === Main App Window === */
+    QWidget *appMainWidget;
+    QStackedWidget *appMainStacked;
+    QGridLayout *gridLayout;
+
+    void setupMainUI();
 
     /* === Register Window === */
     QWidget *registerMainWidget;
@@ -238,8 +245,11 @@ public:
     virtual ~QtVue();
 
     int run();
+    
+    void gotoRegisterWindow();
+    void gotoLoginWindow();
+    void gotoGameWindow();
 
-public slots:
     void loginButtonPressed();
     void registerButtonPressed();
 
