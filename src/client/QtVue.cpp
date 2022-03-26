@@ -2,6 +2,7 @@
 #include "QtVue.h"
 
 #include <iostream>
+#include <string>
 
 QtVue::QtVue(int argc, char *argv[])
     : app(new QApplication(argc, argv))
@@ -1775,20 +1776,31 @@ void QtVue::gotoLoginWindow()
 void QtVue::gotoGameWindow()
 {
     appMainStacked->setCurrentIndex(2);
+    usernameLabel->setText(QString::fromStdString(*mainModel->getUsername()));
+    eloLabel->setText(QString::fromStdString(std::to_string(*mainModel->getELO())));
 }
 
 
 
 void QtVue::loginButtonPressed()
 {
-    if (usernameLineEditLogin->text().length() <= 0) {
+    auto username = usernameLineEditLogin->text().toStdString();
+    auto password = passwordLineEditLogin->text().toStdString();
+    
+    if (username.length() <= 0) {
         messageLabelLogin->setText("Username cannot be empty");
         messageLabelLogin->show();
         return;
     }
 
-    if (passwordLineEditLogin->text().length() <= 0) {
+    if (password.length() <= 0) {
         messageLabelLogin->setText("Password cannot be empty");
+        messageLabelLogin->show();
+        return;
+    }
+
+    if (!serverController->login(username, password)) {
+        messageLabelLogin->setText("Wrong username or password");
         messageLabelLogin->show();
         return;
     }
@@ -1797,35 +1809,51 @@ void QtVue::loginButtonPressed()
     usernameLineEditLogin->setText("");
     passwordLineEditLogin->setText("");
     messageLabelLogin->hide();
+    
+    serverController->fetchData();
     gotoGameWindow();
 }
 
 void QtVue::registerButtonPressed()
 {
-    if (usernameLineEditRegister->text().length() <= 0) {
+    auto username = usernameLineEditRegister->text().toStdString();
+    auto password = passwordLineEditRegister->text().toStdString();
+    auto confirmPassword = confirmPasswordLineEdit->text().toStdString();
+    
+    if (username.length() <= 0) {
         messageLabelRegister->setText("Username cannot be empty");
         messageLabelRegister->show();
         return;
     }
 
-    if (passwordLineEditRegister->text().length() <= 0) {
+    if (password.length() <= 0) {
         messageLabelRegister->setText("Password cannot be empty");
         messageLabelRegister->show();
         return;
     }
 
-    if (passwordLineEditRegister->text() != confirmPasswordLineEdit->text()) {
+    if (password != confirmPassword) {
         messageLabelRegister->setText("Passwords do not match");
         messageLabelRegister->show();
         return;
     }
-    
+
+    if (!serverController->registerUser(username, password)) {
+        messageLabelRegister->setText("Error creating account. Username probably already exists");
+        messageLabelRegister->show();
+        return;
+    }
+
     // Reset fields for next time we come back to register
     usernameLineEditRegister->setText("");
     passwordLineEditRegister->setText("");
     confirmPasswordLineEdit->setText("");
     messageLabelRegister->hide();
-    gotoGameWindow();
+
+    messageLabelLogin->setText("Successfully registered. You can now log in.");
+    messageLabelLogin->show();
+    usernameLineEditLogin->setText(QString::fromStdString(username));
+    gotoLoginWindow();
 }
 
 void QtVue::logoutButtonPressed()
