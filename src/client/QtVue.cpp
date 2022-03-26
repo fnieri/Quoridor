@@ -1,7 +1,6 @@
 
 #include "QtVue.h"
 
-#include <QPushButton>
 #include <iostream>
 
 QtVue::QtVue(int argc, char *argv[])
@@ -72,6 +71,16 @@ void QtVue::setupRegisterUI()
     verticalLayout_r1->setObjectName(QStringLiteral("verticalLayout_r1"));
     verticalLayout_r1->setSizeConstraint(QLayout::SetDefaultConstraint);
     verticalLayout_r1->setContentsMargins(29, 16, 27, 16);
+    messageLabelRegister = new QLabel(registerGroupBox);
+    messageLabelRegister->setObjectName(QStringLiteral("messageLabelRegister"));
+    sizePolicy.setHeightForWidth(messageLabelRegister->sizePolicy().hasHeightForWidth());
+    messageLabelRegister->setSizePolicy(sizePolicy);
+    messageLabelRegister->setMinimumSize(QSize(311, 31));
+    messageLabelRegister->setStyleSheet(QLatin1String("font: 8pt \"MS Shell Dlg 2\";\n"
+                                                      "color: rgb(179, 38, 30);"));
+    messageLabelRegister->setAlignment(Qt::AlignCenter);
+
+    verticalLayout_r1->addWidget(messageLabelRegister);
     usernameVBoxRegister = new QWidget(registerGroupBox);
     usernameVBoxRegister->setObjectName(QStringLiteral("usernameVBoxRegister"));
     sizePolicy.setHeightForWidth(usernameVBoxRegister->sizePolicy().hasHeightForWidth());
@@ -185,6 +194,7 @@ void QtVue::setupRegisterUI()
 
     horizontalLayout_r1->addWidget(registerGroupBox);
 
+    messageLabelRegister->setText("");
     usernameLabelRegister->setText("Username");
     usernameLineEditRegister->setText("");
     passwordLabelRegister->setText("Password");
@@ -192,7 +202,9 @@ void QtVue::setupRegisterUI()
     confirmPasswordLabel->setText("Confirm password");
     confirmPasswordLineEdit->setText("");
     registerButton->setText("REGISTER");
-    
+
+    messageLabelRegister->hide();
+
     QObject::connect(registerButton, &QPushButton::clicked, [this]() { this->registerButtonPressed(); });
 }
 
@@ -219,6 +231,15 @@ void QtVue::setupLoginUI()
     verticalLayout_l1->setSpacing(4);
     verticalLayout_l1->setObjectName(QStringLiteral("verticalLayout_l1"));
     verticalLayout_l1->setContentsMargins(29, 16, 27, 16);
+    messageLabelLogin = new QLabel(loginGroupBox);
+    messageLabelLogin->setObjectName(QStringLiteral("messageLabelLogin"));
+    sizePolicy.setHeightForWidth(messageLabelLogin->sizePolicy().hasHeightForWidth());
+    messageLabelLogin->setSizePolicy(sizePolicy);
+    messageLabelLogin->setMinimumSize(QSize(311, 31));
+    messageLabelLogin->setStyleSheet(QLatin1String("font: 8pt \"MS Shell Dlg 2\";\n"
+                                                   "color: rgb(179, 38, 30);"));
+    messageLabelLogin->setAlignment(Qt::AlignCenter);
+    verticalLayout_l1->addWidget(messageLabelLogin);
     usernameVBoxLogin = new QWidget(loginGroupBox);
     usernameVBoxLogin->setObjectName(QStringLiteral("usernameVBoxLogin"));
     sizePolicy.setHeightForWidth(usernameVBoxLogin->sizePolicy().hasHeightForWidth());
@@ -340,6 +361,7 @@ void QtVue::setupLoginUI()
 
     horizontalLayout_l1->addWidget(loginGroupBox);
 
+    messageLabelLogin->setText("");
     usernameLabelLogin->setText("Username");
     usernameLineEditLogin->setInputMask(QString());
     usernameLineEditLogin->setText("");
@@ -348,6 +370,8 @@ void QtVue::setupLoginUI()
     loginButton->setText("LOGIN");
     registerLabel->setText("Not registered yet ?");
     registerButtonLogin->setText("REGISTER");
+
+    messageLabelLogin->hide();
 
     QObject::connect(loginButton, &QPushButton::clicked, [this]() { this->loginButtonPressed(); });
     QObject::connect(registerButtonLogin, &QPushButton::clicked, [this]() { this->gotoRegisterWindow(); });
@@ -513,17 +537,17 @@ void QtVue::setupGameUI()
 
     horizontalLayout_3->addWidget(userInfo);
 
-    logOutButton = new QPushButton(topBarUser);
-    logOutButton->setObjectName(QStringLiteral("logOutButton"));
+    logoutButton = new QPushButton(topBarUser);
+    logoutButton->setObjectName(QStringLiteral("logoutButton"));
     QSizePolicy sizePolicy5(QSizePolicy::Fixed, QSizePolicy::Fixed);
     sizePolicy5.setHorizontalStretch(0);
     sizePolicy5.setVerticalStretch(0);
-    sizePolicy5.setHeightForWidth(logOutButton->sizePolicy().hasHeightForWidth());
-    logOutButton->setSizePolicy(sizePolicy5);
-    logOutButton->setMinimumSize(QSize(55, 35));
-    logOutButton->setMaximumSize(QSize(0, 16777215));
-    logOutButton->setCursor(QCursor(Qt::ArrowCursor));
-    logOutButton->setStyleSheet(QLatin1String("QPushButton#logOutButton{\n"
+    sizePolicy5.setHeightForWidth(logoutButton->sizePolicy().hasHeightForWidth());
+    logoutButton->setSizePolicy(sizePolicy5);
+    logoutButton->setMinimumSize(QSize(55, 35));
+    logoutButton->setMaximumSize(QSize(0, 16777215));
+    logoutButton->setCursor(QCursor(Qt::ArrowCursor));
+    logoutButton->setStyleSheet(QLatin1String("QPushButton#logoutButton{\n"
                                               "	font: 7pt \"MS Shell Dlg 2\";\n"
                                               "	color: rgb(255, 255, 255);\n"
                                               "	background-color: rgb(179,38,30);\n"
@@ -531,19 +555,19 @@ void QtVue::setupGameUI()
                                               "	border-radius: 15px;\n"
                                               "}\n"
                                               "\n"
-                                              "QPushButton:hover#logOutButton{\n"
+                                              "QPushButton:hover#logoutButton{\n"
                                               "	background-color: rgb(148, 31, 25);\n"
                                               "	border-color: rgb(148, 31,25);\n"
                                               "}\n"
                                               "\n"
-                                              "QPushButton:pressed#logOutButton{\n"
+                                              "QPushButton:pressed#logoutButton{\n"
                                               "	border-top-color: rgb(167, 33, 28);\n"
                                               "	border-left-color: rgb(167, 33, 28);\n"
                                               "	border-bottom-color: rgb(127, 25, 21);\n"
                                               "	border-right-color: rgb(127, 25, 21);\n"
                                               "}"));
 
-    horizontalLayout_3->addWidget(logOutButton);
+    horizontalLayout_3->addWidget(logoutButton);
 
     horizontalLayout->addWidget(topBarUser);
 
@@ -1665,7 +1689,7 @@ void QtVue::setupGameUI()
     leaderboardButton->setText("Leaderboard");
     usernameLabel->setText("Bob l'Eponge");
     eloLabel->setText("42069");
-    logOutButton->setText("LOG OUT");
+    logoutButton->setText("LOG OUT");
     createGameButton->setText("+ Create a Game");
     joinGameButton->setText("Join a Game");
     gameConfigurationBox->setTitle(QString());
@@ -1734,7 +1758,9 @@ void QtVue::setupGameUI()
 
     QObject::connect(friendsButton, &QPushButton::clicked, [this]() { this->friendsButtonPressed(); });
     QObject::connect(leaderboardButton, &QPushButton::clicked, [this]() { this->leaderboardButtonPressed(); });
-} // setupUi
+
+    QObject::connect(logoutButton, &QPushButton::clicked, [this]() { this->logoutButtonPressed(); });
+}
 
 void QtVue::gotoRegisterWindow()
 {
@@ -1755,20 +1781,56 @@ void QtVue::gotoGameWindow()
 
 void QtVue::loginButtonPressed()
 {
-    std::cout << "login pressed!" << std::endl;
+    if (usernameLineEditLogin->text().length() <= 0) {
+        messageLabelLogin->setText("Username cannot be empty");
+        messageLabelLogin->show();
+        return;
+    }
+
+    if (passwordLineEditLogin->text().length() <= 0) {
+        messageLabelLogin->setText("Password cannot be empty");
+        messageLabelLogin->show();
+        return;
+    }
+
+    // Reset fields for next time we come back to login
+    usernameLineEditLogin->setText("");
+    passwordLineEditLogin->setText("");
+    messageLabelLogin->hide();
+    gotoGameWindow();
 }
 
 void QtVue::registerButtonPressed()
 {
-    std::cout << "register pressed!" << std::endl;
+    if (usernameLineEditRegister->text().length() <= 0) {
+        messageLabelRegister->setText("Username cannot be empty");
+        messageLabelRegister->show();
+        return;
+    }
+
+    if (passwordLineEditRegister->text().length() <= 0) {
+        messageLabelRegister->setText("Password cannot be empty");
+        messageLabelRegister->show();
+        return;
+    }
+
+    if (passwordLineEditRegister->text() != confirmPasswordLineEdit->text()) {
+        messageLabelRegister->setText("Passwords do not match");
+        messageLabelRegister->show();
+        return;
+    }
+    
+    // Reset fields for next time we come back to register
+    usernameLineEditRegister->setText("");
+    passwordLineEditRegister->setText("");
+    confirmPasswordLineEdit->setText("");
+    messageLabelRegister->hide();
+    gotoGameWindow();
 }
 
-void QtVue::loginFieldsUpdated()
+void QtVue::logoutButtonPressed()
 {
-}
-
-void QtVue::registerFieldsUpdated()
-{
+    gotoLoginWindow();
 }
 
 void QtVue::gameButtonPressed() //

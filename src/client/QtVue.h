@@ -44,6 +44,7 @@ private:
     QHBoxLayout *horizontalLayout_r1;
     QGroupBox *registerGroupBox;
     QVBoxLayout *verticalLayout_r1;
+    QLabel *messageLabelRegister;
     QWidget *usernameVBoxRegister;
     QVBoxLayout *verticalLayout_r2;
     QLabel *usernameLabelRegister;
@@ -65,6 +66,7 @@ private:
     QHBoxLayout *horizontalLayout_l1;
     QGroupBox *loginGroupBox;
     QVBoxLayout *verticalLayout_l1;
+    QLabel *messageLabelLogin;
     QWidget *usernameVBoxLogin;
     QVBoxLayout *verticalLayout_l2;
     QLabel *usernameLabelLogin;
@@ -96,7 +98,7 @@ private:
     QVBoxLayout *verticalLayout_2;
     QLabel *usernameLabel;
     QLabel *eloLabel;
-    QPushButton *logOutButton;
+    QPushButton *logoutButton;
     QStackedWidget *mainStacked;
     QWidget *gamePage;
     QHBoxLayout *horizontalLayout_4;
@@ -252,9 +254,7 @@ public:
 
     void loginButtonPressed();
     void registerButtonPressed();
-
-    void loginFieldsUpdated();
-    void registerFieldsUpdated();
+    void logoutButtonPressed();
 
     void gameButtonPressed();
     void createGameButtonPressed();
