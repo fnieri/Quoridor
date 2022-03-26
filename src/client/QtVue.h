@@ -245,4 +245,10 @@ public slots:
 
     void loginFieldsUpdated();
     void registerFieldsUpdated();
+
+    void gameButtonPressed();
+    void createGameButtonPressed();
+    void joinGameButtonPressed();
+    void friendsButtonPressed();
+    void leaderboardButtonPressed();
 };

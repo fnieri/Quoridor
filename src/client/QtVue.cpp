@@ -1706,6 +1706,14 @@ void QtVue::setupGameUI()
     myLabel->setText("Me");
     myScoreLabel->setText("42069");
     Q_UNUSED(gameMainWidget);
+
+
+    QObject::connect(gameButton, &QPushButton::clicked, [this]() { this->gameButtonPressed(); });
+    QObject::connect(createGameButton, &QPushButton::clicked, [this]() { this->createGameButtonPressed(); });
+    QObject::connect(joinGameButton, &QPushButton::clicked, [this]() { this->joinGameButtonPressed(); });
+
+    QObject::connect(friendsButton, &QPushButton::clicked, [this]() { this->friendsButtonPressed(); });
+    QObject::connect(leaderboardButton, &QPushButton::clicked, [this]() { this->leaderboardButtonPressed(); });
 } // setupUi
 
 /* Slots */
@@ -1724,4 +1732,31 @@ void QtVue::loginFieldsUpdated()
 
 void QtVue::registerFieldsUpdated()
 {
+}
+
+void QtVue::gameButtonPressed() //
+{
+    // if ( bool == true){mainStacked->setCurrentIndex(1); gameMainStacked->setCurrentIndex(0);} //ingame indices
+    // else 
+    mainStacked->setCurrentIndex(0);
+}
+
+void QtVue::joinGameButtonPressed()
+{
+    gameMainStacked->setCurrentIndex(1);
+}
+
+void QtVue::createGameButtonPressed()
+{
+    gameMainStacked->setCurrentIndex(0);
+}
+
+void QtVue::friendsButtonPressed()
+{
+    mainStacked->setCurrentIndex(2);
+}
+
+void QtVue::leaderboardButtonPressed()
+{
+    mainStacked->setCurrentIndex(3);
 }
