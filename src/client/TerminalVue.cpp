@@ -678,3 +678,8 @@ void TerminalVue::run()
     screen = &_screen;
     screen->Loop(mainRenderer);
 }
+
+bool TerminalVue::isConnectedToServer() const
+{
+    return serverController->isConnected();
+}

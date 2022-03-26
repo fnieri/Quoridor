@@ -87,9 +87,16 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-            system("clear");
     TerminalVue vue;
-    vue.run();
+
+    if (!vue.isConnectedToServer()) {
+        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+        exit(1);
+
+    } else {
+        system("clear");
+        vue.run();
+    }
 
     //        std::thread t1(&TerminalVue::run, &vue);
     //        t1.join();

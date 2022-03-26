@@ -334,4 +334,6 @@ class TerminalVue
 
 public:
     void run();
+
+    bool isConnectedToServer() const;
 };

@@ -108,3 +108,8 @@ auto ServerController::createGame(const std::string &username, const std::vector
     sendSyncJson(
         SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
 }
+
+auto ServerController::isConnected() const -> bool
+{
+    return bridge->isConnected();
+}
