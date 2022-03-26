@@ -333,9 +333,7 @@ void QtVue::setupLoginUI()
 /* === Game Window === */
 void QtVue::setupGameUI()
 {
-    // POUR LES AUTRES: Copy paste le code de qt ici en une seule fonction, SANS le MainWindow, et changer les translate() avec setText()
-    // Pour référence regardez dans setupLoginUI() et setupRegisterUI()
-    gameMainWidget = new QWidget();
+	gameMainWidget = new QWidget();
     gameMainWidget->setObjectName(QStringLiteral("gameMainWidget"));
     gameMainWidget->resize(1086, 541);
     gameMainWidget->setStyleSheet(QStringLiteral(""));
@@ -1671,15 +1669,15 @@ void QtVue::setupGameUI()
     playerNumberUMPLabel->setText("Player");
     filtersGroupBox->setTitle(QString());
     filtersPlayerNumberLabel->setText("Player number");
-    filtersNumberChoices->setItemText(0, QApplication::translate("gameMainWidget", "2", nullptr));
-    filtersNumberChoices->setItemText(1, QApplication::translate("gameMainWidget", "4", nullptr));
+    filtersNumberChoices->setItemText(0, "2");
+    filtersNumberChoices->setItemText(1, "4");
 
     filtersNumberChoices->setCurrentText(QString());
     filterModeLabel->setText("Game Mode");
-    filtersModeChoices->setItemText(0, QApplication::translate("gameMainWidget", "Original", nullptr));
-    filtersModeChoices->setItemText(1, QApplication::translate("gameMainWidget", "QuoTetris", nullptr));
-    filtersModeChoices->setItemText(2, QApplication::translate("gameMainWidget", "Timer", nullptr));
-    filtersModeChoices->setItemText(3, QApplication::translate("gameMainWidget", "Training", nullptr));
+    filtersModeChoices->setItemText(0, "Original");
+    filtersModeChoices->setItemText(1, "QuoTetris");
+    filtersModeChoices->setItemText(2, "Timer");
+    filtersModeChoices->setItemText(3, "Training");
 
     quitButton->setText("QUIT");
     gameFlowBox->setTitle(QString());
