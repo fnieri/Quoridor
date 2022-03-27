@@ -50,7 +50,7 @@ auto MainModel::getChatWith(const std::string &username) noexcept -> SPtrToVec<M
     return m_chats.at(username);
 }
 
-auto MainModel::getGameIDs() noexcept -> const std::vector<int> *
+auto MainModel::getGameIDs() noexcept -> const std::map<int, std::vector<std::string>> *
 {
     return m_gameIDs.get();
 }
@@ -157,7 +157,7 @@ auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> 
     updatePtrValue(m_leaderboard, leaderboard);
 }
 
-auto MainModel::setGameIds(const std::vector<int> &gameIDs) -> void
+auto MainModel::setGameIds(const std::map<int, std::vector<std::string>> &gameIDs) -> void
 {
     updatePtrValue(m_gameIDs, gameIDs);
 }

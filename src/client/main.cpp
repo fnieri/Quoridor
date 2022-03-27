@@ -50,17 +50,20 @@ int main(int argc, char *argv[])
 //    MainController mainController;
 //    ServerController serverController {&mainController};
 //    serverController.login("testing", "testingPassword");
-//    //        serverController.createGame("testing", {"testing", "a"});
-//    //    sleep(1);
+//    //    serverController.createGame("testing", {"testing", "testingFriend"});
 //    //
 //    auto model = mainController.getMainModel();
+//    //    sleep(5);
 //    serverController.fetchGameIds();
 //    auto gameIds = model->getGameIDs();
-//    sleep(1);
-//    for (auto gameId : *gameIds) {
-//        std::cout << "Game ID: " << gameId << std::endl;
+//    sleep(3);
+//    for (const auto& gameId : *gameIds) {
+//        std::cout << "Game ID: " << gameId.first << std::endl;
+//        for (const auto& player : gameId.second) {
+//            std::cout << "Player: " << player << std::endl;
+//        }
 //    }
-//    return 0;
+    //    return 0;
 
     //    serverController.login("ok", "k");
     //        model->createAiGame();
@@ -87,9 +90,9 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-    system("clear");
-    TerminalVue vue;
-    vue.run();
+        system("clear");
+        TerminalVue vue;
+        vue.run();
 
     //        std::thread t1(&TerminalVue::run, &vue);
     //        t1.join();

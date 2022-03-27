@@ -226,6 +226,7 @@ void GameHub::processGameCreation(const std::string &serRequest)
     }
 
     DatabaseHandler::createGame(gameID, gPlayers, (int)gPlayers.size(), request["game_configuration"]);
+//    DatabaseHandler::addGameIdToUser(gPlayers.at(0), gameID);
     auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
 
     // This add the players to the game
@@ -263,7 +264,8 @@ void GameHub::processGameJoin(const std::string &serRequest)
     targetGame->playerJoined(request["username"]);
 
     // use domain or wtv
-    m_userHub->relayMessageTo(request["username"], DatabaseHandler::getGameConfig(request["game_id"]));
+//    auto serResponse = SerializableMessageFactory::;
+//    m_userHub->relayMessageTo(request["username"], DatabaseHandler::getGameConfig(request["game_id"]));
 
     if (targetGame->areAllPlayersConfirmed() && targetGame->areAllPlayersConnected() && targetGame->areAllPlayersNotInGame()) {
         targetGame->start();

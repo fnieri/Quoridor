@@ -576,8 +576,8 @@ void TerminalVue::userCreateGame()
 void TerminalVue::joinGame()
 {
     auto gameIds = mainModel->getGameIDs();
-    auto gameId = (*gameIds)[gameSelected];
-    serverController->joinGame(*mainModel->getUsername(), gameId);
+    //    auto gameId = (*gameIds)[gameSelected];
+    //    serverController->joinGame(*mainModel->getUsername(), gameId);
     homeTabIndex = 2;
     rightSize = 40;
 }
@@ -653,7 +653,14 @@ void TerminalVue::updateGameIds()
     // TODO: maybe change this to include a better game description
     auto gameIds = mainModel->getGameIDs();
     for (auto &i : *gameIds) {
-    std::string gameDescription = "Game ID: " + std::to_string(i);
+        std::string friendsListStr;
+        for (int j = 0; j < i.second.size() - 1; ++j) {
+            friendsListStr += i.second[j] + ", ";
+        }
+        friendsListStr += i.second[i.second.size() - 1];
+
+        std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
         if (std::find(gameList.begin(), gameList.end(), gameDescription) == gameList.end()) {
             gameList.push_back(gameDescription);
         }
