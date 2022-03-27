@@ -50,13 +50,13 @@ int main(int argc, char *argv[])
 //    MainController mainController;
 //    ServerController serverController {&mainController};
 //    serverController.login("testing", "testingPassword");
-//        serverController.createGame("testing", {"testing", "a"});
-////    sleep(1);
-//
-//    serverController.fetchGameIds();
-//    sleep(1);
+//    //        serverController.createGame("testing", {"testing", "a"});
+//    //    sleep(1);
+//    //
 //    auto model = mainController.getMainModel();
+//    serverController.fetchGameIds();
 //    auto gameIds = model->getGameIDs();
+//    sleep(1);
 //    for (auto gameId : *gameIds) {
 //        std::cout << "Game ID: " << gameId << std::endl;
 //    }
@@ -87,7 +87,7 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-            system("clear");
+    system("clear");
     TerminalVue vue;
     vue.run();
 

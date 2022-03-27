@@ -262,6 +262,9 @@ void GameHub::processGameJoin(const std::string &serRequest)
 
     targetGame->playerJoined(request["username"]);
 
+    // use domain or wtv
+    m_userHub->relayMessageTo(request["username"], DatabaseHandler::getGameConfig(request["game_id"]));
+
     if (targetGame->areAllPlayersConfirmed() && targetGame->areAllPlayersConnected() && targetGame->areAllPlayersNotInGame()) {
         targetGame->start();
     }

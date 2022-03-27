@@ -40,7 +40,7 @@ private:
     SPtrToVec<std::string> m_friendRequestsReceived = std::make_shared<std::vector<std::string>>();
     bool hasFriends;
 
-    SPtrToVec<int> m_gameIDs;
+    SPtrToVec<int> m_gameIDs = std::make_shared<std::vector<int>>();
 
     std::map<std::string, SPtrToVec<Message>> m_chats;
 

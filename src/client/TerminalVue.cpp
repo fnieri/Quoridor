@@ -575,7 +575,9 @@ void TerminalVue::userCreateGame()
 
 void TerminalVue::joinGame()
 {
-
+    auto gameIds = mainModel->getGameIDs();
+    auto gameId = (*gameIds)[gameSelected];
+    serverController->joinGame(*mainModel->getUsername(), gameId);
     homeTabIndex = 2;
     rightSize = 40;
 }
@@ -645,14 +647,18 @@ void TerminalVue::updateFriendsListCheckboxes()
 
 void TerminalVue::updateGameIds()
 {
-    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
-        //                serverController->fetchGameIds();
-        //        gameList.clear();
-        auto gameIds = mainModel->getGameIDs();
-        for (auto &i : *gameIds) {
-            gameList.push_back(std::to_string(i));
+    //    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
+    //                serverController->fetchGameIds();
+    //        gameList.clear();
+    // TODO: maybe change this to include a better game description
+    auto gameIds = mainModel->getGameIDs();
+    for (auto &i : *gameIds) {
+    std::string gameDescription = "Game ID: " + std::to_string(i);
+        if (std::find(gameList.begin(), gameList.end(), gameDescription) == gameList.end()) {
+            gameList.push_back(gameDescription);
         }
     }
+    //    }
     //    previousHomeTabIndex = homeTabIndex;
 }
 
