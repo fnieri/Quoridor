@@ -21,7 +21,8 @@ int QtVue::run()
     setupMainUI();
     
     appMainWidget->show();
-    gotoLoginWindow();
+    // gotoLoginWindow();
+    gotoGameWindow();
 
     return app->exec();
 }
@@ -412,6 +413,30 @@ void QtVue::setupGameUI()
     sizePolicy1.setVerticalStretch(0);
     sizePolicy1.setHeightForWidth(topBarButtons->sizePolicy().hasHeightForWidth());
     topBarButtons->setSizePolicy(sizePolicy1);
+    topBarButtons->setStyleSheet(QLatin1String("QPushButton{\n"
+                                               "	font: 10pt \"MS Shell Dlg 2\";\n"
+                                               "	color: rgb(8,76,102);\n"
+                                               "	background-color: rgb(196, 207, 218);\n"
+                                               "	border: 3px solid rgb(196, 207, 218);\n"
+                                               "	border-radius: 7px;\n"
+                                               "	padding: 12px;\n"
+                                               "}\n"
+                                               "\n"
+                                               "QPushButton:hover {\n"
+                                               "	color: rgb(20,125,164);\n"
+                                               "	border-color: rgb(20,125,164);\n"
+                                               "}\n"
+                                               "\n"
+                                               "QPushButton:focus {\n"
+                                               "	color: rgb(20,125,200);\n"
+                                               "	border-color: rgb(20,125,164);\n"
+                                               "}\n"
+                                               "\n"
+                                               "QPushButton:pressed {\n"
+                                               "	border: 2px solid rgb(196, 207, 218);\n"
+                                               "	color: rgb(20,125,200);\n"
+                                               "	border-color: rgb(20,125,164);\n"
+                                               "}"));
     horizontalLayout_2 = new QHBoxLayout(topBarButtons);
     horizontalLayout_2->setSpacing(5);
     horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
@@ -424,20 +449,12 @@ void QtVue::setupGameUI()
     sizePolicy2.setHeightForWidth(gameButton->sizePolicy().hasHeightForWidth());
     gameButton->setSizePolicy(sizePolicy2);
     gameButton->setMinimumSize(QSize(0, 0));
-    gameButton->setStyleSheet(QLatin1String("QPushButton#gameButton{\n"
-                                            "	font: 10pt \"MS Shell Dlg 2\";\n"
-                                            "	color: rgb(8,76,102);\n"
-                                            "	background-color: rgb(196, 207, 218);\n"
-                                            "	border: 3px solid rgb(196, 207, 218);\n"
-                                            "	border-radius: 7px;\n"
-                                            "	padding: 15px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QPushButton:hover#gameButton {\n"
-                                            "	color: rgb(20,125,164);\n"
-                                            "	border-color: rgb(20,125,164);\n"
-                                            "}\n"
-                                            ""));
+    gameButton->setCursor(QCursor(Qt::ArrowCursor));
+    gameButton->setMouseTracking(false);
+    gameButton->setStyleSheet(QStringLiteral(""));
+    gameButton->setCheckable(false);
+    gameButton->setChecked(false);
+    gameButton->setAutoExclusive(false);
 
     horizontalLayout_2->addWidget(gameButton);
 
@@ -446,20 +463,10 @@ void QtVue::setupGameUI()
     sizePolicy2.setHeightForWidth(friendsButton->sizePolicy().hasHeightForWidth());
     friendsButton->setSizePolicy(sizePolicy2);
     friendsButton->setMinimumSize(QSize(0, 0));
-    friendsButton->setStyleSheet(QLatin1String("QPushButton#friendsButton{\n"
-                                               "	font: 10pt \"MS Shell Dlg 2\";\n"
-                                               "	color: rgb(8,76,102);\n"
-                                               "	background-color: rgb(196, 207, 218);\n"
-                                               "	border: 3px solid rgb(196, 207, 218);\n"
-                                               "	border-radius: 7px;\n"
-                                               "	padding: 12px;\n"
-                                               "}\n"
-                                               "\n"
-                                               "QPushButton:hover#friendsButton {\n"
-                                               "	color: rgb(20,125,164);\n"
-                                               "	border-color: rgb(20,125,164);\n"
-                                               "}\n"
-                                               ""));
+    friendsButton->setCursor(QCursor(Qt::ArrowCursor));
+    friendsButton->setStyleSheet(QStringLiteral(""));
+    friendsButton->setCheckable(false);
+    friendsButton->setChecked(false);
 
     horizontalLayout_2->addWidget(friendsButton);
 
@@ -468,21 +475,7 @@ void QtVue::setupGameUI()
     sizePolicy2.setHeightForWidth(leaderboardButton->sizePolicy().hasHeightForWidth());
     leaderboardButton->setSizePolicy(sizePolicy2);
     leaderboardButton->setMinimumSize(QSize(0, 0));
-    leaderboardButton->setStyleSheet(QLatin1String("QPushButton#leaderboardButton{\n"
-                                                   "	font: 10pt \"MS Shell Dlg 2\";\n"
-                                                   "	color: rgb(8,76,102);\n"
-                                                   "	background-color: rgb(196, 207, 218);\n"
-                                                   "	border: 3px solid rgb(196, 207, 218);\n"
-                                                   "	border-radius: 7px;\n"
-                                                   "	padding: 12px;\n"
-                                                   "}\n"
-                                                   "\n"
-                                                   "QPushButton:hover#leaderboardButton {\n"
-                                                   "	color: rgb(20,125,164);\n"
-                                                   "	border-color: rgb(20,125,164);\n"
-                                                   "\n"
-                                                   "}\n"
-                                                   ""));
+    leaderboardButton->setStyleSheet(QStringLiteral(""));
 
     horizontalLayout_2->addWidget(leaderboardButton);
 
@@ -623,8 +616,13 @@ void QtVue::setupGameUI()
                                                   "	border-color: rgb(8, 76, 102);\n"
                                                   "}\n"
                                                   "\n"
+                                                  "QPushButton:focus#createGameButton{\n"
+                                                  "	background-color: rgb(96, 96, 96);\n"
+                                                  "	border-color: rgb(8, 76, 102);\n"
+                                                  "}\n"
+                                                  "\n"
                                                   "QPushButton:pressed#createGameButton{\n"
-                                                  "	background-color: rgb(8, 76, 102);\n"
+                                                  "	background-color: rgb(96, 96, 96);\n"
                                                   "	border-color:  rgb(9, 87, 116) rgb(6, 60, 79) rgb(6, 60, 79)  rgb(9, 87, 116);\n"
                                                   "}"));
 
@@ -648,8 +646,13 @@ void QtVue::setupGameUI()
                                                 "	border-color: rgb(8, 76, 102);\n"
                                                 "}\n"
                                                 "\n"
+                                                "QPushButton:focus#joinGameButton{\n"
+                                                "	background-color: rgb(96, 96, 96);\n"
+                                                "	border-color: rgb(8, 76, 102);\n"
+                                                "}\n"
+                                                "\n"
                                                 "QPushButton:pressed#joinGameButton{\n"
-                                                "	background-color: rgb(8, 76, 102);\n"
+                                                "	background-color: rgb(96, 96, 96);\n"
                                                 "	border-color:  rgb(9, 87, 116) rgb(6, 60, 79) rgb(6, 60, 79)  rgb(9, 87, 116);\n"
                                                 "}"));
 
@@ -895,18 +898,18 @@ void QtVue::setupGameUI()
 
     livesgamesVLayout->addItem(liveGamesUpSpacer);
 
-    LivesGamesLabel = new QLabel(liveGamesFrame);
-    LivesGamesLabel->setObjectName(QStringLiteral("LivesGamesLabel"));
-    sizePolicy7.setHeightForWidth(LivesGamesLabel->sizePolicy().hasHeightForWidth());
-    LivesGamesLabel->setSizePolicy(sizePolicy7);
-    LivesGamesLabel->setMinimumSize(QSize(0, 20));
-    LivesGamesLabel->setStyleSheet(QLatin1String("QLabel#LivesGamesLabel{\n"
+    livesGamesLabel = new QLabel(liveGamesFrame);
+    livesGamesLabel->setObjectName(QStringLiteral("livesGamesLabel"));
+    sizePolicy7.setHeightForWidth(livesGamesLabel->sizePolicy().hasHeightForWidth());
+    livesGamesLabel->setSizePolicy(sizePolicy7);
+    livesGamesLabel->setMinimumSize(QSize(0, 20));
+    livesGamesLabel->setStyleSheet(QLatin1String("QLabel#livesGamesLabel{\n"
                                                  "	font: 10pt \"MS Shell Dlg 2\";\n"
                                                  "	color: rgb(7, 39, 51);\n"
                                                  "}"));
-    LivesGamesLabel->setAlignment(Qt::AlignCenter);
+    livesGamesLabel->setAlignment(Qt::AlignCenter);
 
-    livesgamesVLayout->addWidget(LivesGamesLabel);
+    livesgamesVLayout->addWidget(livesGamesLabel);
 
     UMPGroupBox = new QGroupBox(liveGamesFrame);
     UMPGroupBox->setObjectName(QStringLiteral("UMPGroupBox"));
@@ -1111,19 +1114,1704 @@ void QtVue::setupGameUI()
 
     horizontalLayout_33->addWidget(inGameSidebar);
 
-    GameBoardFrame = new QFrame(ingamePage);
-    GameBoardFrame->setObjectName(QStringLiteral("GameBoardFrame"));
-    sizePolicy9.setHeightForWidth(GameBoardFrame->sizePolicy().hasHeightForWidth());
-    GameBoardFrame->setSizePolicy(sizePolicy9);
-    GameBoardFrame->setStyleSheet(QLatin1String("QFrame#GameBoardFrame{\n"
-                                                "	border: 2px solid rgb(159, 128, 107);\n"
-                                                "	background-color: rgb(159, 128, 107);\n"
-                                                "	border-radius: 5px;\n"
+    gameBoardFrame = new QFrame(ingamePage);
+    gameBoardFrame->setObjectName(QStringLiteral("gameBoardFrame"));
+    sizePolicy9.setHeightForWidth(gameBoardFrame->sizePolicy().hasHeightForWidth());
+    gameBoardFrame->setSizePolicy(sizePolicy9);
+    gameBoardFrame->setStyleSheet(QLatin1String("QFrame#gameBoardFrame{\n"
+                                                "	border: 2px solid rgb(85, 68, 58);\n"
+                                                "	background-color: rgb(85, 68, 58);\n"
+                                                "	/*background-color: rgb(66, 53, 45);*/\n"
+                                                "	border-radius: 8px;\n"
                                                 "}"));
-    GameBoardFrame->setFrameShape(QFrame::StyledPanel);
-    GameBoardFrame->setFrameShadow(QFrame::Raised);
+    gameBoardFrame->setFrameShape(QFrame::StyledPanel);
+    gameBoardFrame->setFrameShadow(QFrame::Raised);
+    boardGrid = new QGridLayout(gameBoardFrame);
+    boardGrid->setSpacing(0);
+    boardGrid->setObjectName(QStringLiteral("boardGrid"));
+    boardGrid->setSizeConstraint(QLayout::SetDefaultConstraint);
+    boardGrid->setContentsMargins(20, 20, 20, 20);
+    r0c0 = new QLabel(gameBoardFrame);
+    r0c0->setObjectName(QStringLiteral("r0c0"));
+    sizePolicy4.setHeightForWidth(r0c0->sizePolicy().hasHeightForWidth());
+    r0c0->setSizePolicy(sizePolicy4);
+    r0c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c0->setAlignment(Qt::AlignCenter);
 
-    horizontalLayout_33->addWidget(GameBoardFrame);
+    boardGrid->addWidget(r0c0, 0, 0, 1, 1);
+
+    r0c1 = new QLabel(gameBoardFrame);
+    r0c1->setObjectName(QStringLiteral("r0c1"));
+    sizePolicy2.setHeightForWidth(r0c1->sizePolicy().hasHeightForWidth());
+    r0c1->setSizePolicy(sizePolicy2);
+    r0c1->setMinimumSize(QSize(15, 0));
+    r0c1->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c1, 0, 1, 1, 1);
+
+    r0c2 = new QLabel(gameBoardFrame);
+    r0c2->setObjectName(QStringLiteral("r0c2"));
+    r0c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c2, 0, 2, 1, 1);
+
+    r0c3 = new QLabel(gameBoardFrame);
+    r0c3->setObjectName(QStringLiteral("r0c3"));
+    sizePolicy2.setHeightForWidth(r0c3->sizePolicy().hasHeightForWidth());
+    r0c3->setSizePolicy(sizePolicy2);
+    r0c3->setMinimumSize(QSize(15, 0));
+    r0c3->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c3, 0, 3, 1, 1);
+
+    r0c4 = new QLabel(gameBoardFrame);
+    r0c4->setObjectName(QStringLiteral("r0c4"));
+    r0c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c4, 0, 4, 1, 1);
+
+    r0c5 = new QLabel(gameBoardFrame);
+    r0c5->setObjectName(QStringLiteral("r0c5"));
+    sizePolicy2.setHeightForWidth(r0c5->sizePolicy().hasHeightForWidth());
+    r0c5->setSizePolicy(sizePolicy2);
+    r0c5->setMinimumSize(QSize(15, 0));
+    r0c5->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c5, 0, 5, 1, 1);
+
+    r0c6 = new QLabel(gameBoardFrame);
+    r0c6->setObjectName(QStringLiteral("r0c6"));
+    r0c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c6, 0, 6, 1, 1);
+
+    r0c7 = new QLabel(gameBoardFrame);
+    r0c7->setObjectName(QStringLiteral("r0c7"));
+    sizePolicy2.setHeightForWidth(r0c7->sizePolicy().hasHeightForWidth());
+    r0c7->setSizePolicy(sizePolicy2);
+    r0c7->setMinimumSize(QSize(15, 0));
+    r0c7->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c7, 0, 7, 1, 1);
+
+    r0c8 = new QLabel(gameBoardFrame);
+    r0c8->setObjectName(QStringLiteral("r0c8"));
+    r0c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c8, 0, 8, 1, 1);
+
+    r0c9 = new QLabel(gameBoardFrame);
+    r0c9->setObjectName(QStringLiteral("r0c9"));
+    sizePolicy2.setHeightForWidth(r0c9->sizePolicy().hasHeightForWidth());
+    r0c9->setSizePolicy(sizePolicy2);
+    r0c9->setMinimumSize(QSize(15, 0));
+    r0c9->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c9, 0, 9, 1, 1);
+
+    r0c10 = new QLabel(gameBoardFrame);
+    r0c10->setObjectName(QStringLiteral("r0c10"));
+    r0c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c10, 0, 10, 1, 1);
+
+    r0c11 = new QLabel(gameBoardFrame);
+    r0c11->setObjectName(QStringLiteral("r0c11"));
+    sizePolicy2.setHeightForWidth(r0c11->sizePolicy().hasHeightForWidth());
+    r0c11->setSizePolicy(sizePolicy2);
+    r0c11->setMinimumSize(QSize(15, 0));
+    r0c11->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c11, 0, 11, 1, 1);
+
+    r0c12 = new QLabel(gameBoardFrame);
+    r0c12->setObjectName(QStringLiteral("r0c12"));
+    r0c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c12, 0, 12, 1, 1);
+
+    r0c13 = new QLabel(gameBoardFrame);
+    r0c13->setObjectName(QStringLiteral("r0c13"));
+    sizePolicy2.setHeightForWidth(r0c13->sizePolicy().hasHeightForWidth());
+    r0c13->setSizePolicy(sizePolicy2);
+    r0c13->setMinimumSize(QSize(15, 0));
+    r0c13->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c13, 0, 13, 1, 1);
+
+    r0c14 = new QLabel(gameBoardFrame);
+    r0c14->setObjectName(QStringLiteral("r0c14"));
+    sizePolicy4.setHeightForWidth(r0c14->sizePolicy().hasHeightForWidth());
+    r0c14->setSizePolicy(sizePolicy4);
+    r0c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c14, 0, 14, 1, 1);
+
+    r0c15 = new QLabel(gameBoardFrame);
+    r0c15->setObjectName(QStringLiteral("r0c15"));
+    sizePolicy2.setHeightForWidth(r0c15->sizePolicy().hasHeightForWidth());
+    r0c15->setSizePolicy(sizePolicy2);
+    r0c15->setMinimumSize(QSize(15, 0));
+    r0c15->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r0c15, 0, 15, 1, 1);
+
+    r0c16 = new QLabel(gameBoardFrame);
+    r0c16->setObjectName(QStringLiteral("r0c16"));
+    r0c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r0c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r0c16, 0, 16, 1, 1);
+
+    r1c0 = new QLabel(gameBoardFrame);
+    r1c0->setObjectName(QStringLiteral("r1c0"));
+    r1c0->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c0, 1, 0, 1, 1);
+
+    r1c1 = new QLabel(gameBoardFrame);
+    r1c1->setObjectName(QStringLiteral("r1c1"));
+    r1c1->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c1, 1, 1, 1, 1);
+
+    r1c2 = new QLabel(gameBoardFrame);
+    r1c2->setObjectName(QStringLiteral("r1c2"));
+    r1c2->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c2, 1, 2, 1, 1);
+
+    r1c3 = new QLabel(gameBoardFrame);
+    r1c3->setObjectName(QStringLiteral("r1c3"));
+    r1c3->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c3, 1, 3, 1, 1);
+
+    r1c4 = new QLabel(gameBoardFrame);
+    r1c4->setObjectName(QStringLiteral("r1c4"));
+    r1c4->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c4, 1, 4, 1, 1);
+
+    r1c5 = new QLabel(gameBoardFrame);
+    r1c5->setObjectName(QStringLiteral("r1c5"));
+    r1c5->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c5, 1, 5, 1, 1);
+
+    r1c6 = new QLabel(gameBoardFrame);
+    r1c6->setObjectName(QStringLiteral("r1c6"));
+    r1c6->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c6, 1, 6, 1, 1);
+
+    r1c7 = new QLabel(gameBoardFrame);
+    r1c7->setObjectName(QStringLiteral("r1c7"));
+    r1c7->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c7, 1, 7, 1, 1);
+
+    r1c8 = new QLabel(gameBoardFrame);
+    r1c8->setObjectName(QStringLiteral("r1c8"));
+    r1c8->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c8, 1, 8, 1, 1);
+
+    r1c9 = new QLabel(gameBoardFrame);
+    r1c9->setObjectName(QStringLiteral("r1c9"));
+    r1c9->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c9, 1, 9, 1, 1);
+
+    r1c11 = new QLabel(gameBoardFrame);
+    r1c11->setObjectName(QStringLiteral("r1c11"));
+    r1c11->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c11, 1, 11, 1, 1);
+
+    r1c12 = new QLabel(gameBoardFrame);
+    r1c12->setObjectName(QStringLiteral("r1c12"));
+    r1c12->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c12, 1, 12, 1, 1);
+
+    r1c13 = new QLabel(gameBoardFrame);
+    r1c13->setObjectName(QStringLiteral("r1c13"));
+    r1c13->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c13, 1, 13, 1, 1);
+
+    r1c14 = new QLabel(gameBoardFrame);
+    r1c14->setObjectName(QStringLiteral("r1c14"));
+    r1c14->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c14, 1, 14, 1, 1);
+
+    r1c15 = new QLabel(gameBoardFrame);
+    r1c15->setObjectName(QStringLiteral("r1c15"));
+    r1c15->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c15, 1, 15, 1, 1);
+
+    r1c16 = new QLabel(gameBoardFrame);
+    r1c16->setObjectName(QStringLiteral("r1c16"));
+    r1c16->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c16, 1, 16, 1, 1);
+
+    r2c0 = new QLabel(gameBoardFrame);
+    r2c0->setObjectName(QStringLiteral("r2c0"));
+    r2c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c0, 2, 0, 1, 1);
+
+    r2c1 = new QLabel(gameBoardFrame);
+    r2c1->setObjectName(QStringLiteral("r2c1"));
+    r2c1->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r2c1, 2, 1, 1, 1);
+
+    r2c2 = new QLabel(gameBoardFrame);
+    r2c2->setObjectName(QStringLiteral("r2c2"));
+    r2c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c2, 2, 2, 1, 1);
+
+    r2c3 = new QLabel(gameBoardFrame);
+    r2c3->setObjectName(QStringLiteral("r2c3"));
+
+    boardGrid->addWidget(r2c3, 2, 3, 1, 1);
+
+    r2c4 = new QLabel(gameBoardFrame);
+    r2c4->setObjectName(QStringLiteral("r2c4"));
+    r2c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c4, 2, 4, 1, 1);
+
+    r2c5 = new QLabel(gameBoardFrame);
+    r2c5->setObjectName(QStringLiteral("r2c5"));
+
+    boardGrid->addWidget(r2c5, 2, 5, 1, 1);
+
+    r2c6 = new QLabel(gameBoardFrame);
+    r2c6->setObjectName(QStringLiteral("r2c6"));
+    r2c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c6, 2, 6, 1, 1);
+
+    r2c7 = new QLabel(gameBoardFrame);
+    r2c7->setObjectName(QStringLiteral("r2c7"));
+
+    boardGrid->addWidget(r2c7, 2, 7, 1, 1);
+
+    r2c8 = new QLabel(gameBoardFrame);
+    r2c8->setObjectName(QStringLiteral("r2c8"));
+    r2c8->setMouseTracking(false);
+    r2c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c8, 2, 8, 1, 1);
+
+    r2c9 = new QLabel(gameBoardFrame);
+    r2c9->setObjectName(QStringLiteral("r2c9"));
+
+    boardGrid->addWidget(r2c9, 2, 9, 1, 1);
+
+    r2c10 = new QLabel(gameBoardFrame);
+    r2c10->setObjectName(QStringLiteral("r2c10"));
+    r2c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c10, 2, 10, 1, 1);
+
+    r2c11 = new QLabel(gameBoardFrame);
+    r2c11->setObjectName(QStringLiteral("r2c11"));
+
+    boardGrid->addWidget(r2c11, 2, 11, 1, 1);
+
+    r2c12 = new QLabel(gameBoardFrame);
+    r2c12->setObjectName(QStringLiteral("r2c12"));
+    r2c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c12, 2, 12, 1, 1);
+
+    r2c13 = new QLabel(gameBoardFrame);
+    r2c13->setObjectName(QStringLiteral("r2c13"));
+
+    boardGrid->addWidget(r2c13, 2, 13, 1, 1);
+
+    r2c14 = new QLabel(gameBoardFrame);
+    r2c14->setObjectName(QStringLiteral("r2c14"));
+    r2c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c14, 2, 14, 1, 1);
+
+    r2c15 = new QLabel(gameBoardFrame);
+    r2c15->setObjectName(QStringLiteral("r2c15"));
+
+    boardGrid->addWidget(r2c15, 2, 15, 1, 1);
+
+    r2c16 = new QLabel(gameBoardFrame);
+    r2c16->setObjectName(QStringLiteral("r2c16"));
+    r2c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r2c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r2c16, 2, 16, 1, 1);
+
+    r3c0 = new QLabel(gameBoardFrame);
+    r3c0->setObjectName(QStringLiteral("r3c0"));
+    r3c0->setStyleSheet(QStringLiteral(""));
+    r3c0->setFrameShape(QFrame::NoFrame);
+
+    boardGrid->addWidget(r3c0, 3, 0, 1, 1);
+
+    r3c1 = new QLabel(gameBoardFrame);
+    r3c1->setObjectName(QStringLiteral("r3c1"));
+
+    boardGrid->addWidget(r3c1, 3, 1, 1, 1);
+
+    r3c2 = new QLabel(gameBoardFrame);
+    r3c2->setObjectName(QStringLiteral("r3c2"));
+
+    boardGrid->addWidget(r3c2, 3, 2, 1, 1);
+
+    r3c3 = new QLabel(gameBoardFrame);
+    r3c3->setObjectName(QStringLiteral("r3c3"));
+
+    boardGrid->addWidget(r3c3, 3, 3, 1, 1);
+
+    r3c4 = new QLabel(gameBoardFrame);
+    r3c4->setObjectName(QStringLiteral("r3c4"));
+
+    boardGrid->addWidget(r3c4, 3, 4, 1, 1);
+
+    r3c5 = new QLabel(gameBoardFrame);
+    r3c5->setObjectName(QStringLiteral("r3c5"));
+
+    boardGrid->addWidget(r3c5, 3, 5, 1, 1);
+
+    r3c6 = new QLabel(gameBoardFrame);
+    r3c6->setObjectName(QStringLiteral("r3c6"));
+
+    boardGrid->addWidget(r3c6, 3, 6, 1, 1);
+
+    r3c7 = new QLabel(gameBoardFrame);
+    r3c7->setObjectName(QStringLiteral("r3c7"));
+
+    boardGrid->addWidget(r3c7, 3, 7, 1, 1);
+
+    r3c8 = new QLabel(gameBoardFrame);
+    r3c8->setObjectName(QStringLiteral("r3c8"));
+
+    boardGrid->addWidget(r3c8, 3, 8, 1, 1);
+
+    r3c9 = new QLabel(gameBoardFrame);
+    r3c9->setObjectName(QStringLiteral("r3c9"));
+
+    boardGrid->addWidget(r3c9, 3, 9, 1, 1);
+
+    r3c10 = new QLabel(gameBoardFrame);
+    r3c10->setObjectName(QStringLiteral("r3c10"));
+
+    boardGrid->addWidget(r3c10, 3, 10, 1, 1);
+
+    r3c11 = new QLabel(gameBoardFrame);
+    r3c11->setObjectName(QStringLiteral("r3c11"));
+
+    boardGrid->addWidget(r3c11, 3, 11, 1, 1);
+
+    r3c12 = new QLabel(gameBoardFrame);
+    r3c12->setObjectName(QStringLiteral("r3c12"));
+
+    boardGrid->addWidget(r3c12, 3, 12, 1, 1);
+
+    r3c13 = new QLabel(gameBoardFrame);
+    r3c13->setObjectName(QStringLiteral("r3c13"));
+
+    boardGrid->addWidget(r3c13, 3, 13, 1, 1);
+
+    r3c14 = new QLabel(gameBoardFrame);
+    r3c14->setObjectName(QStringLiteral("r3c14"));
+
+    boardGrid->addWidget(r3c14, 3, 14, 1, 1);
+
+    r3c15 = new QLabel(gameBoardFrame);
+    r3c15->setObjectName(QStringLiteral("r3c15"));
+
+    boardGrid->addWidget(r3c15, 3, 15, 1, 1);
+
+    r3c16 = new QLabel(gameBoardFrame);
+    r3c16->setObjectName(QStringLiteral("r3c16"));
+
+    boardGrid->addWidget(r3c16, 3, 16, 1, 1);
+
+    r4c0 = new QLabel(gameBoardFrame);
+    r4c0->setObjectName(QStringLiteral("r4c0"));
+    r4c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c0, 4, 0, 1, 1);
+
+    r4c1 = new QLabel(gameBoardFrame);
+    r4c1->setObjectName(QStringLiteral("r4c1"));
+
+    boardGrid->addWidget(r4c1, 4, 1, 1, 1);
+
+    r4c2 = new QLabel(gameBoardFrame);
+    r4c2->setObjectName(QStringLiteral("r4c2"));
+    r4c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c2, 4, 2, 1, 1);
+
+    r4c3 = new QLabel(gameBoardFrame);
+    r4c3->setObjectName(QStringLiteral("r4c3"));
+
+    boardGrid->addWidget(r4c3, 4, 3, 1, 1);
+
+    r4c4 = new QLabel(gameBoardFrame);
+    r4c4->setObjectName(QStringLiteral("r4c4"));
+    r4c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c4, 4, 4, 1, 1);
+
+    r4c5 = new QLabel(gameBoardFrame);
+    r4c5->setObjectName(QStringLiteral("r4c5"));
+
+    boardGrid->addWidget(r4c5, 4, 5, 1, 1);
+
+    r4c6 = new QLabel(gameBoardFrame);
+    r4c6->setObjectName(QStringLiteral("r4c6"));
+    r4c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c6, 4, 6, 1, 1);
+
+    r4c7 = new QLabel(gameBoardFrame);
+    r4c7->setObjectName(QStringLiteral("r4c7"));
+
+    boardGrid->addWidget(r4c7, 4, 7, 1, 1);
+
+    r4c8 = new QLabel(gameBoardFrame);
+    r4c8->setObjectName(QStringLiteral("r4c8"));
+    r4c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c8, 4, 8, 1, 1);
+
+    r4c9 = new QLabel(gameBoardFrame);
+    r4c9->setObjectName(QStringLiteral("r4c9"));
+
+    boardGrid->addWidget(r4c9, 4, 9, 1, 1);
+
+    r4c10 = new QLabel(gameBoardFrame);
+    r4c10->setObjectName(QStringLiteral("r4c10"));
+    r4c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c10, 4, 10, 1, 1);
+
+    r4c11 = new QLabel(gameBoardFrame);
+    r4c11->setObjectName(QStringLiteral("r4c11"));
+
+    boardGrid->addWidget(r4c11, 4, 11, 1, 1);
+
+    r4c12 = new QLabel(gameBoardFrame);
+    r4c12->setObjectName(QStringLiteral("r4c12"));
+    r4c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c12, 4, 12, 1, 1);
+
+    r4c13 = new QLabel(gameBoardFrame);
+    r4c13->setObjectName(QStringLiteral("r4c13"));
+
+    boardGrid->addWidget(r4c13, 4, 13, 1, 1);
+
+    r4c14 = new QLabel(gameBoardFrame);
+    r4c14->setObjectName(QStringLiteral("r4c14"));
+    r4c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c14, 4, 14, 1, 1);
+
+    r4c15 = new QLabel(gameBoardFrame);
+    r4c15->setObjectName(QStringLiteral("r4c15"));
+
+    boardGrid->addWidget(r4c15, 4, 15, 1, 1);
+
+    r4c16 = new QLabel(gameBoardFrame);
+    r4c16->setObjectName(QStringLiteral("r4c16"));
+    r4c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r4c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r4c16, 4, 16, 1, 1);
+
+    r5c0 = new QLabel(gameBoardFrame);
+    r5c0->setObjectName(QStringLiteral("r5c0"));
+    r5c0->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r5c0, 5, 0, 1, 1);
+
+    r5c1 = new QLabel(gameBoardFrame);
+    r5c1->setObjectName(QStringLiteral("r5c1"));
+    r5c1->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r5c1, 5, 1, 1, 1);
+
+    r5c2 = new QLabel(gameBoardFrame);
+    r5c2->setObjectName(QStringLiteral("r5c2"));
+    r5c2->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r5c2, 5, 2, 1, 1);
+
+    r5c3 = new QLabel(gameBoardFrame);
+    r5c3->setObjectName(QStringLiteral("r5c3"));
+
+    boardGrid->addWidget(r5c3, 5, 3, 1, 1);
+
+    r5c4 = new QLabel(gameBoardFrame);
+    r5c4->setObjectName(QStringLiteral("r5c4"));
+
+    boardGrid->addWidget(r5c4, 5, 4, 1, 1);
+
+    r5c5 = new QLabel(gameBoardFrame);
+    r5c5->setObjectName(QStringLiteral("r5c5"));
+
+    boardGrid->addWidget(r5c5, 5, 5, 1, 1);
+
+    r5c6 = new QLabel(gameBoardFrame);
+    r5c6->setObjectName(QStringLiteral("r5c6"));
+
+    boardGrid->addWidget(r5c6, 5, 6, 1, 1);
+
+    r5c7 = new QLabel(gameBoardFrame);
+    r5c7->setObjectName(QStringLiteral("r5c7"));
+
+    boardGrid->addWidget(r5c7, 5, 7, 1, 1);
+
+    r5c8 = new QLabel(gameBoardFrame);
+    r5c8->setObjectName(QStringLiteral("r5c8"));
+
+    boardGrid->addWidget(r5c8, 5, 8, 1, 1);
+
+    r5c9 = new QLabel(gameBoardFrame);
+    r5c9->setObjectName(QStringLiteral("r5c9"));
+
+    boardGrid->addWidget(r5c9, 5, 9, 1, 1);
+
+    r5c10 = new QLabel(gameBoardFrame);
+    r5c10->setObjectName(QStringLiteral("r5c10"));
+
+    boardGrid->addWidget(r5c10, 5, 10, 1, 1);
+
+    r5c11 = new QLabel(gameBoardFrame);
+    r5c11->setObjectName(QStringLiteral("r5c11"));
+
+    boardGrid->addWidget(r5c11, 5, 11, 1, 1);
+
+    r5c12 = new QLabel(gameBoardFrame);
+    r5c12->setObjectName(QStringLiteral("r5c12"));
+
+    boardGrid->addWidget(r5c12, 5, 12, 1, 1);
+
+    r5c13 = new QLabel(gameBoardFrame);
+    r5c13->setObjectName(QStringLiteral("r5c13"));
+
+    boardGrid->addWidget(r5c13, 5, 13, 1, 1);
+
+    r5c14 = new QLabel(gameBoardFrame);
+    r5c14->setObjectName(QStringLiteral("r5c14"));
+
+    boardGrid->addWidget(r5c14, 5, 14, 1, 1);
+
+    r5c15 = new QLabel(gameBoardFrame);
+    r5c15->setObjectName(QStringLiteral("r5c15"));
+
+    boardGrid->addWidget(r5c15, 5, 15, 1, 1);
+
+    r5c16 = new QLabel(gameBoardFrame);
+    r5c16->setObjectName(QStringLiteral("r5c16"));
+
+    boardGrid->addWidget(r5c16, 5, 16, 1, 1);
+
+    r6c0 = new QLabel(gameBoardFrame);
+    r6c0->setObjectName(QStringLiteral("r6c0"));
+    r6c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c0, 6, 0, 1, 1);
+
+    r6c1 = new QLabel(gameBoardFrame);
+    r6c1->setObjectName(QStringLiteral("r6c1"));
+
+    boardGrid->addWidget(r6c1, 6, 1, 1, 1);
+
+    r6c2 = new QLabel(gameBoardFrame);
+    r6c2->setObjectName(QStringLiteral("r6c2"));
+    r6c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c2, 6, 2, 1, 1);
+
+    r6c3 = new QLabel(gameBoardFrame);
+    r6c3->setObjectName(QStringLiteral("r6c3"));
+
+    boardGrid->addWidget(r6c3, 6, 3, 1, 1);
+
+    r6c4 = new QLabel(gameBoardFrame);
+    r6c4->setObjectName(QStringLiteral("r6c4"));
+    r6c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c4, 6, 4, 1, 1);
+
+    r6c5 = new QLabel(gameBoardFrame);
+    r6c5->setObjectName(QStringLiteral("r6c5"));
+
+    boardGrid->addWidget(r6c5, 6, 5, 1, 1);
+
+    r6c6 = new QLabel(gameBoardFrame);
+    r6c6->setObjectName(QStringLiteral("r6c6"));
+    r6c6->setEnabled(true);
+    r6c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c6, 6, 6, 1, 1);
+
+    r6c7 = new QLabel(gameBoardFrame);
+    r6c7->setObjectName(QStringLiteral("r6c7"));
+
+    boardGrid->addWidget(r6c7, 6, 7, 1, 1);
+
+    r6c8 = new QLabel(gameBoardFrame);
+    r6c8->setObjectName(QStringLiteral("r6c8"));
+    r6c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c8, 6, 8, 1, 1);
+
+    r6c9 = new QLabel(gameBoardFrame);
+    r6c9->setObjectName(QStringLiteral("r6c9"));
+
+    boardGrid->addWidget(r6c9, 6, 9, 1, 1);
+
+    r6c10 = new QLabel(gameBoardFrame);
+    r6c10->setObjectName(QStringLiteral("r6c10"));
+    r6c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c10, 6, 10, 1, 1);
+
+    r6c11 = new QLabel(gameBoardFrame);
+    r6c11->setObjectName(QStringLiteral("r6c11"));
+
+    boardGrid->addWidget(r6c11, 6, 11, 1, 1);
+
+    r6c12 = new QLabel(gameBoardFrame);
+    r6c12->setObjectName(QStringLiteral("r6c12"));
+    r6c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c12, 6, 12, 1, 1);
+
+    r6c13 = new QLabel(gameBoardFrame);
+    r6c13->setObjectName(QStringLiteral("r6c13"));
+
+    boardGrid->addWidget(r6c13, 6, 13, 1, 1);
+
+    r6c14 = new QLabel(gameBoardFrame);
+    r6c14->setObjectName(QStringLiteral("r6c14"));
+    r6c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c14, 6, 14, 1, 1);
+
+    r6c15 = new QLabel(gameBoardFrame);
+    r6c15->setObjectName(QStringLiteral("r6c15"));
+
+    boardGrid->addWidget(r6c15, 6, 15, 1, 1);
+
+    r6c16 = new QLabel(gameBoardFrame);
+    r6c16->setObjectName(QStringLiteral("r6c16"));
+    r6c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r6c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r6c16, 6, 16, 1, 1);
+
+    r7c0 = new QLabel(gameBoardFrame);
+    r7c0->setObjectName(QStringLiteral("r7c0"));
+
+    boardGrid->addWidget(r7c0, 7, 0, 1, 1);
+
+    r7c1 = new QLabel(gameBoardFrame);
+    r7c1->setObjectName(QStringLiteral("r7c1"));
+
+    boardGrid->addWidget(r7c1, 7, 1, 1, 1);
+
+    r7c2 = new QLabel(gameBoardFrame);
+    r7c2->setObjectName(QStringLiteral("r7c2"));
+
+    boardGrid->addWidget(r7c2, 7, 2, 1, 1);
+
+    r7c3 = new QLabel(gameBoardFrame);
+    r7c3->setObjectName(QStringLiteral("r7c3"));
+
+    boardGrid->addWidget(r7c3, 7, 3, 1, 1);
+
+    r74 = new QLabel(gameBoardFrame);
+    r74->setObjectName(QStringLiteral("r74"));
+
+    boardGrid->addWidget(r74, 7, 4, 1, 1);
+
+    r7c5 = new QLabel(gameBoardFrame);
+    r7c5->setObjectName(QStringLiteral("r7c5"));
+
+    boardGrid->addWidget(r7c5, 7, 5, 1, 1);
+
+    r7c6 = new QLabel(gameBoardFrame);
+    r7c6->setObjectName(QStringLiteral("r7c6"));
+
+    boardGrid->addWidget(r7c6, 7, 6, 1, 1);
+
+    r7c7 = new QLabel(gameBoardFrame);
+    r7c7->setObjectName(QStringLiteral("r7c7"));
+
+    boardGrid->addWidget(r7c7, 7, 7, 1, 1);
+
+    r7c8 = new QLabel(gameBoardFrame);
+    r7c8->setObjectName(QStringLiteral("r7c8"));
+
+    boardGrid->addWidget(r7c8, 7, 8, 1, 1);
+
+    r7c9 = new QLabel(gameBoardFrame);
+    r7c9->setObjectName(QStringLiteral("r7c9"));
+
+    boardGrid->addWidget(r7c9, 7, 9, 1, 1);
+
+    r7c10 = new QLabel(gameBoardFrame);
+    r7c10->setObjectName(QStringLiteral("r7c10"));
+
+    boardGrid->addWidget(r7c10, 7, 10, 1, 1);
+
+    r7c11 = new QLabel(gameBoardFrame);
+    r7c11->setObjectName(QStringLiteral("r7c11"));
+
+    boardGrid->addWidget(r7c11, 7, 11, 1, 1);
+
+    r7c12 = new QLabel(gameBoardFrame);
+    r7c12->setObjectName(QStringLiteral("r7c12"));
+
+    boardGrid->addWidget(r7c12, 7, 12, 1, 1);
+
+    rc13 = new QLabel(gameBoardFrame);
+    rc13->setObjectName(QStringLiteral("rc13"));
+
+    boardGrid->addWidget(rc13, 7, 13, 1, 1);
+
+    r7c14 = new QLabel(gameBoardFrame);
+    r7c14->setObjectName(QStringLiteral("r7c14"));
+
+    boardGrid->addWidget(r7c14, 7, 14, 1, 1);
+
+    r7c15 = new QLabel(gameBoardFrame);
+    r7c15->setObjectName(QStringLiteral("r7c15"));
+
+    boardGrid->addWidget(r7c15, 7, 15, 1, 1);
+
+    r7c16 = new QLabel(gameBoardFrame);
+    r7c16->setObjectName(QStringLiteral("r7c16"));
+
+    boardGrid->addWidget(r7c16, 7, 16, 1, 1);
+
+    r8c0 = new QLabel(gameBoardFrame);
+    r8c0->setObjectName(QStringLiteral("r8c0"));
+    r8c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c0, 8, 0, 1, 1);
+
+    r8c1 = new QLabel(gameBoardFrame);
+    r8c1->setObjectName(QStringLiteral("r8c1"));
+
+    boardGrid->addWidget(r8c1, 8, 1, 1, 1);
+
+    r8c2 = new QLabel(gameBoardFrame);
+    r8c2->setObjectName(QStringLiteral("r8c2"));
+    r8c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c2, 8, 2, 1, 1);
+
+    r8c3 = new QLabel(gameBoardFrame);
+    r8c3->setObjectName(QStringLiteral("r8c3"));
+
+    boardGrid->addWidget(r8c3, 8, 3, 1, 1);
+
+    r8c4 = new QLabel(gameBoardFrame);
+    r8c4->setObjectName(QStringLiteral("r8c4"));
+    r8c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c4, 8, 4, 1, 1);
+
+    r8c5 = new QLabel(gameBoardFrame);
+    r8c5->setObjectName(QStringLiteral("r8c5"));
+
+    boardGrid->addWidget(r8c5, 8, 5, 1, 1);
+
+    r8c6 = new QLabel(gameBoardFrame);
+    r8c6->setObjectName(QStringLiteral("r8c6"));
+    r8c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c6, 8, 6, 1, 1);
+
+    r8c7 = new QLabel(gameBoardFrame);
+    r8c7->setObjectName(QStringLiteral("r8c7"));
+
+    boardGrid->addWidget(r8c7, 8, 7, 1, 1);
+
+    r8c8 = new QLabel(gameBoardFrame);
+    r8c8->setObjectName(QStringLiteral("r8c8"));
+    r8c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c8, 8, 8, 1, 1);
+
+    r8c9 = new QLabel(gameBoardFrame);
+    r8c9->setObjectName(QStringLiteral("r8c9"));
+
+    boardGrid->addWidget(r8c9, 8, 9, 1, 1);
+
+    r8c10 = new QLabel(gameBoardFrame);
+    r8c10->setObjectName(QStringLiteral("r8c10"));
+    r8c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c10, 8, 10, 1, 1);
+
+    r8c11 = new QLabel(gameBoardFrame);
+    r8c11->setObjectName(QStringLiteral("r8c11"));
+
+    boardGrid->addWidget(r8c11, 8, 11, 1, 1);
+
+    r8c12 = new QLabel(gameBoardFrame);
+    r8c12->setObjectName(QStringLiteral("r8c12"));
+    r8c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c12, 8, 12, 1, 1);
+
+    r8c13 = new QLabel(gameBoardFrame);
+    r8c13->setObjectName(QStringLiteral("r8c13"));
+
+    boardGrid->addWidget(r8c13, 8, 13, 1, 1);
+
+    r8c14 = new QLabel(gameBoardFrame);
+    r8c14->setObjectName(QStringLiteral("r8c14"));
+    r8c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c14, 8, 14, 1, 1);
+
+    r8c15 = new QLabel(gameBoardFrame);
+    r8c15->setObjectName(QStringLiteral("r8c15"));
+
+    boardGrid->addWidget(r8c15, 8, 15, 1, 1);
+
+    r8c16 = new QLabel(gameBoardFrame);
+    r8c16->setObjectName(QStringLiteral("r8c16"));
+    r8c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r8c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r8c16, 8, 16, 1, 1);
+
+    r9c0 = new QLabel(gameBoardFrame);
+    r9c0->setObjectName(QStringLiteral("r9c0"));
+
+    boardGrid->addWidget(r9c0, 9, 0, 1, 1);
+
+    r9c1 = new QLabel(gameBoardFrame);
+    r9c1->setObjectName(QStringLiteral("r9c1"));
+
+    boardGrid->addWidget(r9c1, 9, 1, 1, 1);
+
+    r9c2 = new QLabel(gameBoardFrame);
+    r9c2->setObjectName(QStringLiteral("r9c2"));
+
+    boardGrid->addWidget(r9c2, 9, 2, 1, 1);
+
+    r9c3 = new QLabel(gameBoardFrame);
+    r9c3->setObjectName(QStringLiteral("r9c3"));
+
+    boardGrid->addWidget(r9c3, 9, 3, 1, 1);
+
+    r9c4 = new QLabel(gameBoardFrame);
+    r9c4->setObjectName(QStringLiteral("r9c4"));
+
+    boardGrid->addWidget(r9c4, 9, 4, 1, 1);
+
+    r9c5 = new QLabel(gameBoardFrame);
+    r9c5->setObjectName(QStringLiteral("r9c5"));
+
+    boardGrid->addWidget(r9c5, 9, 5, 1, 1);
+
+    r9c6 = new QLabel(gameBoardFrame);
+    r9c6->setObjectName(QStringLiteral("r9c6"));
+
+    boardGrid->addWidget(r9c6, 9, 6, 1, 1);
+
+    r9c7 = new QLabel(gameBoardFrame);
+    r9c7->setObjectName(QStringLiteral("r9c7"));
+
+    boardGrid->addWidget(r9c7, 9, 7, 1, 1);
+
+    r9c8 = new QLabel(gameBoardFrame);
+    r9c8->setObjectName(QStringLiteral("r9c8"));
+
+    boardGrid->addWidget(r9c8, 9, 8, 1, 1);
+
+    r9c9 = new QLabel(gameBoardFrame);
+    r9c9->setObjectName(QStringLiteral("r9c9"));
+
+    boardGrid->addWidget(r9c9, 9, 9, 1, 1);
+
+    r9c10 = new QLabel(gameBoardFrame);
+    r9c10->setObjectName(QStringLiteral("r9c10"));
+
+    boardGrid->addWidget(r9c10, 9, 10, 1, 1);
+
+    r9c11 = new QLabel(gameBoardFrame);
+    r9c11->setObjectName(QStringLiteral("r9c11"));
+
+    boardGrid->addWidget(r9c11, 9, 11, 1, 1);
+
+    r9c12 = new QLabel(gameBoardFrame);
+    r9c12->setObjectName(QStringLiteral("r9c12"));
+
+    boardGrid->addWidget(r9c12, 9, 12, 1, 1);
+
+    r9c14 = new QLabel(gameBoardFrame);
+    r9c14->setObjectName(QStringLiteral("r9c14"));
+
+    boardGrid->addWidget(r9c14, 9, 13, 1, 1);
+
+    r9c16_2 = new QLabel(gameBoardFrame);
+    r9c16_2->setObjectName(QStringLiteral("r9c16_2"));
+
+    boardGrid->addWidget(r9c16_2, 9, 14, 1, 1);
+
+    r9c15 = new QLabel(gameBoardFrame);
+    r9c15->setObjectName(QStringLiteral("r9c15"));
+
+    boardGrid->addWidget(r9c15, 9, 15, 1, 1);
+
+    r9c16 = new QLabel(gameBoardFrame);
+    r9c16->setObjectName(QStringLiteral("r9c16"));
+
+    boardGrid->addWidget(r9c16, 9, 16, 1, 1);
+
+    r10c0 = new QLabel(gameBoardFrame);
+    r10c0->setObjectName(QStringLiteral("r10c0"));
+    r10c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c0, 10, 0, 1, 1);
+
+    r10c1 = new QLabel(gameBoardFrame);
+    r10c1->setObjectName(QStringLiteral("r10c1"));
+
+    boardGrid->addWidget(r10c1, 10, 1, 1, 1);
+
+    r10c2 = new QLabel(gameBoardFrame);
+    r10c2->setObjectName(QStringLiteral("r10c2"));
+    r10c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c2, 10, 2, 1, 1);
+
+    r10c3 = new QLabel(gameBoardFrame);
+    r10c3->setObjectName(QStringLiteral("r10c3"));
+
+    boardGrid->addWidget(r10c3, 10, 3, 1, 1);
+
+    r10c4 = new QLabel(gameBoardFrame);
+    r10c4->setObjectName(QStringLiteral("r10c4"));
+    r10c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c4, 10, 4, 1, 1);
+
+    r10c5 = new QLabel(gameBoardFrame);
+    r10c5->setObjectName(QStringLiteral("r10c5"));
+
+    boardGrid->addWidget(r10c5, 10, 5, 1, 1);
+
+    r10c6 = new QLabel(gameBoardFrame);
+    r10c6->setObjectName(QStringLiteral("r10c6"));
+    r10c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c6, 10, 6, 1, 1);
+
+    r10c7 = new QLabel(gameBoardFrame);
+    r10c7->setObjectName(QStringLiteral("r10c7"));
+
+    boardGrid->addWidget(r10c7, 10, 7, 1, 1);
+
+    r10c8 = new QLabel(gameBoardFrame);
+    r10c8->setObjectName(QStringLiteral("r10c8"));
+    r10c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c8, 10, 8, 1, 1);
+
+    r10c9 = new QLabel(gameBoardFrame);
+    r10c9->setObjectName(QStringLiteral("r10c9"));
+
+    boardGrid->addWidget(r10c9, 10, 9, 1, 1);
+
+    r10c10 = new QLabel(gameBoardFrame);
+    r10c10->setObjectName(QStringLiteral("r10c10"));
+    r10c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c10, 10, 10, 1, 1);
+
+    r10c11 = new QLabel(gameBoardFrame);
+    r10c11->setObjectName(QStringLiteral("r10c11"));
+
+    boardGrid->addWidget(r10c11, 10, 11, 1, 1);
+
+    r10c12 = new QLabel(gameBoardFrame);
+    r10c12->setObjectName(QStringLiteral("r10c12"));
+    r10c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c12, 10, 12, 1, 1);
+
+    r10c13 = new QLabel(gameBoardFrame);
+    r10c13->setObjectName(QStringLiteral("r10c13"));
+
+    boardGrid->addWidget(r10c13, 10, 13, 1, 1);
+
+    r10c14 = new QLabel(gameBoardFrame);
+    r10c14->setObjectName(QStringLiteral("r10c14"));
+    r10c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c14, 10, 14, 1, 1);
+
+    r10c15 = new QLabel(gameBoardFrame);
+    r10c15->setObjectName(QStringLiteral("r10c15"));
+
+    boardGrid->addWidget(r10c15, 10, 15, 1, 1);
+
+    r10c16 = new QLabel(gameBoardFrame);
+    r10c16->setObjectName(QStringLiteral("r10c16"));
+    r10c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r10c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r10c16, 10, 16, 1, 1);
+
+    r11c0 = new QLabel(gameBoardFrame);
+    r11c0->setObjectName(QStringLiteral("r11c0"));
+
+    boardGrid->addWidget(r11c0, 11, 0, 1, 1);
+
+    r11c1 = new QLabel(gameBoardFrame);
+    r11c1->setObjectName(QStringLiteral("r11c1"));
+
+    boardGrid->addWidget(r11c1, 11, 1, 1, 1);
+
+    r11c2 = new QLabel(gameBoardFrame);
+    r11c2->setObjectName(QStringLiteral("r11c2"));
+
+    boardGrid->addWidget(r11c2, 11, 2, 1, 1);
+
+    r11c3 = new QLabel(gameBoardFrame);
+    r11c3->setObjectName(QStringLiteral("r11c3"));
+
+    boardGrid->addWidget(r11c3, 11, 3, 1, 1);
+
+    r11c4 = new QLabel(gameBoardFrame);
+    r11c4->setObjectName(QStringLiteral("r11c4"));
+
+    boardGrid->addWidget(r11c4, 11, 4, 1, 1);
+
+    r11c5 = new QLabel(gameBoardFrame);
+    r11c5->setObjectName(QStringLiteral("r11c5"));
+
+    boardGrid->addWidget(r11c5, 11, 5, 1, 1);
+
+    r11c6 = new QLabel(gameBoardFrame);
+    r11c6->setObjectName(QStringLiteral("r11c6"));
+
+    boardGrid->addWidget(r11c6, 11, 6, 1, 1);
+
+    r11c7 = new QLabel(gameBoardFrame);
+    r11c7->setObjectName(QStringLiteral("r11c7"));
+
+    boardGrid->addWidget(r11c7, 11, 7, 1, 1);
+
+    r11c8 = new QLabel(gameBoardFrame);
+    r11c8->setObjectName(QStringLiteral("r11c8"));
+
+    boardGrid->addWidget(r11c8, 11, 8, 1, 1);
+
+    r11c9 = new QLabel(gameBoardFrame);
+    r11c9->setObjectName(QStringLiteral("r11c9"));
+
+    boardGrid->addWidget(r11c9, 11, 9, 1, 1);
+
+    r11c10 = new QLabel(gameBoardFrame);
+    r11c10->setObjectName(QStringLiteral("r11c10"));
+
+    boardGrid->addWidget(r11c10, 11, 10, 1, 1);
+
+    r11c12 = new QLabel(gameBoardFrame);
+    r11c12->setObjectName(QStringLiteral("r11c12"));
+
+    boardGrid->addWidget(r11c12, 11, 12, 1, 1);
+
+    r11c13 = new QLabel(gameBoardFrame);
+    r11c13->setObjectName(QStringLiteral("r11c13"));
+
+    boardGrid->addWidget(r11c13, 11, 13, 1, 1);
+
+    r11c14 = new QLabel(gameBoardFrame);
+    r11c14->setObjectName(QStringLiteral("r11c14"));
+
+    boardGrid->addWidget(r11c14, 11, 14, 1, 1);
+
+    r11c15 = new QLabel(gameBoardFrame);
+    r11c15->setObjectName(QStringLiteral("r11c15"));
+
+    boardGrid->addWidget(r11c15, 11, 15, 1, 1);
+
+    r11c16 = new QLabel(gameBoardFrame);
+    r11c16->setObjectName(QStringLiteral("r11c16"));
+
+    boardGrid->addWidget(r11c16, 11, 16, 1, 1);
+
+    r12c0 = new QLabel(gameBoardFrame);
+    r12c0->setObjectName(QStringLiteral("r12c0"));
+    r12c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c0, 12, 0, 1, 1);
+
+    r12c1 = new QLabel(gameBoardFrame);
+    r12c1->setObjectName(QStringLiteral("r12c1"));
+
+    boardGrid->addWidget(r12c1, 12, 1, 1, 1);
+
+    r12c2 = new QLabel(gameBoardFrame);
+    r12c2->setObjectName(QStringLiteral("r12c2"));
+    r12c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c2, 12, 2, 1, 1);
+
+    r12c3 = new QLabel(gameBoardFrame);
+    r12c3->setObjectName(QStringLiteral("r12c3"));
+
+    boardGrid->addWidget(r12c3, 12, 3, 1, 1);
+
+    r12c4 = new QLabel(gameBoardFrame);
+    r12c4->setObjectName(QStringLiteral("r12c4"));
+    r12c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c4, 12, 4, 1, 1);
+
+    r12c5 = new QLabel(gameBoardFrame);
+    r12c5->setObjectName(QStringLiteral("r12c5"));
+
+    boardGrid->addWidget(r12c5, 12, 5, 1, 1);
+
+    r12c6 = new QLabel(gameBoardFrame);
+    r12c6->setObjectName(QStringLiteral("r12c6"));
+    r12c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c6, 12, 6, 1, 1);
+
+    r12c8 = new QLabel(gameBoardFrame);
+    r12c8->setObjectName(QStringLiteral("r12c8"));
+    r12c8->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c8, 12, 8, 1, 1);
+
+    r12c9 = new QLabel(gameBoardFrame);
+    r12c9->setObjectName(QStringLiteral("r12c9"));
+
+    boardGrid->addWidget(r12c9, 12, 9, 1, 1);
+
+    r12c10 = new QLabel(gameBoardFrame);
+    r12c10->setObjectName(QStringLiteral("r12c10"));
+    r12c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c10, 12, 10, 1, 1);
+
+    r12c11 = new QLabel(gameBoardFrame);
+    r12c11->setObjectName(QStringLiteral("r12c11"));
+
+    boardGrid->addWidget(r12c11, 12, 11, 1, 1);
+
+    r12c12 = new QLabel(gameBoardFrame);
+    r12c12->setObjectName(QStringLiteral("r12c12"));
+    r12c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c12, 12, 12, 1, 1);
+
+    r12c13 = new QLabel(gameBoardFrame);
+    r12c13->setObjectName(QStringLiteral("r12c13"));
+
+    boardGrid->addWidget(r12c13, 12, 13, 1, 1);
+
+    r12c14 = new QLabel(gameBoardFrame);
+    r12c14->setObjectName(QStringLiteral("r12c14"));
+    r12c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c14, 12, 14, 1, 1);
+
+    r12c15 = new QLabel(gameBoardFrame);
+    r12c15->setObjectName(QStringLiteral("r12c15"));
+
+    boardGrid->addWidget(r12c15, 12, 15, 1, 1);
+
+    r12c16 = new QLabel(gameBoardFrame);
+    r12c16->setObjectName(QStringLiteral("r12c16"));
+    r12c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r12c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r12c16, 12, 16, 1, 1);
+
+    r13c0 = new QLabel(gameBoardFrame);
+    r13c0->setObjectName(QStringLiteral("r13c0"));
+
+    boardGrid->addWidget(r13c0, 13, 0, 1, 1);
+
+    r13c1 = new QLabel(gameBoardFrame);
+    r13c1->setObjectName(QStringLiteral("r13c1"));
+
+    boardGrid->addWidget(r13c1, 13, 1, 1, 1);
+
+    r13c2 = new QLabel(gameBoardFrame);
+    r13c2->setObjectName(QStringLiteral("r13c2"));
+
+    boardGrid->addWidget(r13c2, 13, 2, 1, 1);
+
+    r13c3 = new QLabel(gameBoardFrame);
+    r13c3->setObjectName(QStringLiteral("r13c3"));
+
+    boardGrid->addWidget(r13c3, 13, 3, 1, 1);
+
+    r13c4 = new QLabel(gameBoardFrame);
+    r13c4->setObjectName(QStringLiteral("r13c4"));
+
+    boardGrid->addWidget(r13c4, 13, 4, 1, 1);
+
+    r13c5 = new QLabel(gameBoardFrame);
+    r13c5->setObjectName(QStringLiteral("r13c5"));
+
+    boardGrid->addWidget(r13c5, 13, 5, 1, 1);
+
+    r13c6 = new QLabel(gameBoardFrame);
+    r13c6->setObjectName(QStringLiteral("r13c6"));
+
+    boardGrid->addWidget(r13c6, 13, 6, 1, 1);
+
+    r13c7 = new QLabel(gameBoardFrame);
+    r13c7->setObjectName(QStringLiteral("r13c7"));
+
+    boardGrid->addWidget(r13c7, 13, 7, 1, 1);
+
+    r13c8 = new QLabel(gameBoardFrame);
+    r13c8->setObjectName(QStringLiteral("r13c8"));
+
+    boardGrid->addWidget(r13c8, 13, 8, 1, 1);
+
+    r13c9 = new QLabel(gameBoardFrame);
+    r13c9->setObjectName(QStringLiteral("r13c9"));
+
+    boardGrid->addWidget(r13c9, 13, 9, 1, 1);
+
+    r13c10 = new QLabel(gameBoardFrame);
+    r13c10->setObjectName(QStringLiteral("r13c10"));
+
+    boardGrid->addWidget(r13c10, 13, 10, 1, 1);
+
+    r13c11 = new QLabel(gameBoardFrame);
+    r13c11->setObjectName(QStringLiteral("r13c11"));
+
+    boardGrid->addWidget(r13c11, 13, 11, 1, 1);
+
+    r13c12 = new QLabel(gameBoardFrame);
+    r13c12->setObjectName(QStringLiteral("r13c12"));
+
+    boardGrid->addWidget(r13c12, 13, 12, 1, 1);
+
+    r13c13 = new QLabel(gameBoardFrame);
+    r13c13->setObjectName(QStringLiteral("r13c13"));
+
+    boardGrid->addWidget(r13c13, 13, 13, 1, 1);
+
+    r13c14 = new QLabel(gameBoardFrame);
+    r13c14->setObjectName(QStringLiteral("r13c14"));
+
+    boardGrid->addWidget(r13c14, 13, 14, 1, 1);
+
+    r13c15 = new QLabel(gameBoardFrame);
+    r13c15->setObjectName(QStringLiteral("r13c15"));
+
+    boardGrid->addWidget(r13c15, 13, 15, 1, 1);
+
+    r13c16 = new QLabel(gameBoardFrame);
+    r13c16->setObjectName(QStringLiteral("r13c16"));
+
+    boardGrid->addWidget(r13c16, 13, 16, 1, 1);
+
+    r14c0 = new QLabel(gameBoardFrame);
+    r14c0->setObjectName(QStringLiteral("r14c0"));
+    r14c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c0, 14, 0, 1, 1);
+
+    r14c1 = new QLabel(gameBoardFrame);
+    r14c1->setObjectName(QStringLiteral("r14c1"));
+
+    boardGrid->addWidget(r14c1, 14, 1, 1, 1);
+
+    r14c2 = new QLabel(gameBoardFrame);
+    r14c2->setObjectName(QStringLiteral("r14c2"));
+    r14c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c2, 14, 2, 1, 1);
+
+    r14c3 = new QLabel(gameBoardFrame);
+    r14c3->setObjectName(QStringLiteral("r14c3"));
+
+    boardGrid->addWidget(r14c3, 14, 3, 1, 1);
+
+    r14c4 = new QLabel(gameBoardFrame);
+    r14c4->setObjectName(QStringLiteral("r14c4"));
+    r14c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c4, 14, 4, 1, 1);
+
+    r14c5 = new QLabel(gameBoardFrame);
+    r14c5->setObjectName(QStringLiteral("r14c5"));
+
+    boardGrid->addWidget(r14c5, 14, 5, 1, 1);
+
+    r14c6 = new QLabel(gameBoardFrame);
+    r14c6->setObjectName(QStringLiteral("r14c6"));
+    r14c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c6, 14, 6, 1, 1);
+
+    r14c7 = new QLabel(gameBoardFrame);
+    r14c7->setObjectName(QStringLiteral("r14c7"));
+
+    boardGrid->addWidget(r14c7, 14, 7, 1, 1);
+
+    r14c8 = new QLabel(gameBoardFrame);
+    r14c8->setObjectName(QStringLiteral("r14c8"));
+    r14c8->setStyleSheet(QLatin1String("background-color: rgb(118, 95, 80);\n"
+                                       "\n"
+                                       ""));
+    r14c8->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c8, 14, 8, 1, 1);
+
+    r14c9 = new QLabel(gameBoardFrame);
+    r14c9->setObjectName(QStringLiteral("r14c9"));
+
+    boardGrid->addWidget(r14c9, 14, 9, 1, 1);
+
+    r14c10 = new QLabel(gameBoardFrame);
+    r14c10->setObjectName(QStringLiteral("r14c10"));
+    r14c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c10, 14, 10, 1, 1);
+
+    r14c11 = new QLabel(gameBoardFrame);
+    r14c11->setObjectName(QStringLiteral("r14c11"));
+
+    boardGrid->addWidget(r14c11, 14, 11, 1, 1);
+
+    r14c12 = new QLabel(gameBoardFrame);
+    r14c12->setObjectName(QStringLiteral("r14c12"));
+    r14c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c12, 14, 12, 1, 1);
+
+    r14c13 = new QLabel(gameBoardFrame);
+    r14c13->setObjectName(QStringLiteral("r14c13"));
+
+    boardGrid->addWidget(r14c13, 14, 13, 1, 1);
+
+    r14c14 = new QLabel(gameBoardFrame);
+    r14c14->setObjectName(QStringLiteral("r14c14"));
+    r14c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c14, 14, 14, 1, 1);
+
+    r14c15 = new QLabel(gameBoardFrame);
+    r14c15->setObjectName(QStringLiteral("r14c15"));
+
+    boardGrid->addWidget(r14c15, 14, 15, 1, 1);
+
+    r14c16 = new QLabel(gameBoardFrame);
+    r14c16->setObjectName(QStringLiteral("r14c16"));
+    r14c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r14c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r14c16, 14, 16, 1, 1);
+
+    r15c0 = new QLabel(gameBoardFrame);
+    r15c0->setObjectName(QStringLiteral("r15c0"));
+
+    boardGrid->addWidget(r15c0, 15, 0, 1, 1);
+
+    r15c1 = new QLabel(gameBoardFrame);
+    r15c1->setObjectName(QStringLiteral("r15c1"));
+
+    boardGrid->addWidget(r15c1, 15, 1, 1, 1);
+
+    r15c2 = new QLabel(gameBoardFrame);
+    r15c2->setObjectName(QStringLiteral("r15c2"));
+
+    boardGrid->addWidget(r15c2, 15, 2, 1, 1);
+
+    r15c3 = new QLabel(gameBoardFrame);
+    r15c3->setObjectName(QStringLiteral("r15c3"));
+
+    boardGrid->addWidget(r15c3, 15, 3, 1, 1);
+
+    r15c4 = new QLabel(gameBoardFrame);
+    r15c4->setObjectName(QStringLiteral("r15c4"));
+
+    boardGrid->addWidget(r15c4, 15, 4, 1, 1);
+
+    r15c5 = new QLabel(gameBoardFrame);
+    r15c5->setObjectName(QStringLiteral("r15c5"));
+
+    boardGrid->addWidget(r15c5, 15, 5, 1, 1);
+
+    r15c6 = new QLabel(gameBoardFrame);
+    r15c6->setObjectName(QStringLiteral("r15c6"));
+
+    boardGrid->addWidget(r15c6, 15, 6, 1, 1);
+
+    r15c7 = new QLabel(gameBoardFrame);
+    r15c7->setObjectName(QStringLiteral("r15c7"));
+
+    boardGrid->addWidget(r15c7, 15, 7, 1, 1);
+
+    r15c8 = new QLabel(gameBoardFrame);
+    r15c8->setObjectName(QStringLiteral("r15c8"));
+
+    boardGrid->addWidget(r15c8, 15, 8, 1, 1);
+
+    r15c9 = new QLabel(gameBoardFrame);
+    r15c9->setObjectName(QStringLiteral("r15c9"));
+
+    boardGrid->addWidget(r15c9, 15, 9, 1, 1);
+
+    r15c10 = new QLabel(gameBoardFrame);
+    r15c10->setObjectName(QStringLiteral("r15c10"));
+
+    boardGrid->addWidget(r15c10, 15, 10, 1, 1);
+
+    r15c11 = new QLabel(gameBoardFrame);
+    r15c11->setObjectName(QStringLiteral("r15c11"));
+
+    boardGrid->addWidget(r15c11, 15, 11, 1, 1);
+
+    r15c12 = new QLabel(gameBoardFrame);
+    r15c12->setObjectName(QStringLiteral("r15c12"));
+
+    boardGrid->addWidget(r15c12, 15, 12, 1, 1);
+
+    r15c13 = new QLabel(gameBoardFrame);
+    r15c13->setObjectName(QStringLiteral("r15c13"));
+
+    boardGrid->addWidget(r15c13, 15, 13, 1, 1);
+
+    r15c14 = new QLabel(gameBoardFrame);
+    r15c14->setObjectName(QStringLiteral("r15c14"));
+
+    boardGrid->addWidget(r15c14, 15, 14, 1, 1);
+
+    r15c15 = new QLabel(gameBoardFrame);
+    r15c15->setObjectName(QStringLiteral("r15c15"));
+
+    boardGrid->addWidget(r15c15, 15, 15, 1, 1);
+
+    r15c16 = new QLabel(gameBoardFrame);
+    r15c16->setObjectName(QStringLiteral("r15c16"));
+
+    boardGrid->addWidget(r15c16, 15, 16, 1, 1);
+
+    r16c0 = new QLabel(gameBoardFrame);
+    r16c0->setObjectName(QStringLiteral("r16c0"));
+    r16c0->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c0->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c0, 16, 0, 1, 1);
+
+    r16c1 = new QLabel(gameBoardFrame);
+    r16c1->setObjectName(QStringLiteral("r16c1"));
+
+    boardGrid->addWidget(r16c1, 16, 1, 1, 1);
+
+    r16c2 = new QLabel(gameBoardFrame);
+    r16c2->setObjectName(QStringLiteral("r16c2"));
+    r16c2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c2, 16, 2, 1, 1);
+
+    r16c3 = new QLabel(gameBoardFrame);
+    r16c3->setObjectName(QStringLiteral("r16c3"));
+
+    boardGrid->addWidget(r16c3, 16, 3, 1, 1);
+
+    r16c4 = new QLabel(gameBoardFrame);
+    r16c4->setObjectName(QStringLiteral("r16c4"));
+    r16c4->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c4->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c4, 16, 4, 1, 1);
+
+    r16c5 = new QLabel(gameBoardFrame);
+    r16c5->setObjectName(QStringLiteral("r16c5"));
+
+    boardGrid->addWidget(r16c5, 16, 5, 1, 1);
+
+    r16c6 = new QLabel(gameBoardFrame);
+    r16c6->setObjectName(QStringLiteral("r16c6"));
+    r16c6->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c6->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c6, 16, 6, 1, 1);
+
+    r16c7_2 = new QLabel(gameBoardFrame);
+    r16c7_2->setObjectName(QStringLiteral("r16c7_2"));
+
+    boardGrid->addWidget(r16c7_2, 16, 7, 1, 1);
+
+    r16c8_2 = new QLabel(gameBoardFrame);
+    r16c8_2->setObjectName(QStringLiteral("r16c8_2"));
+    r16c8_2->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c8_2->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c8_2, 16, 8, 1, 1);
+
+    r16c9_2 = new QLabel(gameBoardFrame);
+    r16c9_2->setObjectName(QStringLiteral("r16c9_2"));
+
+    boardGrid->addWidget(r16c9_2, 16, 9, 1, 1);
+
+    r16c10 = new QLabel(gameBoardFrame);
+    r16c10->setObjectName(QStringLiteral("r16c10"));
+    r16c10->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c10->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c10, 16, 10, 1, 1);
+
+    r16c11 = new QLabel(gameBoardFrame);
+    r16c11->setObjectName(QStringLiteral("r16c11"));
+
+    boardGrid->addWidget(r16c11, 16, 11, 1, 1);
+
+    r16c12 = new QLabel(gameBoardFrame);
+    r16c12->setObjectName(QStringLiteral("r16c12"));
+    r16c12->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c12->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c12, 16, 12, 1, 1);
+
+    r16c13 = new QLabel(gameBoardFrame);
+    r16c13->setObjectName(QStringLiteral("r16c13"));
+
+    boardGrid->addWidget(r16c13, 16, 13, 1, 1);
+
+    r16c14 = new QLabel(gameBoardFrame);
+    r16c14->setObjectName(QStringLiteral("r16c14"));
+    r16c14->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c14->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c14, 16, 14, 1, 1);
+
+    r16c15 = new QLabel(gameBoardFrame);
+    r16c15->setObjectName(QStringLiteral("r16c15"));
+
+    boardGrid->addWidget(r16c15, 16, 15, 1, 1);
+
+    r16c16 = new QLabel(gameBoardFrame);
+    r16c16->setObjectName(QStringLiteral("r16c16"));
+    r16c16->setStyleSheet(QStringLiteral("background-color: rgb(118, 95, 80);"));
+    r16c16->setAlignment(Qt::AlignCenter);
+
+    boardGrid->addWidget(r16c16, 16, 16, 1, 1);
+
+    r1c10 = new QLabel(gameBoardFrame);
+    r1c10->setObjectName(QStringLiteral("r1c10"));
+    r1c10->setStyleSheet(QStringLiteral(""));
+
+    boardGrid->addWidget(r1c10, 1, 10, 1, 1);
+
+    r12c7 = new QLabel(gameBoardFrame);
+    r12c7->setObjectName(QStringLiteral("r12c7"));
+
+    boardGrid->addWidget(r12c7, 12, 7, 1, 1);
+
+    r11c11 = new QLabel(gameBoardFrame);
+    r11c11->setObjectName(QStringLiteral("r11c11"));
+
+    boardGrid->addWidget(r11c11, 11, 11, 1, 1);
+
+    boardGrid->setRowStretch(0, 1);
+    boardGrid->setRowStretch(2, 1);
+    boardGrid->setRowStretch(4, 1);
+    boardGrid->setRowStretch(6, 1);
+    boardGrid->setRowStretch(8, 1);
+    boardGrid->setRowStretch(10, 1);
+    boardGrid->setRowStretch(12, 1);
+    boardGrid->setRowStretch(14, 1);
+    boardGrid->setRowStretch(16, 1);
+
+    horizontalLayout_33->addWidget(gameBoardFrame);
 
     gameChatFrame = new QFrame(ingamePage);
     gameChatFrame->setObjectName(QStringLiteral("gameChatFrame"));
@@ -1188,14 +2876,14 @@ void QtVue::setupGameUI()
     inGameTextInput->setObjectName(QStringLiteral("inGameTextInput"));
     sizePolicy4.setHeightForWidth(inGameTextInput->sizePolicy().hasHeightForWidth());
     inGameTextInput->setSizePolicy(sizePolicy4);
-    inGameTextInput->setStyleSheet(QLatin1String("QLineEdit#messageLineEdit2 {\n"
+    inGameTextInput->setStyleSheet(QLatin1String("QLineEdit#inGameTextInput{\n"
                                                  "	color: rgb(20, 125, 164);\n"
                                                  "	border: 1px solid rgb(8,76,102);\n"
                                                  "	border-radius: 5px;\n"
                                                  "	background-color: transparent;\n"
                                                  "}\n"
                                                  "\n"
-                                                 "QLineEdit:focus#messageLineEdit2{\n"
+                                                 "QLineEdit:focus#inGameTextInput{\n"
                                                  "	border: 1px solid rgb(20, 125, 164);\n"
                                                  "	/*background-color: rgb(222, 234, 247);*/\n"
                                                  "}"));
@@ -1214,7 +2902,7 @@ void QtVue::setupGameUI()
     sizePolicy5.setHeightForWidth(inGameSendMessageButton->sizePolicy().hasHeightForWidth());
     inGameSendMessageButton->setSizePolicy(sizePolicy5);
     inGameSendMessageButton->setMinimumSize(QSize(51, 31));
-    inGameSendMessageButton->setStyleSheet(QLatin1String("QPushButton#sendmessageButton2{\n"
+    inGameSendMessageButton->setStyleSheet(QLatin1String("QPushButton#inGameSendMessageButton{\n"
                                                          "	\n"
                                                          "	font: 12pt \"MS Shell Dlg 2\";\n"
                                                          "	background-color: rgb(20,125,164);\n"
@@ -1223,12 +2911,12 @@ void QtVue::setupGameUI()
                                                          "	border-radius: 10px;\n"
                                                          "}\n"
                                                          "\n"
-                                                         "QPushButton:hover#sendmessageButton2 {\n"
+                                                         "QPushButton:hover#inGameSendMessageButton {\n"
                                                          "	background-color: rgb(8, 76, 102);\n"
                                                          "	border: 1px solid rgb(8, 76, 102);\n"
                                                          "}\n"
                                                          "\n"
-                                                         "QPushButton:pressed#sendmessageButton2 {\n"
+                                                         "QPushButton:pressed#inGameSendMessageButton {\n"
                                                          "	border: 4px solid;\n"
                                                          "	border-top-color: rgb(9, 87, 116);\n"
                                                          "	border-left-color: rgb(8, 87, 116);\n"
@@ -1272,7 +2960,7 @@ void QtVue::setupGameUI()
     addFriendContainer->setObjectName(QStringLiteral("addFriendContainer"));
     addFriendLabel = new QLabel(friendsSidebar);
     addFriendLabel->setObjectName(QStringLiteral("addFriendLabel"));
-    addFriendLabel->setStyleSheet(QLatin1String("QLabel#addfriendLabel{\n"
+    addFriendLabel->setStyleSheet(QLatin1String("QLabel#addFriendLabel{\n"
                                                 "	font: 10pt \"MS Shell Dlg 2\";\n"
                                                 "	color: rgb(7, 39, 51);\n"
                                                 "}"));
@@ -1294,7 +2982,7 @@ void QtVue::setupGameUI()
                                                     "	border-radius: 2px;\n"
                                                     "}\n"
                                                     "\n"
-                                                    "QLineEdit:focus#addfriendLineEdit{\n"
+                                                    "QLineEdit:focus#addFriendTextInput{\n"
                                                     "	color: rgb(90, 129, 91);\n"
                                                     "	border: 1px solid rgb(111, 159, 113);\n"
                                                     "}"));
@@ -1306,17 +2994,17 @@ void QtVue::setupGameUI()
     sizePolicy5.setHeightForWidth(addFriendButton->sizePolicy().hasHeightForWidth());
     addFriendButton->setSizePolicy(sizePolicy5);
     addFriendButton->setMinimumSize(QSize(31, 31));
-    addFriendButton->setStyleSheet(QLatin1String("QPushButton#addfriendButton{\n"
+    addFriendButton->setStyleSheet(QLatin1String("QPushButton#addFriendButton{\n"
                                                  "	background-color: rgb(111, 159, 113);\n"
                                                  "	color: rgb(255, 255, 255);\n"
                                                  "	border-radius: 15px;\n"
                                                  "}\n"
                                                  "\n"
-                                                 "QPushButton:hover#addfriendButton{\n"
+                                                 "QPushButton:hover#addFriendButton{\n"
                                                  "	background-color: rgb(90, 129, 91);\n"
                                                  "}\n"
                                                  "\n"
-                                                 "QPushButton:pressed#addfriendButton{\n"
+                                                 "QPushButton:pressed#addFriendButton{\n"
                                                  "	border: 3px solid;\n"
                                                  "	border-top-color: rgb(96, 138, 97);\n"
                                                  "	border-left-color: rgb(96, 138, 97);\n"
@@ -1335,7 +3023,7 @@ void QtVue::setupGameUI()
     friendsLayout->setObjectName(QStringLiteral("friendsLayout"));
     friendsListLabel = new QLabel(friendsSidebar);
     friendsListLabel->setObjectName(QStringLiteral("friendsListLabel"));
-    friendsListLabel->setStyleSheet(QLatin1String("QLabel#friendslistLabel{\n"
+    friendsListLabel->setStyleSheet(QLatin1String("QLabel#friendsListLabel{\n"
                                                   "	font: 10pt \"MS Shell Dlg 2\";\n"
                                                   "	color: rgb(7, 39, 51);\n"
                                                   "}"));
@@ -1381,7 +3069,7 @@ void QtVue::setupGameUI()
     friendsMessageContainerBox->setObjectName(QStringLiteral("friendsMessageContainerBox"));
     sizePolicy4.setHeightForWidth(friendsMessageContainerBox->sizePolicy().hasHeightForWidth());
     friendsMessageContainerBox->setSizePolicy(sizePolicy4);
-    friendsMessageContainerBox->setStyleSheet(QLatin1String("QGroupBox#messagecontainerBox{\n"
+    friendsMessageContainerBox->setStyleSheet(QLatin1String("QGroupBox#friendsMessageContainerBox{\n"
                                                             "	border: 1px solid rgb(8, 76, 102);\n"
                                                             "}"));
     messagesVLayout = new QVBoxLayout(friendsMessageContainerBox);
@@ -1412,14 +3100,14 @@ void QtVue::setupGameUI()
     friendsTextInput->setObjectName(QStringLiteral("friendsTextInput"));
     sizePolicy4.setHeightForWidth(friendsTextInput->sizePolicy().hasHeightForWidth());
     friendsTextInput->setSizePolicy(sizePolicy4);
-    friendsTextInput->setStyleSheet(QLatin1String("QLineEdit#messageLineEdit {\n"
+    friendsTextInput->setStyleSheet(QLatin1String("QLineEdit#friendsTextInput{\n"
                                                   "	color: rgb(20, 125, 164);\n"
                                                   "	border: 1px solid rgb(8,76,102);\n"
                                                   "	border-radius: 5px;\n"
                                                   "	background-color: transparent;\n"
                                                   "}\n"
                                                   "\n"
-                                                  "QLineEdit:focus#messageLineEdit {\n"
+                                                  "QLineEdit:focus#friendsTextInput{\n"
                                                   "	border: 1px solid rgb(20, 125, 164);\n"
                                                   "	/*background-color: rgb(222, 234, 247);*/\n"
                                                   "}"));
@@ -1438,7 +3126,7 @@ void QtVue::setupGameUI()
     sizePolicy5.setHeightForWidth(friendsSendMessageButton->sizePolicy().hasHeightForWidth());
     friendsSendMessageButton->setSizePolicy(sizePolicy5);
     friendsSendMessageButton->setMinimumSize(QSize(51, 31));
-    friendsSendMessageButton->setStyleSheet(QLatin1String("QPushButton#sendmessageButton{\n"
+    friendsSendMessageButton->setStyleSheet(QLatin1String("QPushButton#friendsSendMessageButton{\n"
                                                           "	\n"
                                                           "	font: 12pt \"MS Shell Dlg 2\";\n"
                                                           "	background-color: rgb(20,125,164);\n"
@@ -1447,12 +3135,12 @@ void QtVue::setupGameUI()
                                                           "	border-radius: 10px;\n"
                                                           "}\n"
                                                           "\n"
-                                                          "QPushButton:hover#sendmessageButton {\n"
+                                                          "QPushButton:hover#friendsSendMessageButton{\n"
                                                           "	background-color: rgb(8, 76, 102);\n"
                                                           "	border: 1px solid rgb(8, 76, 102);\n"
                                                           "}\n"
                                                           "\n"
-                                                          "QPushButton:pressed#sendmessageButton {\n"
+                                                          "QPushButton:pressed#friendsSendMessageButton {\n"
                                                           "	border: 4px solid;\n"
                                                           "	border-top-color: rgb(9, 87, 116);\n"
                                                           "	border-left-color: rgb(8, 87, 116);\n"
@@ -1565,7 +3253,7 @@ void QtVue::setupGameUI()
     RUSHLayout->setContentsMargins(-1, 4, -1, 4);
     rankLBLabel = new QLabel(LBGroupBox);
     rankLBLabel->setObjectName(QStringLiteral("rankLBLabel"));
-    rankLBLabel->setStyleSheet(QLatin1String("QLabel#rankLabel{\n"
+    rankLBLabel->setStyleSheet(QLatin1String("QLabel#rankLBLabel{\n"
                                              "	color: rgb(8,76,102);\n"
                                              "}"));
     rankLBLabel->setAlignment(Qt::AlignCenter);
@@ -1574,7 +3262,7 @@ void QtVue::setupGameUI()
 
     usernameLBLabel = new QLabel(LBGroupBox);
     usernameLBLabel->setObjectName(QStringLiteral("usernameLBLabel"));
-    usernameLBLabel->setStyleSheet(QLatin1String("QLabel#usernameLLabel{\n"
+    usernameLBLabel->setStyleSheet(QLatin1String("QLabel#usernameLBLabel{\n"
                                                  "	color: rgb(8,76,102);\n"
                                                  "}"));
     usernameLBLabel->setAlignment(Qt::AlignCenter);
@@ -1583,7 +3271,7 @@ void QtVue::setupGameUI()
 
     scoreLBLabel = new QLabel(LBGroupBox);
     scoreLBLabel->setObjectName(QStringLiteral("scoreLBLabel"));
-    scoreLBLabel->setStyleSheet(QLatin1String("QLabel#scoreLabel{\n"
+    scoreLBLabel->setStyleSheet(QLatin1String("QLabel#scoreLBLabel{\n"
                                               "	color: rgb(8,76,102);\n"
                                               "}"));
     scoreLBLabel->setAlignment(Qt::AlignCenter);
@@ -1634,7 +3322,7 @@ void QtVue::setupGameUI()
 
     myScoreBox = new QGroupBox(myLeaderboardBox);
     myScoreBox->setObjectName(QStringLiteral("myScoreBox"));
-    myScoreBox->setStyleSheet(QLatin1String("QGroupBox#myscoreBox{\n"
+    myScoreBox->setStyleSheet(QLatin1String("QGroupBox#myScoreBox{\n"
                                             "	background-color: rgb(142, 173, 185);\n"
                                             "	border: none;\n"
                                             "}"));
@@ -1678,9 +3366,10 @@ void QtVue::setupGameUI()
 
     verticalLayout->addWidget(mainStacked);
 
+    gameButton->setDefault(false);
     mainStacked->setCurrentIndex(0);
     gameMainStacked->setCurrentIndex(1);
-    filtersNumberChoices->setCurrentIndex(1);
+    filtersNumberChoices->setCurrentIndex(0);
     filtersModeChoices->setCurrentIndex(0);
 
     QMetaObject::connectSlotsByName(gameMainWidget);
@@ -1710,7 +3399,7 @@ void QtVue::setupGameUI()
     inviteFriendsBox->setTitle(QString());
     inviteGroupBox->setTitle(QString());
     inviteFriendsLabel->setText("Invite friends");
-    LivesGamesLabel->setText("Lives Games");
+    livesGamesLabel->setText("Lives Games");
     usernameUMPLabel->setText("Username");
     modeUMPLabel->setText("Mode");
     playerNumberUMPLabel->setText("Player");
@@ -1730,6 +3419,295 @@ void QtVue::setupGameUI()
     gameFlowBox->setTitle(QString());
     gameStatusLabel->setText("Game Status");
     playerTurnLabel->setText("Turn : 0");
+    r0c0->setText(QString());
+    r0c1->setText(QString());
+    r0c2->setText(QString());
+    r0c3->setText(QString());
+    r0c4->setText(QString());
+    r0c5->setText(QString());
+    r0c6->setText(QString());
+    r0c7->setText(QString());
+    r0c8->setText(QString());
+    r0c9->setText(QString());
+    r0c10->setText(QString());
+    r0c11->setText(QString());
+    r0c12->setText(QString());
+    r0c13->setText(QString());
+    r0c14->setText(QString());
+    r0c15->setText(QString());
+    r0c16->setText(QString());
+    r1c0->setText(QString());
+    r1c1->setText(QString());
+    r1c2->setText(QString());
+    r1c3->setText(QString());
+    r1c4->setText(QString());
+    r1c5->setText(QString());
+    r1c6->setText(QString());
+    r1c7->setText(QString());
+    r1c8->setText(QString());
+    r1c9->setText(QString());
+    r1c11->setText(QString());
+    r1c12->setText(QString());
+    r1c13->setText(QString());
+    r1c14->setText(QString());
+    r1c15->setText(QString());
+    r1c16->setText(QString());
+    r2c0->setText(QString());
+    r2c1->setText(QString());
+    r2c2->setText(QString());
+    r2c3->setText(QString());
+    r2c4->setText(QString());
+    r2c5->setText(QString());
+    r2c6->setText(QString());
+    r2c7->setText(QString());
+    r2c8->setText(QString());
+    r2c9->setText(QString());
+    r2c10->setText(QString());
+    r2c11->setText(QString());
+    r2c12->setText(QString());
+    r2c13->setText(QString());
+    r2c14->setText(QString());
+    r2c15->setText(QString());
+    r2c16->setText(QString());
+    r3c0->setText(QString());
+    r3c1->setText(QString());
+    r3c2->setText(QString());
+    r3c3->setText(QString());
+    r3c4->setText(QString());
+    r3c5->setText(QString());
+    r3c6->setText(QString());
+    r3c7->setText(QString());
+    r3c8->setText(QString());
+    r3c9->setText(QString());
+    r3c10->setText(QString());
+    r3c11->setText(QString());
+    r3c12->setText(QString());
+    r3c13->setText(QString());
+    r3c14->setText(QString());
+    r3c15->setText(QString());
+    r3c16->setText(QString());
+    r4c0->setText(QString());
+    r4c1->setText(QString());
+    r4c2->setText(QString());
+    r4c3->setText(QString());
+    r4c4->setText(QString());
+    r4c5->setText(QString());
+    r4c6->setText(QString());
+    r4c7->setText(QString());
+    r4c8->setText(QString());
+    r4c9->setText(QString());
+    r4c10->setText(QString());
+    r4c11->setText(QString());
+    r4c12->setText(QString());
+    r4c13->setText(QString());
+    r4c14->setText(QString());
+    r4c15->setText(QString());
+    r4c16->setText(QString());
+    r5c0->setText(QString());
+    r5c1->setText(QString());
+    r5c2->setText(QString());
+    r5c3->setText(QString());
+    r5c4->setText(QString());
+    r5c5->setText(QString());
+    r5c6->setText(QString());
+    r5c7->setText(QString());
+    r5c8->setText(QString());
+    r5c9->setText(QString());
+    r5c10->setText(QString());
+    r5c11->setText(QString());
+    r5c12->setText(QString());
+    r5c13->setText(QString());
+    r5c14->setText(QString());
+    r5c15->setText(QString());
+    r5c16->setText(QString());
+    r6c0->setText(QString());
+    r6c1->setText(QString());
+    r6c2->setText(QString());
+    r6c3->setText(QString());
+    r6c4->setText(QString());
+    r6c5->setText(QString());
+    r6c6->setText(QString());
+    r6c7->setText(QString());
+    r6c8->setText(QString());
+    r6c9->setText(QString());
+    r6c10->setText(QString());
+    r6c11->setText(QString());
+    r6c12->setText(QString());
+    r6c13->setText(QString());
+    r6c14->setText(QString());
+    r6c15->setText(QString());
+    r6c16->setText(QString());
+    r7c0->setText(QString());
+    r7c1->setText(QString());
+    r7c2->setText(QString());
+    r7c3->setText(QString());
+    r74->setText(QString());
+    r7c5->setText(QString());
+    r7c6->setText(QString());
+    r7c7->setText(QString());
+    r7c8->setText(QString());
+    r7c9->setText(QString());
+    r7c10->setText(QString());
+    r7c11->setText(QString());
+    r7c12->setText(QString());
+    rc13->setText(QString());
+    r7c14->setText(QString());
+    r7c15->setText(QString());
+    r7c16->setText(QString());
+    r8c0->setText(QString());
+    r8c1->setText(QString());
+    r8c2->setText(QString());
+    r8c3->setText(QString());
+    r8c4->setText(QString());
+    r8c5->setText(QString());
+    r8c6->setText(QString());
+    r8c7->setText(QString());
+    r8c8->setText(QString());
+    r8c9->setText(QString());
+    r8c10->setText(QString());
+    r8c11->setText(QString());
+    r8c12->setText(QString());
+    r8c13->setText(QString());
+    r8c14->setText(QString());
+    r8c15->setText(QString());
+    r8c16->setText(QString());
+    r9c0->setText(QString());
+    r9c1->setText(QString());
+    r9c2->setText(QString());
+    r9c3->setText(QString());
+    r9c4->setText(QString());
+    r9c5->setText(QString());
+    r9c6->setText(QString());
+    r9c7->setText(QString());
+    r9c8->setText(QString());
+    r9c9->setText(QString());
+    r9c10->setText(QString());
+    r9c11->setText(QString());
+    r9c12->setText(QString());
+    r9c14->setText(QString());
+    r9c16_2->setText(QString());
+    r9c15->setText(QString());
+    r9c16->setText(QString());
+    r10c0->setText(QString());
+    r10c1->setText(QString());
+    r10c2->setText(QString());
+    r10c3->setText(QString());
+    r10c4->setText(QString());
+    r10c5->setText(QString());
+    r10c6->setText(QString());
+    r10c7->setText(QString());
+    r10c8->setText(QString());
+    r10c9->setText(QString());
+    r10c10->setText(QString());
+    r10c11->setText(QString());
+    r10c12->setText(QString());
+    r10c13->setText(QString());
+    r10c14->setText(QString());
+    r10c15->setText(QString());
+    r10c16->setText(QString());
+    r11c0->setText(QString());
+    r11c1->setText(QString());
+    r11c2->setText(QString());
+    r11c3->setText(QString());
+    r11c4->setText(QString());
+    r11c5->setText(QString());
+    r11c6->setText(QString());
+    r11c7->setText(QString());
+    r11c8->setText(QString());
+    r11c9->setText(QString());
+    r11c10->setText(QString());
+    r11c12->setText(QString());
+    r11c13->setText(QString());
+    r11c14->setText(QString());
+    r11c15->setText(QString());
+    r11c16->setText(QString());
+    r12c0->setText(QString());
+    r12c1->setText(QString());
+    r12c2->setText(QString());
+    r12c3->setText(QString());
+    r12c4->setText(QString());
+    r12c5->setText(QString());
+    r12c6->setText(QString());
+    r12c8->setText(QString());
+    r12c9->setText(QString());
+    r12c10->setText(QString());
+    r12c11->setText(QString());
+    r12c12->setText(QString());
+    r12c13->setText(QString());
+    r12c14->setText(QString());
+    r12c15->setText(QString());
+    r12c16->setText(QString());
+    r13c0->setText(QString());
+    r13c1->setText(QString());
+    r13c2->setText(QString());
+    r13c3->setText(QString());
+    r13c4->setText(QString());
+    r13c5->setText(QString());
+    r13c6->setText(QString());
+    r13c7->setText(QString());
+    r13c8->setText(QString());
+    r13c9->setText(QString());
+    r13c10->setText(QString());
+    r13c11->setText(QString());
+    r13c12->setText(QString());
+    r13c13->setText(QString());
+    r13c14->setText(QString());
+    r13c15->setText(QString());
+    r13c16->setText(QString());
+    r14c0->setText(QString());
+    r14c1->setText(QString());
+    r14c2->setText(QString());
+    r14c3->setText(QString());
+    r14c4->setText(QString());
+    r14c5->setText(QString());
+    r14c6->setText(QString());
+    r14c7->setText(QString());
+    r14c8->setText(QString());
+    r14c9->setText(QString());
+    r14c10->setText(QString());
+    r14c11->setText(QString());
+    r14c12->setText(QString());
+    r14c13->setText(QString());
+    r14c14->setText(QString());
+    r14c15->setText(QString());
+    r14c16->setText(QString());
+    r15c0->setText(QString());
+    r15c1->setText(QString());
+    r15c2->setText(QString());
+    r15c3->setText(QString());
+    r15c4->setText(QString());
+    r15c5->setText(QString());
+    r15c6->setText(QString());
+    r15c7->setText(QString());
+    r15c8->setText(QString());
+    r15c9->setText(QString());
+    r15c10->setText(QString());
+    r15c11->setText(QString());
+    r15c12->setText(QString());
+    r15c13->setText(QString());
+    r15c14->setText(QString());
+    r15c15->setText(QString());
+    r15c16->setText(QString());
+    r16c0->setText(QString());
+    r16c1->setText(QString());
+    r16c2->setText(QString());
+    r16c3->setText(QString());
+    r16c4->setText(QString());
+    r16c5->setText(QString());
+    r16c6->setText(QString());
+    r16c7_2->setText(QString());
+    r16c8_2->setText(QString());
+    r16c9_2->setText(QString());
+    r16c10->setText(QString());
+    r16c11->setText(QString());
+    r16c12->setText(QString());
+    r16c13->setText(QString());
+    r16c14->setText(QString());
+    r16c15->setText(QString());
+    r16c16->setText(QString());
+    r1c10->setText(QString());
+    r12c7->setText(QString());
+    r11c11->setText(QString());
     inGameChatBox->setTitle(QString());
     inGameMessageContainerBox->setTitle(QString());
     inGameTextInput->setText(QString());
