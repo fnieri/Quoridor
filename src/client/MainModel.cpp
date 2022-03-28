@@ -164,6 +164,8 @@ auto MainModel::setGameIds(const std::map<int, std::vector<std::string>> &gameID
 
 auto MainModel::updateFriendsChatMap() noexcept -> void
 {
+    if (!hasFriends)
+        m_chats.clear();
     for (auto &friendUsername : *m_friendList) {
         if (m_chats.find(friendUsername) == m_chats.end()) {
             m_chats[friendUsername] = std::make_shared<std::vector<Message>>();

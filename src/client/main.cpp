@@ -69,19 +69,19 @@ void testGameJoin(std::string username, std::string password)
 
 int main(int argc, char *argv[])
 {
-    MainController mainController;
-    ServerController serverController {&mainController};
-//    serverController.registerUser("b", "b");
-//    serverController.registerUser("c", "c");
-//    serverController.login("b", "b");
-//    serverController.createGame("b", {"b", "c"});
-    std::cout << "creating thread" << std::endl;
-    std::thread t1 (testGameJoin, "b", "b");
-    sleep(1);
-    std::thread t2 (testGameJoin, "c", "c");
-    t1.join();
-    t2.join();
-    return 0;
+//    MainController mainController;
+//    ServerController serverController {&mainController};
+////    serverController.registerUser("b", "b");
+////    serverController.registerUser("c", "c");
+////    serverController.login("b", "b");
+////    serverController.createGame("b", {"b", "c"});
+//    std::cout << "creating thread" << std::endl;
+//    std::thread t1 (testGameJoin, "b", "b");
+//    sleep(1);
+//    std::thread t2 (testGameJoin, "c", "c");
+//    t1.join();
+//    t2.join();
+//    return 0;
 //    serverController.login("testing", "testingPassword");
     //    serverController.createGame("testing", {"testing", "testingFriend"});
     //

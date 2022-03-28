@@ -42,7 +42,7 @@ void MainController::processResourceRequest(const std::string &serRequest)
             friendsList.push_back(userFriend.get<std::string>());
         }
         if (friendsList.empty()) {
-            m_mainModel->setFriendList({"No friends"});
+            m_mainModel->setFriendList({"No friend"});
             m_mainModel->setHasFriends(false);
         } else {
             m_mainModel->setFriendList(friendsList);
@@ -101,6 +101,7 @@ void MainController::processRelations(const std::string &serRequest)
         m_mainModel->removeFriend(request.at("friend_rm_receiver"));
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_ACCEPT)) {
         m_mainModel->addFriend(request.at("friend_req_receiver"));
+        m_mainModel->setHasFriends(true);
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REQUEST)) {
         m_mainModel->addFriendRequestReceived(request.at("friend_req_sender"));
         m_mainModel->setFriendNotification(true);
