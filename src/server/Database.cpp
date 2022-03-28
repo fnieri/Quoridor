@@ -647,7 +647,9 @@ std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
         json acceptedGameIdsJson = userViewJson["accepted_gameId"];
         std::vector<int> gameIds;
         for (auto &gameId : acceptedGameIdsJson) {
-            gameIds.push_back(gameId);
+            if (gameId.is_number()) {
+                gameIds.push_back(gameId.get<int>());
+            }
         }
         return gameIds;
     }

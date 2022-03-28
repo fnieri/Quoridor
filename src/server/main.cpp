@@ -12,8 +12,8 @@
 
 int main(int argc, char *argv[])
 {
-//    DatabaseHandler::sendFriendRequest("testing", "bar");
-    std::cout << "Server started" << std::endl;
+    //    DatabaseHandler::deleteGame(1189641421);
+    //    std::cout << "Server started" << std::endl;
     UserHub userHub;
     LandingPool entryDoor {12346, userHub};
     return entryDoor.openToConnections();

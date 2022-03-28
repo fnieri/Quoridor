@@ -8,7 +8,7 @@ setup:
 
 .PHONY: build
 build:
-	cmake --build build -j 6
+	cmake --build build -j 8
 	echo -e "\e[32m== SUCCESSFUL BUILDING! ==\e[0m\n"
 
 .PHONY: test

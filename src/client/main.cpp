@@ -3,6 +3,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <map>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -45,22 +46,55 @@ void gameLoop()
     board->debugPrint();
 }
 
+void testGameJoin(std::string username, std::string password)
+{
+    MainController mainController;
+    ServerController serverController {&mainController};
+    serverController.login(username, password);
+    sleep(1);
+    auto model = mainController.getMainModel();
+    std::cout << "Username: " << *model->getUsername() << std::endl;
+    serverController.fetchGameIds();
+    sleep(1);
+    auto gameIDs = model->getGameIDs();
+    for (auto &gameID : *gameIDs) {
+        std::cout << "GameID: " << gameID.first << "    " << username << std::endl;
+        serverController.joinGame(gameID.first, username);
+        std::cout << "Joined game " << gameID.first << std::endl;
+        sleep(5);
+        return;
+    }
+}
+
 int main(int argc, char *argv[])
 {
-//    MainController mainController;
-//    ServerController serverController {&mainController};
-//    serverController.login("testing", "testingPassword");
-//        serverController.createGame("testing", {"testing", "a"});
-////    sleep(1);
-//
-//    serverController.fetchGameIds();
-//    sleep(1);
-//    auto model = mainController.getMainModel();
-//    auto gameIds = model->getGameIDs();
-//    for (auto gameId : *gameIds) {
-//        std::cout << "Game ID: " << gameId << std::endl;
-//    }
-//    return 0;
+    MainController mainController;
+    ServerController serverController {&mainController};
+    //    serverController.registerUser("b", "b");
+    //    serverController.registerUser("c", "c");
+    //    serverController.login("b", "b");
+    //    serverController.createGame("b", {"b", "c"});
+    std::cout << "creating thread" << std::endl;
+    std::thread t1(testGameJoin, "b", "b");
+    sleep(1);
+    std::thread t2(testGameJoin, "c", "c");
+    t1.join();
+    t2.join();
+    return 0;
+    //    serverController.login("testing", "testingPassword");
+    //    serverController.createGame("testing", {"testing", "testingFriend"});
+    //
+    //    auto model = mainController.getMainModel();
+    //    sleep(5);
+    //    serverController.fetchGameIds();
+    //    auto gameIds = model->getGameIDs();
+    //    for (const auto& gameId : *gameIds) {
+    //        std::cout << "Game ID: " << gameId.first << std::endl;
+    //        for (const auto& player : gameId.second) {
+    //            std::cout << "Player: " << player << std::endl;
+    //        }
+    //    }
+    //    return 0;
 
     //    serverController.login("ok", "k");
     //        model->createAiGame();

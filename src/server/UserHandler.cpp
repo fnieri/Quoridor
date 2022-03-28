@@ -154,26 +154,43 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     json data;
 
     if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST)) {
-        for (auto &f: m_userHandled->getFriendList()) data.push_back(f);
+        for (auto &f : m_userHandled->getFriendList())
+            data.push_back(f);
         dataType = DataType::FRIENDS_LIST;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
-        for (auto &f: m_userHandled->getFriendRequestsSent()) data.push_back(f);
+        for (auto &f : m_userHandled->getFriendRequestsSent())
+            data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_SENT;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
-        for (auto &f: m_userHandled->getFriendRequestsReceived()) data.push_back(f);
+        for (auto &f : m_userHandled->getFriendRequestsReceived())
+            data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
 
     } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
         json chats;
-        for (auto &m: DatabaseHandler::getMessages(request["sender"], request["receiver"])) chats.push_back(m);
+        for (auto &m : DatabaseHandler::getMessages(request["sender"], request["receiver"]))
+            chats.push_back(m);
         data["friend"] = request["receiver"];
         data["chats"] = chats;
         dataType = DataType::CHATS;
 
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
-        for (auto &g: m_userHandled->getGameIDs()) data.push_back(g);
+        //        for (auto &g: m_userHandled->getGameIDs()) data.push_back(g);
+        auto gameIds = m_userHandled->getGameIDs();
+        data["game_ids"];
+        for (auto &g : gameIds) {
+            auto gameConfig = DatabaseHandler::getGameConfig(g);
+            std::vector<std::string> players;
+            for (auto &p : gameConfig["players"]) {
+                players.push_back(p.get<std::string>());
+            }
+            data["game_ids"].push_back({
+                {"game_id", g      },
+                {"players", players}
+            });
+        }
         dataType = DataType::GAME_IDS;
 
     } else if (request["data_type"] == toJsonString(DataType::ELO)) {
@@ -324,7 +341,6 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     }
     // In case the target disconnects during the writing
     catch (UnableToRead &) {
-
         // Should always be valid but who knows, better avoid them segfaults !
         if (receiver) {
             receiver->terminate();

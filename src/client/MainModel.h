@@ -40,7 +40,7 @@ private:
     SPtrToVec<std::string> m_friendRequestsReceived = std::make_shared<std::vector<std::string>>();
     bool hasFriends;
 
-    SPtrToVec<int> m_gameIDs;
+    std::shared_ptr<std::map<int, std::vector<std::string>>> m_gameIDs = std::make_shared<std::map<int, std::vector<std::string>>>();
 
     std::map<std::string, SPtrToVec<Message>> m_chats;
 
@@ -73,7 +73,7 @@ public:
 
     auto getChatWith(const std::string &) noexcept -> SPtrToVec<Message>;
 
-    auto getGameIDs() noexcept -> const std::vector<int> *;
+    auto getGameIDs() noexcept -> const std::map<int, std::vector<std::string>> *;
 
     auto isInGame() const noexcept -> bool;
     auto getCurrentGame() -> GameModel *;
@@ -126,7 +126,8 @@ public:
 
     auto setLeaderboard(const std::vector<std::pair<std::string, float>> &) -> void;
 
-    auto setGameIds(const std::vector<int> &) -> void;
+    auto setGameIds(const std::map<int, std::vector<std::string>> &) -> void;
+    auto addGameId(const int &, const std::vector<std::string> &) -> void;
 
     auto setFriendNotification(const bool &) -> void;
     auto setGameNotification(const bool &) -> void;

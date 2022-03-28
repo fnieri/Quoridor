@@ -129,7 +129,7 @@ public:
     /**
      * Look in GameSetupSerializableMessageFactory for explanation
      */
-    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID);
+    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username);
     /**
      * Look in GameSetupSerializableMessageFactory   for explanation
      */

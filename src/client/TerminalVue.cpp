@@ -242,11 +242,7 @@ auto TerminalVue::createBoardRenderer()
     auto createGameBtn = Button(
         "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
     auto joinGameBtn = Button(
-        "Join Game",
-        [&] { // TODO join game
-
-        },
-        &buttonOption);
+        "Join Game", [&] { joinGame(); }, &buttonOption);
     auto inviteAndCreateGameBtn = Button(
         "Create game", [&] { userCreateGame(); }, &buttonOption);
     auto cancelGameCreateGamme = Button(
@@ -560,7 +556,7 @@ void TerminalVue::registerUser()
 
 void TerminalVue::userCreateGame()
 {
-    std::vector<std::string> invitedPlayers {*mainModel->getUsername()};
+    std::vector<std::string> invitedPlayers;
 
     for (const auto &state : friendsListStates) {
         if (state.checked) {
@@ -575,7 +571,7 @@ void TerminalVue::userCreateGame()
 
 void TerminalVue::joinGame()
 {
-
+    serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
     homeTabIndex = 2;
     rightSize = 40;
 }
@@ -645,14 +641,26 @@ void TerminalVue::updateFriendsListCheckboxes()
 
 void TerminalVue::updateGameIds()
 {
-    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
-        //                serverController->fetchGameIds();
-        //        gameList.clear();
-        auto gameIds = mainModel->getGameIDs();
-        for (auto &i : *gameIds) {
-            gameList.push_back(std::to_string(i));
+    //    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
+    //                serverController->fetchGameIds();
+    //        gameList.clear();
+    auto gameIds = mainModel->getGameIDs();
+    for (auto &i : *gameIds) {
+        if (std::find(gameListId.begin(), gameListId.end(), i.first) == gameListId.end()) {
+            gameListId.push_back(i.first);
+
+            std::string friendsListStr;
+            for (int j = 0; j < i.second.size() - 1; ++j) {
+                friendsListStr += i.second[j] + ", ";
+            }
+            friendsListStr += i.second[i.second.size() - 1];
+
+            std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
+            gameList.push_back(gameDescription);
         }
     }
+    //    }
     //    previousHomeTabIndex = homeTabIndex;
 }
 

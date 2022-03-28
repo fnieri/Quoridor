@@ -113,14 +113,14 @@ json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vect
     return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, players);
 }
 
-json SerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID)
+json SerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username)
 {
-    return GameSetupSerializableMessageFactory::serializeGameParticipationRequest(gameSetup, gameID);
+    return GameSetupSerializableMessageFactory::serializeGameParticipationRequest(gameSetup, gameID, std::move(username));
 }
 
 json SerializableMessageFactory::serializeGameCreationRequest(const std::string &sender, std::vector<std::string> &receivers, json configuration)
 {
-    return GameSetupSerializableMessageFactory::serializeGameCreationRequest(sender, receivers, configuration);
+    return GameSetupSerializableMessageFactory::serializeGameCreationRequest(sender, receivers, std::move(configuration));
 }
 
 /*

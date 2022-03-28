@@ -49,6 +49,7 @@ void MainController::processResourceRequest(const std::string &serRequest)
             m_mainModel->setHasFriends(true);
         }
     } else if (request.at("data_type") == toJsonString(DataType::GAME_CONFIG)) {
+        std::cout << "Game config received" << std::endl;
     } else if (request.at("data_type") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
         std::vector<std::string> friendRequestsSent;
         for (const auto &userFriend : request.at("serialized_data"))
@@ -60,9 +61,10 @@ void MainController::processResourceRequest(const std::string &serRequest)
             friendRequestsReceived.push_back(userFriend.get<std::string>());
         m_mainModel->setFriendRequestsReceived(friendRequestsReceived);
     } else if (request.at("data_type") == toJsonString(DataType::GAME_IDS)) {
-        std::vector<int> gameIds;
-        for (const auto &gameId : request.at("serialized_data"))
-            gameIds.push_back(gameId.get<int>());
+        std::map<int, std::vector<std::string>> gameIds;
+        for (auto &gameId : request.at("serialized_data").at("game_ids")) {
+            gameIds[gameId.at("game_id").get<int>()] = gameId.at("players").get<std::vector<std::string>>();
+        }
         m_mainModel->setGameIds(gameIds);
     } else if (request.at("data_type") == toJsonString(DataType::CHATS)) {
         auto data = request.at("serialized_data");
@@ -122,10 +124,14 @@ void MainController::processChatBox(const std::string &serRequest)
 
 void MainController::processGameSetup(const std::string &serRequest)
 {
-    //    json request(json::parse(serRequest));
-    //    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
-    //     m_mainModel->loadGame();
-    //    }
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
+        auto gameID = request.at("game_id").get<int>();
+        auto players = request.at("receivers").get<std::vector<std::string>>();
+        players.push_back(request.at("sender").get<std::string>());
+        m_mainModel->addGameId(gameID, players);
+        m_mainModel->setGameNotification(true);
+    }
 }
 
 MainModel *MainController::getMainModel()
