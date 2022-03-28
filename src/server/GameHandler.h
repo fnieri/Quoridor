@@ -34,6 +34,8 @@ private:
 
     std::shared_ptr<GameModel> m_gameModel;
 
+    mutable std::mutex m_gameHandlerMutex;
+
     /* void setConfirmationState(const std::string &, bool); */
 
 public:
