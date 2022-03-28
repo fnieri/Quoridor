@@ -228,3 +228,8 @@ auto MainModel::createAiGame() noexcept -> void
     setUsername(p_players[0]);
     updatePtrValue(m_currentGame, AiGameModel {p_players});
 }
+
+auto MainModel::addGameId(const int &gId, const std::vector<std::string> &players) -> void
+{
+    m_gameIDs->insert({gId, players});
+}

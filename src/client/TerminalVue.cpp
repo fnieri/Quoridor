@@ -242,11 +242,7 @@ auto TerminalVue::createBoardRenderer()
     auto createGameBtn = Button(
         "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
     auto joinGameBtn = Button(
-        "Join Game",
-        [&] { // TODO join game
-
-        },
-        &buttonOption);
+        "Join Game", [&] { joinGame(); }, &buttonOption);
     auto inviteAndCreateGameBtn = Button(
         "Create game", [&] { userCreateGame(); }, &buttonOption);
     auto cancelGameCreateGamme = Button(
@@ -560,7 +556,7 @@ void TerminalVue::registerUser()
 
 void TerminalVue::userCreateGame()
 {
-    std::vector<std::string> invitedPlayers {*mainModel->getUsername()};
+    std::vector<std::string> invitedPlayers;
 
     for (const auto &state : friendsListStates) {
         if (state.checked) {
@@ -575,9 +571,7 @@ void TerminalVue::userCreateGame()
 
 void TerminalVue::joinGame()
 {
-    auto gameIds = mainModel->getGameIDs();
-    //    auto gameId = (*gameIds)[gameSelected];
-    //    serverController->joinGame(*mainModel->getUsername(), gameId);
+    serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
     homeTabIndex = 2;
     rightSize = 40;
 }
@@ -650,18 +644,19 @@ void TerminalVue::updateGameIds()
     //    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
     //                serverController->fetchGameIds();
     //        gameList.clear();
-    // TODO: maybe change this to include a better game description
     auto gameIds = mainModel->getGameIDs();
     for (auto &i : *gameIds) {
-        std::string friendsListStr;
-        for (int j = 0; j < i.second.size() - 1; ++j) {
-            friendsListStr += i.second[j] + ", ";
-        }
-        friendsListStr += i.second[i.second.size() - 1];
+        if (std::find(gameListId.begin(), gameListId.end(), i.first) == gameListId.end()) {
+            gameListId.push_back(i.first);
 
-        std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+            std::string friendsListStr;
+            for (int j = 0; j < i.second.size() - 1; ++j) {
+                friendsListStr += i.second[j] + ", ";
+            }
+            friendsListStr += i.second[i.second.size() - 1];
 
-        if (std::find(gameList.begin(), gameList.end(), gameDescription) == gameList.end()) {
+            std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
             gameList.push_back(gameDescription);
         }
     }

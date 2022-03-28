@@ -124,10 +124,14 @@ void MainController::processChatBox(const std::string &serRequest)
 
 void MainController::processGameSetup(const std::string &serRequest)
 {
-    //    json request(json::parse(serRequest));
-    //    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
-    //     m_mainModel->loadGame();
-    //    }
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
+        auto gameID = request.at("game_id").get<int>();
+        auto players = request.at("receivers").get<std::vector<std::string>>();
+        players.push_back(request.at("sender").get<std::string>());
+        m_mainModel->addGameId(gameID, players);
+        m_mainModel->setGameNotification(true);
+    }
 }
 
 MainModel *MainController::getMainModel()

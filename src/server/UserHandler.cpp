@@ -338,7 +338,6 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     }
     // In case the target disconnects during the writing
     catch (UnableToRead &) {
-
         // Should always be valid but who knows, better avoid them segfaults !
         if (receiver) {
             receiver->terminate();

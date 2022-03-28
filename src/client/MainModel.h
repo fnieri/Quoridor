@@ -127,6 +127,7 @@ public:
     auto setLeaderboard(const std::vector<std::pair<std::string, float>> &) -> void;
 
     auto setGameIds(const std::map<int, std::vector<std::string>> &) -> void;
+    auto addGameId(const int &, const std::vector<std::string> &) -> void;
 
     auto setFriendNotification(const bool &) -> void;
     auto setGameNotification(const bool &) -> void;
