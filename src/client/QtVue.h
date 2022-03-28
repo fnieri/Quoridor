@@ -7,6 +7,7 @@
 
 #include <QApplication>
 #include <QScopedPointer>
+#include <string>
 
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
@@ -230,7 +231,7 @@ private:
     QLabel *scoreLBLabel;
     QScrollArea *leaderBoardScrollArea;
     QWidget *leaderboardScrollAreaWidgetContents;
-    QVBoxLayout *verticalLayout_12;
+    QVBoxLayout *leaderboardScrollAreaWidgetContentsLayout;
     QGroupBox *myLeaderboardBox;
     QHBoxLayout *yourscoreVLayout;
     QSpacerItem *myBoxLeftSpacer;
@@ -243,6 +244,10 @@ private:
     QWidget *leaderboardRightSpacer;
 
     void setupGameUI();
+
+    QWidget *createLeaderboardBox(QWidget *parent, int rank, std::string username, int score);
+
+    void updateLeaderboard();
 
 public:
     QtVue(int argc, char *argv[]);

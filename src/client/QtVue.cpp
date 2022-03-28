@@ -2,7 +2,6 @@
 #include "QtVue.h"
 
 #include <iostream>
-#include <string>
 
 QtVue::QtVue(int argc, char *argv[])
     : app(new QApplication(argc, argv))
@@ -21,8 +20,8 @@ int QtVue::run()
     setupMainUI();
     
     appMainWidget->show();
-    // gotoLoginWindow();
-    gotoGameWindow();
+    gotoLoginWindow();
+    // gotoGameWindow();
 
     return app->exec();
 }
@@ -3283,17 +3282,17 @@ void QtVue::setupGameUI()
     leaderBoardScrollArea = new QScrollArea(leaderboardPlayersBox);
     leaderBoardScrollArea->setObjectName(QStringLiteral("leaderBoardScrollArea"));
     leaderBoardScrollArea->setMinimumSize(QSize(0, 0));
-    leaderBoardScrollArea->setMaximumSize(QSize(16777215, 69));
+    // leaderBoardScrollArea->setMaximumSize(QSize(16777215, 69));
     leaderBoardScrollArea->setFrameShape(QFrame::NoFrame);
     leaderBoardScrollArea->setFrameShadow(QFrame::Raised);
     leaderBoardScrollArea->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
-    leaderBoardScrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
+    leaderBoardScrollArea->setSizeAdjustPolicy(QAbstractScrollArea::AdjustToContents);
     leaderBoardScrollArea->setWidgetResizable(true);
     leaderboardScrollAreaWidgetContents = new QWidget();
     leaderboardScrollAreaWidgetContents->setObjectName(QStringLiteral("leaderboardScrollAreaWidgetContents"));
-    leaderboardScrollAreaWidgetContents->setGeometry(QRect(0, 0, 796, 69));
-    verticalLayout_12 = new QVBoxLayout(leaderboardScrollAreaWidgetContents);
-    verticalLayout_12->setObjectName(QStringLiteral("verticalLayout_12"));
+    // leaderboardScrollAreaWidgetContents->setGeometry(QRect(0, 0, 796, 69));
+    leaderboardScrollAreaWidgetContentsLayout = new QVBoxLayout(leaderboardScrollAreaWidgetContents);
+    leaderboardScrollAreaWidgetContentsLayout->setObjectName(QStringLiteral("leaderboardScrollAreaWidgetContentsLayout"));
     leaderBoardScrollArea->setWidget(leaderboardScrollAreaWidgetContents);
 
     bestplayersVLayout->addWidget(leaderBoardScrollArea, 0, Qt::AlignTop);
@@ -3753,12 +3752,77 @@ void QtVue::gotoLoginWindow()
 
 void QtVue::gotoGameWindow()
 {
+    serverController->fetchData();
+
     appMainStacked->setCurrentIndex(2);
     usernameLabel->setText(QString::fromStdString(*mainModel->getUsername()));
     eloLabel->setText(QString::fromStdString(std::to_string(*mainModel->getELO())));
 }
 
+void QtVue::updateLeaderboard()
+{
+    auto leaderboard = mainModel->getLeaderboard();
 
+    // qDeleteAll(leaderboardScrollAreaWidgetContentsLayout->findChildren<QWidget*>("", Qt::FindDirectChildrenOnly));
+    while (QWidget *w = leaderboardScrollAreaWidgetContentsLayout->findChild<QWidget *>())
+        delete w;
+
+    if (!leaderboard->empty()) {
+        int i = 1;
+        for (auto &leader : *leaderboard) {
+            auto w = createLeaderboardBox(leaderboardScrollAreaWidgetContents, i++, leader.first, (int)leader.second);
+            leaderboardScrollAreaWidgetContentsLayout->addWidget(w);
+        }
+    }
+}
+
+QWidget *QtVue::createLeaderboardBox(QWidget *parent, int rank, std::string username, int score)
+{
+    auto leadBox = new QGroupBox(parent);
+    leadBox->setObjectName(QStringLiteral("leadBox"));
+    leadBox->setGeometry(QRect(100, 120, 625, 32));
+
+    if (rank <= 1)
+        leadBox->setStyleSheet(QLatin1String("background-color: rgb(255, 236, 168);\n"
+                                             "border: none;"));
+    else if (rank == 2)
+        leadBox->setStyleSheet(QLatin1String("background-color: rgb(212, 224, 236);\n"
+                                             "border:none;\n"));
+    else if (rank == 3)
+        leadBox->setStyleSheet(QLatin1String("background-color: rgb(232, 183, 158);"
+                                             "border: none;\n"));
+    else
+        leadBox->setStyleSheet(QStringLiteral("border:none;"));
+
+    auto horizontalLayout_20 = new QHBoxLayout(leadBox);
+    horizontalLayout_20->setObjectName(QStringLiteral("horizontalLayout_20"));
+    auto leadRankLabel = new QLabel(leadBox);
+    leadRankLabel->setObjectName(QStringLiteral("leadRankLabel"));
+
+    horizontalLayout_20->addWidget(leadRankLabel);
+
+    auto leadUserLabel = new QLabel(leadBox);
+    leadUserLabel->setObjectName(QStringLiteral("leadUserLabel"));
+    QSizePolicy sizePolicy1(QSizePolicy::Minimum, QSizePolicy::Minimum);
+    sizePolicy1.setHorizontalStretch(0);
+    sizePolicy1.setVerticalStretch(0);
+    sizePolicy1.setHeightForWidth(leadUserLabel->sizePolicy().hasHeightForWidth());
+    leadUserLabel->setSizePolicy(sizePolicy1);
+
+    horizontalLayout_20->addWidget(leadUserLabel);
+
+    auto leadScoreLabel = new QLabel(leadBox);
+    leadScoreLabel->setObjectName(QStringLiteral("leadScoreLabel"));
+    leadScoreLabel->setAlignment(Qt::AlignRight | Qt::AlignTrailing | Qt::AlignVCenter);
+
+    horizontalLayout_20->addWidget(leadScoreLabel);
+
+    leadRankLabel->setText(QString::fromStdString(std::to_string(rank)));
+    leadUserLabel->setText(QString::fromStdString(username));
+    leadScoreLabel->setText(QString::fromStdString(std::to_string(score)));
+
+    return leadBox;
+}
 
 void QtVue::loginButtonPressed()
 {
@@ -3788,7 +3852,6 @@ void QtVue::loginButtonPressed()
     passwordLineEditLogin->setText("");
     messageLabelLogin->hide();
     
-    serverController->fetchData();
     gotoGameWindow();
 }
 
@@ -3864,4 +3927,5 @@ void QtVue::friendsButtonPressed()
 void QtVue::leaderboardButtonPressed()
 {
     mainStacked->setCurrentIndex(3);
+    updateLeaderboard();
 }
