@@ -17,6 +17,7 @@ target_link_libraries(${PREFIX}_server
         nlohmann_json
         sockpp
         ${PREFIX}_common
+        ${PREFIX}_client  # temporary, for GameModel
         bsoncxx_shared
         mongocxx_shared
     PRIVATE

@@ -50,7 +50,7 @@ auto MainModel::getChatWith(const std::string &username) noexcept -> SPtrToVec<M
     return m_chats.at(username);
 }
 
-auto MainModel::getGameIDs() const noexcept -> const std::vector<int> *
+auto MainModel::getGameIDs() noexcept -> const std::vector<int> *
 {
     return m_gameIDs.get();
 }

@@ -1,31 +1,35 @@
 #include "TimerMode.h"
+#include "src/common/SerializableMessageFactory.h"
+
 #include <cassert>
 #include <chrono>
 #include <cmath>
-#include <iostream>
 #include <mutex>
 #include <thread>
-#include <unistd.h>
 
 using namespace std::chrono;
 using json = nlohmann::json;
 
-TimerMode::TimerMode(int nPlayers, int increment, int time)
+TimerMode::TimerMode(int nPlayers, int increment, int time, std::vector<std::string> &players)
     : c_increment {increment}
 {
     assert(nPlayers == 2 | nPlayers == 4);
     for (int i = 0; i < nPlayers; i++) {
         m_timers.emplace_back(time);
     }
+    for (auto &player : players)
+        m_players.push_back(player);
 }
 
-TimerMode::TimerMode(int increment, std::vector<float> &timers)
+TimerMode::TimerMode(int increment, std::vector<float> &timers, std::vector<std::string> &players)
     : c_increment {increment}
 
 {
     assert(timers.size() == 2 || timers.size() == 4);
     for (auto &timer : timers)
         m_timers.emplace_back(timer);
+    for (auto &player : players)
+        m_players.push_back(player);
 }
 
 TimerMode::TimerMode(const std::string &gameConfig)
@@ -34,54 +38,73 @@ TimerMode::TimerMode(const std::string &gameConfig)
     int nOfPlayers = conf["n_players"];
     for (int i = 0; i < nOfPlayers; i++) {
         std::string playerString = "player" + std::to_string(i);
-        m_timers.emplace_back((conf[playerString]));
+
+        m_timers.emplace_back((conf[playerString]["time"]));
+        m_players.emplace_back(conf[playerString]["username"]);
     }
     c_increment = conf["increment"];
 }
 
-void TimerMode::switchPlayer(int newPlayer)
+TimerMode::TimerMode(const TimerMode &other)
+    : m_players {other.m_players}
+    , c_increment {other.c_increment}
+    , m_stopTimer {true}
 {
-    setStopTimer(true); // Stop current threading timer
-    std::this_thread::sleep_for(20000us); // Wait for worst case scenario for others clock to stop
-    setStopTimer(false);
-    std::thread playerTimer(&TimerMode::countTime, this, newPlayer);
-    playerTimer.detach();
+    m_timers = std::deque<std::atomic<float>>();
+    // for (auto& timer : other.m_timers) m_timers.push_back(timer);
+    for (int i = 0; i < other.m_timers.size(); i++) {
+        float tmp = other.m_timers.at(i);
+        m_timers.emplace_back(tmp);
+    }
 }
 
-void TimerMode::countTime(int playerID)
+TimerMode &TimerMode::operator=(const TimerMode &other)
 {
-    auto start = high_resolution_clock::now();
-
-    while ((!m_stopTimer) && m_timers.at(playerID) > 0) // While true is done for each frame
-                                                        // 16660 = 1/60 s = 1 frame
-    {
-        std::this_thread::sleep_for(16660us);
-        m_timers.at(playerID) = m_timers.at(playerID) - 0.016666666666; // att francesco jai un problm avce ce -= ????
+    m_timers = std::deque<std::atomic<float>>();
+    for (int i = 0; i < other.m_timers.size(); i++) {
+        float tmp = other.m_timers.at(i);
+        m_timers.emplace_back(tmp);
     }
-    std::cout << "I have stopped!! : " << m_timers.at(playerID) << " for player " << playerID << std::endl;
+    m_players = other.m_players;
+    c_increment = other.c_increment;
+    m_stopTimer = true;
+    return *this;
+}
 
-    auto stop = high_resolution_clock::now();
-    auto duration = duration_cast<microseconds>(stop - start);
-
-    std::cout << "Time of loop : " << duration.count() << std::endl;
-
+std::string TimerMode::switchPlayer(int newPlayer)
+{
+    setStopTimer(true); // Stop current threading timer
+    std::this_thread::sleep_for(32000us); // Wait for worst case scenario for others clock to stop
     setStopTimer(false);
+    std::string timeLeft = countTime(newPlayer);
+    return timeLeft;
+}
 
-    float oldTimer = m_timers.at(0);
+std::string TimerMode::countTime(int playerID)
+{
+    while (!m_stopTimer && m_timers.at(playerID) > 0.0f) // While true is done for each frame
+    // 16660 = 1/60 s = 1 frame
+
+    {
+        std::this_thread::sleep_for(16600us);
+        m_timers.at(playerID) = m_timers.at(playerID) - 0.0167; // att francesco jai un problm avce ce -= ????
+    }
+    setStopTimer(false);
+    float oldTimer = m_timers.at(playerID);
     if (oldTimer <= 0)
         timesUp(playerID);
     else {
-        std::cout << "I have updated " << oldTimer << std::endl;
         m_timers.at(playerID) = ceil(m_timers.at(playerID));
-        m_timers.at(playerID) = oldTimer;
+        m_timers.at(playerID) = m_timers.at(playerID) + c_increment;
     }
-    std::cout << "I am done! Player" << playerID << std::endl;
+    json returnJson = {{"time_left", (int)m_timers.at(playerID)}, {"player_id", playerID}};
+    return returnJson.dump();
 }
 
 std::string TimerMode::timesUp(int playerID)
 {
-    return "";
-    // send msg to server so he knows one of the player has reached its time limit
+    json msg = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_players.at(playerID));
+    return msg.dump();
 }
 
 std::string TimerMode::toTimerString(int playerID)
@@ -105,9 +128,8 @@ json TimerMode::serialized()
         std::string playerString = "player_" + std::to_string(i);
         timersArray[playerString] = (int)m_timers.at(i);
     }
-    timersArray["n_players"] = m_timers.size();
-    timersArray["increment"] = c_increment;
-    return timersArray;
+    json timerJson = {{"timers", timersArray}, {"increment", c_increment}};
+    return timerJson;
 }
 
 json TimerMode::saveGame()
@@ -117,8 +139,10 @@ json TimerMode::saveGame()
 
 int TimerMode::getTimeLeft(int playerID)
 {
-    // m_mutex.lock();
-    float toRet = m_timers.at(playerID);
-    // m_mutex.unlock();
-    return (int)toRet;
+    return (int)m_timers.at(playerID);
+}
+
+void TimerMode::setPlayerTimer(int playerID, int time)
+{
+    m_timers.at(playerID) = (float)time;
 }

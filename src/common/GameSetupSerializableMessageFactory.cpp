@@ -26,7 +26,6 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
 
 json GameSetupSerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID)
 {
-
     json participationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(gameSetup)}, {"game_id", gameID}};
     return participationJson;
 }
@@ -42,17 +41,3 @@ json GameSetupSerializableMessageFactory::serializeGameCreationRequest(
         {"receivers", receiversArray}, {"game_configuration", configuration}};
     return creationJson;
 }
-/*
-json GameSetupSerializableMessageFactory::serializeGameSetup(
-    GameMode gameMode, std::vector<std::string> &players, int time, int increment)
-
-{
-    json playerArray = json::array();
-    for (auto &player : players)
-        playerArray.push_back(player);
-
-    json setupJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(gameInvite)}, {"game_mode", toJsonString(gameMode)},
-        {"players", playerArray}, {"time", time}, {"increment", increment}};
-    return setupJson;
-}
-*/

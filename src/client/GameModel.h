@@ -86,6 +86,9 @@ public:
     auto hasWinner() const -> bool;
     auto getWinner() const -> std::string;
 
+    auto getPlayersNames() const -> std::vector<std::string>;
+    auto getPlayersCount() const -> int;
+
     /**
      * @note Winner can be established.
      */
@@ -116,7 +119,7 @@ class TimerGameModel : public GameModel
 
 public:
     TimerGameModel(const std::string &);
-    TimerGameModel(const std::vector<std::string> &);
+    TimerGameModel(const std::vector<std::string> &, int increment, int time);
     auto processAction(const std::string &) -> void override;
     auto serialized() -> nlohmann::json override;
 };

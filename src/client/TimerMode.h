@@ -5,15 +5,17 @@
 #include <nlohmann/json.hpp>
 
 #include <atomic>
+#include <deque>
 #include <mutex>
 #include <string>
 #include <vector>
 
 class TimerMode : public Serializable
 {
-    std::vector<std::atomic<float>> m_timers;
-    int c_increment; // number of total seconds
-    std::atomic<bool> m_stopTimer = false;
+    std::deque<std::atomic<float>> m_timers;
+    std::vector<std::string> m_players;
+    int c_increment {};
+    std::atomic<bool> m_stopTimer = true;
 
 public:
     /**
@@ -23,7 +25,7 @@ public:
      * @param int
      * @throw AssertionError If nPlayers != 2 or 4
      */
-    TimerMode(int nPlayers, int increment, int time);
+    TimerMode(int nPlayers, int increment, int time, std::vector<std::string> &players);
 
     /**
      * @brief Constructor used when resuming a game
@@ -31,7 +33,12 @@ public:
      * @param std::vector<float> timers, the timers of all players
      * @throw AssertionError If timers is not of length 2 or 4
      */
-    TimerMode(int increment, std::vector<float> &timers);
+    TimerMode(int increment, std::vector<float> &timers, std::vector<std::string> &players);
+
+    TimerMode(const TimerMode &);
+    TimerMode &operator=(const TimerMode &other);
+
+    TimerMode() = default;
 
     explicit TimerMode(const std::string &);
 
@@ -42,7 +49,7 @@ public:
      * This is to make sure that the other player's timer has stopped before starting another
      * player's time. OldPlayer timer will stop on its own
      */
-    auto switchPlayer(int newPlayer) -> void;
+    auto switchPlayer(int newPlayer) -> std::string;
 
     /**
      * @brief Saves the timer if game is paused
@@ -55,7 +62,7 @@ public:
      *
      * @param playerID The player's index in the players' time vector (m_timers)
      */
-    auto countTime(int playerID) -> void;
+    auto countTime(int playerID) -> std::string;
 
     /**
      * @brief Sends a message to the server to indicate that a certain player has reached his time limit
@@ -82,4 +89,6 @@ public:
     auto saveGame() -> nlohmann::json;
 
     auto getTimeLeft(int playerID) -> int;
+
+    auto setPlayerTimer(int playerID, int time) -> void;
 };

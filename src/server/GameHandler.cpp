@@ -9,6 +9,7 @@
 
 #include "Database.h"
 #include "EloCalculator.h"
+#include "src/client/GameModel.h" // TODO: move to common
 #include "src/common/SerializableMessageFactory.h"
 
 #include <nlohmann/json.hpp>
@@ -17,10 +18,23 @@
 
 using json = nlohmann::json;
 
-GameHandler::GameHandler(int gameID, GameHub *gameHub, UserHub *userHub)
+/**
+ * GameHandler
+ */
+
+GameHandler::GameHandler(int gameID, GameHub *gameHub, UserHub *userHub, const std::vector<std::string> &players)
     : m_gameID {gameID}
     , m_gameHub {gameHub}
     , m_userHub {userHub}
+    , m_gameModel {std::make_shared<GameModel>(players)}
+{
+}
+
+GameHandler::GameHandler(int gameID, GameHub *gameHub, UserHub *userHub, const std::string &config)
+    : m_gameID {gameID}
+    , m_gameHub {gameHub}
+    , m_userHub {userHub}
+    , m_gameModel {std::make_shared<GameModel>(config)}
 {
 }
 
@@ -34,67 +48,33 @@ int GameHandler::getID() const noexcept
     return m_gameID;
 }
 
-void GameHandler::setConfiguration(const std::string &configuration)
-{
-    m_configuration = configuration;
-
-    auto config= json::parse(configuration);
-    std::cout << config << std::endl;
-    auto players = config.at("players");
-    m_players.clear();
-    for (auto &player : players) {
-        addPlayer(player.at("username").get<std::string>()); // Add player by its username
-    }
-    m_confirmedPlayers.fill(false);
-}
-
-void GameHandler::addPlayer(const std::string &username)
-{
-    m_players.push_back(username);
-
-    assert(m_players.size() <= 4);
-}
-
 int GameHandler::numberOfConfirmedPlayers() const
 {
-    int confirmedPlayers;
-
-    for (auto &state : m_confirmedPlayers)
-        confirmedPlayers += static_cast<int>(state);
-
-    return confirmedPlayers;
-}
-
-void GameHandler::setConfirmationState(const std::string &username, bool state)
-{
-    for (auto i {0}; i < m_players.size(); ++i) {
-        if (m_players[i] == username) {
-            m_confirmedPlayers[i] = state;
-            break;
-        }
-    }
+    return m_confirmedPlayers;
 }
 
 void GameHandler::playerJoined(const std::string &username)
 {
-    setConfirmationState(username, true);
+    // Maybe inform other players ?
+    m_confirmedPlayers++;
 }
 
 void GameHandler::playerQuit(const std::string &username)
 {
-    setConfirmationState(username, false);
+    // Maybe inform other players ?
+    m_confirmedPlayers--;
 }
 
 bool GameHandler::areAllPlayersConfirmed() const
 {
-    return numberOfConfirmedPlayers() == m_players.size();
+    return numberOfConfirmedPlayers() == m_gameModel->getPlayersCount();
 }
 
 bool GameHandler::areAllPlayersConnected() const
 {
     bool allConnected {true};
 
-    for (auto &player : m_players)
+    for (auto &player : m_gameModel->getPlayersNames())
         allConnected = allConnected && m_userHub->isConnected(player);
 
     return allConnected;
@@ -104,7 +84,7 @@ bool GameHandler::areAllPlayersNotInGame() const
 {
     bool allNotInGame {true};
 
-    for (auto &player : m_players)
+    for (auto &player : m_gameModel->getPlayersNames())
         allNotInGame = allNotInGame && m_userHub->isInGame(player);
 
     return allNotInGame;
@@ -112,9 +92,9 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    auto startRequest {SerializableMessageFactory::serializeGameStarted(getID(), json::parse(m_configuration))};
+    auto startRequest {SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized())};
 
-    for (auto &p : m_players)
+    for (auto &p : m_gameModel->getPlayersNames())
         m_userHub->relayMessageTo(p, startRequest);
 }
 
@@ -131,11 +111,12 @@ void GameHandler::deleteFromDB()
 
 void GameHandler::saveToDB()
 {
-    for (auto i_player : m_players) {
+    for (const auto &i_player : m_gameModel->getPlayersNames()) {
+        std::cerr << "Saving " << i_player << std::endl;
         DatabaseHandler::addGameIdToUser(i_player, getID());
     }
 
-    DatabaseHandler::setGameBoardConfig(getID(), m_configuration);
+    DatabaseHandler::setGameBoardConfig(getID(), m_gameModel->serialized());
 }
 
 void GameHandler::updateELO(const std::string &winner)
@@ -143,7 +124,7 @@ void GameHandler::updateELO(const std::string &winner)
     std::vector<float> currentELOs;
     std::vector<bool> winningState;
 
-    for (auto &i_player : m_players) {
+    for (auto &i_player : m_gameModel->getPlayersNames()) {
         currentELOs.push_back(DatabaseHandler::getELO(i_player));
         winningState.push_back(i_player == winner);
     }
@@ -152,8 +133,8 @@ void GameHandler::updateELO(const std::string &winner)
     eloCalc.calculateELO();
     auto finalELOs {eloCalc.getFinalELOs()};
 
-    for (auto i {0}; i < m_players.size(); ++i) {
-        DatabaseHandler::setELO(m_players.at(i), finalELOs.at(i));
+    for (auto i {0}; i < m_gameModel->getPlayersNames().size(); ++i) {
+        DatabaseHandler::setELO(m_gameModel->getPlayersNames().at(i), finalELOs.at(i));
     }
 }
 
@@ -162,16 +143,27 @@ void GameHandler::processRequest(const std::string &serRequest)
     auto request(json::parse(serRequest));
 
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
+        m_gameModel->playerSurrendered(request["sender"]);
+        if (m_gameModel->hasWinner()) {
+            updateELO(m_gameModel->getWinner());
+            m_isFinished = true;
+        }
 
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
-        m_isFinished = true;
+        m_saveAcceptance++;
+
+    } else if (request["action"] == toJsonString(GameAction::ACCEPT_SAVE)) {
+        m_saveAcceptance++;
+
+    } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
+        m_saveAcceptance--;
 
     } else if (request["action"] == toJsonString(GameAction::END_GAME)) {
         updateELO(request["winner"]);
         m_isFinished = true;
     }
 
-    for (auto &p : m_players)
+    for (auto &p : m_gameModel->getPlayersNames())
         if (p != request["sender"])
             m_userHub->relayMessageTo(p, serRequest);
 }
@@ -215,16 +207,22 @@ void GameHub::eraseFinished()
 
 void GameHub::processGameCreation(const std::string &serRequest)
 {
-    auto request(json::parse(serRequest));
+    auto request = json::parse(serRequest);
+    std::cout << request << std::endl;
 
     auto gameID {getUniqueID()};
-    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
 
-    // This add the players to the game
-    tmp->setConfiguration(request["game_configuration"]);
-    tmp->playerJoined(request["sender"]);
+    std::vector<std::string> gPlayers;
+    for (auto &i_user : request["receivers"]) {
+        gPlayers.push_back(i_user.get<std::string>());
+    }
+
+    DatabaseHandler::createGame(gameID, gPlayers, (int)gPlayers.size(), request["game_configuration"]);
+
+    auto config {request["game_configuration"].dump()};
+    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub, config)};
+
     tmp->saveToDB();
-
     m_games.push_back(tmp);
 
     for (auto &i_user : request["receivers"]) {
@@ -234,10 +232,8 @@ void GameHub::processGameCreation(const std::string &serRequest)
 
 void GameHub::createGameFromDB(int gameID)
 {
-    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub)};
-
-    auto config {DatabaseHandler::getGameConfig(gameID)};
-    tmp->setConfiguration(config);
+    auto config {DatabaseHandler::getGameConfig(gameID).dump()};
+    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub, config)};
 
     m_games.push_back(tmp);
 }
@@ -264,7 +260,7 @@ void GameHub::processGameQuit(const std::string &serRequest)
     auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
 
-    targetGame->playerJoined(request["username"]);
+    targetGame->playerQuit(request["username"]);
 
     if (targetGame->numberOfConfirmedPlayers() == 0) {
         unloadGame(request["game_id"]);
@@ -284,19 +280,16 @@ void GameHub::unloadGame(int gameID)
 void GameHub::processRequest(const std::string &serRequest)
 {
     // Mutex when operating on game creation
-    std::cout << "GameHub: processing request" << std::endl;
     std::lock_guard<std::mutex> guard {m_gamesMutex};
-    std::cout << "GameHub: request processed" << std::endl;
 
-//    auto request= json::parse(serRequest);
-//
-//    if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
-//        processGameCreation(serRequest);
-//
-//    } else if (request["action"] == toJsonString(GameSetup::JOIN_GAME)) {
-//        processGameJoin(serRequest);
-//
-//    } else if (request["action"] == toJsonString(GameSetup::QUIT_GAME)) {
-//        processGameQuit(serRequest);
-//    }
+    auto request = json::parse(serRequest);
+
+    if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
+        processGameCreation(serRequest);
+    } else if (request["action"] == toJsonString(GameSetup::JOIN_GAME)) {
+        processGameJoin(serRequest);
+
+    } else if (request["action"] == toJsonString(GameSetup::QUIT_GAME)) {
+        processGameQuit(serRequest);
+    }
 }

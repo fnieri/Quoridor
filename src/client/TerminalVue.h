@@ -82,9 +82,10 @@ class TerminalVue
     ButtonOption buttonOption;
 
     std::vector<std::string> chatElements;
-    std::vector<std::string> gameList {"12. UserA, UserB", "14. UserA, UserC, UserD, UserH", "69. Louis, Ryan Reynolds"};
-//    std::vector<std::string> friendsList {
-//        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+    std::vector<std::string> gameList;
+    //    std::vector<std::string> friendsList {
+    //        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard",
+    //        "Ginette"};
     std::vector<CheckboxState> friendsListStates;
     std::vector<std::string> chatEntry;
 
@@ -328,6 +329,12 @@ class TerminalVue
 
     void updateFriendsListCheckboxes();
 
+    void updateGameIds();
+
+    void joinGame();
+
 public:
     void run();
+
+    bool isConnectedToServer() const;
 };

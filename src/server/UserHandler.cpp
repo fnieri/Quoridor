@@ -34,7 +34,7 @@ UserHandler::UserHandler(Socket &&user, UserHub *userHub, std::shared_ptr<AuthHa
     , m_authHandler {authHandler}
     , m_relationsHandler {relationsHandler}
     , m_chatboxHandler {chatboxHandler}
-    , m_gameHub {gameHub}
+    , m_gameHub {std::make_shared<GameHub>(userHub)}
     , m_userHandled {std::make_shared<ServerUser>()}
 {
 }

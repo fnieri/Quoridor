@@ -16,10 +16,12 @@
 #include <nlohmann/json.hpp>
 
 #include <cassert>
+#include <chrono>
 #include <iostream>
 #include <thread>
 
 using json = nlohmann::json;
+using namespace std::chrono_literals;
 
 GameModel::GameModel(const std::vector<std::string> &p_players)
 {
@@ -149,12 +151,27 @@ auto GameModel::getWinner() const -> std::string
     return m_winner;
 }
 
+auto GameModel::getPlayersNames() const -> std::vector<std::string>
+{
+    auto playersNames {std::vector<std::string> {}};
+
+    for (auto &i_player : m_players)
+        playersNames.emplace_back(i_player->getUsername());
+
+    return playersNames;
+}
+
+auto GameModel::getPlayersCount() const -> int
+{
+    return m_players.size();
+}
+
 auto GameModel::playerSurrendered(const std::string &p_username) -> void
 {
     auto playerIt {std::find_if(m_players.begin(), m_players.end(), [p_username](auto &p) { return p->getUsername() == p_username; })};
 
     if (playerIt == m_players.end()) {
-        std::cerr << "The players don't exist!\n";
+        std::cerr << "The player doesn't exist!\n";
         return;
     }
 
@@ -259,7 +276,6 @@ auto GameModel::getPlayerIdx(const std::string &username) const noexcept -> int
             return i_player->getIndex();
     }
     return -2;
-}
 
 auto GameModel::getPlayersRemainingWalls() noexcept -> std::map<std::string, int>
 {
@@ -289,26 +305,51 @@ auto AiGameModel::processAction(const std::string &p_action) -> void
     GameModel::processAction(aiPlayJsonStr);
 }
 
-TimerGameModel::TimerGameModel(const std::string &player)
-    : GameModel(player)
-    , m_timerMode {2, 30, 120}
+TimerGameModel::TimerGameModel(const std::string &p_conf)
+    : GameModel(p_conf)
+
 {
+    auto conf(json::parse(p_conf));
+
+    std::vector<std::string> usernames;
+    std::vector<float> timers;
+    usernames.reserve(m_players.size());
+
+    for (auto &player : m_players)
+        usernames.push_back(player->getUsername());
+
+    int increment = conf["timer_setup"]["increment"];
+
+    for (int i = 0; (int)i < conf["players"]; i++) {
+        std::string playerStr = "player_" + std::to_string(i);
+        timers.push_back(conf["timers"][playerStr]);
+    }
+    m_timerMode = {increment, timers, usernames};
 }
 
-TimerGameModel::TimerGameModel(const std::vector<std::string> &players)
-    : GameModel(players)
-    , m_timerMode {(int)players.size(), 30, 120}
+TimerGameModel::TimerGameModel(const std::vector<std::string> &p_players, int increment, int time)
+    : GameModel(p_players)
 {
+    std::vector<std::string> usernames;
+    usernames.reserve(p_players.size());
+    for (auto &username : p_players)
+        usernames.push_back(username);
+
+    m_timerMode = {(int)p_players.size(), increment, time, usernames};
 }
 
+// Not finished
 auto TimerGameModel::processAction(const std::string &action) -> void
 {
     GameModel::processAction(action);
-
-    // std::thread P1Thread(&TimerMode::switchPlayer, &m_timerMode, 0);
+    std::thread newTimer(&TimerMode::switchPlayer, &m_timerMode, m_currentPlayerIdx);
+    std::this_thread::sleep_for(100ms);
+    newTimer.detach();
 }
 
-auto TimerGameModel::serialized() -> json
+auto TimerGameModel::serialized()->nlohmann::json
 {
-    return json::array();
+    json gameSer = GameModel::serialized();
+    gameSer["timer_setup"] = m_timerMode.serialized();
+    return gameSer;
 }

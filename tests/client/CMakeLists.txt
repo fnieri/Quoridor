@@ -3,9 +3,9 @@ set(test_suite ${PREFIX}_client_tests)
 # Names of the test files without the extention
 set(${test_suite}
     Test_Timer
-    Test_Wall_Placement
     Test_Player_Moves
     Test_Main_Model_Controller
+    Test_Wall_Placement
 )
 
 add_executable(${test_suite} ${${test_suite}})

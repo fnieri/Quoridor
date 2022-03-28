@@ -15,6 +15,8 @@ public:
     auto sendJson(const json &) -> void;
     auto sendSyncJson(const json &) -> json;
 
+    auto isConnected() const -> bool;
+
     auto login(const std::string &username, const std::string &password) -> bool;
     auto registerUser(const std::string &username, const std::string &password) -> bool;
 
@@ -29,7 +31,7 @@ public:
     auto fetchData() -> void;
     auto fetchFriends() -> void;
     auto fetchFriendRequestsReceived() -> void;
-    auto fetchGames() -> void;
+    auto fetchGameIds() -> void;
     auto fetchGameMessages(int) -> void;
     auto fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void;
     auto fetchLeaderboard() -> void;
