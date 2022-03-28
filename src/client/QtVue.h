@@ -231,6 +231,7 @@ private:
     QLabel *rankLBLabel;
     QLabel *usernameLBLabel;
     QLabel *scoreLBLabel;
+    QWidget *leaderBoardExtraWidget;
     QScrollArea *leaderBoardScrollArea;
     QWidget *leaderboardScrollAreaWidgetContents;
     QVBoxLayout *leaderboardScrollAreaWidgetContentsLayout;
