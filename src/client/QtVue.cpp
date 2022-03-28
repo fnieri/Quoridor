@@ -14,6 +14,8 @@ QtVue::~QtVue()
 
 int QtVue::run()
 {
+    // resetController();
+
     setupRegisterUI();
     setupLoginUI();
     setupGameUI();
@@ -24,6 +26,12 @@ int QtVue::run()
     // gotoGameWindow();
 
     return app->exec();
+}
+
+void QtVue::resetController()
+{
+    delete serverController;
+    serverController = new ServerController {&mainController};
 }
 
 /* === Main Window === */
@@ -3752,8 +3760,11 @@ void QtVue::gotoLoginWindow()
 
 void QtVue::gotoGameWindow()
 {
+
+    std::cout << "TEST!3" << std::endl;
     serverController->fetchData();
 
+    std::cout << "TEST!4" << std::endl;
     appMainStacked->setCurrentIndex(2);
     usernameLabel->setText(QString::fromStdString(*mainModel->getUsername()));
     eloLabel->setText(QString::fromStdString(std::to_string(*mainModel->getELO())));
@@ -3764,7 +3775,7 @@ void QtVue::updateLeaderboard()
     auto leaderboard = mainModel->getLeaderboard();
 
     // qDeleteAll(leaderboardScrollAreaWidgetContentsLayout->findChildren<QWidget*>("", Qt::FindDirectChildrenOnly));
-    while (QWidget *w = leaderboardScrollAreaWidgetContentsLayout->findChild<QWidget *>())
+    while (QWidget *w = leaderboardScrollAreaWidgetContents->findChild<QWidget *>())
         delete w;
 
     if (!leaderboard->empty()) {
@@ -3841,6 +3852,8 @@ void QtVue::loginButtonPressed()
         return;
     }
 
+    std::cout << "TEST!" << std::endl;
+
     if (!serverController->login(username, password)) {
         messageLabelLogin->setText("Wrong username or password");
         messageLabelLogin->show();
@@ -3851,7 +3864,8 @@ void QtVue::loginButtonPressed()
     usernameLineEditLogin->setText("");
     passwordLineEditLogin->setText("");
     messageLabelLogin->hide();
-    
+
+    std::cout << "TEST!2" << std::endl;
     gotoGameWindow();
 }
 
@@ -3899,6 +3913,7 @@ void QtVue::registerButtonPressed()
 
 void QtVue::logoutButtonPressed()
 {
+    resetController();
     gotoLoginWindow();
 }
 

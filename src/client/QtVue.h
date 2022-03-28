@@ -31,6 +31,8 @@ private:
     MainModel *mainModel = mainController.getMainModel();
     ServerController *serverController = new ServerController {&mainController};
 
+    void resetController();
+
     QScopedPointer<QApplication> app;
     
     /* === Main App Window === */
