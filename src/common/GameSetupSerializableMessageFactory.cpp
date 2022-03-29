@@ -26,7 +26,12 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
 
 json GameSetupSerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username)
 {
-    json participationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(gameSetup)}, {"game_id", gameID}, {"username", username}};
+    json participationJson = {
+        {"domain",   toJsonString(Domain::GAME_SETUP)},
+        {"action",   toJsonString(gameSetup)         },
+        {"game_id",  gameID                          },
+        {"username", username                        }
+    };
     return participationJson;
 }
 

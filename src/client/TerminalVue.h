@@ -84,8 +84,9 @@ class TerminalVue
     std::vector<std::string> chatElements;
     std::vector<std::string> gameList;
     std::vector<int> gameListId;
-//    std::vector<std::string> friendsList {
-//        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard", "Ginette"};
+    //    std::vector<std::string> friendsList {
+    //        "Hector", "Lulu", "Bernard", "Léon", "Charlotte", "Merlin", "Pierre", "Fleure", "Edouard", "José", "Mireille", "Tonio", "Ivan", "Edgard",
+    //        "Ginette"};
     std::vector<CheckboxState> friendsListStates;
     std::vector<std::string> chatEntry;
 
@@ -335,4 +336,6 @@ class TerminalVue
 
 public:
     void run();
+
+    bool isConnectedToServer() const;
 };

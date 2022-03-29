@@ -85,6 +85,9 @@ public:
     auto hasWinner() const -> bool;
     auto getWinner() const -> std::string;
 
+    auto getPlayersNames() const -> std::vector<std::string>;
+    auto getPlayersCount() const -> int;
+
     /**
      * @note Winner can be established.
      */

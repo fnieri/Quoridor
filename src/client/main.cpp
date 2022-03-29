@@ -3,9 +3,9 @@
 #include <cstdlib>
 #include <iostream>
 #include <map>
+#include <thread>
 #include <unistd.h>
 #include <vector>
-#include <thread>
 
 #include "Board.h"
 #include "MainController.h"
@@ -66,35 +66,34 @@ void testGameJoin(std::string username, std::string password)
     }
 }
 
-
 int main(int argc, char *argv[])
 {
     MainController mainController;
     ServerController serverController {&mainController};
-//    serverController.registerUser("b", "b");
-//    serverController.registerUser("c", "c");
-//    serverController.login("b", "b");
-//    serverController.createGame("b", {"b", "c"});
+    //    serverController.registerUser("b", "b");
+    //    serverController.registerUser("c", "c");
+    //    serverController.login("b", "b");
+    //    serverController.createGame("b", {"b", "c"});
     std::cout << "creating thread" << std::endl;
-    std::thread t1 (testGameJoin, "b", "b");
+    std::thread t1(testGameJoin, "b", "b");
     sleep(1);
-    std::thread t2 (testGameJoin, "c", "c");
+    std::thread t2(testGameJoin, "c", "c");
     t1.join();
     t2.join();
     return 0;
-//    serverController.login("testing", "testingPassword");
+    //    serverController.login("testing", "testingPassword");
     //    serverController.createGame("testing", {"testing", "testingFriend"});
     //
-//    auto model = mainController.getMainModel();
+    //    auto model = mainController.getMainModel();
     //    sleep(5);
-//    serverController.fetchGameIds();
-//    auto gameIds = model->getGameIDs();
-//    for (const auto& gameId : *gameIds) {
-//        std::cout << "Game ID: " << gameId.first << std::endl;
-//        for (const auto& player : gameId.second) {
-//            std::cout << "Player: " << player << std::endl;
-//        }
-//    }
+    //    serverController.fetchGameIds();
+    //    auto gameIds = model->getGameIDs();
+    //    for (const auto& gameId : *gameIds) {
+    //        std::cout << "Game ID: " << gameId.first << std::endl;
+    //        for (const auto& player : gameId.second) {
+    //            std::cout << "Player: " << player << std::endl;
+    //        }
+    //    }
     //    return 0;
 
     //    serverController.login("ok", "k");
@@ -122,9 +121,16 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
+    TerminalVue vue;
+
+    if (!vue.isConnectedToServer()) {
+        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+        exit(1);
+
+    } else {
         system("clear");
-        TerminalVue vue;
         vue.run();
+    }
 
     //        std::thread t1(&TerminalVue::run, &vue);
     //        t1.join();

@@ -11,7 +11,7 @@ private:
     int16_t m_port;
 
 public:
-    DummyClient(int16_t port = 12345)
+    DummyClient(int16_t port = 6969)
         : m_port {port}
     {
         m_connector.connect(sockpp::inet_address("localhost", m_port));
@@ -21,12 +21,12 @@ public:
 SCENARIO("Test LandingPool")
 {
     UserHub userHub;
-    LandingPool landingPool {12345, userHub};
+    LandingPool landingPool {6969, userHub};
 
     std::thread th(&LandingPool::openToConnections, &landingPool);
     th.detach();
 
-    GIVEN("Establish connection")
+    GIVEN("Establish connection (may fail if port already used!)")
     {
         DummyClient c1[10];
         sleep(1);

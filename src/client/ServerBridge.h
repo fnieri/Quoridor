@@ -39,6 +39,7 @@ public:
      * @note No immediate answer should be expected as this is asynchronously.
      */
     void sendAsync(const std::string &);
-
     std::string getSyncAnswer(const std::string &);
+
+    bool isConnected() const;
 };

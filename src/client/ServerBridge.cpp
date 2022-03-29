@@ -66,3 +66,8 @@ void ServerBridge::sendAsync(const std::string &serRequest)
 {
     send(serRequest);
 }
+
+bool ServerBridge::isConnected() const
+{
+    return isOpen();
+}

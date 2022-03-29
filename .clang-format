@@ -29,5 +29,7 @@ PointerAlignment: Right
 # Always break after template declaration
 AlwaysBreakTemplateDeclarations: true
 
+AlignArrayOfStructures: Left
+
 ---
 Language: JavaScript
