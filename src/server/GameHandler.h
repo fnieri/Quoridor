@@ -39,6 +39,8 @@ private:
     mutable std::mutex m_gameHandlerMutex;
 
     std::string processAndGetAnswerForSurrender(const nlohmann::json &request);
+    std::string processAndGetAnswerForAction(const nlohmann::json &request);
+    std::string processEndGameEval(const nlohmann::json &request);
 
 public:
     /**

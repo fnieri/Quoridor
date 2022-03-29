@@ -118,7 +118,7 @@ auto GameModel::getCurrentPlayer() noexcept -> const int *
 
 auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool
 {
-    PlayerAction action {m_board, m_players.at(m_currentPlayerIdx), movePoint / 2};
+    PlayerAction action {m_board, m_players.at(m_currentPlayerIdx), movePoint};
     return action.isActionValid();
 }
 
@@ -130,7 +130,7 @@ auto GameModel::isWallValid(const Point &dest, WallOrientation ori) const noexce
 
 auto GameModel::getPlayerAction(const Point &dest) const noexcept -> PlayerAction
 {
-    return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), dest / 2};
+    return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), dest};
 }
 
 auto GameModel::getWallAction(const Point &dest, WallOrientation orientation) const noexcept -> WallAction

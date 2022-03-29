@@ -149,9 +149,21 @@ void GameHandler::updateELO(const std::string &winner)
 
 std::string GameHandler::processAndGetAnswerForSurrender(const json &request)
 {
-    auto answer {request.dump()};
-
     m_gameModel->playerSurrendered(request["sender"]);
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processAndGetAnswerForAction(const json &request)
+{
+    m_gameModel->processAction(request.dump());
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processEndGameEval(const json &request)
+{
+    auto answer {request.dump()};
 
     if (m_gameModel->hasWinner()) {
         updateELO(m_gameModel->getWinner());
@@ -174,6 +186,9 @@ void GameHandler::processRequest(const std::string &serRequest)
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
         answer = processAndGetAnswerForSurrender(request);
 
+    } else if (request["action"] == toJsonString(GameAction::ACTION)) {
+        answer = processAndGetAnswerForAction(request);
+
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
         m_saveAcceptance++;
 
@@ -182,12 +197,6 @@ void GameHandler::processRequest(const std::string &serRequest)
 
     } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
         m_saveAcceptance--;
-
-    } else if (request["action"] == toJsonString(GameAction::END_GAME)) {
-        updateELO(request["winner"]);
-        m_isFinished = true;
-
-        answer = GameRelatedActionsSerializableMessageFactory::serializeGameEnded(getID()).dump();
     }
 
     for (auto &p : m_gameModel->getPlayersNames())

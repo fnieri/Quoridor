@@ -291,7 +291,29 @@ SCENARIO("GameSetup")
             foo.send(joinReqfoo);
             bar.send(joinReqbar);
 
-            REQUIRE(foo.receive() == bar.receive());
+            auto gameStartfoo {foo.receive()};
+            auto gameStartbar {bar.receive()};
+
+            REQUIRE(gameStartfoo == gameStartbar);
+
+            auto gameModel = GameModel {json::parse(gameStartfoo)["configuration"].dump()};
+
+            GIVEN("Play actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getPlayerAction(Point {4, 7});
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializePawnAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
 
             GIVEN("Surrender by request")
             {
