@@ -78,11 +78,7 @@ void GameHandler::setConfirmationState(const std::string &username, bool state)
 
 void GameHandler::playerJoined(const std::string &username)
 {
-    std::cout << "GameHandler::playerJoined: " << username << std::endl;
     setConfirmationState(username, true);
-    for (auto &player : m_players) {
-        std::cout << "Player: " << player << std::endl;
-    }
 }
 
 void GameHandler::playerQuit(const std::string &username)
