@@ -281,7 +281,12 @@ SCENARIO("GameSetup")
         GIVEN("Join created game")
         {
             auto joinReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "foo").dump()};
+            auto quitReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameID, "foo").dump()};
+
             auto joinReqbar {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "bar").dump()};
+
+            foo.send(joinReqfoo);
+            foo.send(quitReqfoo);
 
             foo.send(joinReqfoo);
             bar.send(joinReqbar);
