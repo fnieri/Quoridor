@@ -287,12 +287,36 @@ SCENARIO("GameSetup")
             bar.send(joinReqbar);
 
             REQUIRE(foo.receive() == bar.receive());
+
+            GIVEN("Surrender by request")
+            {
+                auto surrReqfoo {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, "foo").dump()};
+                foo.send(surrReqfoo);
+
+                auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()};
+                auto endGame {bar.receive()};
+
+                REQUIRE(endGame == expEndGame);
+
+                REQUIRE(DatabaseHandler::getPlayerGameIds("foo").empty());
+                REQUIRE(DatabaseHandler::getPlayerGameIds("bar").empty());
+            }
+
+            GIVEN("Surrender by disconnect")
+            {
+                foo.disconnect();
+
+                auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()};
+                auto endGame {bar.receive()};
+
+                REQUIRE(endGame == expEndGame);
+            }
         }
 
-        foo.disconnect();
-        sleep(1);
-        bar.receive();
     }
+
+    foo.disconnect();
+    bar.disconnect();
 
     sleep(1);
 }
