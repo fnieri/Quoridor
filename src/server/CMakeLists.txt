@@ -39,4 +39,6 @@ target_link_libraries(server
         ${PREFIX}_server
 )
 
-target_compile_features(server PRIVATE cxx_std_17)
+target_compile_features(server PRIVATE
+  cxx_std_17 
+)
