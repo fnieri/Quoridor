@@ -33,4 +33,6 @@ public:
     void processChatBox(const std::string &);
 
     void processGameSetup(const std::string &);
+
+    void processGameAction(const std::string &);
 };

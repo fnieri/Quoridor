@@ -148,12 +148,27 @@ auto GameModel::getWinner() const -> std::string
     return m_winner;
 }
 
+auto GameModel::getPlayersNames() const -> std::vector<std::string>
+{
+    auto playersNames {std::vector<std::string> {}};
+
+    for (auto &i_player : m_players)
+        playersNames.emplace_back(i_player->getUsername());
+
+    return playersNames;
+}
+
+auto GameModel::getPlayersCount() const -> int
+{
+    return m_players.size();
+}
+
 auto GameModel::playerSurrendered(const std::string &p_username) -> void
 {
     auto playerIt {std::find_if(m_players.begin(), m_players.end(), [p_username](auto &p) { return p->getUsername() == p_username; })};
 
     if (playerIt == m_players.end()) {
-        std::cerr << "The players don't exist!\n";
+        std::cerr << "The player doesn't exist!\n";
         return;
     }
 

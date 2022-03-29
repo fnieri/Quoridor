@@ -15,6 +15,8 @@ public:
     auto sendJson(const json &) -> void;
     auto sendSyncJson(const json &) -> json;
 
+    auto isConnected() const -> bool;
+
     auto login(const std::string &username, const std::string &password) -> bool;
     auto registerUser(const std::string &username, const std::string &password) -> bool;
 

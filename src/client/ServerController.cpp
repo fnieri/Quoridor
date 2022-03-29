@@ -103,13 +103,23 @@ auto ServerController::removeFriend(const std::string &sender, const std::string
 
 auto ServerController::createGame(const std::string &username, const std::vector<std::string> &players) -> void
 {
-    GameModel defaultGameModel {players};
-    defaultGameModel.serialized();
+    auto gamePlayers = players;
+    gamePlayers.push_back(username);
+    GameModel defaultGameModel {gamePlayers};
     sendJson(
         SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
+}
+
+auto ServerController::isConnected() const -> bool
+{
+    return bridge->isConnected();
 }
 
 auto ServerController::joinGame(const int &gameId, const std::string &username) -> void
 {
     sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
+}
+auto ServerController::fetchGameMessages(int) -> void
+{
+//    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));
 }

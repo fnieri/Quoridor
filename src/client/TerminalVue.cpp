@@ -58,7 +58,10 @@ auto TerminalVue::createCanvas()
                       occupiedHorizontalQuoridor = 7;
             auto c = Canvas(200, 200);
             std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
-            std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
+            std::vector<std::vector<int>> quoridorDirection {
+                {0, 4},
+                {5, 0}
+            }; // 0 = vertical, 1 = horizontal
 
             c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
 
@@ -563,9 +566,9 @@ void TerminalVue::userCreateGame()
             invitedPlayers.push_back(state.username);
         }
     }
-    if (invitedPlayers.size() == 2 || invitedPlayers.size() == 4) {
+    if (invitedPlayers.size() == 1 || invitedPlayers.size() == 3) {
         serverController->createGame(*mainModel->getUsername(), invitedPlayers);
-        homeTabIndex = 2;
+        homeTabIndex = 0;
     }
 }
 
@@ -685,4 +688,9 @@ void TerminalVue::run()
     auto _screen = ScreenInteractive::TerminalOutput();
     screen = &_screen;
     screen->Loop(mainRenderer);
+}
+
+bool TerminalVue::isConnectedToServer() const
+{
+    return serverController->isConnected();
 }

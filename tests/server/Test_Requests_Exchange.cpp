@@ -1,7 +1,6 @@
 #include <catch2/catch.hpp>
-#include "nlohmann/json.hpp"
-#include <nlohmann/json_fwd.hpp>
 
+#include "src/client/GameModel.h"
 #include "src/common/SerializableMessageFactory.h"
 #include "src/common/SocketUser.h"
 #include "src/server/Database.h"
@@ -11,6 +10,7 @@
 
 #include <future>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sockpp/tcp_connector.h>
 
 class TestConnector : public SocketUser
@@ -23,9 +23,14 @@ public:
         setSocket(std::move(connector));
     }
 
-    ~TestConnector()
+    auto disconnect() -> void
     {
         close();
+    }
+
+    ~TestConnector()
+    {
+        disconnect();
     }
 };
 
@@ -88,16 +93,6 @@ void makeFriends(TestConnector &a, const std::string &aName, TestConnector &b, c
     b.send(reqFriendAcc);
     auto accRecv {a.receive()};
 }
-
-/* template <typename T> */
-/* T dataFromSerialized(const std::string &serRequest) */
-/* { */
-/*     json request(json::parse(serRequest)); */
-/*     json jsonData = request["serialized_data"]; */
-/*     T data = jsonData[0].get<T>(); */
-
-/*     return data; */
-/* } */
 
 // Server
 TestServer serv {12345};
@@ -257,6 +252,47 @@ SCENARIO("GameSetup")
     createAndLogUser(bar, "bar", "12345");
 
     makeFriends(foo, "foo", bar, "bar");
+
+    GIVEN("Game creation")
+    {
+        auto sender {"foo"};
+        auto receivers {std::vector<std::string> {"bar"}};
+        auto config = GameModel {
+            std::vector<std::string> {"foo",
+                                      "bar"}
+        }.serialized();
+        auto gameCreatReq {SerializableMessageFactory::serializeGameCreationRequest(sender, receivers, config).dump()};
+
+        foo.send(gameCreatReq);
+
+        REQUIRE(foo.receive() == gameCreatReq);
+        REQUIRE(bar.receive() == gameCreatReq);
+
+        auto gameIDReqfoo {SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS).dump()};
+        auto gameIDResfoo {getAnswer(foo, gameIDReqfoo)};
+
+        auto gameIDReqbar {SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS).dump()};
+        auto gameIDResbar {getAnswer(bar, gameIDReqbar)};
+
+        REQUIRE(gameIDResfoo == gameIDResbar);
+
+        auto gameID {json::parse(gameIDResfoo)["serialized_data"][0]["game_id"].get<int>()};
+
+        GIVEN("Join created game")
+        {
+            auto joinReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "foo").dump()};
+            auto joinReqbar {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "bar").dump()};
+
+            foo.send(joinReqfoo);
+            bar.send(joinReqbar);
+
+            REQUIRE(foo.receive() == bar.receive());
+        }
+
+        foo.disconnect();
+        sleep(1);
+        bar.receive();
+    }
 
     sleep(1);
 }

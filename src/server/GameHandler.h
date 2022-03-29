@@ -8,6 +8,7 @@
 #pragma once
 
 #include "UserHandler.h"
+#include "src/client/Board.h"
 #include "src/common/Observer.h"
 
 #include <memory>
@@ -15,6 +16,9 @@
 #include <vector>
 
 class GameHub;
+class WallAction;
+class PlayerAction;
+class GameModel;
 
 class GameHandler
 {
@@ -25,18 +29,22 @@ private:
     GameHub *m_gameHub;
     UserHub *m_userHub;
 
-    std::string m_configuration;
-    std::vector<std::string> m_players;
-    std::array<bool, 4> m_confirmedPlayers;
+    int m_confirmedPlayers {0};
+    int m_saveAcceptance {0};
 
-    void setConfirmationState(const std::string &, bool);
+    std::shared_ptr<GameModel> m_gameModel;
+
+    mutable std::mutex m_gameHandlerMutex;
+
+    /* void setConfirmationState(const std::string &, bool); */
 
 public:
     /**
      * @param gameId identifier of the game, should be unique
      * @param userHub user hub used to access the participants
      */
-    GameHandler(int, GameHub *, UserHub *);
+    GameHandler(int id, GameHub *, UserHub *, const std::vector<std::string> &players);
+    GameHandler(int id, GameHub *, UserHub *, const std::string &config);
     /**
      * @brief Get the ID of current Game
      * @return m_gameID gameID
@@ -47,20 +55,12 @@ public:
      * @return m_isFinished
      */
     bool isFinished() const;
-    /**
-     * @brief Set a game configuration given a configuration passed by parameter
-     * @param configuration gameConfiguration
-     */
-    void setConfiguration(const std::string &);
-    /**
-     * @brief Add a player given its username
-     * @param username player's username
-     */
-    void addPlayer(const std::string &);
 
     void playerJoined(const std::string &);
     void playerQuit(const std::string &);
+
     int numberOfConfirmedPlayers() const;
+
     /**
      * @brief Check if all players in a game have confirmed to want to play
      * @return True if allConfirmed, else false
@@ -72,11 +72,13 @@ public:
      */
     bool areAllPlayersConnected() const;
     bool areAllPlayersNotInGame() const;
+
     /**
      * @brief Update ELOs for all players involved in a game given a winner
      * @param winner Username of winner
      */
     void updateELO(const std::string &);
+
     /**
      * @brief Relay message to all players that the game has started
      */

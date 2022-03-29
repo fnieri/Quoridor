@@ -45,8 +45,8 @@ private:
     std::map<std::string, SPtrToVec<Message>> m_chats;
 
     // Current game
-    //    GameModel *m_currentGame;
     std::shared_ptr<GameModel> m_currentGame;
+    bool m_isGameStarted = false;
 
     //    bool m_isPlayerTurn;
     //    std::unique_ptr<int> m_currentPlayer;
@@ -77,9 +77,9 @@ public:
 
     auto isInGame() const noexcept -> bool;
     auto getCurrentGame() -> GameModel *;
-    auto loadGame(const int &) noexcept -> void;
+    auto loadGame(const std::string &) noexcept -> void;
     auto createAiGame() noexcept -> void;
-    //    auto isPlayerTurn() const noexcept -> bool;
+    auto isGameStarted() const noexcept -> bool;
 
     auto getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>> *;
 
@@ -128,6 +128,7 @@ public:
 
     auto setGameIds(const std::map<int, std::vector<std::string>> &) -> void;
     auto addGameId(const int &, const std::vector<std::string> &) -> void;
+    auto setIsGameStarted(const bool &) -> void;
 
     auto setFriendNotification(const bool &) -> void;
     auto setGameNotification(const bool &) -> void;
