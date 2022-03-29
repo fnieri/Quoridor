@@ -298,13 +298,30 @@ SCENARIO("GameSetup")
 
             auto gameModel = GameModel {json::parse(gameStartfoo)["configuration"].dump()};
 
-            GIVEN("Play actions")
+            GIVEN("Player actions")
             {
                 gameModel.debugPrintBoard();
 
                 auto action = gameModel.getPlayerAction(Point {4, 7});
                 auto playerID = *gameModel.getCurrentPlayer();
                 auto req = SerializableMessageFactory::serializePawnAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
+
+            GIVEN("Wall actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getWallAction(Point {0, 0}, WallOrientation::Horizontal);
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializeWallAction(action, playerID).dump();
 
                 foo.send(req);
                 auto ans = bar.receive();
