@@ -156,7 +156,7 @@ std::string GameHandler::processAndGetAnswerForSurrender(const json &request)
 
 std::string GameHandler::processAndGetAnswerForAction(const json &request)
 {
-    m_gameModel->processAction(request.dump());
+    m_gameModel->processAction(request["move"].dump());
 
     return processEndGameEval(request);
 }
@@ -186,7 +186,8 @@ void GameHandler::processRequest(const std::string &serRequest)
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
         answer = processAndGetAnswerForSurrender(request);
 
-    } else if (request["action"] == toJsonString(GameAction::ACTION)) {
+    } else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN) || request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL)) {
+        std::cerr << "INSIDE ACTION\n";
         answer = processAndGetAnswerForAction(request);
 
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
