@@ -124,11 +124,6 @@ void GameHandler::deleteFromDB()
 
 void GameHandler::saveToDB()
 {
-    for (const auto &i_player : m_gameModel->getPlayersNames()) {
-        std::cerr << "Saving " << i_player << std::endl;
-        DatabaseHandler::addGameIdToUser(i_player, getID());
-    }
-
     DatabaseHandler::setGameBoardConfig(getID(), m_gameModel->serialized());
 }
 
@@ -270,11 +265,18 @@ void GameHub::processGameCreation(const std::string &serRequest)
 
     auto gameID {getUniqueID()};
 
+    // Establish players usernames
     std::vector<std::string> gPlayers {request["sender"]};
     for (auto &i_user : request["receivers"]) {
         gPlayers.push_back(i_user.get<std::string>());
     }
+
+    // Add to database
     DatabaseHandler::createGame(gameID, gPlayers, (int)gPlayers.size(), request["game_configuration"]);
+    for (const auto &i_player : gPlayers) {
+        std::cerr << "Saving " << i_player << std::endl;
+        DatabaseHandler::addGameIdToUser(i_player, gameID);
+    }
 
     /* auto boardConfig = DatabaseHandler::getGameConfig(gameID); */
     auto config {std::string {request["game_configuration"].dump()}};
