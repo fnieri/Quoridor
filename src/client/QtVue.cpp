@@ -70,6 +70,7 @@ void QtVue::createLoginAndRegister()
     loginBoxLayout->addWidget(passwordTextEntry);
 
     loginMessage = new QLabel("");
+    loginMessage->setAlignment(Qt::AlignTop);
     loginBoxLayout->addWidget(loginMessage);
 
     auto *loginButton = new QPushButton("Login", this);
@@ -93,6 +94,7 @@ void QtVue::createLoginAndRegister()
     registerBoxLayout->addWidget(registerPasswordConfirmTextEntry);
 
     registerMessage = new QLabel("");
+    registerMessage->setAlignment(Qt::AlignTop);
     registerBoxLayout->addWidget(registerMessage);
 
     auto *registerButton = new QPushButton("Register", this);
@@ -155,20 +157,38 @@ void QtVue::createLeaderboardPage()
     mainTabBar->addTab(leaderboardPage, "Leaderboard");
 }
 
+void QtVue::drawBoard()
+{
+    canvasPixmap->fill(Qt::white);
+    int dx = 0, dy = 0;
+    for (auto i = 0; i < 10; i++) {
+        for (auto j = 0; j < 10; j++) {
+            painter->setPen(QPen(Qt::black, 5));
+            painter->drawRect(dx, dy, 35, 35);
+            dx += 50;
+        }
+        dy += 50;
+        dx = 0;
+    }
+    drawLabel->setPixmap(*canvasPixmap);
+}
+
 void QtVue::createTrainingPage()
 {
     auto *trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto *tLabel = new QLabel("Training page");
+    tLabel->setAlignment(Qt::AlignTop);
     trainingPageLayout->addWidget(tLabel);
 
-    auto *drawLabel = new QLabel();
-    auto *canvasPixmap = new QPixmap(QSize(500, 500));
-    auto *painter = new QPainter(canvasPixmap);
-    drawLabel->setPixmap(*canvasPixmap);
+    drawLabel = new QLabel();
+    drawLabel->setAlignment(Qt::AlignTop);
+    canvasPixmap = new QPixmap(QSize(500, 500));
+    painter = new QPainter(canvasPixmap);
 
-    painter->setPen(QPen(Qt::black, 5));
-    painter->drawRect(50, 50, 50, 50);
+    drawBoard();
+
+    trainingPageLayout->addWidget(drawLabel);
 
     auto *trainingPage = new QWidget(this);
     trainingPage->setLayout(trainingPageLayout);

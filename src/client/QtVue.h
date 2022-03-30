@@ -53,6 +53,9 @@ private:
 
     QLabel *userEloLabel{};
 
+    QLabel *drawLabel{};
+    QPixmap *canvasPixmap{};
+    QPainter *painter{};
 
     MainController mainController;
     MainModel *mainModel;
@@ -65,6 +68,8 @@ private:
     void createFriendsPage();
     void createLeaderboardPage();
     void createTrainingPage();
+
+    void drawBoard();
 
     void updateValues();
 };

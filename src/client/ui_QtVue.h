@@ -23,7 +23,7 @@ public:
     {
         if (QtVue->objectName().isEmpty())
             QtVue->setObjectName(QString::fromUtf8("Quoridor"));
-        QtVue->resize(500, 800);
+        QtVue->resize(800, 800);
 
         retranslateUi(QtVue);
 
