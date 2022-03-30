@@ -1,4 +1,3 @@
-
 #pragma once
 
 
@@ -9,6 +8,9 @@
 #include <QScopedPointer>
 #include <string>
 
+#include <QMainWindow>
+#include <QMessageBox>
+#include <QObject>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
@@ -202,14 +204,14 @@ private:
     QLabel *friendsListLabel;
     QScrollArea *friendsScrollArea;
     QWidget *friendsScrollAreaWidgetContents;
-    QVBoxLayout *verticalLayout_13;
+    QVBoxLayout *friendsScrollAreaWidgetContentsLayout;
     QGroupBox *friendsChatBox;
     QVBoxLayout *chatVLayout;
     QGroupBox *friendsMessageContainerBox;
     QVBoxLayout *messagesVLayout;
     QScrollArea *friendsMessageScrollArea;
     QWidget *friendsMessageScrollAreaWidgetContents;
-    QVBoxLayout *verticalLayout_19;
+    QVBoxLayout *friendsMessageScrollAreaWidgetContentsLayout;
     QHBoxLayout *friendsWritingLayout;
     QLineEdit *friendsTextInput;
     QPushButton *friendsSendMessageButton;
@@ -249,12 +251,15 @@ private:
     void setupGameUI();
 
     QWidget *createLeaderboardBox(QWidget *parent, int rank, std::string username, int score);
+    QHBoxLayout *createFriendBox(QWidget *parent = nullptr, std::string username = "");
+    QWidget *createFriendChat(QWidget *parent, std::string chat);
 
     void updateLeaderboard();
+    std::string currentFriendChat;
 
 public:
     QtVue(int argc, char *argv[]);
-    virtual ~QtVue();
+    ~QtVue();
 
     int run();
     
@@ -271,4 +276,17 @@ public:
     void joinGameButtonPressed();
     void friendsButtonPressed();
     void leaderboardButtonPressed();
+
+    void addFriendButtonPressed();
+    void talkButtonPressed(const QPushButton &);
+    void deletefriendButtonPressed();
+    void updateFriendChat();
+
+    void sendFriendMessage();
+    void updateNotifications();
+
+    void showFriends();
+    void sendUserMessage();
+
+    void showFriendRequests();
 };

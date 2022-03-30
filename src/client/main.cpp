@@ -14,6 +14,8 @@
 #include "TerminalVue.h"
 #include "src/common/aiPlayer.h"
 
+#include <QApplication>
+
 void gameLoop()
 {
     // load everything
@@ -86,10 +88,8 @@ int main(int argc, char *argv[])
     //    }
     // gameLoop();
 
-    for (int i = 1; i < argc; ++i) {
-        if (std::string(argv[i]) == "-no-gui")
+    if (argc == 2)
+        if (argv[2] == "-no-gui")
             return startNoGui();
-    }
-
     return startGui(argc, argv);
 };
