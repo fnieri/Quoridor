@@ -94,6 +94,16 @@ void makeFriends(TestConnector &a, const std::string &aName, TestConnector &b, c
     auto accRecv {a.receive()};
 }
 
+void endGame(std::vector<TestConnector *> players)
+{
+    for (auto i = 0; i < players.size() - 1; ++i) {
+        players[i]->disconnect();
+        for (auto j = i + 1; j < players.size(); ++j) {
+            players[j]->receive();
+        }
+    }
+}
+
 // Server
 TestServer serv {12345};
 
