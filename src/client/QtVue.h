@@ -14,6 +14,10 @@
 #include <QLineEdit>
 #include <QPushButton>
 
+#include "MainModel.h"
+#include "ServerController.h"
+#include "src/common/Message.h"
+#include "src/common/Point.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui
@@ -31,12 +35,20 @@ public:
     ~QtVue() override;
 
 private slots:
-//    void handleLoginTabChanged(int index);
-    void handleLoginButtonClicked();
+    void handleLoginButtonClicked(const std::string &username, const std::string &password);
+    void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);
 
 private:
     Ui::QtVue *ui;
+
     QTabWidget *loginTabBar;
+    QLabel *loginMessage;
+    QLabel *registerMessage;
+
+    MainController mainController;
+    MainModel *mainModel = mainController.getMainModel();
+    GameModel *gameModel = mainModel->getCurrentGame();
+    ServerController *serverController = new ServerController {&mainController};
 
     void createLoginAndRegister();
 };
