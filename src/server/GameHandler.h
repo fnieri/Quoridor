@@ -11,6 +11,8 @@
 #include "src/client/Board.h"
 #include "src/common/Observer.h"
 
+#include <nlohmann/json_fwd.hpp>
+
 #include <memory>
 #include <mutex>
 #include <vector>
@@ -36,7 +38,9 @@ private:
 
     mutable std::mutex m_gameHandlerMutex;
 
-    /* void setConfirmationState(const std::string &, bool); */
+    std::string processAndGetAnswerForSurrender(const nlohmann::json &request);
+    std::string processAndGetAnswerForAction(const nlohmann::json &request);
+    std::string processEndGameEval(const nlohmann::json &request);
 
 public:
     /**

@@ -281,18 +281,86 @@ SCENARIO("GameSetup")
         GIVEN("Join created game")
         {
             auto joinReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "foo").dump()};
+            auto quitReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameID, "foo").dump()};
+
             auto joinReqbar {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "bar").dump()};
+
+            foo.send(joinReqfoo);
+            foo.send(quitReqfoo);
 
             foo.send(joinReqfoo);
             bar.send(joinReqbar);
 
-            REQUIRE(foo.receive() == bar.receive());
+            auto gameStartfoo {foo.receive()};
+            auto gameStartbar {bar.receive()};
+
+            REQUIRE(gameStartfoo == gameStartbar);
+
+            auto gameModel = GameModel {json::parse(gameStartfoo)["configuration"].dump()};
+
+            GIVEN("Player actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getPlayerAction(Point {4, 7});
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializePawnAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
+
+            GIVEN("Wall actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getWallAction(Point {0, 0}, WallOrientation::Horizontal);
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializeWallAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
+
+            GIVEN("Surrender by request")
+            {
+                auto surrReqfoo {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, "foo").dump()};
+                foo.send(surrReqfoo);
+
+                auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()};
+                auto endGame {bar.receive()};
+
+                REQUIRE(endGame == expEndGame);
+
+                REQUIRE(DatabaseHandler::getPlayerGameIds("foo").empty());
+                REQUIRE(DatabaseHandler::getPlayerGameIds("bar").empty());
+            }
+
+            GIVEN("Surrender by disconnect")
+            {
+                foo.disconnect();
+
+                auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()};
+                auto endGame {bar.receive()};
+
+                REQUIRE(endGame == expEndGame);
+            }
         }
 
-        foo.disconnect();
-        sleep(1);
-        bar.receive();
     }
+
+    foo.disconnect();
+    bar.disconnect();
 
     sleep(1);
 }

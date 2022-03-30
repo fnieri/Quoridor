@@ -99,10 +99,16 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    std::string startRequest {SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized()).dump()};
+    auto startRequest = SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized());
+
+    /* startRequest["chat"] = DatabaseHandler::getMessages(getID()); */
+    startRequest["chat"] = std::vector<std::vector<std::string>> {
+        {"Jean-Charles", "Salutations à vous"                                           },
+        {"Ernest",       "Ç'eût été mieux si vous eûtes joué autre chose, camarade"}
+    };
 
     for (auto &p : m_gameModel->getPlayersNames())
-        m_userHub->relayMessageTo(p, startRequest);
+        m_userHub->relayMessageTo(p, startRequest.dump());
 }
 
 void GameHandler::terminate()
@@ -147,18 +153,48 @@ void GameHandler::updateELO(const std::string &winner)
     }
 }
 
+std::string GameHandler::processAndGetAnswerForSurrender(const json &request)
+{
+    m_gameModel->playerSurrendered(request["sender"]);
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processAndGetAnswerForAction(const json &request)
+{
+    m_gameModel->processAction(request["move"].dump());
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processEndGameEval(const json &request)
+{
+    auto answer {request.dump()};
+
+    if (m_gameModel->hasWinner()) {
+        updateELO(m_gameModel->getWinner());
+        deleteFromDB();
+        m_isFinished = true;
+
+        answer = GameRelatedActionsSerializableMessageFactory::serializeGameEnded(getID()).dump();
+    }
+
+    return answer;
+}
+
 void GameHandler::processRequest(const std::string &serRequest)
 {
     std::lock_guard<std::mutex> guard {m_gameHandlerMutex};
 
     auto request(json::parse(serRequest));
+    auto answer {serRequest};
 
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
-        m_gameModel->playerSurrendered(request["sender"]);
-        if (m_gameModel->hasWinner()) {
-            updateELO(m_gameModel->getWinner());
-            m_isFinished = true;
-        }
+        answer = processAndGetAnswerForSurrender(request);
+
+    } else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN) || request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL)) {
+        std::cerr << "INSIDE ACTION\n";
+        answer = processAndGetAnswerForAction(request);
 
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
         m_saveAcceptance++;
@@ -168,15 +204,11 @@ void GameHandler::processRequest(const std::string &serRequest)
 
     } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
         m_saveAcceptance--;
-
-    } else if (request["action"] == toJsonString(GameAction::END_GAME)) {
-        updateELO(request["winner"]);
-        m_isFinished = true;
     }
 
     for (auto &p : m_gameModel->getPlayersNames())
         if (p != request["sender"])
-            m_userHub->relayMessageTo(p, serRequest);
+            m_userHub->relayMessageTo(p, answer);
 
     std::cerr << "After relaying\n";
 

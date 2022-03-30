@@ -41,7 +41,7 @@ bool PlayerAction::executeAction()
 
 json PlayerAction::serialized()
 {
-    Point initialPosition = player->getPosition();
+    Point initialPosition = player->getPosition() * 2;
 
     int playerID = (int)player->getColor();
 
