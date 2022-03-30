@@ -15,10 +15,15 @@ add_library(${PREFIX}_client
         ServerBridge.cpp
         ServerController.cpp
         GameModel.cpp
+        QtVue.cpp
+        QtVue.ui
         )
 
+
+find_package(Qt5 REQUIRED COMPONENTS Core Gui Widgets)
+
 target_link_libraries(${PREFIX}_client
-        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread ${PREFIX}_common
+        PUBLIC nlohmann_json ftxui::screen ftxui::dom ftxui::component sockpp pthread Qt5::Core Qt5::Gui Qt5::Widgets ${PREFIX}_common
         )
 
 target_include_directories(${PREFIX}_client

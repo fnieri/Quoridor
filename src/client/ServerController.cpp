@@ -119,7 +119,10 @@ auto ServerController::joinGame(const int &gameId, const std::string &username) 
 {
     sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
 }
+
 auto ServerController::fetchGameMessages(int) -> void
 {
 //    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));
+//SerializableMessageFactory::serializePawnAction()
+//SerializableMessageFactory::serializeWallAction()
 }

@@ -144,12 +144,15 @@ void TerminalVue::handleCellClick(int x, int y)
 {
     auto playerAction = gameModel->getPlayerAction(Point {x, y});
     gameModel->processAction(playerAction.serialized().dump());
+//    serverController->sendAction(playerAction);
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     auto wallAction = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
     gameModel->processAction(wallAction.serialized().dump());
+    //    serverController->sendAction(playerAction);
+
 }
 
 auto TerminalVue::createActionToggle()

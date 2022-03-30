@@ -6,6 +6,7 @@
 #include <thread>
 #include <unistd.h>
 #include <vector>
+#include <QApplication>
 
 #include "Board.h"
 #include "MainController.h"
@@ -13,6 +14,8 @@
 #include "Player.h"
 #include "ServerController.h"
 #include "src/common/aiPlayer.h"
+#include "QtVue.h"
+
 
 void gameLoop()
 {
@@ -68,6 +71,10 @@ void testGameJoin(std::string username, std::string password)
 
 int main(int argc, char *argv[])
 {
+    QApplication QuoridorApp(argc, argv);
+    QtVue vue;
+    vue.show();
+    return QuoridorApp.exec();
 //    MainController mainController;
 //    ServerController serverController {&mainController};
 //    //    serverController.registerUser("b", "b");
@@ -121,19 +128,19 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-    TerminalVue vue;
-
-    if (!vue.isConnectedToServer()) {
-        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
-        exit(1);
-
-    } else {
-        system("clear");
-        vue.run();
-    }
-
-    //        std::thread t1(&TerminalVue::run, &vue);
-    //        t1.join();
-
-    return 0;
+//    TerminalVue vue;
+//
+//    if (!vue.isConnectedToServer()) {
+//        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+//        exit(1);
+//
+//    } else {
+//        system("clear");
+//        vue.run();
+//    }
+//
+//    //        std::thread t1(&TerminalVue::run, &vue);
+//    //        t1.join();
+//
+//    return 0;
 };
