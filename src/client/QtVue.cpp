@@ -30,17 +30,19 @@ void QtVue::createLoginAndRegister()
 {
     auto *loginBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom, this);
 
-    auto *loginTextEntry = new QLineEdit(this);
+    auto loginTextEntry = new QLineEdit(this);
     loginTextEntry->setPlaceholderText("Login");
     loginBoxLayout->addWidget(loginTextEntry);
 
-    auto *passwordTextEntry = new QLineEdit(this);
+    auto passwordTextEntry = new QLineEdit(this);
     passwordTextEntry->setPlaceholderText("Password");
     passwordTextEntry->setEchoMode(QLineEdit::Password);
     loginBoxLayout->addWidget(passwordTextEntry);
 
     auto *loginButton = new QPushButton("Login", this);
-    connect(loginButton, &QPushButton::clicked, this, &QtVue::handleLoginButtonClicked);
+    connect(loginButton, &QPushButton::clicked, this, [this]() {
+        handleLoginButtonClicked();
+    });
     loginBoxLayout->addWidget(loginButton);
 
     auto *loginBox = new QWidget(this);
