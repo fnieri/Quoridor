@@ -22,8 +22,8 @@ public:
     void setupUi(QWidget *QtVue)
     {
         if (QtVue->objectName().isEmpty())
-            QtVue->setObjectName(QString::fromUtf8("QtVue"));
-        QtVue->resize(400, 300);
+            QtVue->setObjectName(QString::fromUtf8("Quoridor"));
+        QtVue->resize(500, 500);
 
         retranslateUi(QtVue);
 
