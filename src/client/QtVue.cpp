@@ -18,6 +18,8 @@ QtVue::QtVue(QWidget *parent)
     serverController = new ServerController {&mainController};
 
     stackWidget = new QStackedWidget(this);
+    stackWidget->setGeometry(0, 0, this->width(), this->height());
+
     loginTabBar = new QTabWidget(this);
     createLoginAndRegister();
     mainTabBar = new QTabWidget(this);
@@ -106,6 +108,8 @@ void QtVue::createLoginAndRegister()
     auto *registerBox = new QWidget(this);
     registerBox->setLayout(registerBoxLayout);
 
+    createTrainingPage();
+
     loginTabBar->addTab(loginBox, "Login");
     loginTabBar->addTab(registerBox, "Register");
 
@@ -142,8 +146,8 @@ void QtVue::createLeaderboardPage()
 {
     auto *leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto *tLabel = new QLabel("leaderboard page");
-    leaderboardPageLayout->addWidget(tLabel);
+    userEloLabel = new QLabel("");
+    leaderboardPageLayout->addWidget(userEloLabel);
 
     auto *leaderboardPage = new QWidget(this);
     leaderboardPage->setLayout(leaderboardPageLayout);
@@ -151,12 +155,35 @@ void QtVue::createLeaderboardPage()
     mainTabBar->addTab(leaderboardPage, "Leaderboard");
 }
 
+void QtVue::createTrainingPage()
+{
+    auto *trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto *tLabel = new QLabel("Training page");
+    trainingPageLayout->addWidget(tLabel);
+
+    auto *trainingPage = new QWidget(this);
+    trainingPage->setLayout(trainingPageLayout);
+
+    loginTabBar->addTab(trainingPage, "Training");
+}
+
+void QtVue::updateValues()
+{
+    auto userElo = mainModel->getELO();
+    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+}
+
 void QtVue::createMainPage()
 {
+    createLeaderboardPage();
     createGamePage();
     createFriendsPage();
-    createLeaderboardPage();
 
     stackWidget->addWidget(mainTabBar);
     stackWidget->setCurrentWidget(mainTabBar);
+
+    auto *timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
+    timer->start(1000);
 }

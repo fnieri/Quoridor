@@ -14,6 +14,7 @@
 #include <QLineEdit>
 #include <QPushButton>
 #include <QStackedWidget>
+#include <QTimer>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -49,6 +50,9 @@ private:
 
     QTabWidget *mainTabBar;
 
+    QLabel *userEloLabel{};
+
+
     MainController mainController;
     MainModel *mainModel;
     GameModel *gameModel;
@@ -59,4 +63,7 @@ private:
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
+    void createTrainingPage();
+
+    void updateValues();
 };
