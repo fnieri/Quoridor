@@ -162,6 +162,14 @@ void QtVue::createTrainingPage()
     auto *tLabel = new QLabel("Training page");
     trainingPageLayout->addWidget(tLabel);
 
+    auto *drawLabel = new QLabel();
+    auto *canvasPixmap = new QPixmap(QSize(500, 500));
+    auto *painter = new QPainter(canvasPixmap);
+    drawLabel->setPixmap(*canvasPixmap);
+
+    painter->setPen(QPen(Qt::black, 5));
+    painter->drawRect(50, 50, 50, 50);
+
     auto *trainingPage = new QWidget(this);
     trainingPage->setLayout(trainingPageLayout);
 

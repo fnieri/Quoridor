@@ -15,6 +15,7 @@
 #include <QPushButton>
 #include <QStackedWidget>
 #include <QTimer>
+#include <QPainter>
 
 #include "MainModel.h"
 #include "ServerController.h"
