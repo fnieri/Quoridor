@@ -182,6 +182,20 @@ std::string GameHandler::processEndGameEval(const json &request)
     return answer;
 }
 
+std::string GameHandler::processAndGetAnswerForSave(const json &request)
+{
+    auto answer = request.dump();
+
+    if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)) {
+        m_saveAcceptance++;
+
+    } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
+        m_saveAcceptance--;
+    }
+
+    return answer;
+}
+
 void GameHandler::processRequest(const std::string &serRequest)
 {
     std::lock_guard<std::mutex> guard {m_gameHandlerMutex};
@@ -196,14 +210,9 @@ void GameHandler::processRequest(const std::string &serRequest)
         std::cerr << "INSIDE ACTION\n";
         answer = processAndGetAnswerForAction(request);
 
-    } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
-        m_saveAcceptance++;
-
-    } else if (request["action"] == toJsonString(GameAction::ACCEPT_SAVE)) {
-        m_saveAcceptance++;
-
-    } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
-        m_saveAcceptance--;
+    } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)
+        || request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
+        answer = processAndGetAnswerForSave(request);
     }
 
     for (auto &p : m_gameModel->getPlayersNames())

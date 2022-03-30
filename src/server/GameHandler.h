@@ -41,6 +41,7 @@ private:
     std::string processAndGetAnswerForSurrender(const nlohmann::json &request);
     std::string processAndGetAnswerForAction(const nlohmann::json &request);
     std::string processEndGameEval(const nlohmann::json &request);
+    std::string processAndGetAnswerForSave(const nlohmann::json &request);
 
 public:
     /**
