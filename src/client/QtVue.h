@@ -13,6 +13,7 @@
 #include <QBoxLayout>
 #include <QLineEdit>
 #include <QPushButton>
+#include <QStackedWidget>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -40,15 +41,22 @@ private slots:
 
 private:
     Ui::QtVue *ui;
+    QStackedWidget *stackWidget;
 
     QTabWidget *loginTabBar;
-    QLabel *loginMessage;
-    QLabel *registerMessage;
+    QLabel *loginMessage{};
+    QLabel *registerMessage{};
+
+    QTabWidget *mainTabBar;
 
     MainController mainController;
-    MainModel *mainModel = mainController.getMainModel();
-    GameModel *gameModel = mainModel->getCurrentGame();
-    ServerController *serverController = new ServerController {&mainController};
+    MainModel *mainModel;
+    GameModel *gameModel;
+    ServerController *serverController;
 
     void createLoginAndRegister();
+    void createMainPage();
+    void createGamePage();
+    void createFriendsPage();
+    void createLeaderboardPage();
 };

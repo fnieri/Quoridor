@@ -12,8 +12,15 @@ QtVue::QtVue(QWidget *parent)
     , ui(new Ui::QtVue)
 {
     ui->setupUi(this);
+
+    mainModel = mainController.getMainModel();
+    gameModel = mainModel->getCurrentGame();
+    serverController = new ServerController {&mainController};
+
+    stackWidget = new QStackedWidget(this);
     loginTabBar = new QTabWidget(this);
     createLoginAndRegister();
+    mainTabBar = new QTabWidget(this);
 }
 
 QtVue::~QtVue()
@@ -28,6 +35,8 @@ void QtVue::handleLoginButtonClicked(const std::string &username, const std::str
     } else {
         serverController->fetchData();
         loginMessage->setText("Successfully logged in");
+        createMainPage();
+        stackWidget->removeWidget(loginTabBar);
     }
 }
 
@@ -99,4 +108,55 @@ void QtVue::createLoginAndRegister()
 
     loginTabBar->addTab(loginBox, "Login");
     loginTabBar->addTab(registerBox, "Register");
+
+    stackWidget->addWidget(loginTabBar);
+}
+
+void QtVue::createGamePage()
+{
+    auto *gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto *tLabel = new QLabel("Game page");
+    gamePickerLayout->addWidget(tLabel);
+
+    auto *gamePage = new QWidget(this);
+    gamePage->setLayout(gamePickerLayout);
+
+    mainTabBar->addTab(gamePage, "Games");
+}
+
+void QtVue::createFriendsPage()
+{
+    auto *friendsPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto *tLabel = new QLabel("friends page");
+    friendsPageLayout->addWidget(tLabel);
+
+    auto *friendsPage = new QWidget(this);
+    friendsPage->setLayout(friendsPageLayout);
+
+    mainTabBar->addTab(friendsPage, "Friends");
+}
+
+void QtVue::createLeaderboardPage()
+{
+    auto *leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto *tLabel = new QLabel("leaderboard page");
+    leaderboardPageLayout->addWidget(tLabel);
+
+    auto *leaderboardPage = new QWidget(this);
+    leaderboardPage->setLayout(leaderboardPageLayout);
+
+    mainTabBar->addTab(leaderboardPage, "Leaderboard");
+}
+
+void QtVue::createMainPage()
+{
+    createGamePage();
+    createFriendsPage();
+    createLeaderboardPage();
+
+    stackWidget->addWidget(mainTabBar);
+    stackWidget->setCurrentWidget(mainTabBar);
 }
