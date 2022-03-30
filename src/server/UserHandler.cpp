@@ -63,6 +63,7 @@ void UserHandler::handleRequests()
                 processRequest(serRequest);
             }
         }
+
         // Client was disconnected
         // FIXME: unable to send may be thrown by another user
         catch (UnableToRead &) {
@@ -77,7 +78,7 @@ void UserHandler::handleRequests()
     // Only run this if the connection was lost,
     // not if the server is shuting itself down.
     if (!m_wasTerminated && isInGame()) {
-        auto req(SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername()).dump());
+        auto req = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername()).dump();
 
         // This is very ugly but will do for the moment.
         // Basically, in order to process the surrend request,
@@ -187,8 +188,8 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
         data = json::array();
         for (auto &g : m_userHandled->getGameIDs()) {
             data.push_back({
-                {"game_id", g                                },
-                {"config",  DatabaseHandler::getGameConfig(g)}
+                {"game_id", g                                     },
+                {"config",  DatabaseHandler::getGameBoardConfig(g)}
             });
         }
         dataType = DataType::GAME_IDS;

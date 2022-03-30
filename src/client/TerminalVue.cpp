@@ -33,7 +33,7 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return gameModel->isMoveValid(Point {x, y});
+    return gameModel->isMoveValid(Point {x, y} / 2);
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
@@ -98,7 +98,7 @@ auto TerminalVue::createCanvas()
                         break;
 
                     case emptyQuoridor:
-                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
+                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i) && isPlayerTurn()) {
                             std::vector<int> direction = quoridorDirection[wallOrientation];
                             c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
                             handleWallAdd(j, i);
@@ -142,14 +142,18 @@ auto TerminalVue::createCanvas()
 
 void TerminalVue::handleCellClick(int x, int y)
 {
-    auto playerAction = gameModel->getPlayerAction(Point {x, y});
+    auto playerAction = gameModel->getPlayerAction(Point {x, y} / 2);
     gameModel->processAction(playerAction.serialized().dump());
+
+    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
     auto wallAction = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
     gameModel->processAction(wallAction.serialized().dump());
+
+    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createActionToggle()
@@ -574,9 +578,11 @@ void TerminalVue::userCreateGame()
 
 void TerminalVue::joinGame()
 {
-    serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
-    homeTabIndex = 2;
-    rightSize = 40;
+    if (!gameListId.empty()) {
+        serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
+        homeTabIndex = 2;
+        rightSize = 40;
+    }
 }
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)

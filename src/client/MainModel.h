@@ -132,4 +132,6 @@ public:
 
     auto setFriendNotification(const bool &) -> void;
     auto setGameNotification(const bool &) -> void;
+
+    auto processGameAction(const std::string &) -> void;
 };

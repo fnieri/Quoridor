@@ -159,6 +159,8 @@ std::string GameHandler::processAndGetAnswerForAction(const json &request)
 {
     m_gameModel->processAction(request["move"].dump());
 
+    m_gameModel->debugPrintBoard();
+
     return processEndGameEval(request);
 }
 
@@ -263,7 +265,8 @@ void GameHub::processGameCreation(const std::string &serRequest)
 {
     auto request = json::parse(serRequest);
 
-    auto gameID {getUniqueID()};
+    auto gameID = getUniqueID();
+    request["game_id"] = gameID;
 
     // Establish players usernames
     std::vector<std::string> gPlayers {request["sender"]};
@@ -278,14 +281,13 @@ void GameHub::processGameCreation(const std::string &serRequest)
         DatabaseHandler::addGameIdToUser(i_player, gameID);
     }
 
-    /* auto boardConfig = DatabaseHandler::getGameConfig(gameID); */
-    auto config {std::string {request["game_configuration"].dump()}};
-    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub, config)};
+    auto config = request["game_configuration"].dump();
+    auto tmp = std::make_shared<GameHandler>(gameID, this, m_userHub, config);
 
-    // This adds the players to the game
     tmp->saveToDB();
     m_games.push_back(tmp);
 
+    // Inform the players
     m_userHub->relayMessageTo(request["sender"], request.dump());
     for (auto &i_user : request["receivers"]) {
         m_userHub->relayMessageTo(i_user, request.dump());

@@ -245,3 +245,8 @@ auto MainModel::setIsGameStarted(const bool &val) -> void
 {
     m_isGameStarted = val;
 }
+
+auto MainModel::processGameAction(const std::string &serAction) -> void
+{
+    m_currentGame->processAction(serAction);
+}
