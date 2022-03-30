@@ -99,10 +99,16 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    std::string startRequest {SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized()).dump()};
+    auto startRequest = SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized());
+
+    /* startRequest["chat"] = DatabaseHandler::getMessages(getID()); */
+    startRequest["chat"] = std::vector<std::vector<std::string>> {
+        {"Jean-Charles", "Salutations à vous"                                           },
+        {"Ernest",       "Ç'eût été mieux si vous eûtes joué autre chose, camarade"}
+    };
 
     for (auto &p : m_gameModel->getPlayersNames())
-        m_userHub->relayMessageTo(p, startRequest);
+        m_userHub->relayMessageTo(p, startRequest.dump());
 }
 
 void GameHandler::terminate()
