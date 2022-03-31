@@ -87,6 +87,16 @@ void UserHandler::handleRequests()
         m_isFinished = false;
         processRequest(req);
         m_isFinished = true;
+
+    } else {
+        auto username = m_userHandled->getUsername();
+        for (auto &gameID : m_userHandled->getGameIDs()) {
+            auto req = SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameID, username).dump();
+
+            m_isFinished = false;
+            processRequest(req);
+            m_isFinished = true;
+        }
     }
 
     m_userHub->eraseFinished();

@@ -333,10 +333,12 @@ void GameHub::processGameQuit(const std::string &serRequest)
     auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
 
-    targetGame->playerQuit(request["username"]);
+    if (targetGame) {
+        targetGame->playerQuit(request["username"]);
 
-    if (targetGame->numberOfConfirmedPlayers() == 0) {
-        unloadGame(request["game_id"]);
+        if (targetGame->numberOfConfirmedPlayers() == 0) {
+            unloadGame(request["game_id"]);
+        }
     }
 }
 
