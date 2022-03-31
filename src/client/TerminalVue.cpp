@@ -33,7 +33,7 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return gameModel->isMoveValid(Point {x, y} / 2);
+    return gameModel->isMoveValid(Point {x, y} / 2, *gameModel->getCurrentPlayer());
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
@@ -53,7 +53,7 @@ auto TerminalVue::createCanvas()
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
                 playerTurn = gameModel->getCurrentPlayer();
             }
-            gameModel->updateBoardIntMatrix(boardIntMatrix);
+            gameModel->updateBoardIntMatrix(boardIntMatrix, player);
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
             auto c = Canvas(200, 200);
@@ -142,7 +142,7 @@ auto TerminalVue::createCanvas()
 
 void TerminalVue::handleCellClick(int x, int y)
 {
-    auto playerAction = gameModel->getPlayerAction(Point {x, y} / 2);
+    auto playerAction = gameModel->getPlayerAction(Point {x, y} / 2, *gameModel->getCurrentPlayer());
     gameModel->processAction(playerAction.serialized().dump());
 
     serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());

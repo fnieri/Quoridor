@@ -73,10 +73,10 @@ public:
 
     auto getCurrentPlayer() noexcept -> const int *;
 
-    auto isMoveValid(const Point &) const noexcept -> bool;
+    auto isMoveValid(const Point &, const int &playerPerspective = 0) const noexcept -> bool;
     auto isWallValid(const Point &, WallOrientation) const noexcept -> bool;
 
-    auto getPlayerAction(const Point &) const noexcept -> PlayerAction;
+    auto getPlayerAction(const Point &, const int &playerPerspective = 0) const noexcept -> PlayerAction;
     auto getWallAction(const Point &, WallOrientation) const noexcept -> WallAction;
 
     auto getPlayerIdx(const std::string &) const noexcept -> int;
@@ -99,7 +99,7 @@ public:
     auto serialized() -> nlohmann::json;
 
     /* auto getBoardAsIntMatrix() -> std::vector<std::vector<int>>; */
-    auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void;
+    auto updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix, int playerIdx) -> void;
     /* auto addGameMessage(const std::string &, const Message &) -> void; */
 };
 
