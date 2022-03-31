@@ -3,18 +3,23 @@
 //
 
 #pragma once
+#include <atomic>
 #include <iostream>
 
 #include <QBoxLayout>
+#include <QButtonGroup>
 #include <QCheckBox>
+#include <QHoverEvent>
 #include <QLabel>
 #include <QLineEdit>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
+#include <QRadioButton>
 #include <QScrollArea>
 #include <QStackedWidget>
 #include <QTabWidget>
+#include <QTableWidget>
 #include <QTimer>
 #include <QToolBox>
 #include <QWidget>
@@ -26,6 +31,7 @@
 #include "MainModel.h"
 #include "ServerController.h"
 #include "src/common/Message.h"
+#include "src/common/Observer.h"
 #include "src/common/Point.h"
 
 QT_BEGIN_NAMESPACE
@@ -37,7 +43,7 @@ QT_END_NAMESPACE
 
 class DrawLabel;
 
-class QtVue : public QWidget
+class QtVue : public QWidget, public Observer
 {
     Q_OBJECT
 
@@ -68,7 +74,7 @@ private:
     QBoxLayout *joinGameLayout;
 
     QLabel *userEloLabel {};
-    QBoxLayout *leaderboardLayout {};
+    QTableWidget *leaderboardLayout {};
 
     int cellSize = 35;
     DrawLabel *drawLabel {};
@@ -91,6 +97,11 @@ private:
     std::vector<std::vector<int>> boardIntMatrix;
     std::vector<std::vector<int>> boardMoveIntMatrix;
 
+    std::atomic<bool> eloUpdated {true};
+    std::atomic<bool> leaderboardUpdated {false};
+    std::atomic<bool> relationsUpdated {false};
+    std::atomic<bool> chatsUpdated {false};
+
     void createLoginAndRegister();
     void createMainPage();
     void createGamePage();
@@ -102,6 +113,15 @@ private:
     Point getCellCoordinates(int x, int y) const;
 
     void updateValues();
+    void update(QuoridorEvent) override;
+
+    template <typename Callable>
+    void updatePart(std::atomic<bool> &toBeUpdated, Callable updateFunc);
+
+    void updateELO();
+    void updateLeaderboard();
+    void updateRelations();
+    void updateChats();
 };
 
 class DrawLabel : public QLabel

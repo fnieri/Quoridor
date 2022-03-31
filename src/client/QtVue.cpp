@@ -45,6 +45,8 @@ QtVue::QtVue(QWidget *parent)
     ui->setupUi(this);
 
     mainModel = mainController.getMainModel();
+    mainModel->registerObserver(this);
+
     gameModel = mainModel->getCurrentGame();
     serverController = new ServerController {&mainController};
 
@@ -229,23 +231,16 @@ void QtVue::createLeaderboardPage()
 {
     auto leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    leaderboardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-
-    auto scrollArea = new QScrollArea(this);
-    auto leaderboardScroll = new QWidget(this);
-    leaderboardScroll->setLayout(leaderboardLayout);
-    for (int i = 0; i < 100; i++) {
-        auto tLabel = new QLabel("test");
-        leaderboardLayout->addWidget(tLabel);
-    }
-
-    scrollArea->setWidget(leaderboardScroll);
-    scrollArea->resize(100, 30);
-    scrollArea->setWidgetResizable(false);
-    leaderboardPageLayout->addWidget(scrollArea);
+    leaderboardLayout = new QTableWidget(10, 2, this);
+    leaderboardLayout->setHorizontalHeaderLabels({"Username", "ELO"});
+    leaderboardPageLayout->addWidget(leaderboardLayout);
 
     userEloLabel = new QLabel("");
     leaderboardPageLayout->addWidget(userEloLabel);
+
+    auto refreshButton = new QPushButton {"Refresh"};
+    connect(refreshButton, &QPushButton::clicked, this, [&]() { serverController->fetchLeaderboard(); });
+    leaderboardPageLayout->addWidget(refreshButton);
 
     auto leaderboardPage = new QWidget(this);
     leaderboardPage->setLayout(leaderboardPageLayout);
@@ -424,8 +419,83 @@ void QtVue::createTrainingPage()
 
 void QtVue::updateValues()
 {
-    //    auto userElo = mainModel->getELO();
-    //    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+    updatePart(eloUpdated, [this]() { this->updateELO(); });
+    updatePart(leaderboardUpdated, [this]() { this->updateLeaderboard(); });
+    updatePart(relationsUpdated, [this]() { this->updateRelations(); });
+    updatePart(chatsUpdated, [this]() { this->updateChats(); });
+}
+
+template <typename Callable>
+void QtVue::updatePart(std::atomic<bool> &toBeUpdated, Callable updateFunc)
+{
+    if (toBeUpdated) {
+        updateFunc();
+        toBeUpdated = false;
+    }
+}
+
+void QtVue::update(QuoridorEvent event)
+{
+    switch (event) {
+    case QuoridorEvent::EloModified:
+        eloUpdated = true;
+        break;
+    case QuoridorEvent::LeaderboardModified:
+        leaderboardUpdated = true;
+        break;
+    case QuoridorEvent::RelationsModified:
+        relationsUpdated = true;
+        break;
+    case QuoridorEvent::ChatsUpdated:
+        chatsUpdated = true;
+        break;
+    }
+}
+
+void QtVue::updateELO()
+{
+    auto userElo = mainModel->getELO();
+    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+}
+
+void QtVue::updateLeaderboard()
+{
+    auto lb = mainModel->getLeaderboard();
+
+    leaderboardLayout->setRowCount(lb->size());
+
+    for (auto i = 0; i < lb->size(); ++i) {
+        auto username = lb->at(i).first;
+        auto elo = std::to_string(lb->at(i).second);
+
+        auto usernameItem = new QTableWidgetItem {username.c_str()};
+        auto eloItem = new QTableWidgetItem {elo.c_str()};
+
+        leaderboardLayout->setItem(i, 0, usernameItem);
+        leaderboardLayout->setItem(i, 1, eloItem);
+    }
+}
+
+void QtVue::updateRelations()
+{
+}
+
+void QtVue::updateChats()
+{
+}
+
+void QtVue::createMainPage()
+{
+    createLeaderboardPage();
+    createGamePage();
+    createFriendsPage();
+
+    stackWidget->addWidget(mainTabBar);
+    stackWidget->setCurrentWidget(mainTabBar);
+
+    auto timer = new QTimer(this);
+    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
+    timer->start(1000);
 }
 
 Point QtVue::getCellCoordinates(int x, int y) const
@@ -522,18 +592,4 @@ void QtVue::handleVerticalWallButtonClicked()
     }
     wallOrientation = WallOrientation::Vertical;
     selectHorizontalWall->setChecked(false);
-}
-
-void QtVue::createMainPage()
-{
-    createGamePage();
-    createFriendsPage();
-    createLeaderboardPage();
-
-    stackWidget->addWidget(mainTabBar);
-    stackWidget->setCurrentWidget(mainTabBar);
-
-    //    auto timer = new QTimer(this);
-    //    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
-    //    timer->start(1000);
 }

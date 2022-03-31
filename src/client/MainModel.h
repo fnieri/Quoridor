@@ -27,7 +27,7 @@ using json = nlohmann::json;
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
 
-class MainModel
+class MainModel : public Subject
 {
 private:
     // User information
