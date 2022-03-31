@@ -141,10 +141,9 @@ void QtVue::createLoginAndRegister()
     auto registerBox = new QWidget(this);
     registerBox->setLayout(registerBoxLayout);
 
-    createTrainingPage();
-
     loginTabBar->addTab(loginBox, "Login");
     loginTabBar->addTab(registerBox, "Register");
+    createTrainingPage();
 
     stackWidget->addWidget(loginTabBar);
 }
@@ -215,7 +214,7 @@ void QtVue::drawBoard()
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
                 playerTurn = gameModel->getCurrentPlayer();
             }
-            gameModel->updateBoardIntMatrix(boardIntMatrix);
+            gameModel->updateBoardIntMatrix(boardIntMatrix, player);
             if (boardMoveIntMatrix.empty()) {
                 boardMoveIntMatrix = boardIntMatrix;
             }
@@ -230,7 +229,7 @@ void QtVue::drawBoard()
             }
 
             painter->drawText(QRect(0, 650, 200, 100), "You are player: " + QString::fromStdString(std::to_string(player)));
-            painter->drawText(QRect(0, 670, 200, 100), "Player: " + QString::fromStdString(std::to_string(*playerTurn)));
+            painter->drawText(QRect(0, 670, 200, 100), "Player's turn: " + QString::fromStdString(std::to_string(*playerTurn)));
             painter->drawText(QRect(0, 690, 500, 100),
                 "Player: " + QString::fromStdString("Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2)));
 
@@ -364,13 +363,6 @@ void QtVue::createTrainingPage()
         drawBoard();
     });
 
-    // JUST FOR TESTING
-    mainModel->createAiGame();
-    selectPawnMove->setVisible(true);
-    selectWallMove->setVisible(true);
-    trainingStartButton->setText("Restart");
-    drawBoard();
-
     trainingPageLayout->addWidget(trainingStartButton);
 
     auto trainingPage = new QWidget(this);
@@ -381,23 +373,10 @@ void QtVue::createTrainingPage()
 
 void QtVue::updateValues()
 {
-    auto userElo = mainModel->getELO();
-    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+//    auto userElo = mainModel->getELO();
+//    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
 }
 
-void QtVue::createMainPage()
-{
-    createLeaderboardPage();
-    createGamePage();
-    createFriendsPage();
-
-    stackWidget->addWidget(mainTabBar);
-    stackWidget->setCurrentWidget(mainTabBar);
-
-    auto timer = new QTimer(this);
-    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
-    timer->start(1000);
-}
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
@@ -411,13 +390,13 @@ void QtVue::handleBoardPress(int x, int y)
     if (gameModel) {
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
-            if (gameModel->isMoveValid(cellCoordinates)) {
-                auto playerAction = gameModel->getPlayerAction(cellCoordinates);
+            if (gameModel->isMoveValid(cellCoordinates) / 2, *gameModel->getCurrentPlayer()) {
+                auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
                 gameModel->processAction(playerAction.serialized().dump());
             }
         } else if (moveType == 1) {
-            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation)) {
-                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation);
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation), *gameModel->getCurrentPlayer()) {
+                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer());
                 gameModel->processAction(wallAction.serialized().dump());
             }
         }
@@ -432,20 +411,19 @@ void QtVue::handleBoardMove(int x, int y)
         boardMoveIntMatrix = boardIntMatrix;
         try {
             if (moveType == 0) {
-                if (gameModel->isMoveValid(cellCoordinates)) {
+                if (gameModel->isMoveValid(cellCoordinates / 2, *gameModel->getCurrentPlayer())) {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
             } else if (moveType == 1) {
                 // TODO handle orientation
-                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation)) {
+                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
                     int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
                     int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                     boardMoveIntMatrix.at(cellCoordinates.y() + dy).at(cellCoordinates.x() + dx) = correctMove;
                     boardMoveIntMatrix.at(cellCoordinates.y() + dy * 2).at(cellCoordinates.x() + dx * 2) = correctMove;
-
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
@@ -494,4 +472,18 @@ void QtVue::handleVerticalWallButtonClicked()
     }
     wallOrientation = WallOrientation::Vertical;
     selectHorizontalWall->setChecked(false);
+}
+
+void QtVue::createMainPage()
+{
+    createLeaderboardPage();
+    createGamePage();
+    createFriendsPage();
+
+    stackWidget->addWidget(mainTabBar);
+    stackWidget->setCurrentWidget(mainTabBar);
+
+//    auto timer = new QTimer(this);
+//    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
+//    timer->start(1000);
 }

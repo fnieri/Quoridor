@@ -1,5 +1,8 @@
 #include "ServerController.h"
 
+#include "src/client/PlayerAction.h"
+#include "src/client/WallAction.h"
+
 #include <nlohmann/json.hpp>
 
 ServerController::ServerController(MainController *mainController)
@@ -120,9 +123,17 @@ auto ServerController::joinGame(const int &gameId, const std::string &username) 
     sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
 }
 
+auto ServerController::playPlayerAction(PlayerAction action, const int &playerIdx) -> void
+{
+    sendJson(SerializableMessageFactory::serializePawnAction(action, playerIdx));
+}
+
+auto ServerController::playWallAction(WallAction action, const int &playerIdx) -> void
+{
+    sendJson(SerializableMessageFactory::serializeWallAction(action, playerIdx));
+}
+
 auto ServerController::fetchGameMessages(int) -> void
 {
 //    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));
-//SerializableMessageFactory::serializePawnAction()
-//SerializableMessageFactory::serializeWallAction()
 }

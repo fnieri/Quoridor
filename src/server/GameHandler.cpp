@@ -99,10 +99,16 @@ bool GameHandler::areAllPlayersNotInGame() const
 
 void GameHandler::start()
 {
-    std::string startRequest {SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized()).dump()};
+    auto startRequest = SerializableMessageFactory::serializeGameStarted(getID(), m_gameModel->serialized());
+
+    /* startRequest["chat"] = DatabaseHandler::getMessages(getID()); */
+    startRequest["chat"] = std::vector<std::vector<std::string>> {
+        {"Jean-Charles", "Salutations à vous"                                           },
+        {"Ernest",       "Ç'eût été mieux si vous eûtes joué autre chose, camarade"}
+    };
 
     for (auto &p : m_gameModel->getPlayersNames())
-        m_userHub->relayMessageTo(p, startRequest);
+        m_userHub->relayMessageTo(p, startRequest.dump());
 }
 
 void GameHandler::terminate()
@@ -118,11 +124,6 @@ void GameHandler::deleteFromDB()
 
 void GameHandler::saveToDB()
 {
-    for (const auto &i_player : m_gameModel->getPlayersNames()) {
-        std::cerr << "Saving " << i_player << std::endl;
-        DatabaseHandler::addGameIdToUser(i_player, getID());
-    }
-
     DatabaseHandler::setGameBoardConfig(getID(), m_gameModel->serialized());
 }
 
@@ -147,36 +148,73 @@ void GameHandler::updateELO(const std::string &winner)
     }
 }
 
+std::string GameHandler::processAndGetAnswerForSurrender(const json &request)
+{
+    m_gameModel->playerSurrendered(request["sender"]);
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processAndGetAnswerForAction(const json &request)
+{
+    m_gameModel->processAction(request["move"].dump());
+
+    m_gameModel->debugPrintBoard();
+
+    return processEndGameEval(request);
+}
+
+std::string GameHandler::processEndGameEval(const json &request)
+{
+    auto answer {request.dump()};
+
+    if (m_gameModel->hasWinner()) {
+        updateELO(m_gameModel->getWinner());
+        deleteFromDB();
+        m_isFinished = true;
+
+        answer = GameRelatedActionsSerializableMessageFactory::serializeGameEnded(getID()).dump();
+    }
+
+    return answer;
+}
+
+std::string GameHandler::processAndGetAnswerForSave(const json &request)
+{
+    auto answer = request.dump();
+
+    if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)) {
+        m_saveAcceptance++;
+
+    } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
+        m_saveAcceptance--;
+    }
+
+    return answer;
+}
+
 void GameHandler::processRequest(const std::string &serRequest)
 {
     std::lock_guard<std::mutex> guard {m_gameHandlerMutex};
 
     auto request(json::parse(serRequest));
+    auto answer {serRequest};
 
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
-        m_gameModel->playerSurrendered(request["sender"]);
-        if (m_gameModel->hasWinner()) {
-            updateELO(m_gameModel->getWinner());
-            m_isFinished = true;
-        }
+        processAndGetAnswerForSurrender(request);
 
-    } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE)) {
-        m_saveAcceptance++;
+    } else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN) || request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL)) {
+        std::cerr << "INSIDE ACTION\n";
+        processAndGetAnswerForAction(request);
 
-    } else if (request["action"] == toJsonString(GameAction::ACCEPT_SAVE)) {
-        m_saveAcceptance++;
-
-    } else if (request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
-        m_saveAcceptance--;
-
-    } else if (request["action"] == toJsonString(GameAction::END_GAME)) {
-        updateELO(request["winner"]);
-        m_isFinished = true;
+    } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)
+        || request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
+        processAndGetAnswerForSave(request);
     }
 
     for (auto &p : m_gameModel->getPlayersNames())
         if (p != request["sender"])
-            m_userHub->relayMessageTo(p, serRequest);
+            m_userHub->relayMessageTo(p, answer);
 
     std::cerr << "After relaying\n";
 
@@ -227,22 +265,29 @@ void GameHub::processGameCreation(const std::string &serRequest)
 {
     auto request = json::parse(serRequest);
 
-    auto gameID {getUniqueID()};
+    auto gameID = getUniqueID();
+    request["game_id"] = gameID;
 
+    // Establish players usernames
     std::vector<std::string> gPlayers {request["sender"]};
     for (auto &i_user : request["receivers"]) {
         gPlayers.push_back(i_user.get<std::string>());
     }
+
+    // Add to database
     DatabaseHandler::createGame(gameID, gPlayers, (int)gPlayers.size(), request["game_configuration"]);
+    for (const auto &i_player : gPlayers) {
+        std::cerr << "Saving " << i_player << std::endl;
+        DatabaseHandler::addGameIdToUser(i_player, gameID);
+    }
 
-    /* auto boardConfig = DatabaseHandler::getGameConfig(gameID); */
-    auto config {std::string {request["game_configuration"].dump()}};
-    auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub, config)};
+    auto config = request["game_configuration"].dump();
+    auto tmp = std::make_shared<GameHandler>(gameID, this, m_userHub, config);
 
-    // This adds the players to the game
     tmp->saveToDB();
     m_games.push_back(tmp);
 
+    // Inform the players
     m_userHub->relayMessageTo(request["sender"], request.dump());
     for (auto &i_user : request["receivers"]) {
         m_userHub->relayMessageTo(i_user, request.dump());
@@ -288,10 +333,12 @@ void GameHub::processGameQuit(const std::string &serRequest)
     auto request(json::parse(serRequest));
     auto targetGame {getGame(request["game_id"])};
 
-    targetGame->playerQuit(request["username"]);
+    if (targetGame) {
+        targetGame->playerQuit(request["username"]);
 
-    if (targetGame->numberOfConfirmedPlayers() == 0) {
-        unloadGame(request["game_id"]);
+        if (targetGame->numberOfConfirmedPlayers() == 0) {
+            unloadGame(request["game_id"]);
+        }
     }
 }
 

@@ -33,13 +33,14 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    return gameModel->isMoveValid(Point {x, y});
+    return gameModel->isMoveValid(Point {x, y} / 2, *gameModel->getCurrentPlayer());
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return gameModel->isWallValid(Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal);
+    return gameModel->isWallValid(
+        Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createCanvas()
@@ -53,7 +54,18 @@ auto TerminalVue::createCanvas()
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
                 playerTurn = gameModel->getCurrentPlayer();
             }
-            gameModel->updateBoardIntMatrix(boardIntMatrix);
+
+            std::cerr << "BoardCanvas: before updateBoardMat\n";
+            gameModel->updateBoardIntMatrix(boardIntMatrix, player);
+            std::cerr << "BoardCanvas: before updateBoardMat\n";
+
+            for (auto &i : boardIntMatrix) {
+                for (auto &j : i) {
+                    std::cerr << j << " ";
+                }
+                std::cerr << "\n";
+            }
+
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
             auto c = Canvas(200, 200);
@@ -98,7 +110,7 @@ auto TerminalVue::createCanvas()
                         break;
 
                     case emptyQuoridor:
-                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
+                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i) && isPlayerTurn()) {
                             std::vector<int> direction = quoridorDirection[wallOrientation];
                             c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
                             handleWallAdd(j, i);
@@ -142,17 +154,19 @@ auto TerminalVue::createCanvas()
 
 void TerminalVue::handleCellClick(int x, int y)
 {
-    auto playerAction = gameModel->getPlayerAction(Point {x, y});
+    auto playerAction = gameModel->getPlayerAction(Point {x, y} / 2, *gameModel->getCurrentPlayer());
     gameModel->processAction(playerAction.serialized().dump());
-//    serverController->sendAction(playerAction);
+
+    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
-    auto wallAction = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    auto wallAction
+        = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical, *gameModel->getCurrentPlayer());
     gameModel->processAction(wallAction.serialized().dump());
-    //    serverController->sendAction(playerAction);
 
+    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createActionToggle()
@@ -577,9 +591,11 @@ void TerminalVue::userCreateGame()
 
 void TerminalVue::joinGame()
 {
-    serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
-    homeTabIndex = 2;
-    rightSize = 40;
+    if (!gameListId.empty()) {
+        serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
+        homeTabIndex = 2;
+        rightSize = 40;
+    }
 }
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)

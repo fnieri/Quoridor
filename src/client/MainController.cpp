@@ -29,7 +29,7 @@ void MainController::processRequest(const std::string &serRequest)
 
 void MainController::processResourceRequest(const std::string &serRequest)
 {
-    json request(json::parse(serRequest));
+    json request = json::parse(serRequest);
 
     if (request.at("data_type") == toJsonString(DataType::LEADERBOARD)) {
         std::vector<std::pair<std::string, float>> leaderboard;
@@ -66,12 +66,9 @@ void MainController::processResourceRequest(const std::string &serRequest)
             auto config = game.at("config");
             std::vector<std::string> players;
             for (auto &player : config.at("players"))
-                players.push_back(player.get<std::string>());
+                players.push_back(player["username"].get<std::string>());
             gameIds[game.at("game_id").get<int>()] = players;
         }
-        //        for (auto &gameId : request.at("serialized_data").at("game_ids")) {
-        //            gameIds[gameId.at("game_id").get<int>()] = gameId.at("players").get<std::vector<std::string>>();
-        //        }
         m_mainModel->setGameIds(gameIds);
     } else if (request.at("data_type") == toJsonString(DataType::CHATS)) {
         auto data = request.at("serialized_data");
@@ -134,10 +131,11 @@ void MainController::processGameSetup(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
     if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
-        // todo fix this
+
         auto gameID = request.at("game_id").get<int>();
         auto players = request.at("receivers").get<std::vector<std::string>>();
         players.push_back(request.at("sender").get<std::string>());
+
         m_mainModel->addGameId(gameID, players);
         m_mainModel->setGameNotification(true);
     }
@@ -151,11 +149,15 @@ void MainController::processGameAction(const std::string &serRequest)
         m_mainModel->loadGame(request.at("configuration").dump());
         // set game started to true in main model
         m_mainModel->setIsGameStarted(true);
+
     } else if (request.at("action") == toJsonString(GameAction::END_GAME)) {
-        // send action to model
-    } else if (request.at("action") == toJsonString(GameAction::ACTION)) {
-//        m_mainModel->processGameAction(request.at("move").dump());
+        // m_mainModel->process
+
+    } else if (request.at("action") == toJsonString(JsonPlayerAction::MOVE_PAWN) || request.at("action") == toJsonString(JsonPlayerAction::PLACE_WALL)) {
+        m_mainModel->processGameAction(request.at("move").dump());
     }
+
+    std::cerr << "MainController::processGameAction: after processing\n";
 }
 
 MainModel *MainController::getMainModel()
