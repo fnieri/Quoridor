@@ -160,6 +160,21 @@ void QtVue::createLeaderboardPage()
 {
     auto *leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
+    auto *leaderboardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    for (int i = 0; i < 100; i++) {
+        auto *tLabel = new QLabel("test");
+        leaderboardLayout->addWidget(tLabel);
+    }
+
+    auto *scrollArea = new QScrollArea(this);
+    auto *leaderboardScroll = new QWidget(this);
+    leaderboardScroll->setLayout(leaderboardLayout);
+
+    scrollArea->setWidget(leaderboardScroll);
+    scrollArea->resize(100, 30);
+    scrollArea->setWidgetResizable(false);
+    leaderboardPageLayout->addWidget(scrollArea);
+
     userEloLabel = new QLabel("");
     leaderboardPageLayout->addWidget(userEloLabel);
 

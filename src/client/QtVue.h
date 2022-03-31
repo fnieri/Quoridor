@@ -17,6 +17,7 @@
 #include <QTimer>
 #include <QPainter>
 #include <QMouseEvent>
+#include <QScrollArea>
 
 #include "MainModel.h"
 #include "ServerController.h"
