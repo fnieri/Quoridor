@@ -185,8 +185,22 @@ void QtVue::createLeaderboardPage()
     leaderboardLayout->setHorizontalHeaderLabels({"Username", "ELO"});
     leaderboardPageLayout->addWidget(leaderboardLayout);
 
+    auto eloWidget = new QWidget {};
+    auto eloLayout = new QHBoxLayout {eloWidget};
+
+    auto preELOText = new QLabel("Your current ELO: ");
+
+    auto userEloFont = QFont {};
+    userEloFont.setBold(true);
+
     userEloLabel = new QLabel("");
-    leaderboardPageLayout->addWidget(userEloLabel);
+    userEloLabel->setFont(userEloFont);
+
+    eloLayout->addWidget(preELOText);
+    eloLayout->addWidget(userEloLabel);
+    eloLayout->addStretch();
+
+    leaderboardPageLayout->addWidget(eloWidget);
 
     auto refreshButton = new QPushButton {"Refresh"};
     connect(refreshButton, &QPushButton::clicked, this, [&]() { serverController->fetchLeaderboard(); });
@@ -393,8 +407,8 @@ void QtVue::update(QuoridorEvent event)
 
 void QtVue::updateELO()
 {
-    auto userElo = mainModel->getELO();
-    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+    auto userElo = static_cast<int>(*mainModel->getELO());
+    userEloLabel->setText(QString::fromStdString(std::to_string(userElo)));
 }
 
 void QtVue::updateLeaderboard()
@@ -405,7 +419,7 @@ void QtVue::updateLeaderboard()
 
     for (auto i = 0; i < lb->size(); ++i) {
         auto username = lb->at(i).first;
-        auto elo = std::to_string(lb->at(i).second);
+        auto elo = std::to_string(static_cast<int>(lb->at(i).second));
 
         auto usernameItem = new QTableWidgetItem {username.c_str()};
         auto eloItem = new QTableWidgetItem {elo.c_str()};
