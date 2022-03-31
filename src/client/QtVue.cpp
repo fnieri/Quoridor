@@ -1,3 +1,4 @@
+
 #include "QtVue.h"
 
 #include <iostream>
@@ -23,7 +24,6 @@ int QtVue::run()
     appMainWidget->show();
     gotoLoginWindow();
     // gotoGameWindow();
-
     return app->exec();
 }
 
@@ -411,12 +411,12 @@ void QtVue::setupGameUI()
     topBar->setStyleSheet(QLatin1String("QFrame {\n"
                                         "	background-color: rgb(196, 207, 218);\n"
                                         "}"));
-
+    
     horizontalLayout = new QHBoxLayout(topBar);
     horizontalLayout->setSpacing(0);
     horizontalLayout->setObjectName(QStringLiteral("horizontalLayout"));
     horizontalLayout->setContentsMargins(0, 0, -1, 0);
-
+    
     topBarButtons = new QWidget(topBar);
     topBarButtons->setObjectName(QStringLiteral("topBarButtons"));
     QSizePolicy sizePolicy1(QSizePolicy::Preferred, QSizePolicy::Expanding);
@@ -427,7 +427,7 @@ void QtVue::setupGameUI()
     topBarButtons->setStyleSheet(QLatin1String("QPushButton{\n"
                                                "	font: 10pt \"MS Shell Dlg 2\";\n"
                                                "	color: rgb(8,76,102);\n"
-                                               "	background-color: rgb(196, 207, 218);\n"
+                                               "	background-color: transparent;\n"
                                                "	border: 3px solid rgb(196, 207, 218);\n"
                                                "	border-radius: 7px;\n"
                                                "	padding: 12px;\n"
@@ -448,10 +448,12 @@ void QtVue::setupGameUI()
                                                "	color: rgb(20,125,200);\n"
                                                "	border-color: rgb(20,125,164);\n"
                                                "}"));
+    
     horizontalLayout_2 = new QHBoxLayout(topBarButtons);
     horizontalLayout_2->setSpacing(5);
     horizontalLayout_2->setObjectName(QStringLiteral("horizontalLayout_2"));
     horizontalLayout_2->setContentsMargins(0, 0, 0, 0);
+    horizontalLayout_2->setSpacing(0);
     gameButton = new QPushButton(topBarButtons);
     gameButton->setObjectName(QStringLiteral("gameButton"));
     QSizePolicy sizePolicy2(QSizePolicy::Fixed, QSizePolicy::Preferred);
@@ -503,10 +505,12 @@ void QtVue::setupGameUI()
     sizePolicy3.setVerticalStretch(0);
     sizePolicy3.setHeightForWidth(topBarUser->sizePolicy().hasHeightForWidth());
     topBarUser->setSizePolicy(sizePolicy3);
+
     horizontalLayout_3 = new QHBoxLayout(topBarUser);
     horizontalLayout_3->setSpacing(14);
     horizontalLayout_3->setObjectName(QStringLiteral("horizontalLayout_3"));
     horizontalLayout_3->setContentsMargins(0, 0, 0, 0);
+    
     userInfo = new QWidget(topBarUser);
     userInfo->setObjectName(QStringLiteral("userInfo"));
     sizePolicy3.setHeightForWidth(userInfo->sizePolicy().hasHeightForWidth());
@@ -515,6 +519,7 @@ void QtVue::setupGameUI()
     verticalLayout_2->setSpacing(5);
     verticalLayout_2->setObjectName(QStringLiteral("verticalLayout_2"));
     verticalLayout_2->setContentsMargins(0, 0, 0, 0);
+    
     usernameLabel = new QLabel(userInfo);
     usernameLabel->setObjectName(QStringLiteral("usernameLabel"));
     QSizePolicy sizePolicy4(QSizePolicy::Preferred, QSizePolicy::Preferred);
@@ -695,7 +700,7 @@ void QtVue::setupGameUI()
     sizePolicy9.setVerticalStretch(0);
     sizePolicy9.setHeightForWidth(gameConfigurationBox->sizePolicy().hasHeightForWidth());
     gameConfigurationBox->setSizePolicy(sizePolicy9);
-    gameConfigurationBox->setStyleSheet(QLatin1String("QGroupBox#gameConfigBox{\n"
+    gameConfigurationBox->setStyleSheet(QLatin1String("QGroupBox#gameConfigurationBox{\n"
                                                       "	border: 1px solid rgb(8,76,102);\n"
                                                       "	border-radius: 10px;\n"
                                                       "}"));
@@ -719,7 +724,7 @@ void QtVue::setupGameUI()
     sizePolicy7.setHeightForWidth(playerNumberLabel->sizePolicy().hasHeightForWidth());
     playerNumberLabel->setSizePolicy(sizePolicy7);
     playerNumberLabel->setMinimumSize(QSize(0, 31));
-    playerNumberLabel->setStyleSheet(QLatin1String("QLabel#playernumberLabel{\n"
+    playerNumberLabel->setStyleSheet(QLatin1String("QLabel#playerNumberLabel{\n"
                                                    "	border: 1px solid rgb(8,76,102);\n"
                                                    "	color: rgb(7, 39, 51);\n"
                                                    "	border-radius: 3px;\n"
@@ -750,7 +755,7 @@ void QtVue::setupGameUI()
     sizePolicy7.setHeightForWidth(gameModeLabel->sizePolicy().hasHeightForWidth());
     gameModeLabel->setSizePolicy(sizePolicy7);
     gameModeLabel->setMinimumSize(QSize(0, 31));
-    gameModeLabel->setStyleSheet(QLatin1String("QLabel#gamemodeLabel{\n"
+    gameModeLabel->setStyleSheet(QLatin1String("QLabel#gameModeLabel{\n"
                                                "	border: 1px solid rgb(8,76,102);\n"
                                                "	border-radius: 3px;\n"
                                                "	color: rgb(7, 39, 51);\n"
@@ -767,10 +772,10 @@ void QtVue::setupGameUI()
 
     gameModeChoices->addWidget(originalModeChoice);
 
-    quotetrisModeChoice = new QRadioButton(gameConfigurationBox);
-    quotetrisModeChoice->setObjectName(QStringLiteral("quotetrisModeChoice"));
+    //quotetrisModeChoice = new QRadioButton(gameConfigurationBox);
+    //quotetrisModeChoice->setObjectName(QStringLiteral("quotetrisModeChoice"));
 
-    gameModeChoices->addWidget(quotetrisModeChoice);
+    //gameModeChoices->addWidget(quotetrisModeChoice);
 
     timerModeChoice = new QRadioButton(gameConfigurationBox);
     timerModeChoice->setObjectName(QStringLiteral("timerModeChoice"));
@@ -783,6 +788,13 @@ void QtVue::setupGameUI()
     gameModeChoices->addWidget(trainingModeChoice);
 
     verticalLayout_5->addLayout(gameModeChoices);
+
+    QObject::connect(twoPlayersChoice, &QRadioButton::clicked, [this] () {this->playerModeChoice(twoPlayersChoice);});
+    QObject::connect(fourPlayersChoice, &QRadioButton::clicked, [this] () {this->playerModeChoice(fourPlayersChoice);});
+    QObject::connect(originalModeChoice, &QRadioButton::clicked, [this] () {this->gameModeChoice(originalModeChoice);});
+    QObject::connect(timerModeChoice, &QRadioButton::clicked, [this] () {this->gameModeChoice(timerModeChoice);});
+    QObject::connect(trainingModeChoice, &QRadioButton::clicked, [this] () {this->gameModeChoice(trainingModeChoice);});
+    
 
     gameStartContainer = new QHBoxLayout();
     gameStartContainer->setObjectName(QStringLiteral("gameStartContainer"));
@@ -863,9 +875,11 @@ void QtVue::setupGameUI()
 
     inviteFriendsScrollArea = new QScrollArea(inviteGroupBox);
     inviteFriendsScrollArea->setObjectName(QStringLiteral("inviteFriendsScrollArea"));
-    QSizePolicy sizePolicy10(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    //QSizePolicy sizePolicy10(QSizePolicy::Expanding, QSizePolicy::Preferred);
+    QSizePolicy sizePolicy10(QSizePolicy::Expanding, QSizePolicy::Expanding);
+    inviteFriendsScrollArea->setMinimumSize(QSize(0, 0));
     sizePolicy10.setHorizontalStretch(0);
-    sizePolicy10.setVerticalStretch(0);
+    sizePolicy10.setVerticalStretch(1);
     sizePolicy10.setHeightForWidth(inviteFriendsScrollArea->sizePolicy().hasHeightForWidth());
     inviteFriendsScrollArea->setSizePolicy(sizePolicy10);
     inviteFriendsScrollArea->setStyleSheet(QLatin1String("QScrollArea{\n"
@@ -875,11 +889,12 @@ void QtVue::setupGameUI()
     inviteFriendsScrollAreaWidgetContents = new QWidget();
     inviteFriendsScrollAreaWidgetContents->setObjectName(QStringLiteral("inviteFriendsScrollAreaWidgetContents"));
     inviteFriendsScrollAreaWidgetContents->setGeometry(QRect(0, 0, 313, 69));
-    verticalLayout_17 = new QVBoxLayout(inviteFriendsScrollAreaWidgetContents);
-    verticalLayout_17->setObjectName(QStringLiteral("verticalLayout_17"));
+    inviteFriendsScrollAreaWidgetContentsLayout = new QVBoxLayout(inviteFriendsScrollAreaWidgetContents);
+    inviteFriendsScrollAreaWidgetContentsLayout->setObjectName(QStringLiteral("inviteFriendsScrollAreaWidgetContentsLayout"));
     inviteFriendsScrollArea->setWidget(inviteFriendsScrollAreaWidgetContents);
 
-    inviteFriendsVLayout->addWidget(inviteFriendsScrollArea, 0, Qt::AlignTop);
+    //inviteFriendsVLayout->addWidget(inviteFriendsScrollArea, 0, Qt::AlignTop);
+    inviteFriendsVLayout->addWidget(inviteFriendsScrollArea);
 
     inviteFriendsBoxVLayout->addWidget(inviteGroupBox);
 
@@ -887,7 +902,8 @@ void QtVue::setupGameUI()
 
     inviteFriendsBoxVLayout->addItem(inviteFriendsDownSpacer);
 
-    horizontalLayout_5->addWidget(inviteFriendsBox, 0, Qt::AlignVCenter);
+    //horizontalLayout_5->addWidget(inviteFriendsBox, 0, Qt::AlignVCenter);
+    horizontalLayout_5->addWidget(inviteFriendsBox);
 
     gameMainStacked->addWidget(createGamePage);
     joinGamePage = new QWidget();
@@ -958,8 +974,8 @@ void QtVue::setupGameUI()
     liveGamesScrollAreaWidgetContents = new QWidget();
     liveGamesScrollAreaWidgetContents->setObjectName(QStringLiteral("liveGamesScrollAreaWidgetContents"));
     liveGamesScrollAreaWidgetContents->setGeometry(QRect(0, 0, 482, 77));
-    verticalLayout_4 = new QVBoxLayout(liveGamesScrollAreaWidgetContents);
-    verticalLayout_4->setObjectName(QStringLiteral("verticalLayout_4"));
+    liveGamesScrollAreaWidgetContentsLayout = new QVBoxLayout(liveGamesScrollAreaWidgetContents);
+    liveGamesScrollAreaWidgetContentsLayout->setObjectName(QStringLiteral("liveGamesScrollAreaWidgetContentsLayout"));
     liveGamesScrollArea->setWidget(liveGamesScrollAreaWidgetContents);
 
     livesgamesVLayout->addWidget(liveGamesScrollArea);
@@ -994,11 +1010,11 @@ void QtVue::setupGameUI()
     sizePolicy7.setHeightForWidth(filtersPlayerNumberLabel->sizePolicy().hasHeightForWidth());
     filtersPlayerNumberLabel->setSizePolicy(sizePolicy7);
     filtersPlayerNumberLabel->setMinimumSize(QSize(0, 31));
-    filtersPlayerNumberLabel->setStyleSheet(QLatin1String("QLabel#playernumberLabel2{\n"
-                                                          "	border: 1px solid rgb(8,76,102);\n"
-                                                          "	color: rgb(7, 39, 51);\n"
-                                                          "	border-radius: 3px;\n"
-                                                          "}"));
+    //filtersPlayerNumberLabel->setStyleSheet(QLatin1String("QLabel#playernumberLabel2{\n"
+    //                                                      "	border: 1px solid rgb(8,76,102);\n"
+    //                                                      "	color: rgb(7, 39, 51);\n"
+    //                                                      "	border-radius: 3px;\n"
+    //                                                      "}"));
     filtersPlayerNumberLabel->setTextFormat(Qt::AutoText);
     filtersPlayerNumberLabel->setScaledContents(false);
     filtersPlayerNumberLabel->setIndent(7);
@@ -1023,11 +1039,11 @@ void QtVue::setupGameUI()
     sizePolicy7.setHeightForWidth(filterModeLabel->sizePolicy().hasHeightForWidth());
     filterModeLabel->setSizePolicy(sizePolicy7);
     filterModeLabel->setMinimumSize(QSize(0, 31));
-    filterModeLabel->setStyleSheet(QLatin1String("QLabel#gamemodeLabel2{\n"
-                                                 "	border: 1px solid rgb(8,76,102);\n"
-                                                 "	border-radius: 3px;\n"
-                                                 "	color: rgb(7, 39, 51);\n"
-                                                 "}"));
+    //filterModeLabel->setStyleSheet(QLatin1String("QLabel#gamemodeLabel2{\n"
+    //                                             "	border: 1px solid rgb(8,76,102);\n"
+    //                                             "	border-radius: 3px;\n"
+    //                                             "	color: rgb(7, 39, 51);\n"
+    //                                             "}"));
     filterModeLabel->setIndent(7);
 
     verticalLayout_6->addWidget(filterModeLabel);
@@ -1142,6 +1158,7 @@ void QtVue::setupGameUI()
     boardGrid->setObjectName(QStringLiteral("boardGrid"));
     boardGrid->setSizeConstraint(QLayout::SetDefaultConstraint);
     boardGrid->setContentsMargins(20, 20, 20, 20);
+    
     r0c0 = new QLabel(gameBoardFrame);
     r0c0->setObjectName(QStringLiteral("r0c0"));
     sizePolicy4.setHeightForWidth(r0c0->sizePolicy().hasHeightForWidth());
@@ -2947,7 +2964,7 @@ void QtVue::setupGameUI()
     horizontalLayout_33->addWidget(gameChatFrame);
 
     mainStacked->addWidget(ingamePage);
-
+    
     friendsPage = new QWidget();
     friendsPage->setObjectName(QStringLiteral("friendsPage"));
     sizePolicy4.setHeightForWidth(friendsPage->sizePolicy().hasHeightForWidth());
@@ -3066,7 +3083,8 @@ void QtVue::setupGameUI()
 
     friendsScrollArea->setWidget(friendsScrollAreaWidgetContents);
 
-    friendsLayout->addWidget(friendsScrollArea, 0, Qt::AlignTop);
+    //friendsLayout->addWidget(friendsScrollArea, 0, Qt::AlignTop);
+    friendsLayout->addWidget(friendsScrollArea);
 
     friendsLayout->setStretch(1, 1);
 
@@ -3100,8 +3118,6 @@ void QtVue::setupGameUI()
     messagesVLayout->setObjectName(QStringLiteral("messagesVLayout"));
     messagesVLayout->setContentsMargins(0, 9, 9, 9);
 
-    // TODO Implement messages : done ?
-
     friendsMessageScrollArea = new QScrollArea(friendsMessageContainerBox);
     friendsMessageScrollArea->setObjectName(QStringLiteral("friendsMessageScrollArea"));
     sizePolicy11.setHeightForWidth(friendsMessageScrollArea->sizePolicy().hasHeightForWidth());
@@ -3123,7 +3139,6 @@ void QtVue::setupGameUI()
 
     chatVLayout->addWidget(friendsMessageContainerBox);
 
-    // TODO Maybe link to send Mwa
     friendsWritingLayout = new QHBoxLayout();
     friendsWritingLayout->setSpacing(6);
     friendsWritingLayout->setObjectName(QStringLiteral("friendsWritingLayout"));
@@ -3152,7 +3167,6 @@ void QtVue::setupGameUI()
     friendsTextInput->setClearButtonEnabled(true);
 
     friendsWritingLayout->addWidget(friendsTextInput);
-    // TODO Link to send message Mwa
     friendsSendMessageButton = new QPushButton(friendsChatBox);
     friendsSendMessageButton->setObjectName(QStringLiteral("friendsSendMessageButton"));
     sizePolicy5.setHeightForWidth(friendsSendMessageButton->sizePolicy().hasHeightForWidth());
@@ -3232,6 +3246,8 @@ void QtVue::setupGameUI()
     horizontalLayout_8->addWidget(friendsNotifications);
 
     mainStacked->addWidget(friendsPage);
+
+
     leaderboardPage = new QWidget();
     leaderboardPage->setObjectName(QStringLiteral("leaderboardPage"));
     horizontalLayout_7 = new QHBoxLayout(leaderboardPage);
@@ -3440,7 +3456,7 @@ void QtVue::setupGameUI()
     fourPlayersChoice->setText("4");
     gameModeLabel->setText("Game Mode");
     originalModeChoice->setText("Original");
-    quotetrisModeChoice->setText("QuoTetris");
+    //quotetrisModeChoice->setText("QuoTetris");
     timerModeChoice->setText("Timer");
     trainingModeChoice->setText("Training");
 #ifndef QT_NO_ACCESSIBILITY
@@ -3456,21 +3472,31 @@ void QtVue::setupGameUI()
     playerNumberUMPLabel->setText("Player");
     filtersGroupBox->setTitle(QString());
     filtersPlayerNumberLabel->setText("Player number");
+    filtersPlayerNumberLabel->setStyleSheet(QLatin1String("QLabel#filtersPlayerNumberLabel{\n"
+                                                        "border: 1px solid rgb(8,76,102);\n"
+                                                        "color: rgb(7, 39, 51);\n"
+                                                        "border-radius: 3px;\n"
+                                                        "}"));
     filtersNumberChoices->setItemText(0, "2");
     filtersNumberChoices->setItemText(1, "4");
 
     filtersNumberChoices->setCurrentText(QString());
     filterModeLabel->setText("Game Mode");
+    filterModeLabel->setStyleSheet(QLatin1String("QLabel#filterModeLabel{\n"
+                                                        "border: 1px solid rgb(8,76,102);\n"
+                                                        "color: rgb(7, 39, 51);\n"
+                                                        "border-radius: 3px;\n"
+                                                        "}"));
     filtersModeChoices->setItemText(0, "Original");
-    filtersModeChoices->setItemText(1, "QuoTetris");
-    filtersModeChoices->setItemText(2, "Timer");
-    filtersModeChoices->setItemText(3, "Training");
+    //filtersModeChoices->setItemText(1, "QuoTetris");
+    filtersModeChoices->setItemText(1, "Timer");
+    filtersModeChoices->setItemText(2, "Training");
 
     quitButton->setText("QUIT");
     gameFlowBox->setTitle(QString());
     gameStatusLabel->setText("Game Status");
     playerTurnLabel->setText("Turn : 0");
-    r0c0->setText(QString());
+    r0c0->setText(QString("LL"));
     r0c1->setText(QString());
     r0c2->setText(QString());
     r0c3->setText(QString());
@@ -3759,24 +3785,23 @@ void QtVue::setupGameUI()
     r1c10->setText(QString());
     r12c7->setText(QString());
     r11c11->setText(QString());
+
     inGameChatBox->setTitle(QString());
     inGameMessageContainerBox->setTitle(QString());
     inGameTextInput->setText(QString());
     inGameSendMessageButton->setText("\360\237\226\211");
-    //--------------
+    
     addFriendLabel->setText("Add a friend");
-
+    
     addFriendButton->setText("+");
-
-    // TODO Show all friends AMLPB : done ? to test
 
     friendsListLabel->setText("Friends");
     friendsChatBox->setTitle(QString());
-    // TODO Show chat messages AMLPB : done ? to test
     friendsMessageContainerBox->setTitle(QString());
     friendsTextInput->setText(QString());
+
     friendsSendMessageButton->setText("\360\237\226\211");
-    // TODO Show all notifications Mwa
+   
     notificationsLabel->setText("Notifications");
     //-----------------------------
     leaderboardPlayersBox->setTitle("Best players of the moment");
@@ -3790,6 +3815,7 @@ void QtVue::setupGameUI()
     Q_UNUSED(gameMainWidget);
 
 
+    
     QObject::connect(gameButton, &QPushButton::clicked, [this]() { this->gameButtonPressed(); });
     QObject::connect(createGameButton, &QPushButton::clicked, [this]() { this->createGameButtonPressed(); });
     QObject::connect(joinGameButton, &QPushButton::clicked, [this]() { this->joinGameButtonPressed(); });
@@ -3800,6 +3826,7 @@ void QtVue::setupGameUI()
     QObject::connect(logoutButton, &QPushButton::clicked, [this]() { this->logoutButtonPressed(); });
     QObject::connect(friendsSendMessageButton, &QPushButton::clicked, [this]() { this->sendUserMessage(); });
     QObject::connect(addFriendButton, &QPushButton::clicked, [this]() { this->addFriendButtonPressed(); });
+    
 }
 
 void QtVue::gotoRegisterWindow()
@@ -3899,6 +3926,93 @@ QWidget *QtVue::createLeaderboardBox(QWidget *parent, int rank, std::string user
     return leadBox;
 }
 
+void QtVue::updateInviteBox() 
+{
+
+    auto friendList = mainModel->getFriendList();
+    
+
+    while (QWidget *w = inviteFriendsScrollAreaWidgetContents->findChild<QWidget *>())
+        delete w;
+
+    allFriends.clear();
+
+    if (!friendList->empty()) {
+       
+        //to test for (auto x=0; x < 4; x++) {
+        for (auto &afriend: *friendList) {
+
+            auto friendCheckBox = new QCheckBox(inviteFriendsScrollAreaWidgetContents);
+            // to test auto name = afriend + "Checkbox";
+            // to test auto name = "CheckBox" + std::to_string(x);
+            friendCheckBox->setObjectName(QString::fromStdString(afriend));
+            friendCheckBox->setMinimumSize(QSize(0, 15));
+            friendCheckBox->setMaximumSize(QSize(16777215, 15));
+            friendCheckBox->setStyleSheet(QLatin1String("QCheckBox{\n"
+                                                "	color: rgb(7, 39, 51);\n"
+                                                "}\n"
+                                                "\n"
+                                                "QCheckBox:indicator{\n"
+                                                "	border: 1px solid rgb(20, 125, 164);\n"
+                                                "	border-radius: 2px;\n"
+                                                "}\n"
+                                                "\n"
+                                                "QCheckBox::indicator:unchecked{\n"
+                                                "	border: 1px solid rgb(20, 125, 164);\n"
+                                                "	border-radius: 2px;\n"
+                                                "	background-color: none;\n"
+                                                "}\n"
+                                                "\n"
+                                                "QCheckBox::indicator:hover{\n"
+                                                "	\n"
+                                                "	background-color: rgb(20, 125, 164);\n"
+                                                "}\n"
+                                                "\n"
+                                                "QCheckBox::indicator:checked{\n"
+                                                "	border-color: rgb(111, 159, 113);\n"
+                                                "	background-color: rgb(111, 159, 113);\n"
+                                                "}"));
+        
+        
+            // test auto oname = "Test" + std::to_string(x);
+            friendCheckBox->setText(QString::fromStdString(afriend));
+            inviteFriendsScrollAreaWidgetContentsLayout->addWidget(friendCheckBox);
+            allFriends.push_back(friendCheckBox);
+        }
+    }
+    
+    for(int i=0; i < allFriends.size(); i++) {
+        auto friendCheck = allFriends[i]; 
+        QObject::connect(friendCheck, &QCheckBox::stateChanged, [=] { this->inviteFriendsChoice(friendCheck); });
+    }
+
+}
+
+void QtVue::inviteFriendsChoice(QCheckBox *afriend)
+{
+
+    if (playerNumber) {
+        if (afriend->isChecked()) {
+            if (invitedFriends.size() == playerNumber - 1) {
+                auto oldest = invitedFriends[0];
+                oldest->setCheckState(Qt::Unchecked);
+                invitedFriends.removeOne(oldest);         
+            }
+
+            invitedFriends.push_back(afriend);
+        }
+        else {
+
+            invitedFriends.removeOne(afriend);
+        }
+
+    }
+    else { 
+        afriend->setCheckState(Qt::Unchecked);
+    }
+    
+}
+
 void QtVue::loginButtonPressed()
 {
     auto username = usernameLineEditLogin->text().toStdString();
@@ -3993,6 +4107,7 @@ void QtVue::joinGameButtonPressed()
 void QtVue::createGameButtonPressed()
 {
     gameMainStacked->setCurrentIndex(0);
+    updateInviteBox();
 }
 
 void QtVue::friendsButtonPressed()
@@ -4007,6 +4122,31 @@ void QtVue::leaderboardButtonPressed()
     mainStacked->setCurrentIndex(3);
     updateLeaderboard();
 }
+
+void QtVue::startButtonPressed()
+{
+    mainStacked->setCurrentIndex(1);
+}
+
+void QtVue::playerModeChoice(QRadioButton *choice) {
+
+    playerNumber = choice->text().toInt();
+}
+
+void QtVue::gameModeChoice(QRadioButton *choice) {
+
+    gameMode = choice->text().toStdString();
+    
+}
+
+
+/*
+void QtVue::gridCellClicked(ClickableLabel* label) {
+    std::cout << label->text().toStdString() << std::endl;
+}
+*/
+
+
 
 void QtVue::sendFriendMessage()
 {
@@ -4046,10 +4186,12 @@ void QtVue::showFriends()
     while (QWidget *w = friendsScrollAreaWidgetContents->findChild<QWidget *>())
         delete w;
 
+    allDeleteButtons.clear();
+    allTalkButtons.clear();
+
     if (friendList->at(0) != "No friends") {
         int i = 0;
         for (auto &afriend : *friendList) {
-            std::cout << afriend << " afr" << std::endl;
             auto fr = createFriendBox(friendsScrollAreaWidgetContents, afriend);
 
             friendsScrollAreaWidgetContentsLayout->addLayout(fr);
@@ -4060,7 +4202,6 @@ void QtVue::showFriends()
 
 QHBoxLayout *QtVue::createFriendBox(QWidget *parent, std::string username)
 {
-    std::cout << username << " afr2" << std::endl;
     auto afriendLayout = new QHBoxLayout();
     afriendLayout->setObjectName(QStringLiteral("afriendLayout"));
     afriendLayout->setContentsMargins(-1, -1, 6, -1);
@@ -4106,6 +4247,8 @@ QHBoxLayout *QtVue::createFriendBox(QWidget *parent, std::string username)
                                              ""));
     afriendLayout->addWidget(talkButton);
 
+    allTalkButtons.push_back(talkButton);
+
     /* DELETE BUTTON */
     auto deletefriendButton = new QPushButton(parent);
     deletefriendButton->setObjectName(QString::fromStdString(username));
@@ -4118,47 +4261,35 @@ QHBoxLayout *QtVue::createFriendBox(QWidget *parent, std::string username)
                                                      "QPushButton:hover{\n"
                                                      "	color: rgb(8, 76, 102);\n"
                                                      "}"));
-    deletefriendButton->setText(QString::fromStdString("+"));
-    afriendLayout->addWidget(deletefriendButton);
+    deletefriendButton->setText(QString::fromStdString("-"));
 
+    afriendLayout->addWidget(deletefriendButton);
+    allDeleteButtons.push_back(deletefriendButton);
     // afriendLayout->setStretch(1, 1); // jsp ?
 
     // connect buttons
-    QObject::connect(aFriendButton, &QPushButton::clicked, [this, &aFriendButton]() { this->talkButtonPressed(*aFriendButton); });
-    QObject::connect(deletefriendButton, &QPushButton::clicked, [this, &username]() { this->deletefriendButtonPressed(); });
+    QObject::connect(talkButton, &QPushButton::clicked, [=] { this->talkButtonPressed(username); });
+    QObject::connect(deletefriendButton, &QPushButton::clicked, [=] { this->deletefriendButtonPressed(username); });
 
     return afriendLayout;
 }
 
-void QtVue::deletefriendButtonPressed()
+void QtVue::deletefriendButtonPressed(std::string username)
 {
-    /*
-        auto button = qobject_cast<QPushButton*>();    // this has to be the "sender" slot of this button ??
-        auto friendToDelete = button->objectName().toStdString();
-        auto friendList = mainModel->getFriendList();
-        serverController->removeFriend(*mainModel->getUsername(), friendToDelete);
-        serverController->fetchFriends();
-        showFriends();
-    */
+    auto friendToDelete = username;
+    serverController->removeFriend(*mainModel->getUsername(), friendToDelete);
+    serverController->fetchFriends();
+    showFriends();
 }
 
-void QtVue::talkButtonPressed(const QPushButton &button)
+void QtVue::talkButtonPressed(std::string username)
 {
-
-    std::cout << "asdasdasd" << std::endl;
-    std::cout << button.text().toStdString() << std::endl;
-    /*
-    // auto button = qobject_cast<QPushButton*>(sender());    // this has to be the "sender" slot of this button ??
-    //  auto friendChatToGet = button->objectName().toStdString();
-    //  we have to get the friends username : find text label from HBoxLayout
-    auto friendList = mainModel->getFriendList();
-    if (mainModel->getHasFriends() && username != currentFriendChat) {
-        currentFriendChat = username;
-        serverController->fetchFriendMessages(*mainModel->getUsername(), username);
+    auto friendChatToGet = username;
+    if (mainModel->getHasFriends() && friendChatToGet != currentFriendChat) {
+        currentFriendChat = friendChatToGet;
+        serverController->fetchFriendMessages(*mainModel->getUsername(), currentFriendChat);
     }
-
-updateFriendChat();
-*/
+    updateFriendChat();
 }
 
 void QtVue::updateFriendChat()
@@ -4215,7 +4346,7 @@ void QtVue::updateNotifications()
 void QtVue::sendUserMessage()
 {
     auto friendList = mainModel->getFriendList();
-    auto receiver = "as"; // L'ami selectionné ici <-
+    auto receiver = currentFriendChat; 
     std::string messageToSend = friendsTextInput->text().toStdString();
     if (messageToSend.length() <= 0)
         return;

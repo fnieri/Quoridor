@@ -1,16 +1,20 @@
+
 #pragma once
 
 
 #include "MainModel.h"
 #include "ServerController.h"
 
+
 #include <QApplication>
 #include <QScopedPointer>
 #include <string>
+#include <vector>
 
 #include <QMainWindow>
 #include <QMessageBox>
 #include <QObject>
+#include <QWidget>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGroupBox>
@@ -24,14 +28,23 @@
 #include <QtWidgets/QStackedWidget>
 #include <QtWidgets/QVBoxLayout>
 #include <QtWidgets/QWidget>
+#include <QtWidgets/QCheckBox>
+#include <QtWidgets/QButtonGroup>
+#include <QMouseEvent>
+#include <QVector>
+#include <Qt>
+
 
 class QtVue
 {
-
 private:
     MainController mainController;
     MainModel *mainModel = mainController.getMainModel();
     ServerController *serverController = new ServerController {&mainController};
+    int playerNumber = 0;
+    std::string gameMode;
+    std::string currentFriendChat;
+    QVector<QCheckBox *> invitedFriends;
 
     void resetController();
 
@@ -119,13 +132,14 @@ private:
     QVBoxLayout *verticalLayout_5;
     QLabel *gameConfigurationLabel;
     QLabel *playerNumberLabel;
+    //QButtonGroup *playersNumbersGroupButton;
     QHBoxLayout *playerNumberChoices;
     QRadioButton *twoPlayersChoice;
     QRadioButton *fourPlayersChoice;
     QLabel *gameModeLabel;
     QHBoxLayout *gameModeChoices;
     QRadioButton *originalModeChoice;
-    QRadioButton *quotetrisModeChoice;
+    //QRadioButton *quotetrisModeChoice;
     QRadioButton *timerModeChoice;
     QRadioButton *trainingModeChoice;
     QHBoxLayout *gameStartContainer;
@@ -140,7 +154,7 @@ private:
     QLabel *inviteFriendsLabel;
     QScrollArea *inviteFriendsScrollArea;
     QWidget *inviteFriendsScrollAreaWidgetContents;
-    QVBoxLayout *verticalLayout_17;
+    QVBoxLayout *inviteFriendsScrollAreaWidgetContentsLayout;
     QSpacerItem *inviteFriendsDownSpacer;
     QWidget *joinGamePage;
     QHBoxLayout *horizontalLayout_27;
@@ -155,7 +169,7 @@ private:
     QLabel *playerNumberUMPLabel;
     QScrollArea *liveGamesScrollArea;
     QWidget *liveGamesScrollAreaWidgetContents;
-    QVBoxLayout *verticalLayout_4;
+    QVBoxLayout *liveGamesScrollAreaWidgetContentsLayout;
     QSpacerItem *liveGamesDownSpacer;
     QFrame *filtersFrame;
     QVBoxLayout *notificationsVLayout_2;
@@ -251,15 +265,24 @@ private:
     void setupGameUI();
 
     QWidget *createLeaderboardBox(QWidget *parent, int rank, std::string username, int score);
+    //Qwidget *createInviteBox(QWidget *parent);
     QHBoxLayout *createFriendBox(QWidget *parent = nullptr, std::string username = "");
     QWidget *createFriendChat(QWidget *parent, std::string chat);
 
     void updateLeaderboard();
-    std::string currentFriendChat;
+    void updateInviteBox();
+
+    void inviteFriendsChoice(QCheckBox *afriend);
+    void playerModeChoice(QRadioButton *choice);
+    void gameModeChoice(QRadioButton *choice);
+
+    QVector<QPushButton*> allDeleteButtons;
+    QVector<QPushButton*> allTalkButtons;
+    QVector<QCheckBox *> allFriends;
 
 public:
     QtVue(int argc, char *argv[]);
-    ~QtVue();
+    virtual ~QtVue();
 
     int run();
     
@@ -277,9 +300,10 @@ public:
     void friendsButtonPressed();
     void leaderboardButtonPressed();
 
+
     void addFriendButtonPressed();
-    void talkButtonPressed(const QPushButton &);
-    void deletefriendButtonPressed();
+    void talkButtonPressed(std::string username);
+    void deletefriendButtonPressed(std::string username);
     void updateFriendChat();
 
     void sendFriendMessage();
@@ -289,4 +313,7 @@ public:
     void sendUserMessage();
 
     void showFriendRequests();
+
+
+    void startButtonPressed();
 };
