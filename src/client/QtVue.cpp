@@ -207,6 +207,7 @@ void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
     if (gameModel) {
+        canvasPixmap->fill(Qt::white);
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 100, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
         } else {
@@ -227,8 +228,6 @@ void QtVue::drawBoard()
             for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
                 remainingWallsText += playerUsername + ": " + std::to_string(remainingWalls) + ", ";
             }
-
-            canvasPixmap->fill(Qt::white);
 
             painter->drawText(QRect(0, 650, 200, 100), "You are player: " + QString::fromStdString(std::to_string(player)));
             painter->drawText(QRect(0, 670, 200, 100), "Player: " + QString::fromStdString(std::to_string(*playerTurn)));
@@ -276,10 +275,12 @@ void QtVue::drawBoard()
                     }
 
                     case occupiedVerticalQuoridor: {
+                        cellColor = Qt::darkRed;
                         painter->fillRect(dx + cellSize / 4, dy, cellSize / 2, cellSize, cellColor);
                         break;
                     }
                     case occupiedHorizontalQuoridor: {
+                        cellColor = Qt::darkRed;
                         painter->fillRect(dx, dy + cellSize / 4, cellSize, cellSize / 2, cellColor);
                         break;
                     }
