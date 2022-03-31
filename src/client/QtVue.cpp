@@ -18,6 +18,11 @@ void DrawLabel::mousePressEvent(QMouseEvent *event)
     QLabel::mousePressEvent(event);
     vue->handleBoardPress(event->x(), event->y());
 }
+void DrawLabel::mouseMoveEvent(QMouseEvent *event)
+{
+    QLabel::mouseMoveEvent(event);
+    vue->handleBoardMove(event->x(), event->y());
+}
 
 QtVue::QtVue(QWidget *parent)
     : QWidget(parent)
@@ -160,15 +165,15 @@ void QtVue::createLeaderboardPage()
 {
     auto *leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto *leaderboardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    for (int i = 0; i < 100; i++) {
-        auto *tLabel = new QLabel("test");
-        leaderboardLayout->addWidget(tLabel);
-    }
+    leaderboardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto *scrollArea = new QScrollArea(this);
     auto *leaderboardScroll = new QWidget(this);
     leaderboardScroll->setLayout(leaderboardLayout);
+    for (int i = 0; i < 100; i++) {
+        auto *tLabel = new QLabel("test");
+        leaderboardLayout->addWidget(tLabel);
+    }
 
     scrollArea->setWidget(leaderboardScroll);
     scrollArea->resize(100, 30);
@@ -186,20 +191,102 @@ void QtVue::createLeaderboardPage()
 
 void QtVue::drawBoard()
 {
-    canvasPixmap->fill(Qt::white);
-    int dx = 0, dy = 0;
-    for (auto i = 0; i < testBoard.size(); i++) {
-        for (auto j = 0; j < testBoard.size(); j++) {
-            if (testBoard[i][j] == 1) {
-                painter->setPen(QPen(Qt::red, 5));
-            } else {
-                painter->setPen(QPen(Qt::black, 5));
+    gameModel = mainModel->getCurrentGame();
+    if (gameModel) {
+        if (gameModel->hasWinner()) {
+            painter->drawText(QRect(0, 0, 100, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
+        } else {
+            if (player == -1) {
+                player = gameModel->getPlayerIdx(*mainModel->getUsername());
+                playerTurn = gameModel->getCurrentPlayer();
             }
-            painter->drawRect(dx, dy, cellSize, cellSize);
-            dx += cellSize + corridorSize;
+            gameModel->updateBoardIntMatrix(boardIntMatrix);
+            const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+                      occupiedHorizontalQuoridor = 7;
+            std::vector<Qt::GlobalColor> playerColors {Qt::red, Qt::green, Qt::blue, Qt::magenta};
+            std::vector<std::vector<int>> quoridorDirection {
+                {0, 4},
+                {5, 0}
+            }; // 0 = vertical, 1 = horizontal
+
+            canvasPixmap->fill(Qt::white);
+            int dx = 10, dy = 100;
+            Qt::GlobalColor cellColor;
+            for (auto i = 0; i < boardIntMatrix.size(); i++) {
+                for (auto j = 0; j < boardIntMatrix[i].size(); j++) {
+                    int gridValue = boardIntMatrix[i][j];
+
+                    switch (gridValue) {
+                    case freeCell:
+                        // draw a free cell
+                        {
+                            cellColor = Qt::darkGray;
+                            painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
+                            break;
+                        }
+
+                        //                if (isClickValid(dx, dy) && isMoveValid(j, i)) {
+                        //                    // if mouse is pressed on this cell/quoridor
+                        //                    c.DrawText(dx, dy, "\u25A0");
+                        //                    handleCellClick(j, i);
+                        //                } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
+                        //                    // if mouse is pressed on this cell/quoridor
+                        //                    c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+                        //                    c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
+                        //                } else {
+                        //                    c.DrawText(dx, dy, "\u25A1");
+                        //                }
+
+                    case emptyQuoridor:
+                        break;
+                        //                if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
+                        //                    std::vector<int> direction = quoridorDirection[wallOrientation];
+                        //                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                        //                    handleWallAdd(j, i);
+                        //                } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
+                        //                    std::vector<int> direction = quoridorDirection[wallOrientation];
+                        //                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
+                        //                }
+                        // don't draw anything otherwise
+
+                    case occupiedVerticalQuoridor:
+                    case occupiedHorizontalQuoridor: {
+                        //                std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
+                        //                c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                        break;
+                    }
+
+                    case playerOne:
+                    case playerTwo:
+                    case playerThree:
+                    case playerFour:
+                        // draw a player one cell
+                        {
+                            cellColor = playerColors[gridValue - 1];
+                            painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
+                            break;
+                        }
+                        //                c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
+
+                    default:
+                        break;
+                    }
+                    //            if (testBoard[i][j] == 1) {
+                    //                cellColor = Qt::red;
+                    //            } else {
+                    //                cellColor = Qt::black;
+                    //                painter->setPen(QPen(Qt::black, 5));
+                    //            }
+                    //            painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
+
+                    dx += cellSize;
+                }
+                dy += cellSize;
+                dx = 10;
+            }
+            painter->setPen(QPen(Qt::black, 2));
+            painter->drawRect(0, 90, cellSize * (int)boardIntMatrix.size() + 20, cellSize * (int)boardIntMatrix.size() + 20);
         }
-        dy += cellSize + corridorSize;
-        dx = 0;
     }
     drawLabel->setPixmap(*canvasPixmap);
 }
@@ -212,13 +299,21 @@ void QtVue::createTrainingPage()
     tLabel->setAlignment(Qt::AlignTop);
     trainingPageLayout->addWidget(tLabel);
 
-    canvasPixmap = new QPixmap(QSize(500, 500));
+    // this is board
+    canvasPixmap = new QPixmap(QSize(800, 800));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
 
-    drawBoard();
-
     trainingPageLayout->addWidget(drawLabel);
+
+    auto *trainingStartButton = new QPushButton("Start training", this);
+    connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
+        mainModel->createAiGame();
+        trainingStartButton->setText("Restart");
+        drawBoard();
+    });
+
+    trainingPageLayout->addWidget(trainingStartButton);
 
     auto *trainingPage = new QWidget(this);
     trainingPage->setLayout(trainingPageLayout);
@@ -246,20 +341,28 @@ void QtVue::createMainPage()
     timer->start(1000);
 }
 
+Point QtVue::getCellCoordinates(int x, int y) const
+{
+    int i = (y-50) / cellSize;
+    int j = (x - 10) / cellSize;
+    return {i, j};
+}
+
 void QtVue::handleBoardPress(int x, int y)
 {
-    int i = y / (cellSize + corridorSize);
-    int j = x / (cellSize + corridorSize);
-
-    for (int k = 0; k < testBoard.size(); k++) {
-        for (int l = 0; l < testBoard.size(); l++) {
-            if (k == i && l == j) {
-                testBoard[k][l] = 1;
-            } else {
-                testBoard[k][l] = 0;
-            }
-        }
-    }
+//    int i = (y-50) / cellSize;
+//    int j = (x - 10) / cellSize;
+//
+//    std::cout << "i: " << i << " j: " << j << std::endl;
+//    std::cout << boardIntMatrix[i][j] << std::endl;
 
     drawBoard();
 }
+
+void QtVue::handleBoardMove(int x, int y)
+{
+    auto cellCoordinates = getCellCoordinates(x, y);
+    auto gridValue = boardIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x());
+    
+}
+

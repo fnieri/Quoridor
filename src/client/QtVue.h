@@ -5,19 +5,19 @@
 #pragma once
 #include <iostream>
 
+#include <QBoxLayout>
 #include <QCheckBox>
 #include <QLabel>
+#include <QLineEdit>
+#include <QMouseEvent>
+#include <QPainter>
+#include <QPushButton>
+#include <QScrollArea>
+#include <QStackedWidget>
 #include <QTabWidget>
+#include <QTimer>
 #include <QToolBox>
 #include <QWidget>
-#include <QBoxLayout>
-#include <QLineEdit>
-#include <QPushButton>
-#include <QStackedWidget>
-#include <QTimer>
-#include <QPainter>
-#include <QMouseEvent>
-#include <QScrollArea>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -41,6 +41,7 @@ public:
     explicit QtVue(QWidget *parent = nullptr);
     ~QtVue() override;
     void handleBoardPress(int x, int y);
+    void handleBoardMove(int x, int y);
 
 private slots:
     void handleLoginButtonClicked(const std::string &username, const std::string &password);
@@ -51,31 +52,27 @@ private:
     QStackedWidget *stackWidget;
 
     QTabWidget *loginTabBar;
-    QLabel *loginMessage{};
-    QLabel *registerMessage{};
+    QLabel *loginMessage {};
+    QLabel *registerMessage {};
 
     QTabWidget *mainTabBar;
 
-    QLabel *userEloLabel{};
+    QLabel *userEloLabel {};
+    QBoxLayout *leaderboardLayout {};
 
-    int cellSize = 35, corridorSize = 15;
-    std::vector<std::vector<int>> testBoard{{0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0},
-                                            {0, 0, 0, 0, 0, 0, 0, 0, 0}};
-    DrawLabel *drawLabel{};
-    QPixmap *canvasPixmap{};
-    QPainter *painter{};
+    int cellSize = 35;
+    DrawLabel *drawLabel {};
+    QPixmap *canvasPixmap {};
+    QPainter *painter {};
 
     MainController mainController;
     MainModel *mainModel;
-    GameModel *gameModel;
     ServerController *serverController;
+    GameModel *gameModel;
+
+    int player = -1;
+    const int *playerTurn;
+    std::vector<std::vector<int>> boardIntMatrix;
 
     void createLoginAndRegister();
     void createMainPage();
@@ -85,6 +82,7 @@ private:
     void createTrainingPage();
 
     void drawBoard();
+    Point getCellCoordinates(int x, int y) const;
 
     void updateValues();
 };
@@ -99,6 +97,6 @@ private:
     QtVue *vue;
 
     void mousePressEvent(QMouseEvent *event) override;
-    //    void mouseMoveEvent(QMouseEvent *event) override;
+        void mouseMoveEvent(QMouseEvent *event) override;
     //    void mouseReleaseEvent(QMouseEvent *event) override;
 };
