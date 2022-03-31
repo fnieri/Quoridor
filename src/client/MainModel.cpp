@@ -50,7 +50,7 @@ auto MainModel::getChatWith(const std::string &username) noexcept -> SPtrToVec<M
     return m_chats.at(username);
 }
 
-auto MainModel::getGameIDs() const noexcept -> const std::vector<int> *
+auto MainModel::getGameIDs() noexcept -> const std::map<int, std::vector<std::string>> *
 {
     return m_gameIDs.get();
 }
@@ -60,20 +60,20 @@ auto MainModel::getGameIDs() const noexcept -> const std::vector<int> *
 //    return m_currentGame.get();
 //}
 
-//auto MainModel::isPlayerTurn() const noexcept -> bool
+// auto MainModel::isPlayerTurn() const noexcept -> bool
 //{
-//    return m_isPlayerTurn;
-//}
+//     return m_isPlayerTurn;
+// }
 
 auto MainModel::getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>> *
 {
     return m_leaderboard.get();
 }
 
-//auto MainModel::isInGame() const noexcept -> bool
+// auto MainModel::isInGame() const noexcept -> bool
 //{
-//    return static_cast<bool>(m_currentGame);
-//}
+//     return static_cast<bool>(m_currentGame);
+// }
 
 auto MainModel::setUsername(const std::string &username) -> void
 {
@@ -157,13 +157,15 @@ auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> 
     updatePtrValue(m_leaderboard, leaderboard);
 }
 
-auto MainModel::setGameIds(const std::vector<int> &gameIDs) -> void
+auto MainModel::setGameIds(const std::map<int, std::vector<std::string>> &gameIDs) -> void
 {
     updatePtrValue(m_gameIDs, gameIDs);
 }
 
 auto MainModel::updateFriendsChatMap() noexcept -> void
 {
+    if (!hasFriends)
+        m_chats.clear();
     for (auto &friendUsername : *m_friendList) {
         if (m_chats.find(friendUsername) == m_chats.end()) {
             m_chats[friendUsername] = std::make_shared<std::vector<Message>>();
@@ -187,7 +189,7 @@ auto MainModel::setHasFriends(const bool &val) -> void
     hasFriends = val;
 }
 
-auto MainModel::getCurrentGame() const noexcept -> const GameModel *
+auto MainModel::getCurrentGame() -> GameModel *
 {
     return m_currentGame.get();
 }
@@ -197,9 +199,9 @@ auto MainModel::isInGame() const noexcept -> bool
     return static_cast<bool>(m_currentGame);
 }
 
-auto MainModel::loadGame(const int &gameId) noexcept -> void
+auto MainModel::loadGame(const std::string &boardConfig) noexcept -> void
 {
-//    m_currentGame = std::make_shared<GameModel>(gameId);
+    m_currentGame = std::make_shared<GameModel>(boardConfig);
 }
 
 auto MainModel::hasFriendNotification() const noexcept -> bool
@@ -222,3 +224,29 @@ auto MainModel::setGameNotification(const bool &val) -> void
     m_gameNotification = val;
 }
 
+auto MainModel::createAiGame() noexcept -> void
+{
+    std::vector<std::string> p_players {"player", "ai"};
+    setUsername(p_players[0]);
+    updatePtrValue(m_currentGame, AiGameModel {p_players});
+}
+
+auto MainModel::addGameId(const int &gId, const std::vector<std::string> &players) -> void
+{
+    m_gameIDs->insert({gId, players});
+}
+
+auto MainModel::isGameStarted() const noexcept -> bool
+{
+    return m_isGameStarted;
+}
+
+auto MainModel::setIsGameStarted(const bool &val) -> void
+{
+    m_isGameStarted = val;
+}
+
+auto MainModel::processGameAction(const std::string &serAction) -> void
+{
+    m_currentGame->processAction(serAction);
+}

@@ -1,7 +1,9 @@
+#include "TerminalVue.h"
+#include "nlohmann/json.hpp"
 #include <cstdlib>
 #include <iostream>
 #include <map>
-#include <string>
+#include <thread>
 #include <unistd.h>
 #include <vector>
 
@@ -50,9 +52,16 @@ void gameLoop()
 
 int startNoGui()
 {
-    system("clear");
     TerminalVue vue;
-    vue.run();
+
+    if (!vue.isConnectedToServer()) {
+        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+        exit(1);
+
+    } else {
+        system("clear");
+        vue.run();
+    }
 
     // std::thread t1(&TerminalVue::run, &vue);
     // t1.join();
@@ -62,6 +71,7 @@ int startNoGui()
 
 int startGui(int argc, char *argv[])
 {
+    // TODO: Add error message when server isn't connected
     QtVue vue(argc, argv);
     return vue.run();
 }
@@ -70,9 +80,42 @@ int main(int argc, char *argv[])
 {
     //    MainController mainController;
     //    ServerController serverController {&mainController};
-    //    //    serverController.login("testing", "testingPassword");
-    //    serverController.login("ok", "k");
+    //    //    serverController.registerUser("b", "b");
+    //    //    serverController.registerUser("c", "c");
+    //    //    serverController.login("b", "b");
+    //    //    serverController.createGame("b", {"b", "c"});
+    //    std::cout << "creating thread" << std::endl;
+    //    std::thread t1(testGameJoin, "b", "b");
+    //    sleep(1);
+    //    std::thread t2(testGameJoin, "c", "c");
+    //    t1.join();
+    //    t2.join();
+    //    return 0;
+    //    serverController.login("testing", "testingPassword");
+    //    serverController.createGame("testing", {"testing", "testingFriend"});
+    //
     //    auto model = mainController.getMainModel();
+    //    sleep(5);
+    //    serverController.fetchGameIds();
+    //    auto gameIds = model->getGameIDs();
+    //    for (const auto& gameId : *gameIds) {
+    //        std::cout << "Game ID: " << gameId.first << std::endl;
+    //        for (const auto& player : gameId.second) {
+    //            std::cout << "Player: " << player << std::endl;
+    //        }
+    //    }
+    //    return 0;
+
+    //    serverController.login("ok", "k");
+    //        model->createAiGame();
+    //        auto game = model->getCurrentGame();
+    //        if (game) {
+    //            game->debugPrintBoard();
+    //            auto playerAction = game->getPlayerAction(Point {8, 2});
+    //            game->processAction(playerAction.serialized().dump());
+    //            game->debugPrintBoard();
+    //            return 0;
+    //        }
     //
     //    serverController.fetchData();
     //    model->getUsername();

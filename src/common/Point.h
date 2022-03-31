@@ -9,7 +9,9 @@
 
 #include "../common/Serializable.h"
 #include "Stringable.h"
-#include <nlohmann/json.hpp>
+
+#include <nlohmann/json_fwd.hpp>
+
 /**
  * Coordinate in the plan
  *

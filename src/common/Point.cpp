@@ -7,9 +7,12 @@
 
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <stdexcept>
 
 using json = nlohmann::json;
+
 // Point
 
 Point::operator std::string() const noexcept

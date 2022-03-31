@@ -9,6 +9,8 @@
 #include "GameSetupSerializableMessageFactory.h"
 #include "MessageEnums/Domain.h"
 
+#include <nlohmann/json.hpp>
+
 using json = nlohmann::json;
 
 json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vector<std::string> &players)
@@ -22,10 +24,9 @@ json GameSetupSerializableMessageFactory::serializeGameSetup(GameMode gameMode, 
     return setupJson;
 }
 
-json GameSetupSerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID)
+json GameSetupSerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username)
 {
-
-    json participationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(gameSetup)}, {"game_id", gameID}};
+    json participationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(gameSetup)}, {"game_id", gameID}, {"username", username}};
     return participationJson;
 }
 
@@ -37,8 +38,8 @@ json GameSetupSerializableMessageFactory::serializeGameCreationRequest(
         receiversArray.push_back(player);
 
     json creationJson = {{"domain", toJsonString(Domain::GAME_SETUP)}, {"action", toJsonString(GameSetup::CREATE_GAME)}, {"sender", sender},
-        {"receivers", receiversArray}, {"configuration", configuration}};
-    return receiversArray;
+        {"receivers", receiversArray}, {"game_configuration", configuration}};
+    return creationJson;
 }
 /*
 json GameSetupSerializableMessageFactory::serializeGameSetup(

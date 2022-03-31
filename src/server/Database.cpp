@@ -6,6 +6,8 @@
 
 #include "PasswordEncrypter.h"
 
+#include <nlohmann/json.hpp>
+
 // avoids having long namespaces
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -645,7 +647,9 @@ std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
         json acceptedGameIdsJson = userViewJson["accepted_gameId"];
         std::vector<int> gameIds;
         for (auto &gameId : acceptedGameIdsJson) {
-            gameIds.push_back(gameId);
+            if (gameId.is_number()) {
+                gameIds.push_back(gameId.get<int>());
+            }
         }
         return gameIds;
     }

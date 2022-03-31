@@ -2,7 +2,7 @@
 
 #include "MessageEnums/Actions/GameActions.h"
 #include "MessageEnums/Modes/GameModes.h"
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 class GameSetupSerializableMessageFactory
 {
@@ -31,7 +31,7 @@ public:
      * {"game_id", game_id},
      * }
      */
-    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID);
+    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username);
     /**
      * @brief Serialize a request to create a game
      * @param sender Creator (Boris)

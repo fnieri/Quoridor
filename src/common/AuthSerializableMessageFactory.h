@@ -12,7 +12,7 @@
 #include "MessageEnums/Actions/AuthActions.h"
 #include "MessageEnums/Status.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <string>
 

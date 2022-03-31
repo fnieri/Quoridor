@@ -2,6 +2,8 @@
 #include "Board.h"
 #include "Player.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 #include <memory>
 #include <vector>

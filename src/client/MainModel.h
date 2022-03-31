@@ -1,22 +1,22 @@
 #pragma once
 
-#include "src/common/Message.h"
-#include "src/common/MessageEnums/DataTypes.h"
-#include "src/common/MessageEnums/Domain.h"
-#include "src/common/Observer.h"
-#include "src/common/Point.h"
-#include "src/common/SerializableMessageFactory.h"
 #include "Board.h"
 #include "BoardComponent.h"
 #include "Cell.h"
 #include "Corridor.h"
+#include "GameModel.h"
 #include "Player.h"
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
 #include "ServerBridge.h"
 #include "WallAction.h"
 #include "WallEnum.h"
-#include "GameModel.h"
+#include "src/common/Message.h"
+#include "src/common/MessageEnums/DataTypes.h"
+#include "src/common/MessageEnums/Domain.h"
+#include "src/common/Observer.h"
+#include "src/common/Point.h"
+#include "src/common/SerializableMessageFactory.h"
 
 #include <map>
 #include <memory>
@@ -26,7 +26,6 @@ using json = nlohmann::json;
 
 template <typename T>
 using SPtrToVec = std::shared_ptr<std::vector<T>>;
-
 
 class MainModel
 {
@@ -38,18 +37,19 @@ private:
 
     SPtrToVec<std::string> m_friendList = std::make_shared<std::vector<std::string>>();
     SPtrToVec<std::string> m_friendRequestsSent = std::make_shared<std::vector<std::string>>();
-    SPtrToVec<std::string> m_friendRequestsReceived  = std::make_shared<std::vector<std::string>>();
+    SPtrToVec<std::string> m_friendRequestsReceived = std::make_shared<std::vector<std::string>>();
     bool hasFriends;
 
-    SPtrToVec<int> m_gameIDs;
+    std::shared_ptr<std::map<int, std::vector<std::string>>> m_gameIDs = std::make_shared<std::map<int, std::vector<std::string>>>();
 
     std::map<std::string, SPtrToVec<Message>> m_chats;
 
     // Current game
     std::shared_ptr<GameModel> m_currentGame;
+    bool m_isGameStarted = false;
 
-//    bool m_isPlayerTurn;
-//    std::unique_ptr<int> m_currentPlayer;
+    //    bool m_isPlayerTurn;
+    //    std::unique_ptr<int> m_currentPlayer;
 
     // General information
     SPtrToVec<std::pair<std::string, float>> m_leaderboard = std::make_shared<std::vector<std::pair<std::string, float>>>();
@@ -73,12 +73,13 @@ public:
 
     auto getChatWith(const std::string &) noexcept -> SPtrToVec<Message>;
 
-    auto getGameIDs() const noexcept -> const std::vector<int> *;
+    auto getGameIDs() noexcept -> const std::map<int, std::vector<std::string>> *;
 
     auto isInGame() const noexcept -> bool;
-    auto getCurrentGame() const noexcept -> const GameModel*;
-    auto loadGame(const int &) noexcept -> void;
-//    auto isPlayerTurn() const noexcept -> bool;
+    auto getCurrentGame() -> GameModel *;
+    auto loadGame(const std::string &) noexcept -> void;
+    auto createAiGame() noexcept -> void;
+    auto isGameStarted() const noexcept -> bool;
 
     auto getLeaderboard() const noexcept -> const std::vector<std::pair<std::string, float>> *;
 
@@ -125,9 +126,12 @@ public:
 
     auto setLeaderboard(const std::vector<std::pair<std::string, float>> &) -> void;
 
-    auto setGameIds(const std::vector<int> &) -> void;
+    auto setGameIds(const std::map<int, std::vector<std::string>> &) -> void;
+    auto addGameId(const int &, const std::vector<std::string> &) -> void;
+    auto setIsGameStarted(const bool &) -> void;
 
     auto setFriendNotification(const bool &) -> void;
     auto setGameNotification(const bool &) -> void;
-};
 
+    auto processGameAction(const std::string &) -> void;
+};

@@ -87,15 +87,16 @@ int aiPlayer::minimax(const std::shared_ptr<Board> &board, const std::shared_ptr
         for (auto &move : getValidActions(board, player)) {
             auto newBoard = std::make_shared<Board>(*board);
             auto destination = move.getDestination();
-            if (!player->nWalls() || rand() % 2) {
-                PlayerAction action(newBoard, ai, destination);
-                action.executeAction();
-            } else {
-                WallOrientation orientation;
-                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
-                WallAction action = findWallPlacement(newBoard, ai, orientation);
-                action.executeAction();
-            }
+            PlayerAction action(newBoard, ai, destination);
+            action.executeAction();
+            //            if (!player->nWalls() || rand() % 2) {
+            //            }
+            //            else {
+            //                WallOrientation orientation;
+            //                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
+            //                WallAction action = findWallPlacement(newBoard, ai, orientation);
+            //                action.executeAction();
+            //            }
             int score = minimax(newBoard, player, ai, depth - 1, false);
             if (score > bestScore) {
                 bestScore = score;
@@ -107,20 +108,19 @@ int aiPlayer::minimax(const std::shared_ptr<Board> &board, const std::shared_ptr
         for (auto &move : getValidActions(board, player)) {
             auto newBoard = std::make_shared<Board>(*board);
             auto destination = move.getDestination();
-            if (!player->nWalls() || rand() % 2) {
-                PlayerAction action(newBoard, player, destination);
-                action.executeAction();
-            } else {
-                WallOrientation orientation;
-                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
-                WallAction action = findWallPlacement(newBoard, player, orientation);
-                action.executeAction();
-            }
+            PlayerAction action(newBoard, player, destination);
+            action.executeAction();
+            //            if (!player->nWalls() || rand() % 2) {
+            //            } else {
+            //                WallOrientation orientation;
+            //                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
+            //                WallAction action = findWallPlacement(newBoard, player, orientation);
+            //                action.executeAction();
+            //            }
             int score = minimax(newBoard, player, ai, depth - 1, true);
             if (score < bestScore) {
                 bestScore = score;
                 bestMove = std::make_shared<PlayerAction>(move);
-                ;
             }
         }
         return bestScore;

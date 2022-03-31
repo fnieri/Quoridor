@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include "AuthSerializableMessageFactory.h"
 #include "BoardActionsSerializableMessageFactory.h"
@@ -129,7 +129,7 @@ public:
     /**
      * Look in GameSetupSerializableMessageFactory for explanation
      */
-    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID);
+    static nlohmann::json serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username);
     /**
      * Look in GameSetupSerializableMessageFactory   for explanation
      */

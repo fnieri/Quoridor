@@ -7,6 +7,8 @@
 
 #include "BoardActionsSerializableMessageFactory.h"
 
+#include <nlohmann/json.hpp>
+
 #include "../client/PlayerAction.h"
 
 #include "MessageEnums/Domain.h"

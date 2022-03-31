@@ -1,5 +1,7 @@
 #include "MainController.h"
 
+#include <nlohmann/json.hpp>
+
 MainController::MainController()
 {
     m_mainModel = new MainModel();
@@ -19,7 +21,7 @@ void MainController::processRequest(const std::string &serRequest)
     } else if (request["domain"] == toJsonString(Domain::RESOURCE_REQUEST)) {
         processResourceRequest(serRequest);
     } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED)) {
-        //        processGameAction(serRequest);
+        processGameAction(serRequest);
     } else if (request["domain"] == toJsonString(Domain::GAME_SETUP)) {
         processGameSetup(serRequest);
     }
@@ -27,7 +29,7 @@ void MainController::processRequest(const std::string &serRequest)
 
 void MainController::processResourceRequest(const std::string &serRequest)
 {
-    json request(json::parse(serRequest));
+    json request = json::parse(serRequest);
 
     if (request.at("data_type") == toJsonString(DataType::LEADERBOARD)) {
         std::vector<std::pair<std::string, float>> leaderboard;
@@ -40,13 +42,14 @@ void MainController::processResourceRequest(const std::string &serRequest)
             friendsList.push_back(userFriend.get<std::string>());
         }
         if (friendsList.empty()) {
-            m_mainModel->setFriendList({"No friends"});
+            m_mainModel->setFriendList({"No friend"});
             m_mainModel->setHasFriends(false);
         } else {
             m_mainModel->setFriendList(friendsList);
             m_mainModel->setHasFriends(true);
         }
     } else if (request.at("data_type") == toJsonString(DataType::GAME_CONFIG)) {
+        std::cout << "Game config received" << std::endl;
     } else if (request.at("data_type") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
         std::vector<std::string> friendRequestsSent;
         for (const auto &userFriend : request.at("serialized_data"))
@@ -58,9 +61,14 @@ void MainController::processResourceRequest(const std::string &serRequest)
             friendRequestsReceived.push_back(userFriend.get<std::string>());
         m_mainModel->setFriendRequestsReceived(friendRequestsReceived);
     } else if (request.at("data_type") == toJsonString(DataType::GAME_IDS)) {
-        std::vector<int> gameIds;
-        for (const auto &gameId : request.at("serialized_data"))
-            gameIds.push_back(gameId.get<int>());
+        std::map<int, std::vector<std::string>> gameIds;
+        for (auto &game : request.at("serialized_data")) {
+            auto config = game.at("config");
+            std::vector<std::string> players;
+            for (auto &player : config.at("players"))
+                players.push_back(player["username"].get<std::string>());
+            gameIds[game.at("game_id").get<int>()] = players;
+        }
         m_mainModel->setGameIds(gameIds);
     } else if (request.at("data_type") == toJsonString(DataType::CHATS)) {
         auto data = request.at("serialized_data");
@@ -97,6 +105,7 @@ void MainController::processRelations(const std::string &serRequest)
         m_mainModel->removeFriend(request.at("friend_rm_receiver"));
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_ACCEPT)) {
         m_mainModel->addFriend(request.at("friend_req_receiver"));
+        m_mainModel->setHasFriends(true);
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REQUEST)) {
         m_mainModel->addFriendRequestReceived(request.at("friend_req_sender"));
         m_mainModel->setFriendNotification(true);
@@ -120,10 +129,35 @@ void MainController::processChatBox(const std::string &serRequest)
 
 void MainController::processGameSetup(const std::string &serRequest)
 {
-    //    json request(json::parse(serRequest));
-    //    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
-    //     m_mainModel->loadGame();
-    //    }
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(GameSetup::CREATE_GAME)) {
+
+        auto gameID = request.at("game_id").get<int>();
+        auto players = request.at("receivers").get<std::vector<std::string>>();
+        players.push_back(request.at("sender").get<std::string>());
+
+        m_mainModel->addGameId(gameID, players);
+        m_mainModel->setGameNotification(true);
+    }
+}
+
+void MainController::processGameAction(const std::string &serRequest)
+{
+    json request(json::parse(serRequest));
+    if (request.at("action") == toJsonString(GameAction::START_GAME)) {
+        // set game model config with serializedData["configuration"]
+        m_mainModel->loadGame(request.at("configuration").dump());
+        // set game started to true in main model
+        m_mainModel->setIsGameStarted(true);
+
+    } else if (request.at("action") == toJsonString(GameAction::END_GAME)) {
+        // m_mainModel->process
+
+    } else if (request.at("action") == toJsonString(JsonPlayerAction::MOVE_PAWN) || request.at("action") == toJsonString(JsonPlayerAction::PLACE_WALL)) {
+        m_mainModel->processGameAction(request.at("move").dump());
+    }
+
+    std::cerr << "MainController::processGameAction: after processing\n";
 }
 
 MainModel *MainController::getMainModel()

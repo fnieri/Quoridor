@@ -3,24 +3,26 @@
 //
 
 #include "TerminalVue.h"
+#include "nlohmann/json.hpp"
+#include <nlohmann/json_fwd.hpp>
 
-bool TerminalVue::mouseInCell(int x, int y)
+bool TerminalVue::mouseInCell(int x, int y) const
 {
     if (actionToggleSelected != 0)
         return false;
     return abs(x - mouse_x) <= 3 && abs(y - mouse_y) <= 3;
 }
 
-bool TerminalVue::mouseInQuoridor(int x, int y)
+bool TerminalVue::mouseInQuoridor(int x, int y) const
 {
     if (actionToggleSelected != 1)
         return false;
     return abs(x - mouse_x) <= (wallOrientation == 0 ? 3 : 15) && abs(y - mouse_y) <= (wallOrientation == 0 ? 15 : 3);
 }
 
-bool TerminalVue::isPlayerTurn()
+bool TerminalVue::isPlayerTurn() const
 {
-    return playerTurn == player;
+    return *playerTurn == player;
 }
 
 bool TerminalVue::isClickValid(int x, int y)
@@ -31,110 +33,137 @@ bool TerminalVue::isClickValid(int x, int y)
 bool TerminalVue::isMoveValid(int x, int y)
 {
     // check if move is actually valid
-    //     return gameController->isMoveValid(x, y);
+    return gameModel->isMoveValid(Point {x, y} / 2, *gameModel->getCurrentPlayer());
 }
 
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    //     return gameController->isWallValid(x, y, wallOrientation);
+    return gameModel->isWallValid(
+        Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createCanvas()
 {
     return Renderer([&] {
-        //        GameModel *gameModel = mainModel.getCurrentGame();
-        //        gameController->updateBoardIntMatrix(boardIntMatrix);
-        const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
-                  occupiedHorizontalQuoridor = 7;
-        auto c = Canvas(200, 200);
-        std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
-        std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
-
-        c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
-
-        std::string remainingWallsText;
-        for (int player = 0; player < remainingWalls.size(); ++player) {
-            if (remainingWalls[player] > 0) {
-                remainingWallsText += "Player " + std::to_string(player + 1) + ": " + std::to_string(remainingWalls[player]) + ", ";
+        if (gameModel) {
+            if (gameModel->hasWinner()) {
+                return text("Player " + gameModel->getWinner() + " has won!");
             }
-        }
-        // TODO get game data
-        c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
-        c.DrawText(0, 190, "Player's turn: " + std::to_string(playerTurn), playerTurn == player ? Color::Green : Color::Red);
-        c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
+            if (player == -1) {
+                player = gameModel->getPlayerIdx(*mainModel->getUsername());
+                playerTurn = gameModel->getCurrentPlayer();
+            }
 
-        // dx and dy represent the distance between cells
-        int dy = 10;
-        for (int i = 0; i < boardIntMatrix.size(); i++) {
-            int dx = 10;
-            for (int j = 0; j < boardIntMatrix[i].size(); j++) {
-                int gridValue = boardIntMatrix[i][j];
-                switch (gridValue) {
-                case freeCell:
-                    // draw a free cell
-                    if (isClickValid(dx, dy) && isMoveValid(j, i)) {
-                        // if mouse is pressed on this cell/quoridor
-                        c.DrawText(dx, dy, "\u25A0");
-                        handleCellClick(j, i);
-                    } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
-                        // if mouse is pressed on this cell/quoridor
-                        c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
-                        c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
-                    } else {
-                        c.DrawText(dx, dy, "\u25A1");
-                    }
-                    break;
+            std::cerr << "BoardCanvas: before updateBoardMat\n";
+            gameModel->updateBoardIntMatrix(boardIntMatrix, player);
+            std::cerr << "BoardCanvas: before updateBoardMat\n";
 
-                case emptyQuoridor:
-                    if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
-                        std::vector<int> direction = quoridorDirection[wallOrientation];
+            for (auto &i : boardIntMatrix) {
+                for (auto &j : i) {
+                    std::cerr << j << " ";
+                }
+                std::cerr << "\n";
+            }
+
+            const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
+                      occupiedHorizontalQuoridor = 7;
+            auto c = Canvas(200, 200);
+            std::vector<Color> playerColors {Color::Red, Color::Green, Color::Blue, Color::Purple};
+            std::vector<std::vector<int>> quoridorDirection {{0, 4}, {5, 0}}; // 0 = vertical, 1 = horizontal
+
+            c.DrawPoint(mouse_x, mouse_y, Color::Yellow);
+
+            std::string remainingWallsText;
+            auto remainingWallsMap = gameModel->getPlayersRemainingWalls();
+            for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
+                remainingWallsText += playerUsername + ": " + std::to_string(remainingWalls) + ", ";
+            }
+
+            c.DrawText(0, 185, "You are player: " + std::to_string(player), Color::Purple);
+            c.DrawText(0, 190, "Player's turn: " + std::to_string(*playerTurn), *playerTurn == player ? Color::Green : Color::Red);
+            c.DrawText(0, 195, "Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2), Color::Red);
+
+            // dx and dy represent the distance between cells
+            int dy = 10;
+            for (int i = 0; i < boardIntMatrix.size(); i++) {
+                int dx = 10;
+                for (int j = 0; j < boardIntMatrix[i].size(); j++) {
+                    int gridValue = boardIntMatrix[i][j];
+                    switch (gridValue) {
+                    case freeCell:
+                        // draw a free cell
+                        if (isClickValid(dx, dy) && isMoveValid(j, i)) {
+                            // if mouse is pressed on this cell/quoridor
+                            c.DrawText(dx, dy, "\u25A0");
+                            handleCellClick(j, i);
+                        } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
+                            // if mouse is pressed on this cell/quoridor
+                            c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
+                            c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
+                        } else {
+                            c.DrawText(dx, dy, "\u25A1");
+                        }
+                        break;
+
+                    case emptyQuoridor:
+                        if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i) && isPlayerTurn()) {
+                            std::vector<int> direction = quoridorDirection[wallOrientation];
+                            c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                            handleWallAdd(j, i);
+                        } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
+                            std::vector<int> direction = quoridorDirection[wallOrientation];
+                            c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
+                        }
+                        // don't draw anything otherwise
+                        break;
+
+                    case occupiedVerticalQuoridor:
+                    case occupiedHorizontalQuoridor: {
+                        std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
                         c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                        handleWallAdd(j, i);
-                    } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
-                        std::vector<int> direction = quoridorDirection[wallOrientation];
-                        c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
+                        break;
                     }
-                    // don't draw anything otherwise
-                    break;
 
-                case occupiedVerticalQuoridor:
-                case occupiedHorizontalQuoridor: {
-                    std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
-                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                    break;
+                    case playerOne:
+                    case playerTwo:
+                    case playerThree:
+                    case playerFour:
+                        // draw a player one cell
+                        c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
+                        break;
+
+                    default:
+                        break;
+                    }
+                    dx += 10;
                 }
-
-                case playerOne:
-                case playerTwo:
-                case playerThree:
-                case playerFour:
-                    // draw a player one cell
-                    c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
-                    break;
-
-                default:
-                    break;
-                }
-                dx += 10;
+                dy += 10;
             }
-            dy += 10;
+
+            return canvas(std::move(c));
         }
 
-        return canvas(std::move(c));
+        gameModel = mainModel->getCurrentGame();
+        return text("Loading...");
     });
 }
 
 void TerminalVue::handleCellClick(int x, int y)
 {
-    // interact with controller
-    //    gameController->movePlayer(Point{x, y});
+    auto playerAction = gameModel->getPlayerAction(Point {x, y} / 2, *gameModel->getCurrentPlayer());
+    gameModel->processAction(playerAction.serialized().dump());
+
+    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
 }
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
-    // interact with controller
-    //    gameController->placeWall(Point{x, y}, wallOrientation);
+    auto wallAction
+        = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical, *gameModel->getCurrentPlayer());
+    gameModel->processAction(wallAction.serialized().dump());
+
+    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createActionToggle()
@@ -192,7 +221,7 @@ auto TerminalVue::createChatRenderer()
     });
 }
 
-auto TerminalVue::createBoardRenderer()
+auto TerminalVue::createBoardGameRenderer()
 {
     auto actionToggle = createActionToggle();
     auto orientationToggle = createOrientationToggle();
@@ -218,40 +247,33 @@ auto TerminalVue::createBoardRenderer()
         }
         return false;
     });
+    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
+    return Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse] {
+        return vbox({boardCanvas->Render(), separator(),
+            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
+    });
+}
 
+auto TerminalVue::createBoardRenderer()
+{
     auto createGameBtn = Button(
         "Create a Game", [&] { homeTabIndex = 1; }, &buttonOption);
     auto joinGameBtn = Button(
-        "Join Game",
-        [&] { // TODO join game
-            homeTabIndex = 2;
-            rightSize = 40;
-        },
-        &buttonOption);
+        "Join Game", [&] { joinGame(); }, &buttonOption);
     auto inviteAndCreateGameBtn = Button(
         "Create game", [&] { userCreateGame(); }, &buttonOption);
     auto cancelGameCreateGamme = Button(
         "Cancel", [&] { homeTabIndex = 0; }, &buttonOption);
     auto gamePickMenu = Menu(&gameList, &gameSelected);
 
-    Component playWithContainer = Container::Vertical({});
-    for (int i = 0; i < friendsList.size(); ++i) {
-        friendsListStates.push_back(CheckboxState {false});
-    }
-    for (int i = 0; i < friendsList.size(); ++i) {
-        //        friendsListStates.push_back(CheckboxState {false});
-        playWithContainer->Add(Checkbox(&friendsList[i], &(friendsListStates[i].checked)));
-    }
-
-    auto boardContainer = Container::Vertical({tabWithMouse, actionToggle, orientationToggle, boardCanvas, createGameBtn, joinGameBtn, gamePickMenu,
-        inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
+    auto boardContainer = Container::Vertical({createGameBtn, joinGameBtn, gamePickMenu, inviteAndCreateGameBtn, cancelGameCreateGamme, playWithContainer});
 
     auto creatingGameContainer = Container::Vertical({
         playWithContainer,
         inviteAndCreateGameBtn,
         cancelGameCreateGamme,
     });
-    auto creatingGameRender = Renderer(creatingGameContainer, [playWithContainer, inviteAndCreateGameBtn, cancelGameCreateGamme] {
+    auto creatingGameRender = Renderer(creatingGameContainer, [&, inviteAndCreateGameBtn, cancelGameCreateGamme] {
         return vbox(
             {text("Create a game with friends"), separator(), playWithContainer->Render() | vscroll_indicator | frame | size(HEIGHT, LESS_THAN, 10) | border,
                 inviteAndCreateGameBtn->Render(), separator(), cancelGameCreateGamme->Render()});
@@ -268,11 +290,7 @@ auto TerminalVue::createBoardRenderer()
             createGameBtn->Render()});
     });
 
-    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
-    auto boardGameRender = Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton] {
-        return vbox({boardCanvas->Render(), separator(),
-            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
-    });
+    auto boardGameRender = createBoardGameRenderer();
 
     auto gameChat = createChatRenderer();
     auto resizeContainer = boardGameRender;
@@ -280,7 +298,11 @@ auto TerminalVue::createBoardRenderer()
 
     auto homeTab = Container::Tab({homeScreenRender, creatingGameRender, resizeContainer}, &homeTabIndex);
 
-    return Renderer(homeTab, [homeTab] { return homeTab->Render(); });
+    return Renderer(homeTab, [&, homeTab] {
+        updateFriendsListCheckboxes();
+        updateGameIds();
+        return homeTab->Render();
+    });
 }
 
 auto TerminalVue::createLeaderBoardRenderer()
@@ -314,6 +336,17 @@ auto TerminalVue::createLoginRenderer()
     auto loginFieldsContainer = Container::Vertical({usernameInput, passwordInput, loginButton});
     return Renderer(loginFieldsContainer, [&, loginFieldsContainer] {
         return vbox({loginFieldsContainer->Render() | center, color(Color::Red, text(errorLoginMessage))});
+    });
+}
+
+auto TerminalVue::createTrainingRenderer()
+{
+    auto boardRender = createBoardGameRenderer();
+    auto restartBtn = Button("Restart", [this]() { mainModel->createAiGame(); });
+
+    auto trainingContainer = Container::Vertical({boardRender, restartBtn});
+    return Renderer(trainingContainer, [&, boardRender, restartBtn] {
+        return vbox({text("Training"), boardRender->Render(), separator(), restartBtn->Render()});
     });
 }
 
@@ -440,16 +473,22 @@ auto TerminalVue::createMainRenderer()
     auto loginToggle = Toggle(&loginTabValues, &loginTabSelect);
     auto loginRenderer = createLoginRenderer();
     auto registerRender = createRegisterRenderer();
+    auto trainingRender = createTrainingRenderer();
     auto loginRegisterContainer = Container::Tab(
         {
             loginRenderer,
             registerRender,
+            trainingRender,
         },
         &loginTabSelect);
 
     auto loginRegisterToggleContainer = Container::Vertical({loginToggle, loginRegisterContainer, loginExit});
 
     auto loginRender = Renderer(loginRegisterToggleContainer, [&, loginRegisterContainer, loginToggle, loginExit] {
+        if (loginTabSelect == 2 && !mainModel->getCurrentGame()) {
+            // create ai game
+            mainModel->createAiGame();
+        }
         return vbox({
             hbox({loginToggle->Render(), filler(), loginExit->Render()}),
             separator(),
@@ -465,7 +504,7 @@ auto TerminalVue::createMainRenderer()
     auto mainRender = Renderer(mainContainer, [&, tabToggle, tabContainer, exitButton] {
         updateNotifications();
         return vbox({
-            hbox({tabToggle->Render(), exitButton->Render()}),
+            hbox({tabToggle->Render(), filler(), exitButton->Render()}),
             separator(),
             tabContainer->Render(),
         });
@@ -534,16 +573,26 @@ void TerminalVue::registerUser()
 
 void TerminalVue::userCreateGame()
 {
-    //    int friendSelected = 0;
-    //    for (bool &state : friendsListStates) {
-    //        if (state) {
-    //            friendSelected++;
-    //        }
-    //    }
-    //    if (friendSelected == 2 || friendSelected == 4) {
-    //        // TODO: create a game
-    //        homeTabIndex = 2;
-    //    }
+    std::vector<std::string> invitedPlayers;
+
+    for (const auto &state : friendsListStates) {
+        if (state.checked) {
+            invitedPlayers.push_back(state.username);
+        }
+    }
+    if (invitedPlayers.size() == 1 || invitedPlayers.size() == 3) {
+        serverController->createGame(*mainModel->getUsername(), invitedPlayers);
+        homeTabIndex = 0;
+    }
+}
+
+void TerminalVue::joinGame()
+{
+    if (!gameListId.empty()) {
+        serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
+        homeTabIndex = 2;
+        rightSize = 40;
+    }
 }
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)
@@ -579,14 +628,59 @@ void TerminalVue::updateNotifications()
 {
     if (mainTabSelect != 1 && mainModel->hasFriendNotification()) {
         mainTabValues[1] = "Friends*";
+    } else if (mainTabSelect == 1 && mainModel->hasFriendNotification()) {
+        mainModel->setFriendNotification(false);
+        mainTabValues[1] = "Friends";
     } else {
         mainTabValues[1] = "Friends";
     }
     if (mainTabSelect != 0 && mainModel->hasGameNotification()) {
         mainTabValues[0] = "Games*";
+    } else if (mainTabSelect == 0 && mainModel->hasGameNotification()) {
+        mainModel->setGameNotification(false);
+        mainTabValues[0] = "Games";
     } else {
         mainTabValues[0] = "Games";
     }
+}
+
+void TerminalVue::updateFriendsListCheckboxes()
+{
+    if (homeTabIndex == 1 && previousHomeTabIndex != homeTabIndex) {
+        auto friendsList = mainModel->getFriendList();
+        for (const auto &i : *friendsList) {
+            friendsListStates.push_back(CheckboxState {false, i});
+        }
+        for (int i = 0; i < friendsList->size(); ++i) {
+            playWithContainer->Add(Checkbox(&friendsList->at(i), &(friendsListStates[i].checked)));
+        }
+    }
+    previousHomeTabIndex = homeTabIndex;
+}
+
+void TerminalVue::updateGameIds()
+{
+    //    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
+    //                serverController->fetchGameIds();
+    //        gameList.clear();
+    auto gameIds = mainModel->getGameIDs();
+    for (auto &i : *gameIds) {
+        if (std::find(gameListId.begin(), gameListId.end(), i.first) == gameListId.end()) {
+            gameListId.push_back(i.first);
+
+            std::string friendsListStr;
+            for (int j = 0; j < i.second.size() - 1; ++j) {
+                friendsListStr += i.second[j] + ", ";
+            }
+            friendsListStr += i.second[i.second.size() - 1];
+
+            std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
+            gameList.push_back(gameDescription);
+        }
+    }
+    //    }
+    //    previousHomeTabIndex = homeTabIndex;
 }
 
 void TerminalVue::acceptFriendRequest()
@@ -610,4 +704,9 @@ void TerminalVue::run()
     auto _screen = ScreenInteractive::TerminalOutput();
     screen = &_screen;
     screen->Loop(mainRenderer);
+}
+
+bool TerminalVue::isConnectedToServer() const
+{
+    return serverController->isConnected();
 }

@@ -47,6 +47,8 @@ inline const char *toJsonString(GameSetup g)
         return "join_game";
     case GameSetup::QUIT_GAME:
         return "quit_game";
+    case GameSetup::CREATE_GAME:
+        return "create_game";
     }
     return "";
 }

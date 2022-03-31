@@ -8,6 +8,8 @@
 
 #include "FriendActionsSerializableMessageFactory.h"
 
+#include <nlohmann/json.hpp>
+
 #include "MessageEnums/Domain.h"
 
 using json = nlohmann::json;

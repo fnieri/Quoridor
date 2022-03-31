@@ -1,5 +1,10 @@
 #include "ServerController.h"
 
+#include "src/client/PlayerAction.h"
+#include "src/client/WallAction.h"
+
+#include <nlohmann/json.hpp>
+
 ServerController::ServerController(MainController *mainController)
 {
     // TODO use an external server config (f.e. parameter)
@@ -61,6 +66,7 @@ auto ServerController::fetchData() -> void
     fetchElo();
     fetchLeaderboard();
     fetchFriendRequestsReceived();
+    fetchGameIds();
 }
 
 auto ServerController::fetchFriends() -> void
@@ -88,7 +94,46 @@ auto ServerController::fetchFriendMessages(const std::string &requester, const s
     sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester, receiver));
 }
 
+auto ServerController::fetchGameIds() -> void
+{
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS));
+}
+
 auto ServerController::removeFriend(const std::string &sender, const std::string &receiver) -> void
 {
     sendJson(SerializableMessageFactory::serializeFriendRemove(sender, receiver));
+}
+
+auto ServerController::createGame(const std::string &username, const std::vector<std::string> &players) -> void
+{
+    auto gamePlayers = players;
+    gamePlayers.push_back(username);
+    GameModel defaultGameModel {gamePlayers};
+    sendJson(
+        SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
+}
+
+auto ServerController::isConnected() const -> bool
+{
+    return bridge->isConnected();
+}
+
+auto ServerController::joinGame(const int &gameId, const std::string &username) -> void
+{
+    sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
+}
+
+auto ServerController::playPlayerAction(PlayerAction action, const int &playerIdx) -> void
+{
+    sendJson(SerializableMessageFactory::serializePawnAction(action, playerIdx));
+}
+
+auto ServerController::playWallAction(WallAction action, const int &playerIdx) -> void
+{
+    sendJson(SerializableMessageFactory::serializeWallAction(action, playerIdx));
+}
+
+auto ServerController::fetchGameMessages(int) -> void
+{
+    //    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));
 }
