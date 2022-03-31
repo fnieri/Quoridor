@@ -201,15 +201,15 @@ void GameHandler::processRequest(const std::string &serRequest)
     auto answer {serRequest};
 
     if (request["action"] == toJsonString(GameAction::SURRENDER)) {
-        answer = processAndGetAnswerForSurrender(request);
+        processAndGetAnswerForSurrender(request);
 
     } else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN) || request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL)) {
         std::cerr << "INSIDE ACTION\n";
-        answer = processAndGetAnswerForAction(request);
+        processAndGetAnswerForAction(request);
 
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)
         || request["action"] == toJsonString(GameAction::REFUSE_SAVE)) {
-        answer = processAndGetAnswerForSave(request);
+        processAndGetAnswerForSave(request);
     }
 
     for (auto &p : m_gameModel->getPlayersNames())
