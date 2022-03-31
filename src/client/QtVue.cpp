@@ -232,7 +232,8 @@ void QtVue::drawBoard()
 
             painter->drawText(QRect(0, 650, 200, 100), "You are player: " + QString::fromStdString(std::to_string(player)));
             painter->drawText(QRect(0, 670, 200, 100), "Player: " + QString::fromStdString(std::to_string(*playerTurn)));
-            painter->drawText(QRect(0, 690, 500, 100), "Player: " + QString::fromStdString("Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2)));
+            painter->drawText(QRect(0, 690, 500, 100),
+                "Player: " + QString::fromStdString("Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2)));
 
             int dx = 10, dy = 10;
             Qt::GlobalColor cellColor;
@@ -406,11 +407,21 @@ Point QtVue::getCellCoordinates(int x, int y) const
 
 void QtVue::handleBoardPress(int x, int y)
 {
-    //    int i = (y-50) / cellSize;
-    //    int j = (x - 10) / cellSize;
-    //
-    //    std::cout << "i: " << i << " j: " << j << std::endl;
-    //    std::cout << boardIntMatrix[i][j] << std::endl;
+    if (gameModel) {
+        auto cellCoordinates = getCellCoordinates(x, y);
+        if (moveType == 0) {
+            if (gameModel->isMoveValid(cellCoordinates)) {
+                auto playerAction = gameModel->getPlayerAction(cellCoordinates);
+                gameModel->processAction(playerAction.serialized().dump());
+            }
+        } else if (moveType == 1) {
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation)) {
+                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation);
+                gameModel->processAction(wallAction.serialized().dump());
+            }
+        }
+        drawBoard();
+    }
 }
 
 void QtVue::handleBoardMove(int x, int y)
