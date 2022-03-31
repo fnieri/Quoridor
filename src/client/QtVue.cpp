@@ -7,6 +7,18 @@
 #include "QtVue.h"
 #include "ui_QtVue.h"
 
+DrawLabel::DrawLabel(QWidget *parent, QtVue *vue)
+    : QLabel(parent)
+    , vue(vue)
+{
+}
+
+void DrawLabel::mousePressEvent(QMouseEvent *event)
+{
+    QLabel::mousePressEvent(event);
+    vue->handleBoardPress(event->x(), event->y());
+}
+
 QtVue::QtVue(QWidget *parent)
     : QWidget(parent)
     , ui(new Ui::QtVue)
@@ -161,13 +173,17 @@ void QtVue::drawBoard()
 {
     canvasPixmap->fill(Qt::white);
     int dx = 0, dy = 0;
-    for (auto i = 0; i < 10; i++) {
-        for (auto j = 0; j < 10; j++) {
-            painter->setPen(QPen(Qt::black, 5));
-            painter->drawRect(dx, dy, 35, 35);
-            dx += 50;
+    for (auto i = 0; i < testBoard.size(); i++) {
+        for (auto j = 0; j < testBoard.size(); j++) {
+            if (testBoard[i][j] == 1) {
+                painter->setPen(QPen(Qt::red, 5));
+            } else {
+                painter->setPen(QPen(Qt::black, 5));
+            }
+            painter->drawRect(dx, dy, cellSize, cellSize);
+            dx += cellSize + corridorSize;
         }
-        dy += 50;
+        dy += cellSize + corridorSize;
         dx = 0;
     }
     drawLabel->setPixmap(*canvasPixmap);
@@ -181,10 +197,9 @@ void QtVue::createTrainingPage()
     tLabel->setAlignment(Qt::AlignTop);
     trainingPageLayout->addWidget(tLabel);
 
-    drawLabel = new QLabel();
-    drawLabel->setAlignment(Qt::AlignTop);
     canvasPixmap = new QPixmap(QSize(500, 500));
     painter = new QPainter(canvasPixmap);
+    drawLabel = new DrawLabel(this, this);
 
     drawBoard();
 
@@ -214,4 +229,22 @@ void QtVue::createMainPage()
     auto *timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
     timer->start(1000);
+}
+
+void QtVue::handleBoardPress(int x, int y)
+{
+    int i = y / (cellSize + corridorSize);
+    int j = x / (cellSize + corridorSize);
+
+    for (int k = 0; k < testBoard.size(); k++) {
+        for (int l = 0; l < testBoard.size(); l++) {
+            if (k == i && l == j) {
+                testBoard[k][l] = 1;
+            } else {
+                testBoard[k][l] = 0;
+            }
+        }
+    }
+
+    drawBoard();
 }
