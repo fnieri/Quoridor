@@ -74,10 +74,10 @@ public:
     auto getCurrentPlayer() noexcept -> const int *;
 
     auto isMoveValid(const Point &, const int &playerPerspective = 0) const noexcept -> bool;
-    auto isWallValid(const Point &, WallOrientation) const noexcept -> bool;
+    auto isWallValid(const Point &, WallOrientation, const int &playerPerspective = 0) const noexcept -> bool;
 
     auto getPlayerAction(const Point &, const int &playerPerspective = 0) const noexcept -> PlayerAction;
-    auto getWallAction(const Point &, WallOrientation) const noexcept -> WallAction;
+    auto getWallAction(const Point &, WallOrientation, const int &playerPerspective = 0) const noexcept -> WallAction;
 
     auto getPlayerIdx(const std::string &) const noexcept -> int;
     auto getPlayersRemainingWalls() noexcept -> std::map<std::string, int>;

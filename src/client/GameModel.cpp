@@ -129,9 +129,9 @@ auto GameModel::isMoveValid(const Point &movePoint, const int &playerPerspective
     return action.isActionValid();
 }
 
-auto GameModel::isWallValid(const Point &dest, WallOrientation ori) const noexcept -> bool
+auto GameModel::isWallValid(const Point &dest, WallOrientation ori, const int &playerPerspective) const noexcept -> bool
 {
-    WallAction action {m_board, m_players.at(m_currentPlayerIdx), dest, ori};
+    auto action = getWallAction(dest, ori, playerPerspective);
     return action.isWallPlacementLegal() && action.isWallPlacementValid();
 }
 
@@ -143,9 +143,28 @@ auto GameModel::getPlayerAction(const Point &dest, const int &playerPerspective)
     return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), rotMov};
 }
 
-auto GameModel::getWallAction(const Point &dest, WallOrientation orientation) const noexcept -> WallAction
+auto GameModel::getWallAction(const Point &dest, WallOrientation orientation, const int &playerPerspective) const noexcept -> WallAction
 {
-    return WallAction {m_board, m_players.at(m_currentPlayerIdx), dest, orientation};
+    auto fl = m_players.at(playerPerspective)->getFinishLine();
+
+    auto actualPos = dest;
+    auto actualOri = orientation;
+
+    if (fl == FinishLine::South) {
+        actualPos = actualPos + Point {1, 1};
+
+    } else if (fl == FinishLine::East) {
+        actualPos = actualPos + Point {1, 0};
+        actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
+
+    } else if (fl == FinishLine::West) {
+        actualPos = actualPos + Point {0, 1};
+        actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
+    }
+
+    auto rotMov = m_board->getRotatedMatrixPosition(actualPos * 2, fl, false) / 2;
+
+    return WallAction {m_board, m_players.at(m_currentPlayerIdx), rotMov, actualOri};
 }
 
 auto GameModel::hasWinner() const -> bool

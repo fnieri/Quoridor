@@ -39,7 +39,8 @@ bool TerminalVue::isMoveValid(int x, int y)
 bool TerminalVue::isWallPlacementValid(int x, int y)
 {
     // check if wall placement is actually valid
-    return gameModel->isWallValid(Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal);
+    return gameModel->isWallValid(
+        Point {x, y} / 2, wallOrientation == 0 ? WallOrientation::Vertical : WallOrientation::Horizontal, *gameModel->getCurrentPlayer());
 }
 
 auto TerminalVue::createCanvas()
@@ -150,7 +151,8 @@ void TerminalVue::handleCellClick(int x, int y)
 
 void TerminalVue::handleWallAdd(int x, int y)
 {
-    auto wallAction = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical);
+    auto wallAction
+        = gameModel->getWallAction(Point {x, y} / 2, wallOrientation ? WallOrientation::Horizontal : WallOrientation::Vertical, *gameModel->getCurrentPlayer());
     gameModel->processAction(wallAction.serialized().dump());
 
     serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
