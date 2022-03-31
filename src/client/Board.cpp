@@ -377,11 +377,11 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
             rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
 
             // make sure to rotate the direction of the walls when needed
-            if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) {
-                auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y()));
+            /* if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) { */
+            /*     auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y())); */
 
-                wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal);
-            }
+            /*     wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal); */
+            /* } */
         }
     }
 

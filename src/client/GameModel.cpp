@@ -138,7 +138,7 @@ auto GameModel::isWallValid(const Point &dest, WallOrientation ori, const int &p
 auto GameModel::getPlayerAction(const Point &dest, const int &playerPerspective) const noexcept -> PlayerAction
 {
     auto fl = m_players.at(playerPerspective)->getFinishLine();
-    auto rotMov = m_board->getRotatedMatrixPosition(dest * 2, fl, false) / 2;
+    auto rotMov = m_board->getRotatedMatrixPosition(dest * 2, fl, true) / 2;
 
     return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), rotMov};
 }
@@ -162,7 +162,7 @@ auto GameModel::getWallAction(const Point &dest, WallOrientation orientation, co
         actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
     }
 
-    auto rotMov = m_board->getRotatedMatrixPosition(actualPos * 2, fl, false) / 2;
+    auto rotMov = m_board->getRotatedMatrixPosition(actualPos * 2, fl, true) / 2;
 
     return WallAction {m_board, m_players.at(m_currentPlayerIdx), rotMov, actualOri};
 }
@@ -225,8 +225,10 @@ auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatr
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
         for (int x = 0; x < boardMatrix.at(y).size(); x++) {
-            if (m_board->isCell(m_board->getRotatedMatrixPosition({x, y}, finishLine, false))) {
-                if (m_board->isFree(m_board->getRotatedMatrixPosition({x, y}, finishLine, false)))
+
+            // Pawns
+            if (m_board->isCell(m_board->getRotatedMatrixPosition({x, y}, finishLine, true))) {
+                if (m_board->isFree(m_board->getRotatedMatrixPosition({x, y}, finishLine, true)))
                     row.push_back(freeCell);
                 else {
                     auto playerCell = (std::dynamic_pointer_cast<Cell>(boardMatrix.at(x).at(y)));
@@ -245,8 +247,19 @@ auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatr
                         break;
                     }
                 }
-            } else if (boardMatrix.at(x).at(y) && boardMatrix.at(x).at(y)->isOccupied()) {
+            }
+
+            // Corridors
+            else if (boardMatrix.at(x).at(y) && boardMatrix.at(x).at(y)->isOccupied()) {
                 auto orientation = std::dynamic_pointer_cast<Corridor>(boardMatrix.at(x).at(y))->getOrientation();
+
+                switch (finishLine) {
+                case FinishLine::West:
+                case FinishLine::East:
+                    orientation = orientation == WallOrientation::Vertical ? WallOrientation::Horizontal : WallOrientation::Vertical;
+                    break;
+                }
+
                 row.push_back((orientation == WallOrientation::Vertical ? occupiedVerticalQuoridor : occupiedHorizontalQuoridor));
             } else
                 row.push_back(emptyQuoridor);

@@ -156,6 +156,8 @@ void MainController::processGameAction(const std::string &serRequest)
     } else if (request.at("action") == toJsonString(JsonPlayerAction::MOVE_PAWN) || request.at("action") == toJsonString(JsonPlayerAction::PLACE_WALL)) {
         m_mainModel->processGameAction(request.at("move").dump());
     }
+
+    std::cerr << "MainController::processGameAction: after processing\n";
 }
 
 MainModel *MainController::getMainModel()
