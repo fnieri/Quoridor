@@ -18,6 +18,9 @@
 #include <QTimer>
 #include <QToolBox>
 #include <QWidget>
+#include <QHoverEvent>
+#include <QRadioButton>
+#include <QButtonGroup>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -46,6 +49,8 @@ public:
 private slots:
     void handleLoginButtonClicked(const std::string &username, const std::string &password);
     void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);
+    void handlePawnButtonClicked();
+    void handleWallButtonClicked();
 
 private:
     Ui::QtVue *ui;
@@ -97,7 +102,8 @@ public:
 private:
     QtVue *vue;
 
+    bool event(QEvent *e) override;
+
     void mousePressEvent(QMouseEvent *event) override;
-        void mouseMoveEvent(QMouseEvent *event) override;
-    //    void mouseReleaseEvent(QMouseEvent *event) override;
+    void hoverMoveEvent(QHoverEvent *event);
 };

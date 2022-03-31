@@ -11,6 +11,7 @@ DrawLabel::DrawLabel(QWidget *parent, QtVue *vue)
     : QLabel(parent)
     , vue(vue)
 {
+    this->setAttribute(Qt::WA_Hover, true);
 }
 
 void DrawLabel::mousePressEvent(QMouseEvent *event)
@@ -18,10 +19,23 @@ void DrawLabel::mousePressEvent(QMouseEvent *event)
     QLabel::mousePressEvent(event);
     vue->handleBoardPress(event->x(), event->y());
 }
-void DrawLabel::mouseMoveEvent(QMouseEvent *event)
+
+void DrawLabel::hoverMoveEvent(QHoverEvent *event)
 {
-    QLabel::mouseMoveEvent(event);
-    vue->handleBoardMove(event->x(), event->y());
+    vue->handleBoardMove(event->pos().x(), event->pos().y());
+}
+
+bool DrawLabel::event(QEvent *e)
+{
+    switch (e->type()) {
+    case QEvent::HoverMove: {
+        hoverMoveEvent(dynamic_cast<QHoverEvent *>(e));
+        return true;
+    }
+    default:
+        break;
+    }
+    return QLabel::event(e);
 }
 
 QtVue::QtVue(QWidget *parent)
@@ -316,9 +330,23 @@ void QtVue::createTrainingPage()
 
     trainingPageLayout->addWidget(drawLabel);
 
+    bool isPawnMove = true, isWallMove = false;
+    auto *selectPawnMove = new QPushButton("Select pawn move");
+    auto *selectWallMove = new QPushButton("Select wall move");
+    selectPawnMove->setCheckable(true);
+    selectWallMove->setCheckable(true);
+    selectPawnMove->setVisible(false);
+    selectWallMove->setVisible(false);
+    auto *selectPawnWallLayout = new QHBoxLayout;
+    selectPawnWallLayout->addWidget(selectPawnMove);
+    selectPawnWallLayout->addWidget(selectWallMove);
+    trainingPageLayout->addLayout(selectPawnWallLayout);
+
     auto *trainingStartButton = new QPushButton("Start training", this);
-    connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
+    connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton, selectWallMove, selectPawnMove]() {
         mainModel->createAiGame();
+        selectPawnMove->setVisible(true);
+        selectWallMove->setVisible(true);
         trainingStartButton->setText("Restart");
         drawBoard();
     });
@@ -353,9 +381,9 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y - 50) / cellSize;
+    int i = (y-25)  / cellSize;
     int j = (x - 10) / cellSize;
-    return {i, j};
+    return {j, i};
 }
 
 void QtVue::handleBoardPress(int x, int y)
@@ -365,20 +393,30 @@ void QtVue::handleBoardPress(int x, int y)
     //
     //    std::cout << "i: " << i << " j: " << j << std::endl;
     //    std::cout << boardIntMatrix[i][j] << std::endl;
-
-    drawBoard();
 }
 
 void QtVue::handleBoardMove(int x, int y)
 {
-    auto cellCoordinates = getCellCoordinates(x, y);
-    boardMoveIntMatrix = boardIntMatrix;
-    try {
-        if (gameModel->isMoveValid(cellCoordinates)) {
-            boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
-        } else {
-            boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
+    if (gameModel) {
+        auto cellCoordinates = getCellCoordinates(x, y);
+        boardMoveIntMatrix = boardIntMatrix;
+        try {
+            if (gameModel->isMoveValid(cellCoordinates)) {
+                boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
+            } else {
+                boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
+            }
+            drawBoard();
+        } catch (std::out_of_range &e) {
         }
-    } catch (std::out_of_range &e) {
     }
+}
+
+void QtVue::handlePawnButtonClicked()
+{
+    
+}
+
+void QtVue::handleWallButtonClicked()
+{
 }
