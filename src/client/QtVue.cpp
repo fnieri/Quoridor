@@ -45,6 +45,8 @@ QtVue::QtVue(QWidget *parent)
     ui->setupUi(this);
 
     mainModel = mainController.getMainModel();
+    mainModel->registerObserver(this);
+
     gameModel = mainModel->getCurrentGame();
     serverController = new ServerController {&mainController};
 
@@ -88,8 +90,8 @@ void QtVue::handleRegisterButtonClicked(const std::string &username, const std::
 
 void QtVue::createLoginAndRegister()
 {
-    auto *loginBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-    auto *registerBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto loginBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto registerBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto loginTextEntry = new QLineEdit(this);
     loginTextEntry->setPlaceholderText("Login");
@@ -104,7 +106,7 @@ void QtVue::createLoginAndRegister()
     loginMessage->setAlignment(Qt::AlignTop);
     loginBoxLayout->addWidget(loginMessage);
 
-    auto *loginButton = new QPushButton("Login", this);
+    auto loginButton = new QPushButton("Login", this);
     connect(loginButton, &QPushButton::clicked, this, [this, loginTextEntry, passwordTextEntry]() {
         handleLoginButtonClicked(loginTextEntry->text().toStdString(), passwordTextEntry->text().toStdString());
     });
@@ -128,17 +130,17 @@ void QtVue::createLoginAndRegister()
     registerMessage->setAlignment(Qt::AlignTop);
     registerBoxLayout->addWidget(registerMessage);
 
-    auto *registerButton = new QPushButton("Register", this);
+    auto registerButton = new QPushButton("Register", this);
     connect(registerButton, &QPushButton::clicked, this, [this, registerUsernameTextEntry, registerPasswordTextEntry, registerPasswordConfirmTextEntry]() {
         handleRegisterButtonClicked(registerUsernameTextEntry->text().toStdString(), registerPasswordTextEntry->text().toStdString(),
             registerPasswordConfirmTextEntry->text().toStdString());
     });
     registerBoxLayout->addWidget(registerButton);
 
-    auto *loginBox = new QWidget(this);
+    auto loginBox = new QWidget(this);
     loginBox->setLayout(loginBoxLayout);
 
-    auto *registerBox = new QWidget(this);
+    auto registerBox = new QWidget(this);
     registerBox->setLayout(registerBoxLayout);
 
     createTrainingPage();
@@ -151,12 +153,12 @@ void QtVue::createLoginAndRegister()
 
 void QtVue::createGamePage()
 {
-    auto *gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto *tLabel = new QLabel("Game page");
+    auto tLabel = new QLabel("Game page");
     gamePickerLayout->addWidget(tLabel);
 
-    auto *gamePage = new QWidget(this);
+    auto gamePage = new QWidget(this);
     gamePage->setLayout(gamePickerLayout);
 
     mainTabBar->addTab(gamePage, "Games");
@@ -164,12 +166,12 @@ void QtVue::createGamePage()
 
 void QtVue::createFriendsPage()
 {
-    auto *friendsPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto friendsPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto *tLabel = new QLabel("friends page");
+    auto tLabel = new QLabel("friends page");
     friendsPageLayout->addWidget(tLabel);
 
-    auto *friendsPage = new QWidget(this);
+    auto friendsPage = new QWidget(this);
     friendsPage->setLayout(friendsPageLayout);
 
     mainTabBar->addTab(friendsPage, "Friends");
@@ -177,27 +179,20 @@ void QtVue::createFriendsPage()
 
 void QtVue::createLeaderboardPage()
 {
-    auto *leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto leaderboardPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    leaderboardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-
-    auto *scrollArea = new QScrollArea(this);
-    auto *leaderboardScroll = new QWidget(this);
-    leaderboardScroll->setLayout(leaderboardLayout);
-    for (int i = 0; i < 100; i++) {
-        auto *tLabel = new QLabel("test");
-        leaderboardLayout->addWidget(tLabel);
-    }
-
-    scrollArea->setWidget(leaderboardScroll);
-    scrollArea->resize(100, 30);
-    scrollArea->setWidgetResizable(false);
-    leaderboardPageLayout->addWidget(scrollArea);
+    leaderboardLayout = new QTableWidget(10, 2, this);
+    leaderboardLayout->setHorizontalHeaderLabels({"Username", "ELO"});
+    leaderboardPageLayout->addWidget(leaderboardLayout);
 
     userEloLabel = new QLabel("");
     leaderboardPageLayout->addWidget(userEloLabel);
 
-    auto *leaderboardPage = new QWidget(this);
+    auto refreshButton = new QPushButton {"Refresh"};
+    connect(refreshButton, &QPushButton::clicked, this, [&]() { serverController->fetchLeaderboard(); });
+    leaderboardPageLayout->addWidget(refreshButton);
+
+    auto leaderboardPage = new QWidget(this);
     leaderboardPage->setLayout(leaderboardPageLayout);
 
     mainTabBar->addTab(leaderboardPage, "Leaderboard");
@@ -317,9 +312,9 @@ void QtVue::drawBoard()
 
 void QtVue::createTrainingPage()
 {
-    auto *trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto *tLabel = new QLabel("Training page");
+    auto tLabel = new QLabel("Training page");
     tLabel->setAlignment(Qt::AlignTop);
     trainingPageLayout->addWidget(tLabel);
 
@@ -339,12 +334,12 @@ void QtVue::createTrainingPage()
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
 
-    auto *selectPawnWallLayout = new QHBoxLayout;
+    auto selectPawnWallLayout = new QHBoxLayout;
     selectPawnWallLayout->addWidget(selectPawnMove);
     selectPawnWallLayout->addWidget(selectWallMove);
     trainingPageLayout->addLayout(selectPawnWallLayout);
 
-    auto *trainingStartButton = new QPushButton("Start training", this);
+    auto trainingStartButton = new QPushButton("Start training", this);
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
         mainModel->createAiGame();
         selectPawnMove->setVisible(true);
@@ -355,7 +350,7 @@ void QtVue::createTrainingPage()
 
     trainingPageLayout->addWidget(trainingStartButton);
 
-    auto *trainingPage = new QWidget(this);
+    auto trainingPage = new QWidget(this);
     trainingPage->setLayout(trainingPageLayout);
 
     loginTabBar->addTab(trainingPage, "Training");
@@ -363,8 +358,69 @@ void QtVue::createTrainingPage()
 
 void QtVue::updateValues()
 {
+    updatePart(eloUpdated, [this]() { this->updateELO(); });
+    updatePart(leaderboardUpdated, [this]() { this->updateLeaderboard(); });
+    updatePart(relationsUpdated, [this]() { this->updateRelations(); });
+    updatePart(chatsUpdated, [this]() { this->updateChats(); });
+}
+
+template <typename Callable>
+void QtVue::updatePart(std::atomic<bool> &toBeUpdated, Callable updateFunc)
+{
+    if (toBeUpdated) {
+        updateFunc();
+        toBeUpdated = false;
+    }
+}
+
+void QtVue::update(QuoridorEvent event)
+{
+    switch (event) {
+    case QuoridorEvent::EloModified:
+        eloUpdated = true;
+        break;
+    case QuoridorEvent::LeaderboardModified:
+        leaderboardUpdated = true;
+        break;
+    case QuoridorEvent::RelationsModified:
+        relationsUpdated = true;
+        break;
+    case QuoridorEvent::ChatsUpdated:
+        chatsUpdated = true;
+        break;
+    }
+}
+
+void QtVue::updateELO()
+{
     auto userElo = mainModel->getELO();
     userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+}
+
+void QtVue::updateLeaderboard()
+{
+    auto lb = mainModel->getLeaderboard();
+
+    leaderboardLayout->setRowCount(lb->size());
+
+    for (auto i = 0; i < lb->size(); ++i) {
+        auto username = lb->at(i).first;
+        auto elo = std::to_string(lb->at(i).second);
+
+        auto usernameItem = new QTableWidgetItem {username.c_str()};
+        auto eloItem = new QTableWidgetItem {elo.c_str()};
+
+        leaderboardLayout->setItem(i, 0, usernameItem);
+        leaderboardLayout->setItem(i, 1, eloItem);
+    }
+}
+
+void QtVue::updateRelations()
+{
+}
+
+void QtVue::updateChats()
+{
 }
 
 void QtVue::createMainPage()
@@ -376,7 +432,7 @@ void QtVue::createMainPage()
     stackWidget->addWidget(mainTabBar);
     stackWidget->setCurrentWidget(mainTabBar);
 
-    auto *timer = new QTimer(this);
+    auto timer = new QTimer(this);
     connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
     timer->start(1000);
 }

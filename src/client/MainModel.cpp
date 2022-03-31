@@ -155,6 +155,7 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
 auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> &leaderboard) -> void
 {
     updatePtrValue(m_leaderboard, leaderboard);
+    notifyObservers(QuoridorEvent::LeaderboardModified);
 }
 
 auto MainModel::setGameIds(const std::map<int, std::vector<std::string>> &gameIDs) -> void

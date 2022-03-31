@@ -9,4 +9,8 @@
 
 enum class QuoridorEvent {
     Modified, ///< Generic modification
+    EloModified,
+    LeaderboardModified,
+    RelationsModified,
+    ChatsUpdated,
 };
