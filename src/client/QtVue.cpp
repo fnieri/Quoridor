@@ -136,9 +136,11 @@ void QtVue::createLoginAndRegister()
     registerBoxLayout->addWidget(registerButton);
 
     auto loginBox = new QWidget(this);
+    loginBoxLayout->setAlignment(Qt::AlignTop);
     loginBox->setLayout(loginBoxLayout);
 
     auto registerBox = new QWidget(this);
+    registerBoxLayout->setAlignment(Qt::AlignTop);
     registerBox->setLayout(registerBoxLayout);
 
     loginTabBar->addTab(loginBox, "Login");
@@ -152,10 +154,59 @@ void QtVue::createGamePage()
 {
     auto gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto tLabel = new QLabel("Game page");
-    gamePickerLayout->addWidget(tLabel);
+    auto pickJoinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto joinGameTitle = new QLabel("Pick a game to join");
+    joinGameTitle->setStyleSheet("QLabel { font-weight: bold; }");
+    pickJoinGameLayout->addWidget(joinGameTitle, 0, Qt::AlignTop);
+
+    joinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto joinGameScrollArea = new QScrollArea(this);
+    joinGameScrollArea->resize(100, 30);
+    joinGameScrollArea->setWidgetResizable(false);
+    auto joinGameScroll = new QWidget(this);
+    joinGameScroll->setLayout(joinGameLayout);
+    for (int i = 0; i < 10; i++) {
+        auto tLabel = new QPushButton("test");
+        joinGameLayout->addWidget(tLabel);
+    }
+    pickJoinGameLayout->addWidget(joinGameScrollArea);
+    joinGameScrollArea->setWidget(joinGameScroll);
+
+    auto joinGameWidget = new QFrame(this);
+    joinGameWidget->setFrameShape(QFrame::Box);
+    joinGameWidget->setLayout(pickJoinGameLayout);
+    gamePickerLayout->addWidget(joinGameWidget);
+
+    auto createGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto createGameTitle = new QLabel("Create a game");
+    createGameTitle->setStyleSheet("QLabel { font-weight: bold; }");
+    createGameLayout->addWidget(createGameTitle, 0, Qt::AlignTop);
+
+    auto pickFriendsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto pickFriendsScrollArea = new QScrollArea(this);
+    pickFriendsScrollArea->resize(100, 30);
+    pickFriendsScrollArea->setWidgetResizable(false);
+    auto createGameScroll = new QWidget(this);
+    createGameScroll->setLayout(pickFriendsLayout);
+    for (int i = 0; i < 10; i++) {
+        auto tLabel = new QPushButton("test");
+        pickFriendsLayout->addWidget(tLabel);
+    }
+    pickFriendsScrollArea->setWidget(createGameScroll);
+    createGameLayout->addWidget(pickFriendsScrollArea);
+
+    auto createGameButton = new QPushButton("Invite friends and create game");
+    createGameLayout->addWidget(createGameButton);
+    createGameLayout->setGeometry(QRect(0, 0, 100, 100));
+
+    auto createGameWidget = new QFrame(this);
+    createGameWidget->setFrameShape(QFrame::Box);
+    createGameWidget->setLayout(createGameLayout);
+    gamePickerLayout->addWidget(createGameWidget);
 
     auto gamePage = new QWidget(this);
+    gamePickerLayout->setAlignment(Qt::AlignTop);
     gamePage->setLayout(gamePickerLayout);
 
     mainTabBar->addTab(gamePage, "Games");
@@ -373,10 +424,9 @@ void QtVue::createTrainingPage()
 
 void QtVue::updateValues()
 {
-//    auto userElo = mainModel->getELO();
-//    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+    //    auto userElo = mainModel->getELO();
+    //    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
 }
-
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
@@ -476,14 +526,14 @@ void QtVue::handleVerticalWallButtonClicked()
 
 void QtVue::createMainPage()
 {
-    createLeaderboardPage();
     createGamePage();
     createFriendsPage();
+    createLeaderboardPage();
 
     stackWidget->addWidget(mainTabBar);
     stackWidget->setCurrentWidget(mainTabBar);
 
-//    auto timer = new QTimer(this);
-//    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
-//    timer->start(1000);
+    //    auto timer = new QTimer(this);
+    //    connect(timer, &QTimer::timeout, this, &QtVue::updateValues);
+    //    timer->start(1000);
 }

@@ -21,6 +21,7 @@
 #include <QHoverEvent>
 #include <QRadioButton>
 #include <QButtonGroup>
+#include <QFrame>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -63,6 +64,8 @@ private:
     QLabel *registerMessage {};
 
     QTabWidget *mainTabBar;
+
+    QBoxLayout *joinGameLayout;
 
     QLabel *userEloLabel {};
     QBoxLayout *leaderboardLayout {};
