@@ -75,6 +75,9 @@ private:
     ServerController *serverController;
     GameModel *gameModel;
 
+    QPushButton *selectPawnMove{};
+    QPushButton *selectWallMove{};
+    int moveType = 0; // 0 = pawn, 1 = wall
     int player = -1, correctMove = 10, incorrectMove = -10;
     const int *playerTurn;
     std::vector<std::vector<int>> boardIntMatrix;

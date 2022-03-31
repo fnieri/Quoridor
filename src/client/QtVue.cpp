@@ -327,23 +327,25 @@ void QtVue::createTrainingPage()
     canvasPixmap = new QPixmap(QSize(800, 800));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
-
     trainingPageLayout->addWidget(drawLabel);
 
-    bool isPawnMove = true, isWallMove = false;
-    auto *selectPawnMove = new QPushButton("Select pawn move");
-    auto *selectWallMove = new QPushButton("Select wall move");
+    selectPawnMove = new QPushButton("Pawn");
+    selectWallMove = new QPushButton("Wall");
+    connect(selectPawnMove, SIGNAL(clicked()), this, SLOT(handlePawnButtonClicked()));
+    connect(selectWallMove, SIGNAL(clicked()), this, SLOT(handleWallButtonClicked()));
     selectPawnMove->setCheckable(true);
     selectWallMove->setCheckable(true);
+    selectPawnMove->setChecked(true);
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
+
     auto *selectPawnWallLayout = new QHBoxLayout;
     selectPawnWallLayout->addWidget(selectPawnMove);
     selectPawnWallLayout->addWidget(selectWallMove);
     trainingPageLayout->addLayout(selectPawnWallLayout);
 
     auto *trainingStartButton = new QPushButton("Start training", this);
-    connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton, selectWallMove, selectPawnMove]() {
+    connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
         mainModel->createAiGame();
         selectPawnMove->setVisible(true);
         selectWallMove->setVisible(true);
@@ -381,7 +383,7 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y-25)  / cellSize;
+    int i = (y - 25) / cellSize;
     int j = (x - 10) / cellSize;
     return {j, i};
 }
@@ -414,9 +416,18 @@ void QtVue::handleBoardMove(int x, int y)
 
 void QtVue::handlePawnButtonClicked()
 {
-    
+    if (!selectPawnMove->isChecked()) {
+        selectPawnMove->setChecked(true);
+        moveType = 0;
+    }
+    selectWallMove->setChecked(false);
 }
 
 void QtVue::handleWallButtonClicked()
 {
+    if (!selectWallMove->isChecked()) {
+        selectWallMove->setChecked(true);
+        moveType = 1;
+    }
+    selectPawnMove->setChecked(false);
 }
