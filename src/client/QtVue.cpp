@@ -222,70 +222,64 @@ void QtVue::drawBoard()
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
             std::vector<Qt::GlobalColor> playerColors {Qt::red, Qt::green, Qt::blue, Qt::magenta};
-            std::vector<std::vector<int>> quoridorDirection {
-                {0, 4},
-                {5, 0}
-            }; // 0 = vertical, 1 = horizontal
+            std::string remainingWallsText;
+            auto remainingWallsMap = gameModel->getPlayersRemainingWalls();
+            for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
+                remainingWallsText += playerUsername + ": " + std::to_string(remainingWalls) + ", ";
+            }
 
             canvasPixmap->fill(Qt::white);
-            int dx = 10, dy = 100;
+
+            painter->drawText(QRect(0, 650, 200, 100), "You are player: " + QString::fromStdString(std::to_string(player)));
+            painter->drawText(QRect(0, 670, 200, 100), "Player: " + QString::fromStdString(std::to_string(*playerTurn)));
+            painter->drawText(QRect(0, 690, 500, 100), "Player: " + QString::fromStdString("Remaining walls: " + remainingWallsText.substr(0, remainingWallsText.size() - 2)));
+
+            int dx = 10, dy = 10;
             Qt::GlobalColor cellColor;
             for (auto i = 0; i < boardIntMatrix.size(); i++) {
                 for (auto j = 0; j < boardIntMatrix[i].size(); j++) {
                     int gridValue = boardIntMatrix[i][j];
 
                     switch (gridValue) {
-                    case freeCell:
+                    case freeCell: {
                         // draw a free cell
-                        {
+                        cellColor = Qt::darkGray;
+                        if (moveType == 0) {
+                            if (boardMoveIntMatrix[i][j] == correctMove) {
+                                cellColor = Qt::green;
+                            } else if (boardMoveIntMatrix[i][j] == incorrectMove) {
+                                cellColor = Qt::red;
+                            }
+                        }
+                        painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
+                        break;
+                    }
+
+                    case emptyQuoridor: {
+                        // don't draw anything otherwise
+                        if (moveType == 1) {
                             if (boardMoveIntMatrix[i][j] == correctMove) {
                                 cellColor = Qt::green;
                             } else if (boardMoveIntMatrix[i][j] == incorrectMove) {
                                 cellColor = Qt::red;
                             } else {
-                                cellColor = Qt::darkGray;
+                                cellColor = Qt::white;
                             }
-                            painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
-                            break;
+                            if (wallOrientation == WallOrientation::Vertical && j % 2 == 1) {
+                                painter->fillRect(dx + cellSize / 4, dy, cellSize / 2, cellSize, cellColor);
+                            } else if (wallOrientation == WallOrientation::Horizontal && i % 2 == 1) {
+                                painter->fillRect(dx, dy + cellSize / 4, cellSize, cellSize / 2, cellColor);
+                            }
                         }
-
-                        //                if (isClickValid(dx, dy) && isMoveValid(j, i)) {
-                        //                    // if mouse is pressed on this cell/quoridor
-                        //                    c.DrawText(dx, dy, "\u25A0");
-                        //                    handleCellClick(j, i);
-                        //                } else if (mouseInCell(dx, dy) && isPlayerTurn()) {
-                        //                    // if mouse is pressed on this cell/quoridor
-                        //                    c.DrawText(dx, dy, "\u25A0", isMoveValid(j, i) ? Color::Green : Color::Red);
-                        //                    c.DrawText(150, 185, "x: " + std::to_string(j) + ", y: " + std::to_string(i));
-                        //                } else {
-                        //                    c.DrawText(dx, dy, "\u25A1");
-                        //                }
-
-                    case emptyQuoridor: {
-                        if (boardMoveIntMatrix[i][j] == correctMove) {
-                            cellColor = Qt::green;
-                        } else if (boardMoveIntMatrix[i][j] == incorrectMove) {
-                            cellColor = Qt::red;
-                        } else {
-                            cellColor = Qt::darkGray;
-                        }
-                        painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
                         break;
                     }
-                        //                if (mouseInQuoridor(dx, dy) && mousePressed && isWallPlacementValid(j, i)) {
-                        //                    std::vector<int> direction = quoridorDirection[wallOrientation];
-                        //                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
-                        //                    handleWallAdd(j, i);
-                        //                } else if (mouseInQuoridor(dx, dy) && isPlayerTurn() && isWallPlacementValid(j, i)) {
-                        //                    std::vector<int> direction = quoridorDirection[wallOrientation];
-                        //                    c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1], Color::Green);
-                        //                }
-                        // don't draw anything otherwise
 
-                    case occupiedVerticalQuoridor:
+                    case occupiedVerticalQuoridor: {
+                        painter->fillRect(dx + cellSize / 4, dy, cellSize / 2, cellSize, cellColor);
+                        break;
+                    }
                     case occupiedHorizontalQuoridor: {
-                        //                std::vector<int> direction = quoridorDirection[gridValue - occupiedVerticalQuoridor];
-                        //                c.DrawBlockLine(dx - direction[0], dy - direction[1], dx + direction[0], dy + direction[1]);
+                        painter->fillRect(dx, dy + cellSize / 4, cellSize, cellSize / 2, cellColor);
                         break;
                     }
 
@@ -299,18 +293,10 @@ void QtVue::drawBoard()
                             painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
                             break;
                         }
-                        //                c.DrawText(dx, dy, "\u25A0", playerColors[gridValue - 1]);
 
                     default:
                         break;
                     }
-                    //            if (testBoard[i][j] == 1) {
-                    //                cellColor = Qt::red;
-                    //            } else {
-                    //                cellColor = Qt::black;
-                    //                painter->setPen(QPen(Qt::black, 5));
-                    //            }
-                    //            painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
 
                     dx += cellSize;
                 }
@@ -318,7 +304,7 @@ void QtVue::drawBoard()
                 dx = 10;
             }
             painter->setPen(QPen(Qt::black, 2));
-            painter->drawRect(0, 90, cellSize * (int)boardIntMatrix.size() + 20, cellSize * (int)boardIntMatrix.size() + 20);
+            painter->drawRect(0, 0, cellSize * (int)boardIntMatrix.size() + 20, cellSize * (int)boardIntMatrix.size() + 20);
         }
     }
     drawLabel->setPixmap(*canvasPixmap);
@@ -333,20 +319,34 @@ void QtVue::createTrainingPage()
     trainingPageLayout->addWidget(tLabel);
 
     // this is board
-    canvasPixmap = new QPixmap(QSize(800, 800));
+    canvasPixmap = new QPixmap(QSize(620, 740));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
     trainingPageLayout->addWidget(drawLabel);
 
     selectPawnMove = new QPushButton("Pawn");
     selectWallMove = new QPushButton("Wall");
+    selectHorizontalWall = new QPushButton("Horizontal");
+    selectVerticalWall = new QPushButton("Vertical");
     connect(selectPawnMove, SIGNAL(clicked()), this, SLOT(handlePawnButtonClicked()));
     connect(selectWallMove, SIGNAL(clicked()), this, SLOT(handleWallButtonClicked()));
+    connect(selectHorizontalWall, SIGNAL(clicked()), this, SLOT(handleHorizontalWallButtonClicked()));
+    connect(selectVerticalWall, SIGNAL(clicked()), this, SLOT(handleVerticalWallButtonClicked()));
     selectPawnMove->setCheckable(true);
     selectWallMove->setCheckable(true);
+    selectHorizontalWall->setCheckable(true);
+    selectVerticalWall->setCheckable(true);
     selectPawnMove->setChecked(true);
+    selectHorizontalWall->setChecked(true);
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
+    selectHorizontalWall->setVisible(false);
+    selectVerticalWall->setVisible(false);
+
+    auto selectWallOrientationLayout = new QHBoxLayout;
+    selectWallOrientationLayout->addWidget(selectHorizontalWall);
+    selectWallOrientationLayout->addWidget(selectVerticalWall);
+    trainingPageLayout->addLayout(selectWallOrientationLayout);
 
     auto selectPawnWallLayout = new QHBoxLayout;
     selectPawnWallLayout->addWidget(selectPawnMove);
@@ -361,6 +361,13 @@ void QtVue::createTrainingPage()
         trainingStartButton->setText("Restart");
         drawBoard();
     });
+
+    // JUST FOR TESTING
+    mainModel->createAiGame();
+    selectPawnMove->setVisible(true);
+    selectWallMove->setVisible(true);
+    trainingStartButton->setText("Restart");
+    drawBoard();
 
     trainingPageLayout->addWidget(trainingStartButton);
 
@@ -392,7 +399,7 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y - 25) / cellSize;
+    int i = (y - 10) / cellSize;
     int j = (x - 10) / cellSize;
     return {j, i};
 }
@@ -418,6 +425,18 @@ void QtVue::handleBoardMove(int x, int y)
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
+            } else if (moveType == 1) {
+                // TODO handle orientation
+                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation)) {
+                    int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
+                    int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
+                    boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
+                    boardMoveIntMatrix.at(cellCoordinates.y() + dy).at(cellCoordinates.x() + dx) = correctMove;
+                    boardMoveIntMatrix.at(cellCoordinates.y() + dy * 2).at(cellCoordinates.x() + dx * 2) = correctMove;
+
+                } else {
+                    boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
+                }
             }
             drawBoard();
         } catch (std::out_of_range &e) {
@@ -431,14 +450,36 @@ void QtVue::handlePawnButtonClicked()
         selectPawnMove->setChecked(true);
     }
     moveType = 0;
+    selectHorizontalWall->setVisible(false);
+    selectVerticalWall->setVisible(false);
     selectWallMove->setChecked(false);
 }
+
 void QtVue::handleWallButtonClicked()
 {
-
     if (!selectWallMove->isChecked()) {
         selectWallMove->setChecked(true);
     }
     moveType = 1;
+    selectHorizontalWall->setVisible(true);
+    selectVerticalWall->setVisible(true);
     selectPawnMove->setChecked(false);
+}
+
+void QtVue::handleHorizontalWallButtonClicked()
+{
+    if (!selectHorizontalWall->isChecked()) {
+        selectHorizontalWall->setChecked(true);
+    }
+    wallOrientation = WallOrientation::Horizontal;
+    selectVerticalWall->setChecked(false);
+}
+
+void QtVue::handleVerticalWallButtonClicked()
+{
+    if (!selectVerticalWall->isChecked()) {
+        selectVerticalWall->setChecked(true);
+    }
+    wallOrientation = WallOrientation::Vertical;
+    selectHorizontalWall->setChecked(false);
 }

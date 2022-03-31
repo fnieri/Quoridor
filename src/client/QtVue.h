@@ -51,6 +51,8 @@ private slots:
     void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);
     void handlePawnButtonClicked();
     void handleWallButtonClicked();
+    void handleHorizontalWallButtonClicked();
+    void handleVerticalWallButtonClicked();
 
 private:
     Ui::QtVue *ui;
@@ -77,8 +79,11 @@ private:
 
     QPushButton *selectPawnMove{};
     QPushButton *selectWallMove{};
+    QPushButton *selectHorizontalWall{};
+    QPushButton *selectVerticalWall{};
     int moveType = 0; // 0 = pawn, 1 = wall
     int player = -1, correctMove = 10, incorrectMove = -10;
+    WallOrientation wallOrientation = WallOrientation::Horizontal;
     const int *playerTurn;
     std::vector<std::vector<int>> boardIntMatrix;
     std::vector<std::vector<int>> boardMoveIntMatrix;
