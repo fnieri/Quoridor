@@ -70,9 +70,10 @@ private:
     ServerController *serverController;
     GameModel *gameModel;
 
-    int player = -1;
+    int player = -1, correctMove = 10, incorrectMove = -10;
     const int *playerTurn;
     std::vector<std::vector<int>> boardIntMatrix;
+    std::vector<std::vector<int>> boardMoveIntMatrix;
 
     void createLoginAndRegister();
     void createMainPage();

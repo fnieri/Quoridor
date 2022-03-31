@@ -201,6 +201,10 @@ void QtVue::drawBoard()
                 playerTurn = gameModel->getCurrentPlayer();
             }
             gameModel->updateBoardIntMatrix(boardIntMatrix);
+            if (boardMoveIntMatrix.empty()) {
+                boardMoveIntMatrix = boardIntMatrix;
+            }
+
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
             std::vector<Qt::GlobalColor> playerColors {Qt::red, Qt::green, Qt::blue, Qt::magenta};
@@ -220,7 +224,13 @@ void QtVue::drawBoard()
                     case freeCell:
                         // draw a free cell
                         {
-                            cellColor = Qt::darkGray;
+                            if (boardMoveIntMatrix[i][j] == correctMove) {
+                                cellColor = Qt::green;
+                            } else if (boardMoveIntMatrix[i][j] == incorrectMove) {
+                                cellColor = Qt::red;
+                            } else {
+                                cellColor = Qt::darkGray;
+                            }
                             painter->fillRect(dx, dy, cellSize, cellSize, cellColor);
                             break;
                         }
@@ -343,18 +353,18 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y-50) / cellSize;
+    int i = (y - 50) / cellSize;
     int j = (x - 10) / cellSize;
     return {i, j};
 }
 
 void QtVue::handleBoardPress(int x, int y)
 {
-//    int i = (y-50) / cellSize;
-//    int j = (x - 10) / cellSize;
-//
-//    std::cout << "i: " << i << " j: " << j << std::endl;
-//    std::cout << boardIntMatrix[i][j] << std::endl;
+    //    int i = (y-50) / cellSize;
+    //    int j = (x - 10) / cellSize;
+    //
+    //    std::cout << "i: " << i << " j: " << j << std::endl;
+    //    std::cout << boardIntMatrix[i][j] << std::endl;
 
     drawBoard();
 }
@@ -362,7 +372,13 @@ void QtVue::handleBoardPress(int x, int y)
 void QtVue::handleBoardMove(int x, int y)
 {
     auto cellCoordinates = getCellCoordinates(x, y);
-    auto gridValue = boardIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x());
-    
+    boardMoveIntMatrix = boardIntMatrix;
+    try {
+        if (gameModel->isMoveValid(cellCoordinates)) {
+            boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
+        } else {
+            boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
+        }
+    } catch (std::out_of_range &e) {
+    }
 }
-
