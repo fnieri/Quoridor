@@ -9,6 +9,7 @@ add_library(${PREFIX}_server
     AuthHandler.cpp
     RelationsHandler.cpp
     Database.cpp
+    Config.cpp
     EloCalculator.cpp
     )
 
@@ -20,6 +21,7 @@ target_link_libraries(${PREFIX}_server
         ${PREFIX}_client  # temporary, for GameModel
         bsoncxx_shared
         mongocxx_shared
+        stdc++fs
     PRIVATE
         cryptopp_shared
         pthread

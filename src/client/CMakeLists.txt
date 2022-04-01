@@ -17,6 +17,7 @@ add_library(${PREFIX}_client
         GameModel.cpp
         QtVue.cpp
         QtVue.ui
+        ../server/Config.cpp
         )
 
 

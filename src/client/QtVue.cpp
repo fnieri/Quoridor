@@ -51,6 +51,123 @@ QtVue::QtVue(QWidget *parent)
     serverController = new ServerController {&mainController};
 
     stackWidget = new QStackedWidget(this);
+    stackWidget->setStyleSheet(QLatin1String("QPushButton {\n"  //https://gist.github.com/espdev/4f1565b18497a42d317cdf2531b7ef05 the great majority of that styleSheet comes from the git user : "espdev"
+                                            "color: rgb(255, 255, 255);\n"
+                                            "background-color: rgb(8, 76, 102);\n"
+                                            "border-radius: 3px;\n"
+                                            "border:none;\n"
+                                            "border-bottom:3px solid rgb(0,0,0);\n"
+                                            "}\n"
+                                            "\n"
+                                            "QPushButton:hover {\n"
+                                            "background-color: rgb(20, 125, 164);\n"
+                                            "border-bottom:1px solid rgb(0,0,0);\n"
+                                            "}\n"
+                                            "\n"
+                                            "QPushButton:focus {\n"
+                                            "border-bottom:none;\n"
+                                            "border-top:2px solid rgb(0,0,0);\n"
+                                            "border-left:1px solid rgb(0,0,0);\n"
+                                            "border-right:1px solid rgb(0,0,0);\n"
+                                            "background-color: rgb(18, 111, 145);\n"
+                                            "}\n"
+                                            "\n"
+                                            "\n"
+                                            "QPushButton:pressed {\n"
+                                            "background-color: rgb(18, 111, 160);\n"
+                                            "border-top:3px solid rgb(0,0,0);\n"
+                                            "}\n"
+                                            "QTabWidget::pane {\n"
+                                            "    border: 1px solid black;\n"
+                                            "    background: white;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabWidget::tab-bar:top {\n"
+                                            "    top: 1px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabWidget::tab-bar:bottom {\n"
+                                            "    bottom: 1px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabWidget::tab-bar:left {\n"
+                                            "    right: 1px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabWidget::tab-bar:right {\n"
+                                            "    left: 1px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab {\n"
+                                            "    border: 1px solid black;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:selected {\n"
+                                            "    background: white;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:!selected {\n"
+                                            "    background: silver;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:!selected:hover {\n"
+                                            "    background: #999;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:top:!selected {\n"
+                                            "    margin-top: 3px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:bottom:!selected {\n"
+                                            "    margin-bottom: 3px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:top, QTabBar::tab:bottom {\n"
+                                            "    min-width: 8ex;\n"
+                                            "    margin-right: -1px;\n"
+                                            "    padding: 5px 10px 5px 10px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:top:selected {\n"
+                                            "    border-bottom-color: none;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:bottom:selected {\n"
+                                            "    border-top"
+                                                                    "-color: none;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:top:last, QTabBar::tab:bottom:last,\n"
+                                            "QTabBar::tab:top:only-one, QTabBar::tab:bottom:only-one {\n"
+                                            "    margin-right: 0;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:left:!selected {\n"
+                                            "    margin-right: 3px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:right:!selected {\n"
+                                            "    margin-left: 3px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:left, QTabBar::tab:right {\n"
+                                            "    min-height: 8ex;\n"
+                                            "    margin-bottom: -1px;\n"
+                                            "    padding: 10px 5px 10px 5px;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:left:selected {\n"
+                                            "    border-left-color: none;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:right:selected {\n"
+                                            "    border-right-color: none;\n"
+                                            "}\n"
+                                            "\n"
+                                            "QTabBar::tab:left:last, QTabBar::tab:right:last,\n"
+                                            "QTabBar::tab:left:only-one, QTabBar::tab:right:only-one {\n"
+                                            "    margin-bottom: 0;\n"
+                                            "}"));
     stackWidget->setGeometry(0, 0, this->width(), this->height());
 
     loginTabBar = new QTabWidget(this);
@@ -95,10 +212,16 @@ void QtVue::createLoginAndRegister()
     auto registerBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto loginTextEntry = new QLineEdit(this);
-    loginTextEntry->setPlaceholderText("Login");
+    loginTextEntry->setMinimumSize(QSize(311, 31));
+    loginTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
+                             ));
+    loginTextEntry->setPlaceholderText("Username");
     loginBoxLayout->addWidget(loginTextEntry);
 
     auto passwordTextEntry = new QLineEdit(this);
+    passwordTextEntry->setMinimumSize(QSize(311, 31));
+    passwordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
+                             ));
     passwordTextEntry->setPlaceholderText("Password");
     passwordTextEntry->setEchoMode(QLineEdit::Password);
     loginBoxLayout->addWidget(passwordTextEntry);
@@ -115,15 +238,24 @@ void QtVue::createLoginAndRegister()
     loginBoxLayout->addWidget(loginButton);
 
     auto registerUsernameTextEntry = new QLineEdit(this);
-    registerUsernameTextEntry->setPlaceholderText("Login");
+    registerUsernameTextEntry->setMinimumSize(QSize(311, 31));
+    registerUsernameTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
+                                                            ));
+    registerUsernameTextEntry->setPlaceholderText("Username");
     registerBoxLayout->addWidget(registerUsernameTextEntry);
 
     auto registerPasswordTextEntry = new QLineEdit(this);
+    registerPasswordTextEntry->setMinimumSize(QSize(311, 31));
+    registerPasswordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
+                                                           ));
     registerPasswordTextEntry->setPlaceholderText("Password");
     registerPasswordTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordTextEntry);
 
     auto registerPasswordConfirmTextEntry = new QLineEdit(this);
+    registerPasswordConfirmTextEntry->setMinimumSize(QSize(311, 31));
+    registerPasswordConfirmTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
+                                                                  ));
     registerPasswordConfirmTextEntry->setPlaceholderText("Confirm password");
     registerPasswordConfirmTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordConfirmTextEntry);
@@ -133,7 +265,7 @@ void QtVue::createLoginAndRegister()
     registerBoxLayout->addWidget(registerMessage);
 
     auto registerButton = new QPushButton("Register", this);
-    registerButton->setAutoDefault(true);
+    registerButton->setMinimumSize(QSize(311, 31));
     connect(registerButton, &QPushButton::clicked, this, [this, registerUsernameTextEntry, registerPasswordTextEntry, registerPasswordConfirmTextEntry]() {
         handleRegisterButtonClicked(registerUsernameTextEntry->text().toStdString(), registerPasswordTextEntry->text().toStdString(),
             registerPasswordConfirmTextEntry->text().toStdString());
@@ -568,9 +700,13 @@ void QtVue::createBoard(QBoxLayout *layout)
     layout->addWidget(drawLabel);
 
     selectPawnMove = new QPushButton("Pawn");
+    selectPawnMove->setMinimumSize(QSize(0, 31));
     selectWallMove = new QPushButton("Wall");
+    selectWallMove->setMinimumSize(QSize(0, 31));
     selectHorizontalWall = new QPushButton("Horizontal");
+    selectHorizontalWall->setMinimumSize(QSize(0, 31));
     selectVerticalWall = new QPushButton("Vertical");
+    selectVerticalWall->setMinimumSize(QSize(0, 31));
     connect(selectPawnMove, SIGNAL(clicked()), this, SLOT(handlePawnButtonClicked()));
     connect(selectWallMove, SIGNAL(clicked()), this, SLOT(handleWallButtonClicked()));
     connect(selectHorizontalWall, SIGNAL(clicked()), this, SLOT(handleHorizontalWallButtonClicked()));
@@ -604,6 +740,7 @@ void QtVue::createTrainingPage()
     selectWallMove->setVisible(false);
 
     auto trainingStartButton = new QPushButton("Start training with Jürgen the AI", this);
+    trainingStartButton->setMinimumSize(QSize(311, 31));
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
         isTrainingGame = true;
         mainModel->createAiGame();

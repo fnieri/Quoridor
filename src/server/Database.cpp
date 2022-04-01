@@ -27,7 +27,7 @@ DatabaseHandler::DatabaseHandler()
 
 std::mutex DatabaseHandler::m_dbMutex;
 
-void DatabaseHandler::quickTest()
+auto DatabaseHandler::quickTest() -> void
 {
     static std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -51,7 +51,7 @@ void DatabaseHandler::quickTest()
     std::cout << "Data sent" << std::endl;
 }
 
-bool DatabaseHandler::createAccount(const std::string &username, const std::string &password)
+auto DatabaseHandler::createAccount(const std::string &username, const std::string &password) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -83,7 +83,7 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
     return true;
 }
 
-bool DatabaseHandler::doesUsernameExist(const std::string &username)
+auto DatabaseHandler::doesUsernameExist(const std::string &username) -> bool
 {
     // get user collection
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
@@ -95,7 +95,7 @@ bool DatabaseHandler::doesUsernameExist(const std::string &username)
     return false;
 }
 
-bool DatabaseHandler::checkLogin(const std::string &username, const std::string &password)
+auto DatabaseHandler::checkLogin(const std::string &username, const std::string &password) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -118,7 +118,7 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
     return false;
 }
 
-void DatabaseHandler::deleteAccount(const std::string &username)
+auto DatabaseHandler::deleteAccount(const std::string &username) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -129,7 +129,7 @@ void DatabaseHandler::deleteAccount(const std::string &username)
     userColl.delete_one(document {} << "username" << username << finalize);
 }
 
-std::vector<std::string> DatabaseHandler::getFriends(const std::string &username)
+auto DatabaseHandler::getFriends(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -158,7 +158,7 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
     return friends;
 }
 
-std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::string &username)
+auto DatabaseHandler::getSentFriendRequests(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -184,7 +184,7 @@ std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::strin
     return sentFriendRequests;
 }
 
-std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::string &username)
+auto DatabaseHandler::getReceivedFriendRequests(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -211,7 +211,7 @@ std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::s
 }
 
 // TODO : may cause issues with threads
-void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
     // verification just in case but this should not be necessary if everything is implemented correctly
     std::vector<std::string> sentFriendRequests = getSentFriendRequests(friendRequestSender);
@@ -258,7 +258,7 @@ void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender
     }
 }
 
-void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -281,7 +281,7 @@ void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender
     }
 }
 
-void DatabaseHandler::addFriend(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::addFriend(const std::string &username, const std::string &friendUsername) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -309,7 +309,7 @@ void DatabaseHandler::addFriend(const std::string &username, const std::string &
     }
 }
 
-void DatabaseHandler::removeFriend(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::removeFriend(const std::string &username, const std::string &friendUsername) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -331,7 +331,7 @@ void DatabaseHandler::removeFriend(const std::string &username, const std::strin
 }
 
 // TODO : may cause issues with threads
-void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
 
     // check that they are not already friends. this verification should not be necessary if everything is implemented correctly
@@ -377,7 +377,7 @@ void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, 
     }
 }
 
-int DatabaseHandler::getELO(const std::string &username)
+auto DatabaseHandler::getELO(const std::string &username) -> int
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -393,7 +393,7 @@ int DatabaseHandler::getELO(const std::string &username)
     return elo;
 }
 
-void DatabaseHandler::setELO(const std::string &username, const int &elo)
+auto DatabaseHandler::setELO(const std::string &username, const int &elo) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -407,7 +407,7 @@ void DatabaseHandler::setELO(const std::string &username, const int &elo)
     }
 }
 
-std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId)
+auto DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId) -> std::string
 {
     std::string idStr1, idStr2;
     if (senderId < receiverId) {
@@ -421,7 +421,7 @@ std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid recei
     return chatId;
 }
 
-void DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message)
+auto DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -445,7 +445,7 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
     }
 }
 
-std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername) -> std::vector<std::vector<std::string>>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -485,7 +485,7 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::st
     return messages;
 }
 
-void DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId)
+auto DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -503,7 +503,7 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
     }
 }
 
-std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &gameId)
+auto DatabaseHandler::getMessages(const int &gameId) -> std::vector<std::vector<std::string>>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -533,7 +533,7 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &ga
     return messages;
 }
 
-void DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -548,7 +548,7 @@ void DatabaseHandler::addGameIdToUser(const std::string &username, const int &ga
     }
 }
 
-void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -561,7 +561,7 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
     }
 }
 
-void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -576,7 +576,7 @@ void DatabaseHandler::removeGameIdFromUser(const std::string &username, const in
     }
 }
 
-bool DatabaseHandler::isGameIdUsed(const int &gameId)
+auto DatabaseHandler::isGameIdUsed(const int &gameId) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -589,7 +589,7 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
     return false;
 }
 
-void DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig)
+auto DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -603,7 +603,7 @@ void DatabaseHandler::createGame(const int &gameId, const std::vector<std::strin
                                     << "board_config" << bsoncxx::from_json(boardConfig.dump()) << finalize);
 }
 
-json DatabaseHandler::getGameBoardConfig(const int &gameId)
+auto DatabaseHandler::getGameBoardConfig(const int &gameId) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -619,7 +619,7 @@ json DatabaseHandler::getGameBoardConfig(const int &gameId)
     return json();
 }
 
-json DatabaseHandler::getGameConfig(const int &gameId)
+auto DatabaseHandler::getGameConfig(const int &gameId) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -635,7 +635,7 @@ json DatabaseHandler::getGameConfig(const int &gameId)
     return json();
 }
 
-std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
+auto DatabaseHandler::getPlayerGameIds(const std::string &username) -> std::vector<int>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -658,7 +658,7 @@ std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
     return std::vector<int>();
 }
 
-std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &username)
+auto DatabaseHandler::getPlayerInviteGameIds(const std::string &username) -> std::vector<int>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -679,7 +679,7 @@ std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &user
     return std::vector<int>();
 }
 
-void DatabaseHandler::deleteGame(const int &gameId)
+auto DatabaseHandler::deleteGame(const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -701,7 +701,7 @@ void DatabaseHandler::deleteGame(const int &gameId)
     }
 }
 
-void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig)
+auto DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -710,7 +710,7 @@ void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardCon
         document {} << "$set" << open_document << "board_config" << bsoncxx::from_json(boardConfig.dump()) << close_document << finalize);
 }
 
-json DatabaseHandler::getLeaderboard(const int &nPlayers)
+auto DatabaseHandler::getLeaderboard(const int &nPlayers) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
