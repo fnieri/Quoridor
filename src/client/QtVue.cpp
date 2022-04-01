@@ -606,6 +606,12 @@ void QtVue::updateChats()
             for (const auto &entry : *chat) {
                 auto msg = entry.sender + ": " + entry.sentMessage;
                 auto qmsg = QString::fromStdString(msg);
+                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
+                /* auto listItem = new QListWidgetItem {qmsg}; */
+                /* if (entry.sender == *mainModel->getUsername()) { */
+                /*     listItem->setTextAlignment(Qt::AlignRight); */
+                /* } */
+                /* chatHistLW->addItem(listItem); */
                 chatHistLW->addItem(qmsg);
             }
         }
