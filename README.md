@@ -54,12 +54,12 @@ Bref c'est une perte de temps de faire tourner la base de donnée en local au NO
 ## Execution client
 
 ### IMPORTANT !
-Avant d'exécuter le client il est nécessaire de mettre la taille de la police du texte du terminal à 11 ou moins.
+Avant d'exécuter le client en mode no gui, il est nécessaire de mettre la taille de la police du texte du terminal à 11 ou moins. Aussi, pour assurer la bonne exécution du programme, faites tourner le client une fois que le serveur est actif.
 
 C'est mieux de faire tourner le client une fois que le serveur est actif (ou sinon ça ne marche pas).
 
 ```bash
-./build/bin/client
+./build/bin/client [--no-gui]
 ```
 
 # Compilation avec Docker (plus facile)
