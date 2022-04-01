@@ -51,123 +51,124 @@ QtVue::QtVue(QWidget *parent)
     serverController = new ServerController {&mainController};
 
     stackWidget = new QStackedWidget(this);
-    stackWidget->setStyleSheet(QLatin1String("QPushButton {\n"  //https://gist.github.com/espdev/4f1565b18497a42d317cdf2531b7ef05 the great majority of that styleSheet comes from the git user : "espdev"
-                                            "color: rgb(255, 255, 255);\n"
-                                            "background-color: rgb(8, 76, 102);\n"
-                                            "border-radius: 3px;\n"
-                                            "border:none;\n"
-                                            "border-bottom:3px solid rgb(0,0,0);\n"
-                                            "}\n"
-                                            "\n"
-                                            "QPushButton:hover {\n"
-                                            "background-color: rgb(20, 125, 164);\n"
-                                            "border-bottom:1px solid rgb(0,0,0);\n"
-                                            "}\n"
-                                            "\n"
-                                            "QPushButton:focus {\n"
-                                            "border-bottom:none;\n"
-                                            "border-top:2px solid rgb(0,0,0);\n"
-                                            "border-left:1px solid rgb(0,0,0);\n"
-                                            "border-right:1px solid rgb(0,0,0);\n"
-                                            "background-color: rgb(18, 111, 145);\n"
-                                            "}\n"
-                                            "\n"
-                                            "\n"
-                                            "QPushButton:pressed {\n"
-                                            "background-color: rgb(18, 111, 160);\n"
-                                            "border-top:3px solid rgb(0,0,0);\n"
-                                            "}\n"
-                                            "QTabWidget::pane {\n"
-                                            "    border: 1px solid black;\n"
-                                            "    background: white;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabWidget::tab-bar:top {\n"
-                                            "    top: 1px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabWidget::tab-bar:bottom {\n"
-                                            "    bottom: 1px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabWidget::tab-bar:left {\n"
-                                            "    right: 1px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabWidget::tab-bar:right {\n"
-                                            "    left: 1px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab {\n"
-                                            "    border: 1px solid black;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:selected {\n"
-                                            "    background: white;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:!selected {\n"
-                                            "    background: silver;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:!selected:hover {\n"
-                                            "    background: #999;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:top:!selected {\n"
-                                            "    margin-top: 3px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:bottom:!selected {\n"
-                                            "    margin-bottom: 3px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:top, QTabBar::tab:bottom {\n"
-                                            "    min-width: 8ex;\n"
-                                            "    margin-right: -1px;\n"
-                                            "    padding: 5px 10px 5px 10px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:top:selected {\n"
-                                            "    border-bottom-color: none;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:bottom:selected {\n"
-                                            "    border-top"
-                                                                    "-color: none;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:top:last, QTabBar::tab:bottom:last,\n"
-                                            "QTabBar::tab:top:only-one, QTabBar::tab:bottom:only-one {\n"
-                                            "    margin-right: 0;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:left:!selected {\n"
-                                            "    margin-right: 3px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:right:!selected {\n"
-                                            "    margin-left: 3px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:left, QTabBar::tab:right {\n"
-                                            "    min-height: 8ex;\n"
-                                            "    margin-bottom: -1px;\n"
-                                            "    padding: 10px 5px 10px 5px;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:left:selected {\n"
-                                            "    border-left-color: none;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:right:selected {\n"
-                                            "    border-right-color: none;\n"
-                                            "}\n"
-                                            "\n"
-                                            "QTabBar::tab:left:last, QTabBar::tab:right:last,\n"
-                                            "QTabBar::tab:left:only-one, QTabBar::tab:right:only-one {\n"
-                                            "    margin-bottom: 0;\n"
-                                            "}"));
+    stackWidget->setStyleSheet(QLatin1String("QPushButton {\n" // https://gist.github.com/espdev/4f1565b18497a42d317cdf2531b7ef05 the great majority of that
+                                                               // styleSheet comes from the git user : "espdev"
+                                             "color: rgb(255, 255, 255);\n"
+                                             "background-color: rgb(8, 76, 102);\n"
+                                             "border-radius: 3px;\n"
+                                             "border:none;\n"
+                                             "border-bottom:3px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "\n"
+                                             "QPushButton:hover {\n"
+                                             "background-color: rgb(20, 125, 164);\n"
+                                             "border-bottom:1px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "\n"
+                                             "QPushButton:focus {\n"
+                                             "border-bottom:none;\n"
+                                             "border-top:2px solid rgb(0,0,0);\n"
+                                             "border-left:1px solid rgb(0,0,0);\n"
+                                             "border-right:1px solid rgb(0,0,0);\n"
+                                             "background-color: rgb(18, 111, 145);\n"
+                                             "}\n"
+                                             "\n"
+                                             "\n"
+                                             "QPushButton:pressed {\n"
+                                             "background-color: rgb(18, 111, 160);\n"
+                                             "border-top:3px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "QTabWidget::pane {\n"
+                                             "    border: 1px solid black;\n"
+                                             "    background: white;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:top {\n"
+                                             "    top: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:bottom {\n"
+                                             "    bottom: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:left {\n"
+                                             "    right: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:right {\n"
+                                             "    left: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab {\n"
+                                             "    border: 1px solid black;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:selected {\n"
+                                             "    background: white;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:!selected {\n"
+                                             "    background: silver;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:!selected:hover {\n"
+                                             "    background: #999;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:!selected {\n"
+                                             "    margin-top: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:bottom:!selected {\n"
+                                             "    margin-bottom: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top, QTabBar::tab:bottom {\n"
+                                             "    min-width: 8ex;\n"
+                                             "    margin-right: -1px;\n"
+                                             "    padding: 5px 10px 5px 10px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:selected {\n"
+                                             "    border-bottom-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:bottom:selected {\n"
+                                             "    border-top"
+                                             "-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:last, QTabBar::tab:bottom:last,\n"
+                                             "QTabBar::tab:top:only-one, QTabBar::tab:bottom:only-one {\n"
+                                             "    margin-right: 0;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:!selected {\n"
+                                             "    margin-right: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:right:!selected {\n"
+                                             "    margin-left: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left, QTabBar::tab:right {\n"
+                                             "    min-height: 8ex;\n"
+                                             "    margin-bottom: -1px;\n"
+                                             "    padding: 10px 5px 10px 5px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:selected {\n"
+                                             "    border-left-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:right:selected {\n"
+                                             "    border-right-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:last, QTabBar::tab:right:last,\n"
+                                             "QTabBar::tab:left:only-one, QTabBar::tab:right:only-one {\n"
+                                             "    margin-bottom: 0;\n"
+                                             "}"));
     stackWidget->setGeometry(0, 0, this->width(), this->height());
 
     loginTabBar = new QTabWidget(this);
@@ -213,15 +214,13 @@ void QtVue::createLoginAndRegister()
 
     auto loginTextEntry = new QLineEdit(this);
     loginTextEntry->setMinimumSize(QSize(311, 31));
-    loginTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-                             ));
+    loginTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     loginTextEntry->setPlaceholderText("Username");
     loginBoxLayout->addWidget(loginTextEntry);
 
     auto passwordTextEntry = new QLineEdit(this);
     passwordTextEntry->setMinimumSize(QSize(311, 31));
-    passwordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-                             ));
+    passwordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     passwordTextEntry->setPlaceholderText("Password");
     passwordTextEntry->setEchoMode(QLineEdit::Password);
     loginBoxLayout->addWidget(passwordTextEntry);
@@ -240,23 +239,20 @@ void QtVue::createLoginAndRegister()
 
     auto registerUsernameTextEntry = new QLineEdit(this);
     registerUsernameTextEntry->setMinimumSize(QSize(311, 31));
-    registerUsernameTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-                                                            ));
+    registerUsernameTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     registerUsernameTextEntry->setPlaceholderText("Username");
     registerBoxLayout->addWidget(registerUsernameTextEntry);
 
     auto registerPasswordTextEntry = new QLineEdit(this);
     registerPasswordTextEntry->setMinimumSize(QSize(311, 31));
-    registerPasswordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-                                                           ));
+    registerPasswordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     registerPasswordTextEntry->setPlaceholderText("Password");
     registerPasswordTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordTextEntry);
 
     auto registerPasswordConfirmTextEntry = new QLineEdit(this);
     registerPasswordConfirmTextEntry->setMinimumSize(QSize(311, 31));
-    registerPasswordConfirmTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"
-                                                                  ));
+    registerPasswordConfirmTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     registerPasswordConfirmTextEntry->setPlaceholderText("Confirm password");
     registerPasswordConfirmTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordConfirmTextEntry);
@@ -560,12 +556,13 @@ void QtVue::createBoardChat(QBoxLayout *layout)
     messageLE->setPlaceholderText("Aa");
     auto messageLEAction = [this, messageLE]() {
         auto text = messageLE->text().toStdString();
-        messageLE->clear();
-        if (!text.empty() && gameModel) {
+        std::cout << "Sending message: " << text << std::endl;
+        if (!text.empty()) {
             std::vector<std::string> playersInGame = gameModel->getPlayersNames();
             serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
             serverController->fetchGameMessages(currentGameId);
         }
+        messageLE->clear();
     };
     connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
     chatL->addWidget(messageLE);
@@ -953,28 +950,15 @@ void QtVue::updateChats()
 
 void QtVue::updateGameChat()
 {
-    //    if (mainModel->getHasFriends()) {
-    //        auto userItem = friendListLW->currentItem();
-    //        if (userItem) {
-    //            auto user = userItem->text().toStdString();
-    //            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
-    //            auto chat = mainModel->getChatWith(user);
-    //
-    //            chatHistLW->clear();
-    //
-    //            for (const auto &entry : *chat) {
-    //                auto msg = entry.sender + ": " + entry.sentMessage;
-    //                auto qmsg = QString::fromStdString(msg);
-    //                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
-    //                /* auto listItem = new QListWidgetItem {qmsg}; */
-    //                /* if (entry.sender == *mainModel->getUsername()) { */
-    //                /*     listItem->setTextAlignment(Qt::AlignRight); */
-    //                /* } */
-    //                /* chatHistLW->addItem(listItem); */
-    //                chatHistLW->addItem(qmsg);
-    //            }
-    //        }
-    //    }
+    if (mainModel->isInGame()) {
+        auto gameChat = mainModel->getGameMessages();
+        gameChatHistLW->clear();
+        for (const auto &entry : *gameChat) {
+            auto msg = entry.sender + ": " + entry.sentMessage;
+            auto qmsg = QString::fromStdString(msg);
+            gameChatHistLW->addItem(qmsg);
+        }
+    }
 }
 
 void QtVue::updateNotifications()
@@ -1136,6 +1120,7 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
     currentGameId = gameId;
+    gameChatHistLW->clear();
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
 

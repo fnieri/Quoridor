@@ -171,12 +171,17 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
     notifyObservers(QuoridorEvent::ChatsModified);
 }
 
-// auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void
-//{
-//     m_chats[riendUsername]->push_back({friendUsername, message});
-// notifyObservers(QuoridorEvent::GameChatUpdated);
-//
-// }
+auto MainModel::addGameMessage(const Message &msg) -> void
+{
+    m_gameChats->push_back(msg);
+
+    notifyObservers(QuoridorEvent::GameChatUpdated);
+}
+
+auto MainModel::getGameMessages() -> const std::vector<Message> *
+{
+    return m_gameChats.get();
+}
 
 auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> &leaderboard) -> void
 {
@@ -231,6 +236,7 @@ auto MainModel::isInGame() const noexcept -> bool
 auto MainModel::loadGame(const std::string &boardConfig) noexcept -> void
 {
     m_currentGame = std::make_shared<GameModel>(boardConfig);
+    m_gameChats->clear();
     notifyObservers(QuoridorEvent::GameUpdated);
 }
 
