@@ -50,31 +50,10 @@ bool TerminalVue::isWallPlacementValid(int x, int y)
 
 auto TerminalVue::createCanvas()
 {
-    auto mainScreenButton = Button(
-        "Return to main screen",
-        [&]() {
-            serverController->fetchGameIds();
-            /* mainModel->unloadGame(); */
-            homeTabIndex = 0;
-        },
-        &buttonOption);
-
-    return Renderer([&, mainScreenButton] {
+    return Renderer([&] {
         if (gameModel) {
             if (gameModel->hasWinner()) {
-                /* return text("Player " + gameModel->getWinner() + " has won!"); */
-                return vbox({
-                    hbox({
-                        filler(),
-                        text("Player " + gameModel->getWinner() + " has won!"),
-                        filler(),
-                    }),
-                    hbox({
-                        filler(),
-                        mainScreenButton->Render(),
-                        filler(),
-                    }),
-                });
+                return text("Player " + gameModel->getWinner() + " has won!");
             }
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
@@ -620,6 +599,7 @@ void TerminalVue::userCreateGame()
 void TerminalVue::joinGame()
 {
     if (!gameListId.empty()) {
+        /* std::cerr << "Game selected : " << gameListId[gameSelected] << " with index " << gameSelected << std::endl; */
         serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
         homeTabIndex = 2;
         rightSize = 40;
@@ -695,6 +675,8 @@ void TerminalVue::updateGameIds()
     //                serverController->fetchGameIds();
 
     gameList.clear();
+    gameListId.clear();
+
     auto gameIds = mainModel->getGameIDs();
 
     for (auto &i : *gameIds) {
