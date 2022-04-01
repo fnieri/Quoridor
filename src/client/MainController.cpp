@@ -123,7 +123,10 @@ void MainController::processChatBox(const std::string &serRequest)
         m_mainModel->setFriendNotification(true);
     }
     if (request.at("action") == toJsonString(ChatInteraction::IN_GAME_MESSAGE)) {
+        Message msg {request.at("sender"), request.at("message")};
+        m_mainModel->addGameMessage(msg);
         //        m_mainModel->addGameMessage(request.at("sender"), request.at("receivers").get<std::vector<std::string>>(), request.at("message"));
+        m_mainModel->setGameNotification(true);
     }
 }
 

@@ -210,12 +210,13 @@ auto GameModel::playerSurrended(const std::string &p_username) -> void
         m_winner = m_players.front()->getUsername();
     }
 }
+
 auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix, int playerIdx) -> void
 {
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
               occupiedHorizontalQuoridor = 7;
     boardIntMatrix.clear();
-    if (m_players.empty())
+    if (m_players.empty() || hasWinner())
         return;
 
     auto finishLine = m_players.at(playerIdx)->getFinishLine();

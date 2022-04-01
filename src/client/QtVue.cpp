@@ -289,6 +289,7 @@ void QtVue::createGamePage()
     quitButton = new QPushButton("Exit to main menu", this);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(handleQuitGameButtonClicked()));
     surrenderButton = new QPushButton("Surrender", this);
+    surrenderButton->setVisible(false);
     connect(surrenderButton, SIGNAL(clicked()), this, SLOT(handleSurrenderButtonClicked()));
     gameChatHistLW = new QListWidget {};
 
@@ -556,12 +557,12 @@ void QtVue::createBoardChat(QBoxLayout *layout)
     messageLE->setPlaceholderText("Aa");
     auto messageLEAction = [this, messageLE]() {
         auto text = messageLE->text().toStdString();
-        messageLE->clear();
-        if (!text.empty() && gameModel) {
+        if (!text.empty()) {
             std::vector<std::string> playersInGame = gameModel->getPlayersNames();
             serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
             serverController->fetchGameMessages(currentGameId);
         }
+        messageLE->clear();
     };
     connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
     chatL->addWidget(messageLE);
@@ -574,7 +575,7 @@ void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
     canvasPixmap->fill(Qt::white);
-    if (mainModel->isGameStarted() && gameModel) {
+    if (mainModel->isInGame() && gameModel) {
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 300, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
             selectHorizontalWall->setVisible(false);
@@ -890,6 +891,7 @@ void QtVue::updateRelations()
 
 void QtVue::updateGame()
 {
+    quitButton->setVisible(false);
     selectPawnMove->setVisible(true);
     selectWallMove->setVisible(true);
     surrenderButton->setVisible(true);
@@ -949,28 +951,15 @@ void QtVue::updateChats()
 
 void QtVue::updateGameChat()
 {
-    //    if (mainModel->getHasFriends()) {
-    //        auto userItem = friendListLW->currentItem();
-    //        if (userItem) {
-    //            auto user = userItem->text().toStdString();
-    //            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
-    //            auto chat = mainModel->getChatWith(user);
-    //
-    //            chatHistLW->clear();
-    //
-    //            for (const auto &entry : *chat) {
-    //                auto msg = entry.sender + ": " + entry.sentMessage;
-    //                auto qmsg = QString::fromStdString(msg);
-    //                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
-    //                /* auto listItem = new QListWidgetItem {qmsg}; */
-    //                /* if (entry.sender == *mainModel->getUsername()) { */
-    //                /*     listItem->setTextAlignment(Qt::AlignRight); */
-    //                /* } */
-    //                /* chatHistLW->addItem(listItem); */
-    //                chatHistLW->addItem(qmsg);
-    //            }
-    //        }
-    //    }
+    if (mainModel->isInGame()) {
+        auto gameChat = mainModel->getGameMessages();
+        gameChatHistLW->clear();
+        for (const auto &entry : *gameChat) {
+            auto msg = entry.sender + ": " + entry.sentMessage;
+            auto qmsg = QString::fromStdString(msg);
+            gameChatHistLW->addItem(qmsg);
+        }
+    }
 }
 
 void QtVue::updateNotifications()
@@ -1132,14 +1121,14 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
     currentGameId = gameId;
+    gameChatHistLW->clear();
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
 
     auto boardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     createBoard(boardLayout);
     boardLayout->addWidget(surrenderButton);
-    surrenderButton->setVisible(false);
-    quitButton->setVisible(false);
+//    quitButton->setVisible(false);
     boardLayout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);
     boardWidget->setLayout(boardLayout);
@@ -1159,6 +1148,13 @@ void QtVue::handleQuitGameButtonClicked()
 {
     gameStack->removeWidget(gameStack->currentWidget());
     serverController->fetchGameIds();
+    if (gameModel && gameModel->hasWinner()) {
+        serverController->fetchGameIds();
+        mainModel->unloadGame();
+        gameModel = nullptr;
+    } else {
+        serverController->quitGame(currentGameId, *mainModel->getUsername());
+    }
 }
 
 void QtVue::handleSurrenderButtonClicked()

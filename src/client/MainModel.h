@@ -43,6 +43,7 @@ private:
     std::shared_ptr<std::map<int, std::vector<std::string>>> m_gameIDs = std::make_shared<std::map<int, std::vector<std::string>>>();
 
     std::map<std::string, SPtrToVec<Message>> m_chats;
+    SPtrToVec<Message> m_gameChats = std::make_shared<std::vector<Message>>();
 
     // Current game
     std::shared_ptr<GameModel> m_currentGame;
@@ -120,11 +121,7 @@ public:
      */
     auto addFriendMessage(const std::string &, const Message &) -> void;
 
-    /**
-     * @param username friend participating in the chat
-     * @param message content of the message
-     */
-    //    auto addGameMessage(const std::string &, const std::vector<std::string> &, const std::string &) -> void;
+    auto addGameMessage(const Message &msg) -> void;
 
     auto setLeaderboard(const std::vector<std::pair<std::string, float>> &) -> void;
 
@@ -137,4 +134,5 @@ public:
 
     auto processGameAction(const std::string &) -> void;
     auto playerSurrended(const std::string &username) -> void;
+    auto getGameMessages() -> const std::vector<Message> *;
 };
