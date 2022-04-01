@@ -215,15 +215,147 @@ void QtVue::createGamePage()
 
 void QtVue::createFriendsPage()
 {
-    auto friendsPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto friendsPageLayout = new QHBoxLayout {};
 
-    auto tLabel = new QLabel("friends page");
-    friendsPageLayout->addWidget(tLabel);
+    auto titleFont = QFont {};
+    titleFont.setBold(true);
 
+    auto getTitle = [titleFont](const std::string &title) {
+        auto label = new QLabel {QString::fromStdString(title)};
+        label->setAlignment(Qt::AlignHCenter);
+        label->setFont(titleFont);
+        return label;
+    };
+
+    // Friend list
+    auto friendListW = new QWidget {};
+    auto friendListL = new QVBoxLayout {};
+
+    auto friendListTitle = getTitle("Friend list");
+    friendListL->addWidget(friendListTitle);
+
+    friendListLW = new QListWidget {};
+    connect(friendListLW, &QListWidget::itemClicked, this, &QtVue::updateChatEntries);
+    friendListL->addWidget(friendListLW);
+
+    auto remFriendButton = new QPushButton {"Remove friend"};
+    auto remFriendAction = [this]() {
+        auto user = friendListLW->currentItem()->text().toStdString();
+        serverController->removeFriend(*mainModel->getUsername(), user);
+        serverController->fetchFriends();
+    };
+    connect(remFriendButton, &QPushButton::clicked, this, remFriendAction);
+    friendListL->addWidget(remFriendButton);
+
+    friendListW->setLayout(friendListL);
+    friendsPageLayout->addWidget(friendListW);
+
+    // Central chat
+    auto chatW = new QWidget {};
+    auto chatL = new QVBoxLayout {};
+
+    chatHistLW = new QListWidget {};
+    /* chatHistLW->setWordWrap(true); */
+    chatL->addWidget(chatHistLW);
+
+    auto messageLE = new QLineEdit {};
+    messageLE->setPlaceholderText("Aa");
+    auto messageLEAction = [this, messageLE]() {
+        auto receiver = friendListLW->currentItem()->text().toStdString();
+        auto text = messageLE->text().toStdString();
+        messageLE->clear();
+        if (!text.empty()) {
+            serverController->sendFriendMessage(*mainModel->getUsername(), receiver, text);
+            serverController->fetchFriendMessages(*mainModel->getUsername(), receiver);
+        }
+    };
+    connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
+    chatL->addWidget(messageLE);
+
+    chatW->setLayout(chatL);
+    friendsPageLayout->addWidget(chatW);
+
+    // Right hand side friends actions (FA)
+    auto FAWidget = new QWidget {};
+    auto FALayout = new QVBoxLayout {};
+
+    auto FARecTitle = getTitle("Invitations received");
+    FALayout->addWidget(FARecTitle);
+
+    friendInvLW = new QListWidget {};
+    FALayout->addWidget(friendInvLW);
+
+    // Decline and accept buttons
+    auto invRespW = new QWidget {};
+    auto invRespL = new QHBoxLayout {};
+
+    auto decInvB = new QPushButton {"Decline"};
+    auto decInvBAction = [this]() {
+        auto user = friendInvLW->currentItem()->text().toStdString();
+        serverController->declineFriendRequest(user, *mainModel->getUsername());
+        serverController->fetchFriendRequestsReceived();
+        serverController->fetchFriends();
+    };
+    connect(decInvB, &QPushButton::clicked, this, decInvBAction);
+    invRespL->addWidget(decInvB);
+
+    auto accInvB = new QPushButton {"Accept"};
+    auto accInvBAction = [this]() {
+        auto user = friendInvLW->currentItem()->text().toStdString();
+        serverController->acceptFriendRequest(user, *mainModel->getUsername());
+        serverController->fetchFriendRequestsReceived();
+        serverController->fetchFriends();
+    };
+    connect(accInvB, &QPushButton::clicked, this, accInvBAction);
+    invRespL->addWidget(accInvB);
+
+    invRespW->setLayout(invRespL);
+    FALayout->addWidget(invRespW);
+
+    auto FASentTitle = getTitle("Invitations sent");
+    FALayout->addWidget(FASentTitle);
+
+    friendSentLW = new QListWidget {};
+    FALayout->addWidget(friendSentLW);
+
+    auto sendInvLE = new QLineEdit {};
+    sendInvLE->setPlaceholderText("Aa");
+    FALayout->addWidget(sendInvLE);
+
+    auto sendInvB = new QPushButton {"Send invitation"};
+    auto sendInvBAction = [this, sendInvLE]() {
+        serverController->sendFriendRequest(*mainModel->getUsername(), sendInvLE->text().toStdString());
+        serverController->fetchFriendRequestsSent();
+        sendInvLE->clear();
+    };
+    connect(sendInvB, &QPushButton::clicked, this, sendInvBAction);
+    FALayout->addWidget(sendInvB);
+
+    FAWidget->setLayout(FALayout);
+    friendsPageLayout->addWidget(FAWidget);
+
+    // Tab page
     auto friendsPage = new QWidget(this);
     friendsPage->setLayout(friendsPageLayout);
 
     mainTabBar->addTab(friendsPage, "Friends");
+}
+
+void QtVue::updateChatEntries()
+{
+    if (friendListLW->count() > 0) {
+        auto user = friendListLW->currentItem()->text().toStdString();
+        serverController->fetchFriendMessages(*mainModel->getUsername(), user);
+        auto chat = mainModel->getChatWith(user);
+
+        chatHistLW->clear();
+
+        for (const auto &entry : *chat) {
+            auto msg = entry.sender + ": " + entry.sentMessage;
+            auto qmsg = QString::fromStdString(msg);
+            chatHistLW->addItem(qmsg);
+        }
+    }
 }
 
 void QtVue::createLeaderboardPage()
@@ -234,8 +366,22 @@ void QtVue::createLeaderboardPage()
     leaderboardLayout->setHorizontalHeaderLabels({"Username", "ELO"});
     leaderboardPageLayout->addWidget(leaderboardLayout);
 
+    auto eloWidget = new QWidget {};
+    auto eloLayout = new QHBoxLayout {eloWidget};
+
+    auto preELOText = new QLabel("Your current ELO: ");
+
+    auto userEloFont = QFont {};
+    userEloFont.setBold(true);
+
     userEloLabel = new QLabel("");
-    leaderboardPageLayout->addWidget(userEloLabel);
+    userEloLabel->setFont(userEloFont);
+
+    eloLayout->addWidget(preELOText);
+    eloLayout->addWidget(userEloLabel);
+    eloLayout->addStretch();
+
+    leaderboardPageLayout->addWidget(eloWidget);
 
     auto refreshButton = new QPushButton {"Refresh"};
     connect(refreshButton, &QPushButton::clicked, this, [&]() { serverController->fetchLeaderboard(); });
@@ -457,7 +603,7 @@ void QtVue::update(QuoridorEvent event)
     case QuoridorEvent::RelationsModified:
         relationsUpdated = true;
         break;
-    case QuoridorEvent::ChatsUpdated:
+    case QuoridorEvent::ChatsModified:
         chatsUpdated = true;
         break;
     case QuoridorEvent::FriendsUpdated:
@@ -476,8 +622,8 @@ void QtVue::update(QuoridorEvent event)
 
 void QtVue::updateELO()
 {
-    auto userElo = mainModel->getELO();
-    userEloLabel->setText(QString::fromStdString(std::to_string(*userElo)));
+    auto userElo = static_cast<int>(*mainModel->getELO());
+    userEloLabel->setText(QString::fromStdString(std::to_string(userElo)));
 }
 
 void QtVue::updateLeaderboard()
@@ -488,7 +634,7 @@ void QtVue::updateLeaderboard()
 
     for (auto i = 0; i < lb->size(); ++i) {
         auto username = lb->at(i).first;
-        auto elo = std::to_string(lb->at(i).second);
+        auto elo = std::to_string(static_cast<int>(lb->at(i).second));
 
         auto usernameItem = new QTableWidgetItem {username.c_str()};
         auto eloItem = new QTableWidgetItem {elo.c_str()};
@@ -525,6 +671,20 @@ void QtVue::updateFriends()
 
 void QtVue::updateRelations()
 {
+    auto friendList = mainModel->getFriendList();
+    auto friendInv = mainModel->getFriendRequestsReceived();
+    auto friendSent = mainModel->getFriendRequestsSent();
+
+    auto updateRel = [](QListWidget *w, const std::vector<std::string> *l) {
+        w->clear();
+        for (auto &entry : *l) {
+            w->addItem(QString::fromStdString(entry));
+        }
+    };
+
+    updateRel(friendListLW, friendList);
+    updateRel(friendInvLW, friendInv);
+    updateRel(friendSentLW, friendSent);
 }
 
 void QtVue::updateGame()
@@ -561,14 +721,14 @@ void QtVue::updateGameIds()
 
 void QtVue::updateChats()
 {
-    std::cout << "Updating chats" << std::endl;
+    updateChatEntries();
 }
 
 void QtVue::createMainPage()
 {
     createGamePage();
-    createLeaderboardPage();
     createFriendsPage();
+    createLeaderboardPage();
 
     stackWidget->addWidget(mainTabBar);
     stackWidget->setCurrentWidget(mainTabBar);

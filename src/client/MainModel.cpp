@@ -99,43 +99,59 @@ auto MainModel::setFriendList(const std::vector<std::string> &friendList) -> voi
 {
     updatePtrValue(m_friendList, friendList);
     updateFriendsChatMap();
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::addFriend(const std::string &friendUsername) -> void
 {
     m_friendList->push_back(friendUsername);
     updateFriendsChatMap();
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::setFriendRequestsSent(const std::vector<std::string> &friendRequestsSent) -> void
 {
     updatePtrValue(m_friendRequestsSent, friendRequestsSent);
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::addFriendRequestSent(const std::string &friendRequestSent) -> void
 {
     m_friendList->push_back(friendRequestSent);
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::setFriendRequestsReceived(const std::vector<std::string> &friendRequestsReceived) -> void
 {
     updatePtrValue(m_friendRequestsReceived, friendRequestsReceived);
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::addFriendRequestReceived(const std::string &friendRequestReceived) -> void
 {
     m_friendRequestsReceived->push_back(friendRequestReceived);
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::refuseFriendRequest(const std::string &notFriendUsername) -> void
 {
     m_friendRequestsReceived->erase(
         std::remove(m_friendRequestsReceived->begin(), m_friendRequestsReceived->end(), notFriendUsername), m_friendRequestsReceived->end());
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::removeFriend(const std::string &friendToRemove) -> void
 {
     m_friendList->erase(std::remove(m_friendList->begin(), m_friendList->end(), friendToRemove), m_friendList->end());
+
+    notifyObservers(QuoridorEvent::RelationsModified);
 }
 
 auto MainModel::addFriendMessage(const std::string &friendUsername, const Message &msg) -> void
@@ -144,7 +160,9 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
         m_chats.insert({friendUsername, std::make_shared<std::vector<Message>>()});
     }
     m_chats.at(friendUsername)->push_back(msg);
-    notifyObservers(QuoridorEvent::ChatsUpdated);
+
+    notifyObservers(QuoridorEvent::ChatsModified);
+//    notifyObservers(QuoridorEvent::ChatsUpdated);
 }
 
 // auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void

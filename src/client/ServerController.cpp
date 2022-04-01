@@ -66,6 +66,7 @@ auto ServerController::fetchData() -> void
     fetchElo();
     fetchLeaderboard();
     fetchFriendRequestsReceived();
+    fetchFriendRequestsSent();
     fetchGameIds();
 }
 
@@ -82,6 +83,11 @@ auto ServerController::fetchLeaderboard() -> void
 auto ServerController::fetchFriendRequestsReceived() -> void
 {
     sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_RECEIVED));
+}
+
+auto ServerController::fetchFriendRequestsSent() -> void
+{
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_SENT));
 }
 
 auto ServerController::fetchElo() -> void

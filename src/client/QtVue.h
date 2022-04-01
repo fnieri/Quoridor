@@ -12,6 +12,7 @@
 #include <QHoverEvent>
 #include <QLabel>
 #include <QLineEdit>
+#include <QListWidget>
 #include <QMouseEvent>
 #include <QPainter>
 #include <QPushButton>
@@ -112,6 +113,12 @@ private:
     std::atomic<bool> gameIdsUpdated {false};
     std::atomic<bool> gameLoaded {false};
 
+    // Friends
+    QListWidget *friendListLW;
+    QListWidget *chatHistLW;
+    QListWidget *friendInvLW;
+    QListWidget *friendSentLW;
+
     void createLoginAndRegister();
     void createMainPage();
     void createGamePage();
@@ -133,6 +140,8 @@ private:
     void updateLeaderboard();
     void updateRelations();
     void updateChats();
+
+    void updateChatEntries();
     void updateFriends();
     void updateGameIds();
     void updateGame();
