@@ -600,7 +600,7 @@ void QtVue::drawBoard()
 
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
-            std::vector<Qt::GlobalColor> playerColors {Qt::red, Qt::green, Qt::blue, Qt::magenta};
+            std::vector<Qt::GlobalColor> playerColors {Qt::cyan, Qt::yellow, Qt::blue, Qt::magenta};
             std::string remainingWallsText;
             auto remainingWallsMap = gameModel->getPlayersRemainingWalls();
             for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
@@ -719,6 +719,8 @@ void QtVue::createBoard(QBoxLayout *layout)
     selectHorizontalWall->setChecked(true);
     selectHorizontalWall->setVisible(false);
     selectVerticalWall->setVisible(false);
+    selectPawnMove->setVisible(false);
+    selectWallMove->setVisible(false);
     auto selectWallOrientationLayout = new QHBoxLayout;
     selectWallOrientationLayout->addWidget(selectHorizontalWall);
     selectWallOrientationLayout->addWidget(selectVerticalWall);
@@ -735,9 +737,6 @@ void QtVue::createTrainingPage()
     auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     createBoard(trainingPageLayout);
-
-    selectPawnMove->setVisible(false);
-    selectWallMove->setVisible(false);
 
     auto trainingStartButton = new QPushButton("Start training with Jürgen the AI", this);
     trainingStartButton->setMinimumSize(QSize(311, 31));
@@ -1173,5 +1172,5 @@ void QtVue::handleSurrenderButtonClicked()
 
 bool QtVue::isConnectedToServer()
 {
-    serverController->isConnected();
+    return serverController->isConnected();
 }
