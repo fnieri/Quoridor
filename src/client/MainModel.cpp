@@ -169,12 +169,12 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
     m_chats.at(friendUsername)->push_back(msg);
 
     notifyObservers(QuoridorEvent::ChatsModified);
-//    notifyObservers(QuoridorEvent::ChatsUpdated);
 }
 
 // auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void
 //{
 //     m_chats[riendUsername]->push_back({friendUsername, message});
+// notifyObservers(QuoridorEvent::GameChatUpdated);
 //
 // }
 

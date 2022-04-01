@@ -53,6 +53,8 @@ public:
     void handleBoardPress(int x, int y);
     void handleBoardMove(int x, int y);
 
+    bool isConnectedToServer();
+
 private slots:
     void handleLoginButtonClicked(const std::string &username, const std::string &password);
     void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);
@@ -63,36 +65,44 @@ private slots:
 
     void handleCreateGameButtonClicked();
     void handleJoinGameButtonClicked(const int &gameId);
+    void handleQuitGameButtonClicked();
+    void handleSurrenderButtonClicked();
 
 private:
     Ui::QtVue *ui;
     QStackedWidget *stackWidget;
-
-    QTabWidget *loginTabBar;
-    QLabel *loginMessage {};
-    QLabel *registerMessage {};
-
-    QTabWidget *mainTabBar {};
-
-    QStackedWidget *gameStack {};
-    QStackedWidget *gameIdsScroll {};
-    QStackedWidget *createGameScroll {};
-    QList<QCheckBox *> *pickFriendsList {};
-
-    QLabel *userEloLabel {};
-    QTableWidget *leaderboardLayout {};
-
-    int cellSize = 35;
-    DrawLabel *drawLabel {};
-    QPixmap *canvasPixmap {};
-    QPainter *painter {};
 
     MainController mainController;
     MainModel *mainModel;
     ServerController *serverController;
     GameModel *gameModel;
 
+    // login tabs
+    QTabWidget *loginTabBar;
+    QLabel *loginMessage {};
+    QLabel *registerMessage {};
+
+    QTabWidget *mainTabBar {};
+
+    // game tab
+    QStackedWidget *gameStack {};
+    QStackedWidget *gameIdsScroll {};
+    QStackedWidget *createGameScroll {};
+    QList<QCheckBox *> *pickFriendsList {};
+
+    // leaderboard
+    QLabel *userEloLabel {};
+    QTableWidget *leaderboardLayout {};
+
+    // game board
+    int currentGameId = -1;
+    int cellSize = 35;
+    DrawLabel *drawLabel {};
+    QPixmap *canvasPixmap {};
+    QPainter *painter {};
     bool isTrainingGame = false;
+    QPushButton *quitButton {};
+    QPushButton *surrenderButton {};
     QPushButton *selectPawnMove{};
     QPushButton *selectWallMove{};
     QPushButton *selectHorizontalWall{};
@@ -104,6 +114,7 @@ private:
     std::vector<std::vector<int>> boardIntMatrix;
     std::vector<std::vector<int>> boardMoveIntMatrix;
 
+    // board update
     std::atomic<bool> eloUpdated {true};
     std::atomic<bool> leaderboardUpdated {false};
     std::atomic<bool> relationsUpdated {false};
@@ -111,7 +122,7 @@ private:
     std::atomic<bool> gameUpdated {false};
     std::atomic<bool> friendsUpdated {false};
     std::atomic<bool> gameIdsUpdated {false};
-    std::atomic<bool> gameLoaded {false};
+    std::atomic<bool> gameChatUpdated {false};
 
     // Friends
     QListWidget *friendListLW;
@@ -119,12 +130,16 @@ private:
     QListWidget *friendInvLW;
     QListWidget *friendSentLW;
 
+    // Game chat
+    QListWidget *gameChatHistLW;
+
     void createLoginAndRegister();
     void createMainPage();
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
     void createBoard(QBoxLayout *layout);
+    void createBoardChat(QBoxLayout *layout);
     void createTrainingPage();
 
     void drawBoard();
@@ -140,6 +155,7 @@ private:
     void updateLeaderboard();
     void updateRelations();
     void updateChats();
+    void updateGameChat();
 
     void updateNotifications();
     void updateFriends();

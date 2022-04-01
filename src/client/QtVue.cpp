@@ -51,6 +51,124 @@ QtVue::QtVue(QWidget *parent)
     serverController = new ServerController {&mainController};
 
     stackWidget = new QStackedWidget(this);
+    stackWidget->setStyleSheet(QLatin1String("QPushButton {\n" // https://gist.github.com/espdev/4f1565b18497a42d317cdf2531b7ef05 the great majority of that
+                                                               // styleSheet comes from the git user : "espdev"
+                                             "color: rgb(255, 255, 255);\n"
+                                             "background-color: rgb(8, 76, 102);\n"
+                                             "border-radius: 3px;\n"
+                                             "border:none;\n"
+                                             "border-bottom:3px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "\n"
+                                             "QPushButton:hover {\n"
+                                             "background-color: rgb(20, 125, 164);\n"
+                                             "border-bottom:1px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "\n"
+                                             "QPushButton:focus {\n"
+                                             "border-bottom:none;\n"
+                                             "border-top:2px solid rgb(0,0,0);\n"
+                                             "border-left:1px solid rgb(0,0,0);\n"
+                                             "border-right:1px solid rgb(0,0,0);\n"
+                                             "background-color: rgb(18, 111, 145);\n"
+                                             "}\n"
+                                             "\n"
+                                             "\n"
+                                             "QPushButton:pressed {\n"
+                                             "background-color: rgb(18, 111, 160);\n"
+                                             "border-top:3px solid rgb(0,0,0);\n"
+                                             "}\n"
+                                             "QTabWidget::pane {\n"
+                                             "    border: 1px solid black;\n"
+                                             "    background: white;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:top {\n"
+                                             "    top: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:bottom {\n"
+                                             "    bottom: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:left {\n"
+                                             "    right: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabWidget::tab-bar:right {\n"
+                                             "    left: 1px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab {\n"
+                                             "    border: 1px solid black;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:selected {\n"
+                                             "    background: white;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:!selected {\n"
+                                             "    background: silver;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:!selected:hover {\n"
+                                             "    background: #999;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:!selected {\n"
+                                             "    margin-top: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:bottom:!selected {\n"
+                                             "    margin-bottom: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top, QTabBar::tab:bottom {\n"
+                                             "    min-width: 8ex;\n"
+                                             "    margin-right: -1px;\n"
+                                             "    padding: 5px 10px 5px 10px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:selected {\n"
+                                             "    border-bottom-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:bottom:selected {\n"
+                                             "    border-top"
+                                             "-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:top:last, QTabBar::tab:bottom:last,\n"
+                                             "QTabBar::tab:top:only-one, QTabBar::tab:bottom:only-one {\n"
+                                             "    margin-right: 0;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:!selected {\n"
+                                             "    margin-right: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:right:!selected {\n"
+                                             "    margin-left: 3px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left, QTabBar::tab:right {\n"
+                                             "    min-height: 8ex;\n"
+                                             "    margin-bottom: -1px;\n"
+                                             "    padding: 10px 5px 10px 5px;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:selected {\n"
+                                             "    border-left-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:right:selected {\n"
+                                             "    border-right-color: none;\n"
+                                             "}\n"
+                                             "\n"
+                                             "QTabBar::tab:left:last, QTabBar::tab:right:last,\n"
+                                             "QTabBar::tab:left:only-one, QTabBar::tab:right:only-one {\n"
+                                             "    margin-bottom: 0;\n"
+                                             "}"));
     stackWidget->setGeometry(0, 0, this->width(), this->height());
 
     loginTabBar = new QTabWidget(this);
@@ -95,10 +213,14 @@ void QtVue::createLoginAndRegister()
     auto registerBoxLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto loginTextEntry = new QLineEdit(this);
-    loginTextEntry->setPlaceholderText("Login");
+    loginTextEntry->setMinimumSize(QSize(311, 31));
+    loginTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
+    loginTextEntry->setPlaceholderText("Username");
     loginBoxLayout->addWidget(loginTextEntry);
 
     auto passwordTextEntry = new QLineEdit(this);
+    passwordTextEntry->setMinimumSize(QSize(311, 31));
+    passwordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     passwordTextEntry->setPlaceholderText("Password");
     passwordTextEntry->setEchoMode(QLineEdit::Password);
     loginBoxLayout->addWidget(passwordTextEntry);
@@ -115,15 +237,21 @@ void QtVue::createLoginAndRegister()
     loginBoxLayout->addWidget(loginButton);
 
     auto registerUsernameTextEntry = new QLineEdit(this);
-    registerUsernameTextEntry->setPlaceholderText("Login");
+    registerUsernameTextEntry->setMinimumSize(QSize(311, 31));
+    registerUsernameTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
+    registerUsernameTextEntry->setPlaceholderText("Username");
     registerBoxLayout->addWidget(registerUsernameTextEntry);
 
     auto registerPasswordTextEntry = new QLineEdit(this);
+    registerPasswordTextEntry->setMinimumSize(QSize(311, 31));
+    registerPasswordTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     registerPasswordTextEntry->setPlaceholderText("Password");
     registerPasswordTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordTextEntry);
 
     auto registerPasswordConfirmTextEntry = new QLineEdit(this);
+    registerPasswordConfirmTextEntry->setMinimumSize(QSize(311, 31));
+    registerPasswordConfirmTextEntry->setStyleSheet(QLatin1String("background-color: rgb(255, 255, 255);\n"));
     registerPasswordConfirmTextEntry->setPlaceholderText("Confirm password");
     registerPasswordConfirmTextEntry->setEchoMode(QLineEdit::Password);
     registerBoxLayout->addWidget(registerPasswordConfirmTextEntry);
@@ -133,7 +261,7 @@ void QtVue::createLoginAndRegister()
     registerBoxLayout->addWidget(registerMessage);
 
     auto registerButton = new QPushButton("Register", this);
-    registerButton->setAutoDefault(true);
+    registerButton->setMinimumSize(QSize(311, 31));
     connect(registerButton, &QPushButton::clicked, this, [this, registerUsernameTextEntry, registerPasswordTextEntry, registerPasswordConfirmTextEntry]() {
         handleRegisterButtonClicked(registerUsernameTextEntry->text().toStdString(), registerPasswordTextEntry->text().toStdString(),
             registerPasswordConfirmTextEntry->text().toStdString());
@@ -157,6 +285,12 @@ void QtVue::createLoginAndRegister()
 
 void QtVue::createGamePage()
 {
+    quitButton = new QPushButton("Exit to main menu", this);
+    connect(quitButton, SIGNAL(clicked()), this, SLOT(handleQuitGameButtonClicked()));
+    surrenderButton = new QPushButton("Surrender", this);
+    connect(surrenderButton, SIGNAL(clicked()), this, SLOT(handleSurrenderButtonClicked()));
+    gameChatHistLW = new QListWidget {};
+
     auto gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto pickJoinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -188,12 +322,14 @@ void QtVue::createGamePage()
     createGameLayout->addWidget(createGameTitle, 0, Qt::AlignTop);
 
     auto pickFriendsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    pickFriendsLayout->setAlignment(Qt::AlignTop);
     auto pickFriendsScrollArea = new QScrollArea(this);
     createGameScroll = new QStackedWidget(this);
     pickFriendsLayout->addWidget(new QLabel("Loading friends..."));
     auto pickFriendsWidget = new QWidget(this);
     pickFriendsWidget->setLayout(pickFriendsLayout);
     createGameScroll->addWidget(pickFriendsWidget);
+    createGameScroll->setMinimumSize(500, 300);
     pickFriendsScrollArea->setWidget(createGameScroll);
     createGameLayout->addWidget(pickFriendsScrollArea);
 
@@ -406,6 +542,33 @@ void QtVue::createLeaderboardPage()
     mainTabBar->addTab(leaderboardPage, "Leaderboard");
 }
 
+void QtVue::createBoardChat(QBoxLayout *layout)
+{
+    // Central chat
+    auto chatW = new QWidget {};
+    auto chatL = new QVBoxLayout {};
+
+    gameChatHistLW = new QListWidget {};
+    chatL->addWidget(gameChatHistLW);
+
+    auto messageLE = new QLineEdit {};
+    messageLE->setPlaceholderText("Aa");
+    auto messageLEAction = [this, messageLE]() {
+        auto text = messageLE->text().toStdString();
+        messageLE->clear();
+        if (!text.empty() && gameModel) {
+            std::vector<std::string> playersInGame = gameModel->getPlayersNames();
+            serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
+            serverController->fetchGameMessages(currentGameId);
+        }
+    };
+    connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
+    chatL->addWidget(messageLE);
+
+    chatW->setLayout(chatL);
+    layout->addWidget(chatW);
+}
+
 void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
@@ -413,6 +576,14 @@ void QtVue::drawBoard()
     if (mainModel->isGameStarted() && gameModel) {
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 300, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
+            selectHorizontalWall->setVisible(false);
+            selectVerticalWall->setVisible(false);
+            selectPawnMove->setVisible(false);
+            selectWallMove->setVisible(false);
+            if (!isTrainingGame) {
+                surrenderButton->setVisible(false);
+                quitButton->setVisible(true);
+            }
         } else {
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
@@ -425,7 +596,7 @@ void QtVue::drawBoard()
 
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
-            std::vector<Qt::GlobalColor> playerColors {Qt::red, Qt::green, Qt::blue, Qt::magenta};
+            std::vector<Qt::GlobalColor> playerColors {Qt::cyan, Qt::yellow, Qt::blue, Qt::magenta};
             std::string remainingWallsText;
             auto remainingWallsMap = gameModel->getPlayersRemainingWalls();
             for (auto &[playerUsername, remainingWalls] : remainingWallsMap) {
@@ -519,16 +690,19 @@ void QtVue::drawBoard()
 
 void QtVue::createBoard(QBoxLayout *layout)
 {
-    // this is board
     canvasPixmap = new QPixmap(QSize(620, 740));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
     layout->addWidget(drawLabel);
 
     selectPawnMove = new QPushButton("Pawn");
+    selectPawnMove->setMinimumSize(QSize(0, 31));
     selectWallMove = new QPushButton("Wall");
+    selectWallMove->setMinimumSize(QSize(0, 31));
     selectHorizontalWall = new QPushButton("Horizontal");
+    selectHorizontalWall->setMinimumSize(QSize(0, 31));
     selectVerticalWall = new QPushButton("Vertical");
+    selectVerticalWall->setMinimumSize(QSize(0, 31));
     connect(selectPawnMove, SIGNAL(clicked()), this, SLOT(handlePawnButtonClicked()));
     connect(selectWallMove, SIGNAL(clicked()), this, SLOT(handleWallButtonClicked()));
     connect(selectHorizontalWall, SIGNAL(clicked()), this, SLOT(handleHorizontalWallButtonClicked()));
@@ -541,6 +715,8 @@ void QtVue::createBoard(QBoxLayout *layout)
     selectHorizontalWall->setChecked(true);
     selectHorizontalWall->setVisible(false);
     selectVerticalWall->setVisible(false);
+    selectPawnMove->setVisible(false);
+    selectWallMove->setVisible(false);
     auto selectWallOrientationLayout = new QHBoxLayout;
     selectWallOrientationLayout->addWidget(selectHorizontalWall);
     selectWallOrientationLayout->addWidget(selectVerticalWall);
@@ -556,17 +732,10 @@ void QtVue::createTrainingPage()
 {
     auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto tLabel = new QLabel("Training page");
-    tLabel->setAlignment(Qt::AlignTop);
-    trainingPageLayout->addWidget(tLabel);
-
     createBoard(trainingPageLayout);
-//    trainingPageLayout->addWidget(drawLabel);
 
-    selectPawnMove->setVisible(false);
-    selectWallMove->setVisible(false);
-
-    auto trainingStartButton = new QPushButton("Start training", this);
+    auto trainingStartButton = new QPushButton("Start training with Jürgen the AI", this);
+    trainingStartButton->setMinimumSize(QSize(311, 31));
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
         isTrainingGame = true;
         mainModel->createAiGame();
@@ -595,6 +764,7 @@ void QtVue::updateValues()
     updatePart(friendsUpdated, [this]() { this->updateFriends(); });
     updatePart(gameIdsUpdated, [this]() { this->updateGameIds(); });
     updatePart(gameUpdated, [this]() { this->updateGame(); });
+    updatePart(gameChatUpdated, [this]() { this->updateGameChat(); });
 }
 
 template <typename Callable>
@@ -629,6 +799,9 @@ void QtVue::update(QuoridorEvent event)
         break;
     case QuoridorEvent::GameUpdated:
         gameUpdated = true;
+        break;
+    case QuoridorEvent::GameChatUpdated:
+        gameChatUpdated = true;
         break;
     default:
         break;
@@ -674,6 +847,7 @@ void QtVue::updateFriends()
         pickFriendsList = new QList<QCheckBox *>;
         auto friendList = mainModel->getFriendList();
         auto friendListLayout = new QVBoxLayout;
+        friendListLayout->setAlignment(Qt::AlignTop);
         for (auto &f : *friendList) {
             auto friendCheckbox = new QCheckBox(QString::fromStdString(f));
             pickFriendsList->append(friendCheckbox);
@@ -717,6 +891,7 @@ void QtVue::updateGame()
 {
     selectPawnMove->setVisible(true);
     selectWallMove->setVisible(true);
+    surrenderButton->setVisible(true);
     drawBoard();
 }
 
@@ -771,6 +946,32 @@ void QtVue::updateChats()
     }
 }
 
+void QtVue::updateGameChat()
+{
+    //    if (mainModel->getHasFriends()) {
+    //        auto userItem = friendListLW->currentItem();
+    //        if (userItem) {
+    //            auto user = userItem->text().toStdString();
+    //            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
+    //            auto chat = mainModel->getChatWith(user);
+    //
+    //            chatHistLW->clear();
+    //
+    //            for (const auto &entry : *chat) {
+    //                auto msg = entry.sender + ": " + entry.sentMessage;
+    //                auto qmsg = QString::fromStdString(msg);
+    //                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
+    //                /* auto listItem = new QListWidgetItem {qmsg}; */
+    //                /* if (entry.sender == *mainModel->getUsername()) { */
+    //                /*     listItem->setTextAlignment(Qt::AlignRight); */
+    //                /* } */
+    //                /* chatHistLW->addItem(listItem); */
+    //                chatHistLW->addItem(qmsg);
+    //            }
+    //        }
+    //    }
+}
+
 void QtVue::updateNotifications()
 {
     auto currentTabIdx = mainTabBar->currentIndex();
@@ -816,7 +1017,7 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y - 10) / cellSize;
+    int i = (y - cellSize * 2) / cellSize;
     int j = (x - 10) / cellSize;
     return {j, i};
 }
@@ -826,18 +1027,18 @@ void QtVue::handleBoardPress(int x, int y)
     if (gameModel) {
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
-            if (gameModel->isMoveValid(cellCoordinates/ 2, *gameModel->getCurrentPlayer())) {
-                auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
+            if (gameModel->isMoveValid(cellCoordinates / 2, player) && *gameModel->getCurrentPlayer() == player) {
+                auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, player);
                 gameModel->processAction(playerAction.serialized().dump());
                 if (!isTrainingGame)
-                    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
+                    serverController->playPlayerAction(playerAction, player);
             }
         } else if (moveType == 1) {
-            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
-                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer());
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player) && *gameModel->getCurrentPlayer() == player) {
+                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, player);
                 gameModel->processAction(wallAction.serialized().dump());
                 if (!isTrainingGame)
-                    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
+                    serverController->playWallAction(wallAction, player);
             }
         }
         drawBoard();
@@ -851,14 +1052,13 @@ void QtVue::handleBoardMove(int x, int y)
         boardMoveIntMatrix = boardIntMatrix;
         try {
             if (moveType == 0) {
-                if (gameModel->isMoveValid(cellCoordinates / 2, *gameModel->getCurrentPlayer())) {
+                if (gameModel->isMoveValid(cellCoordinates / 2, player) && *gameModel->getCurrentPlayer() == player) {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
             } else if (moveType == 1) {
-                // TODO handle orientation
-                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
+                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player) && *gameModel->getCurrentPlayer() == player) {
                     int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
                     int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
@@ -930,13 +1130,43 @@ void QtVue::handleCreateGameButtonClicked()
 void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
+    currentGameId = gameId;
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
-    auto layout = new QBoxLayout(QBoxLayout::TopToBottom);
-    createBoard(layout);
+
+    auto boardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    createBoard(boardLayout);
+    boardLayout->addWidget(surrenderButton);
+    surrenderButton->setVisible(false);
+    quitButton->setVisible(false);
+    boardLayout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);
-    boardWidget->setLayout(layout);
-    gameStack->addWidget(boardWidget);
-    gameStack->setCurrentWidget(drawLabel);
+    boardWidget->setLayout(boardLayout);
+
+    auto layout = new QBoxLayout(QBoxLayout::LeftToRight);
+    layout->addWidget(boardWidget);
+    createBoardChat(layout);
+
+    auto mainWidget = new QWidget(this);
+    mainWidget->setLayout(layout);
+    gameStack->addWidget(mainWidget);
+    gameStack->setCurrentWidget(mainWidget);
     drawBoard();
+}
+
+void QtVue::handleQuitGameButtonClicked()
+{
+    gameStack->removeWidget(gameStack->currentWidget());
+    serverController->fetchGameIds();
+}
+
+void QtVue::handleSurrenderButtonClicked()
+{
+    serverController->surrend(*mainModel->getUsername());
+    handleQuitGameButtonClicked();
+}
+
+bool QtVue::isConnectedToServer()
+{
+    return serverController->isConnected();
 }

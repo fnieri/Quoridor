@@ -50,7 +50,18 @@ bool TerminalVue::isWallPlacementValid(int x, int y)
 
 auto TerminalVue::createCanvas()
 {
-    return Renderer([&] {
+    auto mainScreenButton = Button(
+        "Return to main screen",
+        [&]() {
+            serverController->fetchGameIds();
+            /* mainModel->unloadGame(); */
+            homeTabIndex = 0;
+        },
+        &buttonOption);
+
+    auto canvasContainer = Container::Vertical({mainScreenButton});
+
+    return Renderer(canvasContainer, [&, mainScreenButton] {
         if (gameModel) {
             if (gameModel->hasWinner()) {
                 return text("Player " + gameModel->getWinner() + " has won!");
@@ -60,16 +71,7 @@ auto TerminalVue::createCanvas()
                 playerTurn = gameModel->getCurrentPlayer();
             }
 
-            std::cerr << "BoardCanvas: before updateBoardMat\n";
             gameModel->updateBoardIntMatrix(boardIntMatrix, player);
-            std::cerr << "BoardCanvas: before updateBoardMat\n";
-
-            for (auto &i : boardIntMatrix) {
-                for (auto &j : i) {
-                    std::cerr << j << " ";
-                }
-                std::cerr << "\n";
-            }
 
             const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
                       occupiedHorizontalQuoridor = 7;
