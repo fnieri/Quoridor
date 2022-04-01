@@ -32,6 +32,7 @@ public:
     auto fetchData() -> void;
     auto fetchFriends() -> void;
     auto fetchFriendRequestsReceived() -> void;
+    auto fetchFriendRequestsSent() -> void;
     auto fetchGameIds() -> void;
     auto fetchGameMessages(int) -> void;
     auto fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void;
