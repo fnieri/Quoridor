@@ -839,14 +839,14 @@ void QtVue::handleBoardPress(int x, int y)
     if (gameModel) {
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
-            if (gameModel->isMoveValid(cellCoordinates / 2, player)) {
+            if (gameModel->isMoveValid(cellCoordinates / 2, player) && *gameModel->getCurrentPlayer() == player) {
                 auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, player);
                 gameModel->processAction(playerAction.serialized().dump());
                 if (!isTrainingGame)
                     serverController->playPlayerAction(playerAction, player);
             }
         } else if (moveType == 1) {
-            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player)) {
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player) && *gameModel->getCurrentPlayer() == player) {
                 auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, player);
                 gameModel->processAction(wallAction.serialized().dump());
                 if (!isTrainingGame)
@@ -864,14 +864,13 @@ void QtVue::handleBoardMove(int x, int y)
         boardMoveIntMatrix = boardIntMatrix;
         try {
             if (moveType == 0) {
-                if (gameModel->isMoveValid(cellCoordinates / 2, player)) {
+                if (gameModel->isMoveValid(cellCoordinates / 2, player) && *gameModel->getCurrentPlayer() == player) {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
             } else if (moveType == 1) {
-                // TODO handle orientation
-                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player)) {
+                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player) && *gameModel->getCurrentPlayer() == player) {
                     int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
                     int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
@@ -961,11 +960,11 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
 void QtVue::handleQuitGameButtonClicked()
 {
     gameStack->removeWidget(gameStack->currentWidget());
+    serverController->fetchGameIds();
 }
 
 void QtVue::handleSurrenderButtonClicked()
 {
-    //    serverController->surrend(*mainModel->getUsername());
+    serverController->surrend(*mainModel->getUsername());
     handleQuitGameButtonClicked();
-    serverController->fetchGameIds();
 }
