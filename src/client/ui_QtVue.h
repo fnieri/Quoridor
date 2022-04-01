@@ -32,7 +32,7 @@ public:
 
     void retranslateUi(QWidget *QtVue)
     {
-        QtVue->setWindowTitle(QCoreApplication::translate("QtVue", "QtVue", nullptr));
+        QtVue->setWindowTitle(QCoreApplication::translate("Quoridor", "Quoridor", nullptr));
     } // retranslateUi
 
 };
