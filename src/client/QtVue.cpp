@@ -192,9 +192,12 @@ void QtVue::createFriendsPage()
 
     auto remFriendButton = new QPushButton {"Remove friend"};
     auto remFriendAction = [this]() {
-        auto user = friendListLW->currentItem()->text().toStdString();
-        serverController->removeFriend(*mainModel->getUsername(), user);
-        serverController->fetchFriends();
+        auto userItem = friendListLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            serverController->removeFriend(*mainModel->getUsername(), user);
+            serverController->fetchFriends();
+        }
     };
     connect(remFriendButton, &QPushButton::clicked, this, remFriendAction);
     friendListL->addWidget(remFriendButton);
@@ -213,12 +216,15 @@ void QtVue::createFriendsPage()
     auto messageLE = new QLineEdit {};
     messageLE->setPlaceholderText("Aa");
     auto messageLEAction = [this, messageLE]() {
-        auto receiver = friendListLW->currentItem()->text().toStdString();
-        auto text = messageLE->text().toStdString();
-        messageLE->clear();
-        if (!text.empty()) {
-            serverController->sendFriendMessage(*mainModel->getUsername(), receiver, text);
-            serverController->fetchFriendMessages(*mainModel->getUsername(), receiver);
+        auto receiverItem = friendListLW->currentItem();
+        if (receiverItem) {
+            auto receiver = receiverItem->text().toStdString();
+            auto text = messageLE->text().toStdString();
+            messageLE->clear();
+            if (!text.empty()) {
+                serverController->sendFriendMessage(*mainModel->getUsername(), receiver, text);
+                serverController->fetchFriendMessages(*mainModel->getUsername(), receiver);
+            }
         }
     };
     connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
@@ -243,20 +249,26 @@ void QtVue::createFriendsPage()
 
     auto decInvB = new QPushButton {"Decline"};
     auto decInvBAction = [this]() {
-        auto user = friendInvLW->currentItem()->text().toStdString();
-        serverController->declineFriendRequest(user, *mainModel->getUsername());
-        serverController->fetchFriendRequestsReceived();
-        serverController->fetchFriends();
+        auto userItem = friendInvLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            serverController->declineFriendRequest(user, *mainModel->getUsername());
+            serverController->fetchFriendRequestsReceived();
+            serverController->fetchFriends();
+        }
     };
     connect(decInvB, &QPushButton::clicked, this, decInvBAction);
     invRespL->addWidget(decInvB);
 
     auto accInvB = new QPushButton {"Accept"};
     auto accInvBAction = [this]() {
-        auto user = friendInvLW->currentItem()->text().toStdString();
-        serverController->acceptFriendRequest(user, *mainModel->getUsername());
-        serverController->fetchFriendRequestsReceived();
-        serverController->fetchFriends();
+        auto userItem = friendInvLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            serverController->acceptFriendRequest(user, *mainModel->getUsername());
+            serverController->fetchFriendRequestsReceived();
+            serverController->fetchFriends();
+        }
     };
     connect(accInvB, &QPushButton::clicked, this, accInvBAction);
     invRespL->addWidget(accInvB);
@@ -295,17 +307,20 @@ void QtVue::createFriendsPage()
 
 void QtVue::updateChatEntries()
 {
-    if (friendListLW->count() > 0) {
-        auto user = friendListLW->currentItem()->text().toStdString();
-        serverController->fetchFriendMessages(*mainModel->getUsername(), user);
-        auto chat = mainModel->getChatWith(user);
+    if (!mainModel->getFriendList()->empty()) {
+        auto userItem = friendListLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            serverController->fetchFriendMessages(*mainModel->getUsername(), user);
+            auto chat = mainModel->getChatWith(user);
 
-        chatHistLW->clear();
+            chatHistLW->clear();
 
-        for (const auto &entry : *chat) {
-            auto msg = entry.sender + ": " + entry.sentMessage;
-            auto qmsg = QString::fromStdString(msg);
-            chatHistLW->addItem(qmsg);
+            for (const auto &entry : *chat) {
+                auto msg = entry.sender + ": " + entry.sentMessage;
+                auto qmsg = QString::fromStdString(msg);
+                chatHistLW->addItem(qmsg);
+            }
         }
     }
 }
@@ -505,6 +520,7 @@ void QtVue::createTrainingPage()
 
 void QtVue::updateValues()
 {
+    updateNotifications();
     updatePart(eloUpdated, [this]() { this->updateELO(); });
     updatePart(leaderboardUpdated, [this]() { this->updateLeaderboard(); });
     updatePart(relationsUpdated, [this]() { this->updateRelations(); });
@@ -536,8 +552,6 @@ void QtVue::update(QuoridorEvent event)
         chatsUpdated = true;
         break;
     }
-
-    updateNotifications();
 }
 
 void QtVue::updateELO()
