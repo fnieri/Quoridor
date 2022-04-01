@@ -154,11 +154,11 @@ auto GameModel::getWallAction(const Point &dest, WallOrientation orientation, co
         actualPos = actualPos + Point {1, 1};
 
     } else if (fl == FinishLine::East) {
-        actualPos = actualPos + Point {1, 0};
+        actualPos = actualPos + Point {0, 1};
         actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
 
     } else if (fl == FinishLine::West) {
-        actualPos = actualPos + Point {0, 1};
+        actualPos = actualPos + Point {1, 0};
         actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
     }
 
