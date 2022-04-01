@@ -173,16 +173,6 @@ void QtVue::createGamePage()
     joinGameScrollArea->setWidget(gameIdsScroll);
     pickJoinGameLayout->addWidget(joinGameScrollArea);
 
-    //    auto joinGameScroll = new QWidget(this);
-    //    for (int i = 0; i < 10; i++) {
-    //        auto tLabel = new QPushButton("Game id, players");
-    //        connect(tLabel, &QPushButton::clicked, this, [&, i]() { handleJoinGameButtonClicked(i); });
-    //        joinGameLayout->addWidget(tLabel);
-    //    }
-    //    joinGameScroll->setLayout(joinGameLayout);
-    //    pickJoinGameLayout->addWidget(joinGameScrollArea);
-    //    joinGameScrollArea->setWidget(joinGameScroll);
-
     auto joinGameWidget = new QFrame(this);
     joinGameWidget->setFrameShape(QFrame::Box);
     joinGameWidget->setLayout(pickJoinGameLayout);
