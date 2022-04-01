@@ -90,11 +90,16 @@ auto GameModel::processAction(const std::string &p_action) -> void
 {
     auto action = json::parse(p_action);
 
+    std::cerr << "Before action\n";
+
     if (action["action_type"] == "wall") {
         auto specAction {getWallActionFromSer(action.dump())};
 
         assert(specAction.isWallPlacementLegal() && specAction.isWallPlacementValid());
+
+        std::cerr << "Before exec action\n";
         specAction.executeAction();
+        std::cerr << "After exec action\n";
 
     } else if (action["action_type"] == "player") {
         auto specAction {getPlayerActionFromSer(action.dump())};
@@ -107,6 +112,8 @@ auto GameModel::processAction(const std::string &p_action) -> void
         }
     }
 
+    std::cerr << "After action\n";
+
     // Next turn
     m_currentPlayerIdx = ++m_currentPlayerIdx % m_players.size();
 }
@@ -116,26 +123,48 @@ auto GameModel::getCurrentPlayer() noexcept -> const int *
     return &m_currentPlayerIdx;
 }
 
-auto GameModel::isMoveValid(const Point &movePoint) const noexcept -> bool
+auto GameModel::isMoveValid(const Point &movePoint, const int &playerPerspective) const noexcept -> bool
 {
-    PlayerAction action {m_board, m_players.at(m_currentPlayerIdx), movePoint / 2};
+    auto action = getPlayerAction(movePoint, playerPerspective);
     return action.isActionValid();
 }
 
-auto GameModel::isWallValid(const Point &dest, WallOrientation ori) const noexcept -> bool
+auto GameModel::isWallValid(const Point &dest, WallOrientation ori, const int &playerPerspective) const noexcept -> bool
 {
-    WallAction action {m_board, m_players.at(m_currentPlayerIdx), dest, ori};
+    auto action = getWallAction(dest, ori, playerPerspective);
     return action.isWallPlacementLegal() && action.isWallPlacementValid();
 }
 
-auto GameModel::getPlayerAction(const Point &dest) const noexcept -> PlayerAction
+auto GameModel::getPlayerAction(const Point &dest, const int &playerPerspective) const noexcept -> PlayerAction
 {
-    return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), dest / 2};
+    auto fl = m_players.at(playerPerspective)->getFinishLine();
+    auto rotMov = m_board->getRotatedMatrixPosition(dest * 2, fl, true) / 2;
+
+    return PlayerAction {m_board, m_players.at(m_currentPlayerIdx), rotMov};
 }
 
-auto GameModel::getWallAction(const Point &dest, WallOrientation orientation) const noexcept -> WallAction
+auto GameModel::getWallAction(const Point &dest, WallOrientation orientation, const int &playerPerspective) const noexcept -> WallAction
 {
-    return WallAction {m_board, m_players.at(m_currentPlayerIdx), dest, orientation};
+    auto fl = m_players.at(playerPerspective)->getFinishLine();
+
+    auto actualPos = dest;
+    auto actualOri = orientation;
+
+    if (fl == FinishLine::South) {
+        actualPos = actualPos + Point {1, 1};
+
+    } else if (fl == FinishLine::East) {
+        actualPos = actualPos + Point {1, 0};
+        actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
+
+    } else if (fl == FinishLine::West) {
+        actualPos = actualPos + Point {0, 1};
+        actualOri = orientation == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal;
+    }
+
+    auto rotMov = m_board->getRotatedMatrixPosition(actualPos * 2, fl, true) / 2;
+
+    return WallAction {m_board, m_players.at(m_currentPlayerIdx), rotMov, actualOri};
 }
 
 auto GameModel::hasWinner() const -> bool
@@ -181,21 +210,25 @@ auto GameModel::playerSurrendered(const std::string &p_username) -> void
         m_winner = m_players.front()->getUsername();
     }
 }
-auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix) -> void
+auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatrix, int playerIdx) -> void
 {
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
               occupiedHorizontalQuoridor = 7;
     boardIntMatrix.clear();
     if (m_players.empty())
         return;
-    // TODO change this to correct player
-    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = m_board->getRotatedBoardMatrix(m_players.at(0)->getFinishLine());
+
+    auto finishLine = m_players.at(playerIdx)->getFinishLine();
+
+    std::vector<std::vector<std::shared_ptr<BoardComponent>>> boardMatrix = rotatedBoard(finishLine);
 
     for (int y = 0; y < boardMatrix.size(); y++) {
         std::vector<int> row;
         for (int x = 0; x < boardMatrix.at(y).size(); x++) {
-            if (m_board->isCell({x, y})) {
-                if (m_board->isFree({x, y}))
+
+            // Pawns
+            if (m_board->isCell(m_board->getRotatedMatrixPosition({x, y}, finishLine, true))) {
+                if (m_board->isFree(m_board->getRotatedMatrixPosition({x, y}, finishLine, true)))
                     row.push_back(freeCell);
                 else {
                     auto playerCell = (std::dynamic_pointer_cast<Cell>(boardMatrix.at(x).at(y)));
@@ -214,20 +247,41 @@ auto GameModel::updateBoardIntMatrix(std::vector<std::vector<int>> &boardIntMatr
                         break;
                     }
                 }
-            } else if (boardMatrix.at(x).at(y) && boardMatrix.at(x).at(y)->isOccupied()) {
+            }
+
+            // Corridors
+            else if (boardMatrix.at(x).at(y) && boardMatrix.at(x).at(y)->isOccupied()) {
                 auto orientation = std::dynamic_pointer_cast<Corridor>(boardMatrix.at(x).at(y))->getOrientation();
+
+                switch (finishLine) {
+                case FinishLine::West:
+                case FinishLine::East:
+                    orientation = orientation == WallOrientation::Vertical ? WallOrientation::Horizontal : WallOrientation::Vertical;
+                    break;
+                }
+
                 row.push_back((orientation == WallOrientation::Vertical ? occupiedVerticalQuoridor : occupiedHorizontalQuoridor));
             } else
                 row.push_back(emptyQuoridor);
         }
         boardIntMatrix.push_back(row);
     }
+
+//    std::cerr << "updateBoardIntMatrix: after construction\n";
 }
 
 auto GameModel::rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>
 {
     return m_board->getRotatedBoardMatrix(fl);
 }
+
+/* auto GameModel::rotatedPosition(const Point &pos, FinishLine fl) -> Point */
+/* { */
+/*     auto matPos = pos * 2; */
+/*     auto rotatedMatPos = m_board->getRotatedMatrixPosition(matPos, fl, false); */
+
+/*     return rotatedPosition / 2; */
+/* } */
 
 auto GameModel::debugPrintBoard() -> void
 {

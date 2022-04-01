@@ -24,6 +24,9 @@
 #include <QTimer>
 #include <QToolBox>
 #include <QWidget>
+#include <QHoverEvent>
+#include <QRadioButton>
+#include <QFrame>
 
 #include "MainModel.h"
 #include "ServerController.h"
@@ -55,6 +58,11 @@ private slots:
     void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);
     void handlePawnButtonClicked();
     void handleWallButtonClicked();
+    void handleHorizontalWallButtonClicked();
+    void handleVerticalWallButtonClicked();
+
+    void handleCreateGameButtonClicked();
+    void handleJoinGameButtonClicked(const int &gameId);
 
 private:
     Ui::QtVue *ui;
@@ -64,7 +72,12 @@ private:
     QLabel *loginMessage {};
     QLabel *registerMessage {};
 
-    QTabWidget *mainTabBar;
+    QTabWidget *mainTabBar {};
+
+    QStackedWidget *gameStack {};
+    QStackedWidget *gameIdsScroll {};
+    QStackedWidget *createGameScroll {};
+    QList<QCheckBox *> *pickFriendsList {};
 
     QLabel *userEloLabel {};
     QTableWidget *leaderboardLayout {};
@@ -79,10 +92,14 @@ private:
     ServerController *serverController;
     GameModel *gameModel;
 
+    bool isTrainingGame = false;
     QPushButton *selectPawnMove{};
     QPushButton *selectWallMove{};
+    QPushButton *selectHorizontalWall{};
+    QPushButton *selectVerticalWall{};
     int moveType = 0; // 0 = pawn, 1 = wall
     int player = -1, correctMove = 10, incorrectMove = -10;
+    WallOrientation wallOrientation = WallOrientation::Horizontal;
     const int *playerTurn;
     std::vector<std::vector<int>> boardIntMatrix;
     std::vector<std::vector<int>> boardMoveIntMatrix;
@@ -91,6 +108,10 @@ private:
     std::atomic<bool> leaderboardUpdated {false};
     std::atomic<bool> relationsUpdated {false};
     std::atomic<bool> chatsUpdated {false};
+    std::atomic<bool> gameUpdated {false};
+    std::atomic<bool> friendsUpdated {false};
+    std::atomic<bool> gameIdsUpdated {false};
+    std::atomic<bool> gameLoaded {false};
 
     // Friends
     QListWidget *friendListLW;
@@ -103,6 +124,7 @@ private:
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
+    void createBoard(QBoxLayout *layout);
     void createTrainingPage();
 
     void drawBoard();
@@ -120,6 +142,9 @@ private:
     void updateChats();
 
     void updateNotifications();
+    void updateFriends();
+    void updateGameIds();
+    void updateGame();
 };
 
 class DrawLabel : public QLabel

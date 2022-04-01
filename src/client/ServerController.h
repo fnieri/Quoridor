@@ -6,6 +6,9 @@
 
 #include <nlohmann/json_fwd.hpp>
 
+class PlayerAction;
+class WallAction;
+
 class ServerController
 {
     std::unique_ptr<ServerBridge> bridge;
@@ -40,4 +43,7 @@ public:
     auto fetchElo() -> void;
 
     auto createGame(const std::string &username, const std::vector<std::string> &players) -> void;
+
+    auto playPlayerAction(PlayerAction, const int &playerIdx) -> void;
+    auto playWallAction(WallAction, const int &playerIdx) -> void;
 };
