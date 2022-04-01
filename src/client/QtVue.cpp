@@ -965,7 +965,7 @@ void QtVue::updateNotifications()
     if (currentTabIdx == -1)
         return;
 
-    std::cerr << currentTabIdx;
+    /* std::cerr << currentTabIdx; */
 
     if (currentTabIdx != 1 && mainModel->hasFriendNotification()) {
         mainTabBar->setTabText(1, "Friends*");

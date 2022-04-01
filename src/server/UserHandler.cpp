@@ -200,7 +200,7 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
         data = json::array();
         for (auto &g : m_userHandled->getGameIDs()) {
-            std::cerr << "ID : " << g << std::endl;
+            /* std::cerr << "ID : " << g << std::endl; */
             ;
             data.push_back({
                 {"game_id", g                                     },
@@ -225,7 +225,7 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
 
 void UserHandler::processGameSetup(const std::string &serRequest)
 {
-    std::cout << "Processing game setup request" << std::endl;
+    /* std::cout << "Processing game setup request" << std::endl; */
     m_gameHub->processRequest(serRequest);
 }
 

@@ -33,7 +33,7 @@ auto DatabaseHandler::quickTest() -> void
 
     // just ignore this unless you want to test the database
     // just a quick test to see if the database is working
-    std::cout << "Sending test data" << std::endl;
+    /* std::cout << "Sending test data" << std::endl; */
 
     mongocxx::collection coll = Instance()->db[database::kCollectionName];
     auto builder = bsoncxx::builder::stream::document {};
@@ -48,7 +48,7 @@ auto DatabaseHandler::quickTest() -> void
 
     bsoncxx::stdx::optional<mongocxx::result::insert_one> result = coll.insert_one(view);
 
-    std::cout << "Data sent" << std::endl;
+    /* std::cout << "Data sent" << std::endl; */
 }
 
 auto DatabaseHandler::createAccount(const std::string &username, const std::string &password) -> bool

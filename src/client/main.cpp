@@ -57,14 +57,14 @@ void testGameJoin(std::string username, std::string password)
     serverController.login(username, password);
     sleep(1);
     auto model = mainController.getMainModel();
-    std::cout << "Username: " << *model->getUsername() << std::endl;
+    /* std::cout << "Username: " << *model->getUsername() << std::endl; */
     serverController.fetchGameIds();
     sleep(1);
     auto gameIDs = model->getGameIDs();
     for (auto &gameID : *gameIDs) {
-        std::cout << "GameID: " << gameID.first << "    " << username << std::endl;
+        /* std::cout << "GameID: " << gameID.first << "    " << username << std::endl; */
         serverController.joinGame(gameID.first, username);
-        std::cout << "Joined game " << gameID.first << std::endl;
+        /* std::cout << "Joined game " << gameID.first << std::endl; */
         sleep(5);
         return;
     }
@@ -111,60 +111,4 @@ int main(int argc, char *argv[])
     } else {
         return launchGUI(argc, argv);
     }
-
-    /* if () */
-    //    MainController mainController;
-    //    ServerController serverController {&mainController};
-    //    //    serverController.registerUser("b", "b");
-    //    //    serverController.registerUser("c", "c");
-    //    //    serverController.login("b", "b");
-    //    //    serverController.createGame("b", {"b", "c"});
-    //    std::cout << "creating thread" << std::endl;
-    //    std::thread t1(testGameJoin, "b", "b");
-    //    sleep(1);
-    //    std::thread t2(testGameJoin, "c", "c");
-    //    t1.join();
-    //    t2.join();
-    //    return 0;
-    //    serverController.login("testing", "testingPassword");
-    //    serverController.createGame("testing", {"testing", "testingFriend"});
-    //
-    //    auto model = mainController.getMainModel();
-    //    sleep(5);
-    //    serverController.fetchGameIds();
-    //    auto gameIds = model->getGameIDs();
-    //    for (const auto& gameId : *gameIds) {
-    //        std::cout << "Game ID: " << gameId.first << std::endl;
-    //        for (const auto& player : gameId.second) {
-    //            std::cout << "Player: " << player << std::endl;
-    //        }
-    //    }
-    //    return 0;
-
-    //    serverController.login("ok", "k");
-    //        model->createAiGame();
-    //        auto game = model->getCurrentGame();
-    //        if (game) {
-    //            game->debugPrintBoard();
-    //            auto playerAction = game->getPlayerAction(Point {8, 2});
-    //            game->processAction(playerAction.serialized().dump());
-    //            game->debugPrintBoard();
-    //            return 0;
-    //        }
-    //
-    //    serverController.fetchData();
-    //    model->getUsername();
-    //    model->getFriendList();
-    //    if (model->getFriendRequestsReceived()->empty()) std::cout << "No friend requests received" << std::endl;
-    //    else std::cout << "Friend requests received: " << std::endl;
-    //    sleep(2);
-    //
-    //    model->getUsername();
-    //    auto friendList = model->getFriendList();
-    //    for (const auto& f : *friendRequestsReceived) {
-    //        std::cout << f << std::endl;
-    //    }
-    //    gameLoop();
-
-    /* return 0; */
 };

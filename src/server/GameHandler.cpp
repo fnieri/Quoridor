@@ -56,20 +56,20 @@ int GameHandler::numberOfConfirmedPlayers() const
 void GameHandler::playerJoined(const std::string &username)
 {
     // Maybe inform other players ?
-    std::cout << "GameHandler::playerJoined: " << username << std::endl;
+    /* std::cout << "GameHandler::playerJoined: " << username << std::endl; */
     m_confirmedPlayers++;
 }
 
 void GameHandler::playerQuit(const std::string &username)
 {
     // Maybe inform other players ?
-    std::cout << "GameHandler::playerQuit: " << username << std::endl;
+    /* std::cout << "GameHandler::playerQuit: " << username << std::endl; */
     m_confirmedPlayers--;
 }
 
 bool GameHandler::areAllPlayersConfirmed() const
 {
-    std::cout << "GameHandler::areAllPlayersConfirmed: " << numberOfConfirmedPlayers() << "   " << m_gameModel->getPlayersCount() << std::endl;
+    /* std::cout << "GameHandler::areAllPlayersConfirmed: " << numberOfConfirmedPlayers() << "   " << m_gameModel->getPlayersCount() << std::endl; */
     return numberOfConfirmedPlayers() == m_gameModel->getPlayersCount();
 }
 
@@ -80,7 +80,7 @@ bool GameHandler::areAllPlayersConnected() const
     for (auto &player : m_gameModel->getPlayersNames())
         allConnected = allConnected && m_userHub->isConnected(player);
 
-    std::cerr << std::boolalpha << "GameHandler::areAllPlayersConnected: " << allConnected << std::endl;
+    /* std::cerr << std::boolalpha << "GameHandler::areAllPlayersConnected: " << allConnected << std::endl; */
 
     return allConnected;
 }
@@ -92,7 +92,7 @@ bool GameHandler::areAllPlayersNotInGame() const
     for (auto &player : m_gameModel->getPlayersNames())
         allNotInGame = allNotInGame && !m_userHub->isInGame(player);
 
-    std::cerr << std::boolalpha << "GameHandler::areAllPlayersNotInGame: " << allNotInGame << std::endl;
+    /* std::cerr << std::boolalpha << "GameHandler::areAllPlayersNotInGame: " << allNotInGame << std::endl; */
 
     return allNotInGame;
 }
@@ -209,7 +209,7 @@ void GameHandler::processRequest(const std::string &serRequest)
         processAndGetAnswerForSurrender(request);
 
     } else if (request["action"] == toJsonString(JsonPlayerAction::MOVE_PAWN) || request["action"] == toJsonString(JsonPlayerAction::PLACE_WALL)) {
-        std::cerr << "INSIDE ACTION\n";
+        /* std::cerr << "INSIDE ACTION\n"; */
         processAndGetAnswerForAction(request);
 
     } else if (request["action"] == toJsonString(GameAction::PROPOSE_SAVE) || request["action"] == toJsonString(GameAction::ACCEPT_SAVE)
@@ -221,7 +221,7 @@ void GameHandler::processRequest(const std::string &serRequest)
         if (p != request["sender"])
             m_userHub->relayMessageTo(p, answer);
 
-    std::cerr << "After relaying\n";
+    /* std::cerr << "After relaying\n"; */
 
     if (m_isFinished)
         m_gameHub->eraseFinished();
@@ -256,7 +256,7 @@ std::shared_ptr<GameHandler> GameHub::getGame(int gameID) const
     if (gameHandleIt != m_games.end())
         gameHandle = *gameHandleIt;
 
-    std::cerr << "GameHub::getGame: " << gameHandle << std::endl;
+    /* std::cerr << "GameHub::getGame: " << gameHandle << std::endl; */
 
     return gameHandle;
 }
@@ -282,7 +282,7 @@ void GameHub::processGameCreation(const std::string &serRequest)
     // Add to database
     DatabaseHandler::createGame(gameID, gPlayers, (int)gPlayers.size(), request["game_configuration"]);
     for (const auto &i_player : gPlayers) {
-        std::cerr << "Saving " << i_player << std::endl;
+        /* std::cerr << "Saving " << i_player << std::endl; */
         DatabaseHandler::addGameIdToUser(i_player, gameID);
     }
 
@@ -304,31 +304,31 @@ void GameHub::createGameFromDB(int gameID)
     auto config {DatabaseHandler::getGameConfig(gameID)["board_config"].dump()};
     auto tmp {std::make_shared<GameHandler>(gameID, this, m_userHub, config)};
 
-    std::cerr << "GameHub::createGameFromDB " << tmp << std::endl;
+    /* std::cerr << "GameHub::createGameFromDB " << tmp << std::endl; */
 
     m_games.push_back(tmp);
 }
 
 void GameHub::processGameJoin(const std::string &serRequest)
 {
-    std::cerr << "GameHub::processGameJoin\n";
+    /* std::cerr << "GameHub::processGameJoin\n"; */
 
     auto request = json::parse(serRequest);
     auto targetGame {getGame(request["game_id"].get<int>())};
 
     if (!targetGame) {
-        std::cerr << "GameHub::processGameJoin no game with id\n";
+        /* std::cerr << "GameHub::processGameJoin no game with id\n"; */
 
         createGameFromDB(request["game_id"].get<int>());
         targetGame = getGame(request["game_id"].get<int>());
     }
 
-    std::cout << "GameHub::processGameJoin target = " << targetGame << std::endl;
+    /* std::cout << "GameHub::processGameJoin target = " << targetGame << std::endl; */
 
     targetGame->playerJoined(request["username"].get<std::string>());
 
     if (targetGame->areAllPlayersConfirmed() && targetGame->areAllPlayersConnected() && targetGame->areAllPlayersNotInGame()) {
-        std::cout << "Starting game " << std::endl;
+        /* std::cout << "Starting game " << std::endl; */
         targetGame->start();
     }
 }
@@ -364,7 +364,7 @@ void GameHub::processRequest(const std::string &serRequest)
 
     auto request = json::parse(serRequest);
 
-    std::cerr << "BEFORE ACTION ptr = " << this << "userHub_ptr = " << m_userHub << std::endl;
+    /* std::cerr << "BEFORE ACTION ptr = " << this << "userHub_ptr = " << m_userHub << std::endl; */
 
     if (request["action"] == toJsonString(GameSetup::CREATE_GAME)) {
         processGameCreation(serRequest);
@@ -376,5 +376,5 @@ void GameHub::processRequest(const std::string &serRequest)
         processGameQuit(serRequest);
     }
 
-    std::cerr << "AFTER ACTION\n";
+    /* std::cerr << "AFTER ACTION\n"; */
 }

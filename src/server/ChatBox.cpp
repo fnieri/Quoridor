@@ -23,19 +23,19 @@ ChatBox::ChatBox(UserHub &userHub)
 auto ChatBox::processRequest(const std::string &serMessage) -> void
 {
     recordMessage(serMessage);
-    std::cout << "ChatBox::processRequest" << std::endl;
+    /* std::cout << "ChatBox::processRequest" << std::endl; */
     relayMessage(serMessage);
 }
 
 auto ChatBox::recordMessage(const std::string &serRequest) -> void
 {
-    std::cout << serRequest << std::endl;
+    /* std::cout << serRequest << std::endl; */
     auto request = json::parse(serRequest);
 
     std::string sender = request["sender"].get<std::string>();
     std::string message = request["message"].get<std::string>();
 
-    std::cout << "ChatBox::recordMessage" << std::endl;
+    /* std::cout << "ChatBox::recordMessage" << std::endl; */
     if (request["action"] == toJsonString(ChatInteraction::FRIEND_MESSAGE)) {
         std::string receiver = request["receiver"].get<std::string>();
         DatabaseHandler::recordMessage(sender, receiver, message);
