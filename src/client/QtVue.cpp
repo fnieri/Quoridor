@@ -161,6 +161,7 @@ void QtVue::createGamePage()
     connect(quitButton, SIGNAL(clicked()), this, SLOT(handleQuitGameButtonClicked()));
     surrenderButton = new QPushButton("Surrender", this);
     connect(surrenderButton, SIGNAL(clicked()), this, SLOT(handleSurrenderButtonClicked()));
+    gameChatHistLW = new QListWidget {};
 
     auto gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
@@ -413,6 +414,33 @@ void QtVue::createLeaderboardPage()
     mainTabBar->addTab(leaderboardPage, "Leaderboard");
 }
 
+void QtVue::createBoardChat(QBoxLayout *layout)
+{
+    // Central chat
+    auto chatW = new QWidget {};
+    auto chatL = new QVBoxLayout {};
+
+    gameChatHistLW = new QListWidget {};
+    chatL->addWidget(chatHistLW);
+
+    auto messageLE = new QLineEdit {};
+    messageLE->setPlaceholderText("Aa");
+    auto messageLEAction = [this, messageLE]() {
+        auto text = messageLE->text().toStdString();
+        messageLE->clear();
+        if (!text.empty() && gameModel) {
+            std::vector<std::string> playersInGame = gameModel->getPlayersNames();
+            serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
+            serverController->fetchGameMessages(currentGameId);
+        }
+    };
+    connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
+    chatL->addWidget(messageLE);
+
+    chatW->setLayout(chatL);
+    layout->addWidget(chatW);
+}
+
 void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
@@ -534,7 +562,6 @@ void QtVue::drawBoard()
 
 void QtVue::createBoard(QBoxLayout *layout)
 {
-    // this is board
     canvasPixmap = new QPixmap(QSize(620, 740));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
@@ -572,7 +599,6 @@ void QtVue::createTrainingPage()
     auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     createBoard(trainingPageLayout);
-    //    trainingPageLayout->addWidget(drawLabel);
 
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
@@ -942,18 +968,27 @@ void QtVue::handleCreateGameButtonClicked()
 void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
+    currentGameId = gameId;
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
-    auto layout = new QBoxLayout(QBoxLayout::TopToBottom);
-    createBoard(layout);
-    layout->addWidget(surrenderButton);
+
+    auto boardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    createBoard(boardLayout);
+    boardLayout->addWidget(surrenderButton);
     surrenderButton->setVisible(false);
     quitButton->setVisible(false);
-    layout->addWidget(quitButton);
+    boardLayout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);
-    boardWidget->setLayout(layout);
-    gameStack->addWidget(boardWidget);
-    gameStack->setCurrentWidget(boardWidget);
+    boardWidget->setLayout(boardLayout);
+
+    auto layout = new QBoxLayout(QBoxLayout::LeftToRight);
+    layout->addWidget(boardWidget);
+    createBoardChat(layout);
+
+    auto mainWidget = new QWidget(this);
+    mainWidget->setLayout(layout);
+    gameStack->addWidget(mainWidget);
+    gameStack->setCurrentWidget(mainWidget);
     drawBoard();
 }
 

@@ -70,30 +70,34 @@ private:
     Ui::QtVue *ui;
     QStackedWidget *stackWidget;
 
+    MainController mainController;
+    MainModel *mainModel;
+    ServerController *serverController;
+    GameModel *gameModel;
+
+    // login tabs
     QTabWidget *loginTabBar;
     QLabel *loginMessage {};
     QLabel *registerMessage {};
 
     QTabWidget *mainTabBar {};
 
+    // game tab
     QStackedWidget *gameStack {};
     QStackedWidget *gameIdsScroll {};
     QStackedWidget *createGameScroll {};
     QList<QCheckBox *> *pickFriendsList {};
 
+    // leaderboard
     QLabel *userEloLabel {};
     QTableWidget *leaderboardLayout {};
 
+    // game board
+    int currentGameId = -1;
     int cellSize = 35;
     DrawLabel *drawLabel {};
     QPixmap *canvasPixmap {};
     QPainter *painter {};
-
-    MainController mainController;
-    MainModel *mainModel;
-    ServerController *serverController;
-    GameModel *gameModel;
-
     bool isTrainingGame = false;
     QPushButton *quitButton {};
     QPushButton *surrenderButton {};
@@ -108,6 +112,7 @@ private:
     std::vector<std::vector<int>> boardIntMatrix;
     std::vector<std::vector<int>> boardMoveIntMatrix;
 
+    // board update
     std::atomic<bool> eloUpdated {true};
     std::atomic<bool> leaderboardUpdated {false};
     std::atomic<bool> relationsUpdated {false};
@@ -122,12 +127,16 @@ private:
     QListWidget *friendInvLW;
     QListWidget *friendSentLW;
 
+    // Game chat
+    QListWidget *gameChatHistLW;
+
     void createLoginAndRegister();
     void createMainPage();
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
     void createBoard(QBoxLayout *layout);
+    void createBoardChat(QBoxLayout *layout);
     void createTrainingPage();
 
     void drawBoard();
