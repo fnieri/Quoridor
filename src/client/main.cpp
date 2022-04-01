@@ -1,12 +1,13 @@
 #include "TerminalVue.h"
 #include "nlohmann/json.hpp"
+#include <QApplication>
 #include <cstdlib>
 #include <iostream>
 #include <map>
+#include <string.h>
 #include <thread>
 #include <unistd.h>
 #include <vector>
-#include <QApplication>
 
 #include "Board.h"
 #include "MainController.h"
@@ -69,25 +70,59 @@ void testGameJoin(std::string username, std::string password)
     }
 }
 
-int main(int argc, char *argv[])
+auto launchTUI()
+{
+    TerminalVue vue;
+
+    if (!vue.isConnectedToServer()) {
+        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+        exit(1);
+    } else {
+        system("clear");
+        vue.run();
+    }
+
+    std::thread t1(&TerminalVue::run, &vue);
+    t1.join();
+
+    return 0;
+}
+
+auto launchGUI(int argc, char *argv[]) -> int
 {
     QApplication QuoridorApp(argc, argv);
     QtVue vue;
     vue.show();
     return QuoridorApp.exec();
-//    MainController mainController;
-//    ServerController serverController {&mainController};
-//    //    serverController.registerUser("b", "b");
-//    //    serverController.registerUser("c", "c");
-//    //    serverController.login("b", "b");
-//    //    serverController.createGame("b", {"b", "c"});
-//    std::cout << "creating thread" << std::endl;
-//    std::thread t1(testGameJoin, "b", "b");
-//    sleep(1);
-//    std::thread t2(testGameJoin, "c", "c");
-//    t1.join();
-//    t2.join();
-//    return 0;
+}
+
+int main(int argc, char *argv[])
+{
+    if (argc > 2 || (argc == 2 && strcmp(argv[1], "--no-gui") != 0)) {
+        std::cout << "Usage:\n\t./client [--no-gui]\n";
+        return 1;
+    }
+
+    if (argc == 2 && strcmp(argv[1], "--no-gui") == 0) {
+        return launchTUI();
+    } else {
+        return launchGUI(argc, argv);
+    }
+
+    /* if () */
+    //    MainController mainController;
+    //    ServerController serverController {&mainController};
+    //    //    serverController.registerUser("b", "b");
+    //    //    serverController.registerUser("c", "c");
+    //    //    serverController.login("b", "b");
+    //    //    serverController.createGame("b", {"b", "c"});
+    //    std::cout << "creating thread" << std::endl;
+    //    std::thread t1(testGameJoin, "b", "b");
+    //    sleep(1);
+    //    std::thread t2(testGameJoin, "c", "c");
+    //    t1.join();
+    //    t2.join();
+    //    return 0;
     //    serverController.login("testing", "testingPassword");
     //    serverController.createGame("testing", {"testing", "testingFriend"});
     //
@@ -128,19 +163,5 @@ int main(int argc, char *argv[])
     //    }
     //    gameLoop();
 
-//    TerminalVue vue;
-//
-//    if (!vue.isConnectedToServer()) {
-//        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
-//        exit(1);
-//
-//    } else {
-//        system("clear");
-//        vue.run();
-//    }
-//
-//    //        std::thread t1(&TerminalVue::run, &vue);
-//    //        t1.join();
-//
-//    return 0;
+    /* return 0; */
 };

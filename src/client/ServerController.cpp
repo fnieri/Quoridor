@@ -139,6 +139,11 @@ auto ServerController::playWallAction(WallAction action, const int &playerIdx) -
     sendJson(SerializableMessageFactory::serializeWallAction(action, playerIdx));
 }
 
+auto ServerController::surrend(const std::string &username) -> void
+{
+    sendJson(SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, username));
+}
+
 auto ServerController::fetchGameMessages(int) -> void
 {
 //    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));

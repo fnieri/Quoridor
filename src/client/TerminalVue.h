@@ -51,7 +51,7 @@ struct CheckboxState {
  * @brief TUI of Quoridor using ftxui to display more easily the required components
  * [@details You can find the documentation of the author of FTXUI at : https://arthursonzogni.github.io/FTXUI/]
  */
-class TerminalVue
+class TerminalVue : public Observer
 {
     MainController mainController;
     MainModel *mainModel = mainController.getMainModel();
@@ -60,8 +60,7 @@ class TerminalVue
 
     ScreenInteractive *screen;
 
-    std::string message, searchField, messageToFriend, username = "testing", password = "testingPassword", registerUsername, registerPassword,
-                                                       registerRepeatPassword;
+    std::string message, searchField, messageToFriend, username = "aa", password = "aa", registerUsername, registerPassword, registerRepeatPassword;
 
     int actionToggleSelected = 0;
     int mouse_x = 0;
@@ -332,7 +331,11 @@ class TerminalVue
     void joinGame();
 
 public:
+    TerminalVue();
+
     void run();
 
     bool isConnectedToServer() const;
+
+    void update(QuoridorEvent) override;
 };
