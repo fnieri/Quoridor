@@ -54,7 +54,7 @@ auto TerminalVue::createCanvas()
         "Return to main screen",
         [&]() {
             serverController->fetchGameIds();
-            /* mainModel->unloadGame(); */
+            unloadCurrentGame();
             homeTabIndex = 0;
         },
         &buttonOption);
@@ -64,8 +64,21 @@ auto TerminalVue::createCanvas()
     return Renderer(canvasContainer, [&, mainScreenButton] {
         if (gameModel) {
             if (gameModel->hasWinner()) {
-                return text("Player " + gameModel->getWinner() + " has won!");
+                /* return text("Player " + gameModel->getWinner() + " has won!"); */
+                return vbox({
+                    hbox({
+                        filler(),
+                        text("Player " + gameModel->getWinner() + " has won!"),
+                        filler(),
+                    }),
+                    hbox({
+                        filler(),
+                        mainScreenButton->Render(),
+                        filler(),
+                    }),
+                });
             }
+
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
                 playerTurn = gameModel->getCurrentPlayer();
@@ -240,7 +253,7 @@ auto TerminalVue::createBoardGameRenderer()
         [&] {
             serverController->surrend(*mainModel->getUsername());
             serverController->fetchGameIds();
-            /* mainModel->unloadGame(); */
+            unloadCurrentGame();
             homeTabIndex = 0;
         },
         &buttonOption);
@@ -660,6 +673,14 @@ void TerminalVue::updateNotifications()
 void TerminalVue::updateFriendsListCheckboxes()
 {
     if (homeTabIndex == 1 && previousHomeTabIndex != homeTabIndex) {
+
+        // Reset containers
+        friendsListStates.clear();
+        for (auto i = 0; i < playWithContainer->ChildCount(); ++i) {
+            playWithContainer->ChildAt(i)->Detach();
+        }
+
+        // Update
         auto friendsList = mainModel->getFriendList();
         for (const auto &i : *friendsList) {
             friendsListStates.push_back(CheckboxState {false, i});
@@ -733,4 +754,10 @@ void TerminalVue::update(QuoridorEvent event)
         updateGameIds();
         break;
     }
+}
+
+void TerminalVue::unloadCurrentGame()
+{
+    mainModel->unloadGame();
+    gameModel = nullptr;
 }
