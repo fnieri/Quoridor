@@ -209,7 +209,7 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
         dataType = DataType::ELO;
 
     } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) {
-        data = DatabaseHandler::getLeaderboard(10);
+        data = DatabaseHandler::getLeaderboard(50);
         dataType = DataType::LEADERBOARD;
     }
 

@@ -650,7 +650,16 @@ void QtVue::updateLeaderboard()
         auto elo = std::to_string(static_cast<int>(lb->at(i).second));
 
         auto usernameItem = new QTableWidgetItem {username.c_str()};
+        usernameItem->setTextAlignment(Qt::AlignHCenter);
         auto eloItem = new QTableWidgetItem {elo.c_str()};
+        eloItem->setTextAlignment(Qt::AlignHCenter);
+
+        if (username == *mainModel->getUsername()) {
+            auto font = QFont {};
+            font.setBold(true);
+            usernameItem->setFont(font);
+            eloItem->setFont(font);
+        }
 
         leaderboardLayout->setItem(i, 0, usernameItem);
         leaderboardLayout->setItem(i, 1, eloItem);
