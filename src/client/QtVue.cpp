@@ -374,6 +374,7 @@ void QtVue::createLeaderboardPage()
 
     leaderboardLayout = new QTableWidget(10, 2, this);
     leaderboardLayout->setHorizontalHeaderLabels({"Username", "ELO"});
+    leaderboardLayout->setEditTriggers(QAbstractItemView::NoEditTriggers);
     leaderboardPageLayout->addWidget(leaderboardLayout);
 
     auto eloWidget = new QWidget {};
@@ -735,7 +736,7 @@ void QtVue::updateGameIds()
 
 void QtVue::updateChats()
 {
-    if (!mainModel->getFriendList()->empty()) {
+    if (mainModel->getHasFriends()) {
         auto userItem = friendListLW->currentItem();
         if (userItem) {
             auto user = userItem->text().toStdString();
@@ -790,7 +791,6 @@ void QtVue::createMainPage()
 {
     createGamePage();
     createFriendsPage();
-    createLeaderboardPage();
     createLeaderboardPage();
 
     serverController->fetchData();
