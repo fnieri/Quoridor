@@ -50,10 +50,31 @@ bool TerminalVue::isWallPlacementValid(int x, int y)
 
 auto TerminalVue::createCanvas()
 {
-    return Renderer([&] {
+    auto mainScreenButton = Button(
+        "Return to main screen",
+        [&]() {
+            serverController->fetchGameIds();
+            /* mainModel->unloadGame(); */
+            homeTabIndex = 0;
+        },
+        &buttonOption);
+
+    return Renderer([&, mainScreenButton] {
         if (gameModel) {
             if (gameModel->hasWinner()) {
-                return text("Player " + gameModel->getWinner() + " has won!");
+                /* return text("Player " + gameModel->getWinner() + " has won!"); */
+                return vbox({
+                    hbox({
+                        filler(),
+                        text("Player " + gameModel->getWinner() + " has won!"),
+                        filler(),
+                    }),
+                    hbox({
+                        filler(),
+                        mainScreenButton->Render(),
+                        filler(),
+                    }),
+                });
             }
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
