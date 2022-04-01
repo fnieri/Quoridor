@@ -12,5 +12,5 @@ enum class QuoridorEvent {
     EloModified,
     LeaderboardModified,
     RelationsModified,
-    ChatsUpdated,
+    ChatsModified,
 };

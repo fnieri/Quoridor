@@ -120,6 +120,7 @@ private:
     void updateChats();
 
     void updateChatEntries();
+    void updateNotifications();
 };
 
 class DrawLabel : public QLabel
