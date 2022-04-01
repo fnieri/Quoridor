@@ -397,7 +397,7 @@ void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
     canvasPixmap->fill(Qt::white);
-    if (gameModel) {
+    if (mainModel->isGameStarted() && gameModel) {
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 100, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
         } else {
@@ -560,6 +560,7 @@ void QtVue::createTrainingPage()
         selectPawnMove->setVisible(true);
         selectWallMove->setVisible(true);
         trainingStartButton->setText("Restart");
+        mainModel->setIsGameStarted(true);
         drawBoard();
     });
 
@@ -751,7 +752,6 @@ void QtVue::handleBoardPress(int x, int y)
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
             if (gameModel->isMoveValid(cellCoordinates/ 2, *gameModel->getCurrentPlayer())) {
-                std::cout << "Pawn move" << std::endl;
                 auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
                 gameModel->processAction(playerAction.serialized().dump());
                 if (!isTrainingGame)
@@ -855,6 +855,7 @@ void QtVue::handleCreateGameButtonClicked()
 void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
+    mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
     createBoard();
     gameStack->addWidget(drawLabel);
