@@ -231,6 +231,7 @@ void QtVue::createLoginAndRegister()
 
     auto loginButton = new QPushButton("Login", this);
     loginButton->setAutoDefault(true);
+    loginButton->setMinimumSize(QSize(311, 31));
     connect(loginButton, &QPushButton::clicked, this, [this, loginTextEntry, passwordTextEntry]() {
         handleLoginButtonClicked(loginTextEntry->text().toStdString(), passwordTextEntry->text().toStdString());
     });
