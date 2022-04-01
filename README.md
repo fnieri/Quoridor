@@ -67,19 +67,27 @@ C'est mieux de faire tourner le client une fois que le serveur est actif (ou sin
 Afin de faciliter la tache, des utilisateurs sont déjà existants. 
 
 **Utilisateur 1:**
+
 Username: RickAstley
+
 Password: NeverGonnaGiveYouUp
 
 **Utilisateur 2:**
+
 Username: MichaelJackson
+
 Password: Thriller
 
 **Utilisateur 3:**
+
 Username: ThierryMassart
+
 Password: Mooc
 
 **Utilisateur 4:**
+
 Username: Jerome
+
 Password: OnPeutAvoirUneBonneNoteSvp
 
 
