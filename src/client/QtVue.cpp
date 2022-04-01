@@ -556,12 +556,13 @@ void QtVue::createBoardChat(QBoxLayout *layout)
     messageLE->setPlaceholderText("Aa");
     auto messageLEAction = [this, messageLE]() {
         auto text = messageLE->text().toStdString();
-        messageLE->clear();
-        if (!text.empty() && gameModel) {
+        std::cout << "Sending message: " << text << std::endl;
+        if (!text.empty()) {
             std::vector<std::string> playersInGame = gameModel->getPlayersNames();
             serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
             serverController->fetchGameMessages(currentGameId);
         }
+        messageLE->clear();
     };
     connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
     chatL->addWidget(messageLE);
@@ -949,28 +950,15 @@ void QtVue::updateChats()
 
 void QtVue::updateGameChat()
 {
-    //    if (mainModel->getHasFriends()) {
-    //        auto userItem = friendListLW->currentItem();
-    //        if (userItem) {
-    //            auto user = userItem->text().toStdString();
-    //            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
-    //            auto chat = mainModel->getChatWith(user);
-    //
-    //            chatHistLW->clear();
-    //
-    //            for (const auto &entry : *chat) {
-    //                auto msg = entry.sender + ": " + entry.sentMessage;
-    //                auto qmsg = QString::fromStdString(msg);
-    //                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
-    //                /* auto listItem = new QListWidgetItem {qmsg}; */
-    //                /* if (entry.sender == *mainModel->getUsername()) { */
-    //                /*     listItem->setTextAlignment(Qt::AlignRight); */
-    //                /* } */
-    //                /* chatHistLW->addItem(listItem); */
-    //                chatHistLW->addItem(qmsg);
-    //            }
-    //        }
-    //    }
+    if (mainModel->isInGame()) {
+        auto gameChat = mainModel->getGameMessages();
+        gameChatHistLW->clear();
+        for (const auto &entry : *gameChat) {
+            auto msg = entry.sender + ": " + entry.sentMessage;
+            auto qmsg = QString::fromStdString(msg);
+            gameChatHistLW->addItem(qmsg);
+        }
+    }
 }
 
 void QtVue::updateNotifications()
@@ -1132,6 +1120,7 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
     isTrainingGame = false;
     currentGameId = gameId;
+    gameChatHistLW->clear();
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
 
