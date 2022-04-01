@@ -18,8 +18,8 @@ make
 
 ## Test
 
-Une fois le code compilé, il est intéressant de l'executé (ou sinon à quoi bon le compiler).
-Avant d'exécuter le code, il est recommandé d'executer les tests.
+Une fois le code compilé, il est intéressant de l'exécuter (ou sinon à quoi bon le compiler).
+Avant d'exécuter le code, il est recommandé d'exécuter les tests.
 
 ```bash
 ./build/bin/qrd_server_tests
@@ -130,6 +130,8 @@ docker stop quoridor_server
 ```
 
 # Contributions
+
+Cette section est principalement dédiée à ceux participant à la création du projet.
 
 ## Formatage
 
