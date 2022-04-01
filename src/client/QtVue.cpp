@@ -188,12 +188,14 @@ void QtVue::createGamePage()
     createGameLayout->addWidget(createGameTitle, 0, Qt::AlignTop);
 
     auto pickFriendsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    pickFriendsLayout->setAlignment(Qt::AlignTop);
     auto pickFriendsScrollArea = new QScrollArea(this);
     createGameScroll = new QStackedWidget(this);
     pickFriendsLayout->addWidget(new QLabel("Loading friends..."));
     auto pickFriendsWidget = new QWidget(this);
     pickFriendsWidget->setLayout(pickFriendsLayout);
     createGameScroll->addWidget(pickFriendsWidget);
+    createGameScroll->setMinimumSize(500, 300);
     pickFriendsScrollArea->setWidget(createGameScroll);
     createGameLayout->addWidget(pickFriendsScrollArea);
 
@@ -674,6 +676,7 @@ void QtVue::updateFriends()
         pickFriendsList = new QList<QCheckBox *>;
         auto friendList = mainModel->getFriendList();
         auto friendListLayout = new QVBoxLayout;
+        friendListLayout->setAlignment(Qt::AlignTop);
         for (auto &f : *friendList) {
             auto friendCheckbox = new QCheckBox(QString::fromStdString(f));
             pickFriendsList->append(friendCheckbox);
