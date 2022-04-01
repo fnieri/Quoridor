@@ -82,9 +82,6 @@ auto launchTUI()
         vue.run();
     }
 
-    std::thread t1(&TerminalVue::run, &vue);
-    t1.join();
-
     return 0;
 }
 

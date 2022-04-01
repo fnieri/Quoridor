@@ -78,6 +78,7 @@ public:
     auto isInGame() const noexcept -> bool;
     auto getCurrentGame() -> GameModel *;
     auto loadGame(const std::string &) noexcept -> void;
+    auto unloadGame() -> void;
     auto createAiGame() noexcept -> void;
     auto isGameStarted() const noexcept -> bool;
 

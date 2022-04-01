@@ -234,6 +234,11 @@ auto MainModel::loadGame(const std::string &boardConfig) noexcept -> void
     notifyObservers(QuoridorEvent::GameUpdated);
 }
 
+auto MainModel::unloadGame() -> void
+{
+    m_currentGame.reset();
+}
+
 auto MainModel::hasFriendNotification() const noexcept -> bool
 {
     return m_friendNotification;

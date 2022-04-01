@@ -238,6 +238,7 @@ auto TerminalVue::createBoardGameRenderer()
         [&] {
             serverController->surrend(*mainModel->getUsername());
             serverController->fetchGameIds();
+            /* mainModel->unloadGame(); */
             homeTabIndex = 0;
         },
         &buttonOption);
@@ -671,22 +672,22 @@ void TerminalVue::updateGameIds()
 {
     //    if (homeTabIndex == 0 && previousHomeTabIndex != homeTabIndex) {
     //                serverController->fetchGameIds();
-    //        gameList.clear();
+
+    gameList.clear();
     auto gameIds = mainModel->getGameIDs();
+
     for (auto &i : *gameIds) {
-        if (std::find(gameListId.begin(), gameListId.end(), i.first) == gameListId.end()) {
-            gameListId.push_back(i.first);
+        gameListId.push_back(i.first);
 
-            std::string friendsListStr;
-            for (int j = 0; j < i.second.size() - 1; ++j) {
-                friendsListStr += i.second[j] + ", ";
-            }
-            friendsListStr += i.second[i.second.size() - 1];
-
-            std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
-
-            gameList.push_back(gameDescription);
+        std::string friendsListStr;
+        for (int j = 0; j < i.second.size() - 1; ++j) {
+            friendsListStr += i.second[j] + ", ";
         }
+        friendsListStr += i.second[i.second.size() - 1];
+
+        std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
+        gameList.push_back(gameDescription);
     }
     //    }
     //    previousHomeTabIndex = homeTabIndex;
