@@ -17,6 +17,7 @@ add_library(${PREFIX}_common
         ../client/Corridor.cpp
         ../client/BoardComponent.cpp
         ../client/Cell.cpp
+        ../client/Action.cpp
         Point.cpp
         SocketUser.cpp
         Observer.cpp

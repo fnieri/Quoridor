@@ -10,9 +10,9 @@
 
 #include "Cell.h"
 #include "Corridor.h"
+#include "src/client/Action.h"
 #include "src/client/PlayerAction.h"
 #include "src/client/WallAction.h"
-
 #include <nlohmann/json.hpp>
 
 #include <cassert>
@@ -351,6 +351,14 @@ auto AiGameModel::processAction(const std::string &p_action) -> void
 
     // ai plays
     auto aiPlay = m_aiPlayer.findAction(m_board, m_players.at((m_currentPlayerIdx) % m_players.size()), m_players.at(m_currentPlayerIdx));
-    auto aiPlayJsonStr = aiPlay.serialized().dump();
-    GameModel::processAction(aiPlayJsonStr);
+
+    if (aiPlay->isPlayerAction()) {
+        auto aiPla = std::dynamic_pointer_cast<PlayerAction>(aiPlay);
+        auto aiPlayJsonStr = aiPla->serialized().dump();
+        GameModel::processAction(aiPlayJsonStr);
+    } else if (aiPlay->isWallAction()) {
+        auto aiPla = std::dynamic_pointer_cast<WallAction>(aiPlay);
+        auto aiPlayJsonStr = aiPla->serialized().dump();
+        GameModel::processAction(aiPlayJsonStr);
+    }
 }

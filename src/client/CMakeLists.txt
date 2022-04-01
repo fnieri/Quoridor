@@ -7,6 +7,7 @@ add_library(${PREFIX}_client
         Player.cpp
         PlayerAction.cpp
         WallAction.cpp
+        Action.cpp
         WallEnum.h
         PlayerAction.h
         MainModel.cpp

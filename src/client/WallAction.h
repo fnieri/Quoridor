@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Action.h"
 #include "Board.h"
 #include "Player.h"
 #include "WallEnum.h"
@@ -13,7 +14,7 @@
  *
  * @see PlayerAction for the analogous action for pawn movement.
  */
-class WallAction
+class WallAction : public Action
 {
 private:
     /// A reference to the Board to perform the action on.
@@ -71,6 +72,14 @@ public:
      */
     WallAction(std::shared_ptr<Board> board, std::shared_ptr<Player> player, const Point &destCell, const WallOrientation &orientation);
 
+    Point getDestination() const override
+    {
+        return destCell;
+    };
+    WallOrientation getOrientation()
+    {
+        return orientation;
+    };
 
     /**
      * Checks if the wall placement of this action is *legal*, meaning it doesn't obstruct any Player from reaching their finish line.
@@ -91,7 +100,7 @@ public:
      *
      * @returns bool whether or not the action was executed
      */
-    bool executeAction();
+    bool executeAction() override;
 
     /**
      * @brief Return serialized json of a WallAction as such
@@ -106,5 +115,14 @@ public:
      *
      * @returns \ref nlohmann::json
      */
-    nlohmann::json serialized();
+    nlohmann::json serialized() override;
+
+    bool isWallAction() override
+    {
+        return true;
+    };
+    bool isPlayerAction() override
+    {
+        return false;
+    };
 };

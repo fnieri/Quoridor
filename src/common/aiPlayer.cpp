@@ -3,6 +3,10 @@
 //
 
 #include "aiPlayer.h"
+#include <iostream>
+#include <stdlib.h> /* srand, rand */
+#include <time.h>
+#include <unistd.h>
 
 std::vector<PlayerAction> aiPlayer::getValidActions(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player)
 {
@@ -56,24 +60,27 @@ int aiPlayer::distanceFromFinishLine(const std::shared_ptr<Board> &board, const 
         action->executeAction();
         distance++;
     }
-
     return distance;
 }
 
-WallAction aiPlayer::findWallPlacement(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, WallOrientation orientation)
+std::vector<WallAction> aiPlayer::findWallPlacement(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, WallOrientation orientation)
 {
+    srand(time(NULL));
     auto boardSize = board->getCellSize();
+    std::vector<WallAction> actions;
     int randX = rand() % boardSize;
     int randY = rand() % boardSize;
     Point wallPos(randX, randY);
     WallAction wallAction(board, player, wallPos, orientation);
-    while (!wallAction.isWallPlacementValid()) {
+    while (!wallAction.isWallPlacementValid() || actions.size() < 1) {
         randX = rand() % boardSize;
         randY = rand() % boardSize;
         wallPos = Point(randX, randY);
         wallAction = WallAction(board, player, wallPos, orientation);
+        if (wallAction.isWallPlacementValid() && wallAction.isWallPlacementLegal())
+            actions.push_back(wallAction);
     }
-    return wallAction;
+    return actions;
 }
 
 int aiPlayer::minimax(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, const std::shared_ptr<Player> &ai, int depth, bool maximizing)
@@ -81,62 +88,101 @@ int aiPlayer::minimax(const std::shared_ptr<Board> &board, const std::shared_ptr
     if (depth == 0 || isGameOver(board, player)) {
         return distanceFromFinishLine(board, player) * -1;
     }
-
+    int bestScore = (maximizing) ? -100 : 100;
     if (maximizing) {
-        int bestScore = -100;
-        for (auto &move : getValidActions(board, player)) {
+        for (auto &move : getValidActions(board, ai)) {
             auto newBoard = std::make_shared<Board>(*board);
             auto destination = move.getDestination();
             PlayerAction action(newBoard, ai, destination);
             action.executeAction();
-            //            if (!player->nWalls() || rand() % 2) {
-            //            }
-            //            else {
-            //                WallOrientation orientation;
-            //                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
-            //                WallAction action = findWallPlacement(newBoard, ai, orientation);
-            //                action.executeAction();
-            //            }
             int score = minimax(newBoard, player, ai, depth - 1, false);
-            if (score > bestScore) {
+            if (score >= bestScore) {
                 bestScore = score;
-                bestMove = std::make_shared<PlayerAction>(move);
+                bestPlayerMove = std::make_shared<PlayerAction>(move);
             }
         }
     } else {
-        int bestScore = 100;
         for (auto &move : getValidActions(board, player)) {
             auto newBoard = std::make_shared<Board>(*board);
             auto destination = move.getDestination();
             PlayerAction action(newBoard, player, destination);
             action.executeAction();
-            //            if (!player->nWalls() || rand() % 2) {
-            //            } else {
-            //                WallOrientation orientation;
-            //                rand() % 2 ? orientation = WallOrientation::Vertical : orientation = WallOrientation::Horizontal;
-            //                WallAction action = findWallPlacement(newBoard, player, orientation);
-            //                action.executeAction();
-            //            }
             int score = minimax(newBoard, player, ai, depth - 1, true);
-            if (score < bestScore) {
+            if (score <= bestScore) {
                 bestScore = score;
-                bestMove = std::make_shared<PlayerAction>(move);
+                bestPlayerMove = std::make_shared<PlayerAction>(move);
             }
         }
-        return bestScore;
     }
+    return bestScore;
 }
 
-PlayerAction aiPlayer::findAction(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, const std::shared_ptr<Player> &ai)
+int aiPlayer::wallMinimax(
+    const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, const std::shared_ptr<Player> &ai, int depth, bool maximizing)
 {
-    minimax(board, player, ai, 2, true);
-    return *bestMove;
+
+    if (depth == 0 || isGameOver(board, player)) {
+        return distanceFromFinishLine(board, player) * -1;
+    }
+    int bestScore = (maximizing) ? -100 : 100;
+    if (maximizing) {
+        if (ai->nWalls() > 0) {
+            for (auto &wallAction : findWallPlacement(board, ai, WallOrientation::Horizontal)) {
+
+                auto newBoard = std::make_shared<Board>(*board);
+                auto destCell = wallAction.getDestination();
+                WallAction newAction(newBoard, ai, destCell, WallOrientation::Horizontal);
+                newAction.executeAction();
+                int score = wallMinimax(newBoard, player, ai, depth - 1, false);
+                if (score >= bestScore) {
+                    bestScore = score;
+                    bestWallMove = std::make_shared<WallAction>(wallAction);
+                }
+            }
+        }
+    } else {
+        if (player->nWalls() > 0) {
+            for (auto &wallAction : findWallPlacement(board, player, WallOrientation::Horizontal)) {
+                auto newBoard = std::make_shared<Board>(*board);
+                auto destCell = wallAction.getDestination();
+                WallAction newAction(newBoard, player, destCell, WallOrientation::Horizontal);
+
+                newAction.executeAction();
+                int score = wallMinimax(newBoard, player, ai, depth - 1, true);
+                if (score <= bestScore) {
+                    bestScore = score;
+                    bestWallMove = std::make_shared<WallAction>(wallAction);
+                }
+            }
+        }
+    }
+    return bestScore;
+}
+
+std::shared_ptr<Action> aiPlayer::findAction(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, const std::shared_ptr<Player> &ai)
+{
+
+    srand(time(NULL));
+
+    int play = rand();
+    if (play % 2 == 0) {
+        minimax(board, player, ai, 2, true);
+        return bestPlayerMove;
+    } else {
+        if (ai->nWalls() > 0) {
+            wallMinimax(board, player, ai, 2, true);
+            return bestWallMove;
+        } else {
+            minimax(board, player, ai, 2, true);
+            return bestPlayerMove;
+        }
+    }
 }
 
 void aiPlayer::play(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player, const std::shared_ptr<Player> &ai)
 {
     auto action = findAction(board, player, ai);
-    action.executeAction();
+    action->executeAction();
 }
 
 bool aiPlayer::isGameOver(const std::shared_ptr<Board> &board, const std::shared_ptr<Player> &player)

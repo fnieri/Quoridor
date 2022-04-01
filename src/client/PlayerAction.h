@@ -1,11 +1,11 @@
 #pragma once
 
-#include "src/common/Serializable.h"
+#include "Action.h"
 #include "Board.h"
 #include "Player.h"
 #include "PlayerEnum.h"
 #include "src/common/Point.h"
-
+#include "src/common/Serializable.h"
 #include <nlohmann/json_fwd.hpp>
 
 #include <memory>
@@ -16,7 +16,7 @@
  *
  * @see WallAction for the analogous action for wall placement.
  */
-class PlayerAction
+class PlayerAction : public Action
 {
     /// A reference to the Board to perform the action on.
     std::shared_ptr<Board> board;
@@ -62,14 +62,24 @@ public:
      *
      * @returns bool whether or not the move was executed
      */
-    bool executeAction();
+    bool executeAction() override;
 
-    Point getDestination() const;
+    Point getDestination() const override;
 
     /**
      * Serialize the PlayerAction to json format.
      *
      * @returns \ref nlohmann::json
      */
-    nlohmann::json serialized();
+    nlohmann::json serialized() override;
+
+    bool isPlayerAction() override
+    {
+        return true;
+    };
+
+    bool isWallAction() override
+    {
+        return false;
+    };
 };
