@@ -1,6 +1,9 @@
-//
-// Created by louis on 3/30/22.
-//
+/**
+* @file QtVue.h
+* @author Louis Vanstappen, Boris Petrov, Sacha Testaert
+* @brief GUI for the client.
+* @date 02/25/22
+*/
 
 #pragma once
 #include <atomic>
