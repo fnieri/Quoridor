@@ -205,7 +205,8 @@ auto MainModel::isInGame() const noexcept -> bool
 
 auto MainModel::loadGame(const std::string &boardConfig) noexcept -> void
 {
-        m_currentGame = std::make_shared<GameModel>(boardConfig);
+    m_currentGame = std::make_shared<GameModel>(boardConfig);
+    notifyObservers(QuoridorEvent::GameUpdated);
 }
 
 auto MainModel::hasFriendNotification() const noexcept -> bool
@@ -254,4 +255,5 @@ auto MainModel::setIsGameStarted(const bool &val) -> void
 auto MainModel::processGameAction(const std::string &serAction) -> void
 {
     m_currentGame->processAction(serAction);
+    notifyObservers(QuoridorEvent::GameUpdated);
 }

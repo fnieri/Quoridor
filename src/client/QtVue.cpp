@@ -207,8 +207,10 @@ void QtVue::createGamePage()
     auto gamePage = new QWidget(this);
     gamePickerLayout->setAlignment(Qt::AlignTop);
     gamePage->setLayout(gamePickerLayout);
+    gameStack = new QStackedWidget(this);
+    gameStack->addWidget(gamePage);
 
-    mainTabBar->addTab(gamePage, "Games");
+    mainTabBar->addTab(gameStack, "Games");
 }
 
 void QtVue::createFriendsPage()
@@ -248,8 +250,8 @@ void QtVue::createLeaderboardPage()
 void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
+    canvasPixmap->fill(Qt::white);
     if (gameModel) {
-        canvasPixmap->fill(Qt::white);
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 100, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
         } else {
@@ -350,23 +352,18 @@ void QtVue::drawBoard()
             painter->setPen(QPen(Qt::black, 2));
             painter->drawRect(0, 0, cellSize * (int)boardIntMatrix.size() + 20, cellSize * (int)boardIntMatrix.size() + 20);
         }
+    } else if (!isTrainingGame) {
+        painter->drawText(QRect(0, 0, 500, 100), "Waiting for other players to join...");
     }
     drawLabel->setPixmap(*canvasPixmap);
 }
 
-void QtVue::createTrainingPage()
+void QtVue::createBoard()
 {
-    auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
-
-    auto tLabel = new QLabel("Training page");
-    tLabel->setAlignment(Qt::AlignTop);
-    trainingPageLayout->addWidget(tLabel);
-
     // this is board
     canvasPixmap = new QPixmap(QSize(620, 740));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
-    trainingPageLayout->addWidget(drawLabel);
 
     selectPawnMove = new QPushButton("Pawn");
     selectWallMove = new QPushButton("Wall");
@@ -382,10 +379,23 @@ void QtVue::createTrainingPage()
     selectVerticalWall->setCheckable(true);
     selectPawnMove->setChecked(true);
     selectHorizontalWall->setChecked(true);
-    selectPawnMove->setVisible(false);
-    selectWallMove->setVisible(false);
     selectHorizontalWall->setVisible(false);
     selectVerticalWall->setVisible(false);
+}
+
+void QtVue::createTrainingPage()
+{
+    auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+
+    auto tLabel = new QLabel("Training page");
+    tLabel->setAlignment(Qt::AlignTop);
+    trainingPageLayout->addWidget(tLabel);
+
+    createBoard();
+    trainingPageLayout->addWidget(drawLabel);
+
+    selectPawnMove->setVisible(false);
+    selectWallMove->setVisible(false);
 
     auto selectWallOrientationLayout = new QHBoxLayout;
     selectWallOrientationLayout->addWidget(selectHorizontalWall);
@@ -399,6 +409,7 @@ void QtVue::createTrainingPage()
 
     auto trainingStartButton = new QPushButton("Start training", this);
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
+        isTrainingGame = true;
         mainModel->createAiGame();
         selectPawnMove->setVisible(true);
         selectWallMove->setVisible(true);
@@ -422,6 +433,7 @@ void QtVue::updateValues()
     updatePart(chatsUpdated, [this]() { this->updateChats(); });
     updatePart(friendsUpdated, [this]() { this->updateFriends(); });
     updatePart(gameIdsUpdated, [this]() { this->updateGameIds(); });
+    updatePart(gameUpdated, [this]() { this->updateGame(); });
 }
 
 template <typename Callable>
@@ -453,6 +465,9 @@ void QtVue::update(QuoridorEvent event)
         break;
     case QuoridorEvent::GameIdsUpdated:
         gameIdsUpdated = true;
+        break;
+    case QuoridorEvent::GameUpdated:
+        gameUpdated = true;
         break;
     default:
         break;
@@ -510,6 +525,13 @@ void QtVue::updateFriends()
 
 void QtVue::updateRelations()
 {
+}
+
+void QtVue::updateGame()
+{
+    selectPawnMove->setVisible(true);
+    selectWallMove->setVisible(true);
+    drawBoard();
 }
 
 void QtVue::updateGameIds()
@@ -571,11 +593,15 @@ void QtVue::handleBoardPress(int x, int y)
             if (gameModel->isMoveValid(cellCoordinates) / 2, *gameModel->getCurrentPlayer()) {
                 auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
                 gameModel->processAction(playerAction.serialized().dump());
+                if (!isTrainingGame)
+                    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
             }
         } else if (moveType == 1) {
             if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation), *gameModel->getCurrentPlayer()) {
                 auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer());
                 gameModel->processAction(wallAction.serialized().dump());
+                if (!isTrainingGame)
+                    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
             }
         }
         drawBoard();
@@ -660,12 +686,17 @@ void QtVue::handleCreateGameButtonClicked()
             friendsPicked.push_back(friendCheckbox->text().toStdString());
         }
     }
-    for (auto &f : friendsPicked) {
-        std::cout << f << std::endl;
+    if (friendsPicked.size() == 1 || friendsPicked.size() == 3) {
+        serverController->createGame(*mainModel->getUsername(), friendsPicked);
     }
 }
 
 void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
-    std::cout << "join game " << gameId << std::endl;
+    isTrainingGame = false;
+    serverController->joinGame(gameId, *mainModel->getUsername());
+    createBoard();
+    gameStack->addWidget(drawLabel);
+    gameStack->setCurrentWidget(drawLabel);
+    drawBoard();
 }

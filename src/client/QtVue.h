@@ -73,6 +73,7 @@ private:
 
     QTabWidget *mainTabBar {};
 
+    QStackedWidget *gameStack {};
     QStackedWidget *gameIdsScroll {};
     QStackedWidget *createGameScroll {};
     QList<QCheckBox *> *pickFriendsList {};
@@ -85,12 +86,12 @@ private:
     QPixmap *canvasPixmap {};
     QPainter *painter {};
 
-
     MainController mainController;
     MainModel *mainModel;
     ServerController *serverController;
     GameModel *gameModel;
 
+    bool isTrainingGame = false;
     QPushButton *selectPawnMove{};
     QPushButton *selectWallMove{};
     QPushButton *selectHorizontalWall{};
@@ -109,12 +110,14 @@ private:
     std::atomic<bool> gameUpdated {false};
     std::atomic<bool> friendsUpdated {false};
     std::atomic<bool> gameIdsUpdated {false};
+    std::atomic<bool> gameLoaded {false};
 
     void createLoginAndRegister();
     void createMainPage();
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
+    void createBoard();
     void createTrainingPage();
 
     void drawBoard();
@@ -132,6 +135,7 @@ private:
     void updateChats();
     void updateFriends();
     void updateGameIds();
+    void updateGame();
 };
 
 class DrawLabel : public QLabel

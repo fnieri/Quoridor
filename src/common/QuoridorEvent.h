@@ -15,4 +15,5 @@ enum class QuoridorEvent {
     ChatsUpdated,
     FriendsUpdated,
     GameIdsUpdated,
+    GameUpdated,
 };
