@@ -118,6 +118,8 @@ private:
     void updateLeaderboard();
     void updateRelations();
     void updateChats();
+
+    void updateChatEntries();
 };
 
 class DrawLabel : public QLabel

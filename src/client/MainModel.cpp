@@ -160,6 +160,8 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
         m_chats.insert({friendUsername, std::make_shared<std::vector<Message>>()});
     }
     m_chats.at(friendUsername)->push_back(msg);
+
+    notifyObservers(QuoridorEvent::ChatsModified);
 }
 
 // auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void

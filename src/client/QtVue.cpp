@@ -186,9 +186,9 @@ void QtVue::createFriendsPage()
     friendListL->addWidget(friendListTitle);
 
     friendListLW = new QListWidget {};
+    connect(friendListLW, &QListWidget::itemClicked, this, &QtVue::updateChatEntries);
     friendListL->addWidget(friendListLW);
 
-    // TODO: action
     auto remFriendButton = new QPushButton {"Remove friend"};
     auto remFriendAction = [this]() {
         auto user = friendListLW->currentItem()->text().toStdString();
@@ -206,10 +206,21 @@ void QtVue::createFriendsPage()
     auto chatL = new QVBoxLayout {};
 
     chatHistLW = new QListWidget {};
+    /* chatHistLW->setWordWrap(true); */
     chatL->addWidget(chatHistLW);
 
-    // TODO: action
     auto messageLE = new QLineEdit {};
+    messageLE->setPlaceholderText("Aa");
+    auto messageLEAction = [this, messageLE]() {
+        auto receiver = friendListLW->currentItem()->text().toStdString();
+        auto text = messageLE->text().toStdString();
+        messageLE->clear();
+        if (!text.empty()) {
+            serverController->sendFriendMessage(*mainModel->getUsername(), receiver, text);
+            serverController->fetchFriendMessages(*mainModel->getUsername(), receiver);
+        }
+    };
+    connect(messageLE, &QLineEdit::returnPressed, this, messageLEAction);
     chatL->addWidget(messageLE);
 
     chatW->setLayout(chatL);
@@ -256,11 +267,10 @@ void QtVue::createFriendsPage()
     FALayout->addWidget(FASentTitle);
 
     friendSentLW = new QListWidget {};
-    for (auto i = 0; i < 2; ++i)
-        friendSentLW->addItem("send");
     FALayout->addWidget(friendSentLW);
 
     auto sendInvLE = new QLineEdit {};
+    sendInvLE->setPlaceholderText("Aa");
     FALayout->addWidget(sendInvLE);
 
     auto sendInvB = new QPushButton {"Send invitation"};
@@ -280,6 +290,23 @@ void QtVue::createFriendsPage()
     friendsPage->setLayout(friendsPageLayout);
 
     mainTabBar->addTab(friendsPage, "Friends");
+}
+
+void QtVue::updateChatEntries()
+{
+    if (friendListLW->count() > 0) {
+        auto user = friendListLW->currentItem()->text().toStdString();
+        serverController->fetchFriendMessages(*mainModel->getUsername(), user);
+        auto chat = mainModel->getChatWith(user);
+
+        chatHistLW->clear();
+
+        for (const auto &entry : *chat) {
+            auto msg = entry.sender + ": " + entry.sentMessage;
+            auto qmsg = QString::fromStdString(msg);
+            chatHistLW->addItem(qmsg);
+        }
+    }
 }
 
 void QtVue::createLeaderboardPage()
@@ -504,7 +531,7 @@ void QtVue::update(QuoridorEvent event)
     case QuoridorEvent::RelationsModified:
         relationsUpdated = true;
         break;
-    case QuoridorEvent::ChatsUpdated:
+    case QuoridorEvent::ChatsModified:
         chatsUpdated = true;
         break;
     }
@@ -554,6 +581,7 @@ void QtVue::updateRelations()
 
 void QtVue::updateChats()
 {
+    updateChatEntries();
 }
 
 void QtVue::createMainPage()
