@@ -71,10 +71,34 @@ void testGameJoin(std::string username, std::string password)
 
 int main(int argc, char *argv[])
 {
-    QApplication QuoridorApp(argc, argv);
-    QtVue vue;
-    vue.show();
-    return QuoridorApp.exec();
+
+    if (argc == 1) {
+        QApplication QuoridorApp(argc, argv);
+        QtVue vue;
+        vue.show();
+        return QuoridorApp.exec();
+    }
+
+    if (argc == 2)
+    {
+        if (std::string(argv[1]) == "-nogui"){
+            std::cout << "Utilisation de l'interface terminal."<<"\n""\n";
+            TerminalVue vue;
+            if (!vue.isConnectedToServer()) {
+                std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+                exit(1);
+            } else {
+                system("clear");
+                vue.run();
+            }
+            return 0;
+        }else{
+            std::cout << "Utilisation: ./build/bin/client -nogui ;" << "\n";
+            std::cout << "Afin de lancer en mode Terminal" << "\n";
+            return 0;
+        }
+    }
+    
 //    MainController mainController;
 //    ServerController serverController {&mainController};
 //    //    serverController.registerUser("b", "b");

@@ -60,7 +60,7 @@ class TerminalVue
 
     ScreenInteractive *screen;
 
-    std::string message, searchField, messageToFriend, username = "testing", password = "testingPassword", registerUsername, registerPassword,
+    std::string message, searchField, messageToFriend, username = "", password = "", registerUsername, registerPassword,
                                                        registerRepeatPassword;
 
     int actionToggleSelected = 0;
