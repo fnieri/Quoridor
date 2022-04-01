@@ -117,7 +117,10 @@ class TerminalVue
     int previousHomeTabIndex = homeTabIndex;
     Component playWithContainer = Container::Vertical({});
 
-
+    /**
+     * @brief Updates responsively all chat entries
+     * 
+     */
     void updateChatEntries();
 
     /**
@@ -201,10 +204,10 @@ class TerminalVue
     void handleCellClick(int x, int y);
 
     /**
-     * @brief
-     *
-     * @param x
-     * @param y
+     * @brief handler of wall additions to the gameModel
+     * 
+     * @param x 
+     * @param y 
      */
     void handleWallAdd(int x, int y);
 
@@ -215,11 +218,22 @@ class TerminalVue
      */
     auto createActionToggle();
 
+    /**
+     * @brief Create a Training Renderer object; renders the game of a player against an AI
+     * 
+     * @return Renderer
+     */
     auto createTrainingRenderer();
+
+    /**
+     * @brief Create a Board Game Renderer object
+     * 
+     * @return auto 
+     */
     auto createBoardGameRenderer();
 
     /**
-     * @brief Create a Orientation Toggle object, to chose in which direction you place your wall
+     * @brief Create an Orientation Toggle object, to chose in which direction you place your wall
      *
      * @return Toggle
      */
@@ -267,6 +281,13 @@ class TerminalVue
      */
     auto createLoginRenderer();
 
+
+    /**
+     * @brief Create a Friends Renderer object; displays your friends list and offers other friend related actions
+     * [@details other actions being: Add a friend, look what friendrequests we received]
+     * 
+     * @return Renderer
+     */
     auto createFriendsRenderer();
 
     /**
@@ -295,13 +316,31 @@ class TerminalVue
      *
      */
     void loginUser();
-
+    
+    /**
+     * @brief Handler of registring process, displays error messages in needed cases
+     * 
+     */
     void registerUser();
 
+    /**
+     * @brief Handles the in-Game messages you send
+     * 
+     * @param message string
+     * @param gameId int
+     */
     void sendMessageGame(const std::string &message, int gameId);
 
+    /**
+     * @brief Handles the messages you send to any of your friends
+     * 
+     */
     void sendUserMessage();
 
+    /**
+     * @brief Game creator, manages the invited persons, send them invitation
+     * 
+     */
     void userCreateGame();
 
     /**
@@ -312,27 +351,65 @@ class TerminalVue
     void sendFriendRequest();
 
     /**
-     * @brief Delete a friend from your friends list
+     * @brief Delete a friend from your friends list, updates server data
      *
      */
     void deleteFriend();
 
+    /**
+     * @brief Handles accepted friend requests, updates server data
+     * 
+     */
     void acceptFriendRequest();
 
+    /**
+     * @brief Handles declinated friend requests, updates server data
+     * 
+     */
     void declineFriendRequest();
 
+    /**
+     * @brief Handles all tabs from the Tab widget
+     * 
+     */
     void updateFriendTabsIndex();
 
+    /**
+     * @brief Updates responsively "Game" or "Friends" tab if there is a notification
+     * 
+     */
     void updateNotifications();
 
+    /** 
+     * @brief Updates friends checkboxes with friends list from server
+     * 
+     */
     void updateFriendsListCheckboxes();
 
+    /**
+     * @brief Updates responsively currently joinable games
+     * 
+     */
     void updateGameIds();
 
+    /**
+     * @brief Makes possible for the user to join a particular game 
+     * 
+     */
     void joinGame();
 
 public:
+    /**
+     * @brief Displays the program continuously
+     * 
+     */
     void run();
 
+    /**
+     * @brief States if the application is connected or not to the server
+     * 
+     * @return true 
+     * @return false 
+     */
     bool isConnectedToServer() const;
 };
