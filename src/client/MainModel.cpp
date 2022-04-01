@@ -139,10 +139,17 @@ auto MainModel::addFriendRequestReceived(const std::string &friendRequestReceive
     notifyObservers(QuoridorEvent::RelationsModified);
 }
 
+auto MainModel::acceptFriendRequest(const std::string &friendUsername) -> void
+{
+    m_friendRequestsSent->erase(std::remove(m_friendRequestsSent->begin(), m_friendRequestsSent->end(), friendUsername), m_friendRequestsSent->end());
+    addFriend(friendUsername);
+
+    notifyObservers(QuoridorEvent::RelationsModified);
+}
+
 auto MainModel::refuseFriendRequest(const std::string &notFriendUsername) -> void
 {
-    m_friendRequestsReceived->erase(
-        std::remove(m_friendRequestsReceived->begin(), m_friendRequestsReceived->end(), notFriendUsername), m_friendRequestsReceived->end());
+    m_friendRequestsSent->erase(std::remove(m_friendRequestsSent->begin(), m_friendRequestsSent->end(), notFriendUsername), m_friendRequestsSent->end());
 
     notifyObservers(QuoridorEvent::RelationsModified);
 }

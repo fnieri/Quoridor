@@ -168,6 +168,7 @@ void QtVue::createGamePage()
 void QtVue::createFriendsPage()
 {
     auto friendsPageLayout = new QHBoxLayout {};
+    friendsPageLayout->setSpacing(0);
 
     auto titleFont = QFont {};
     titleFont.setBold(true);
@@ -181,13 +182,14 @@ void QtVue::createFriendsPage()
 
     // Friend list
     auto friendListW = new QWidget {};
+    friendListW->setMaximumWidth(200);
     auto friendListL = new QVBoxLayout {};
 
     auto friendListTitle = getTitle("Friend list");
     friendListL->addWidget(friendListTitle);
 
     friendListLW = new QListWidget {};
-    connect(friendListLW, &QListWidget::itemClicked, this, &QtVue::updateChatEntries);
+    connect(friendListLW, &QListWidget::itemClicked, this, &QtVue::updateChats);
     friendListL->addWidget(friendListLW);
 
     auto remFriendButton = new QPushButton {"Remove friend"};
@@ -235,6 +237,7 @@ void QtVue::createFriendsPage()
 
     // Right hand side friends actions (FA)
     auto FAWidget = new QWidget {};
+    FAWidget->setMaximumWidth(200);
     auto FALayout = new QVBoxLayout {};
 
     auto FARecTitle = getTitle("Invitations received");
@@ -288,8 +291,11 @@ void QtVue::createFriendsPage()
 
     auto sendInvB = new QPushButton {"Send invitation"};
     auto sendInvBAction = [this, sendInvLE]() {
-        serverController->sendFriendRequest(*mainModel->getUsername(), sendInvLE->text().toStdString());
-        serverController->fetchFriendRequestsSent();
+        auto newFriend = sendInvLE->text().toStdString();
+        if (newFriend != *mainModel->getUsername()) {
+            serverController->sendFriendRequest(*mainModel->getUsername(), newFriend);
+            serverController->fetchFriendRequestsSent();
+        }
         sendInvLE->clear();
     };
     connect(sendInvB, &QPushButton::clicked, this, sendInvBAction);
@@ -303,26 +309,6 @@ void QtVue::createFriendsPage()
     friendsPage->setLayout(friendsPageLayout);
 
     mainTabBar->addTab(friendsPage, "Friends");
-}
-
-void QtVue::updateChatEntries()
-{
-    if (!mainModel->getFriendList()->empty()) {
-        auto userItem = friendListLW->currentItem();
-        if (userItem) {
-            auto user = userItem->text().toStdString();
-            serverController->fetchFriendMessages(*mainModel->getUsername(), user);
-            auto chat = mainModel->getChatWith(user);
-
-            chatHistLW->clear();
-
-            for (const auto &entry : *chat) {
-                auto msg = entry.sender + ": " + entry.sentMessage;
-                auto qmsg = QString::fromStdString(msg);
-                chatHistLW->addItem(qmsg);
-            }
-        }
-    }
 }
 
 void QtVue::createLeaderboardPage()
@@ -600,7 +586,22 @@ void QtVue::updateRelations()
 
 void QtVue::updateChats()
 {
-    updateChatEntries();
+    if (!mainModel->getFriendList()->empty()) {
+        auto userItem = friendListLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
+            auto chat = mainModel->getChatWith(user);
+
+            chatHistLW->clear();
+
+            for (const auto &entry : *chat) {
+                auto msg = entry.sender + ": " + entry.sentMessage;
+                auto qmsg = QString::fromStdString(msg);
+                chatHistLW->addItem(qmsg);
+            }
+        }
+    }
 }
 
 void QtVue::updateNotifications()
@@ -608,6 +609,8 @@ void QtVue::updateNotifications()
     auto currentTabIdx = mainTabBar->currentIndex();
     if (currentTabIdx == -1)
         return;
+
+    std::cerr << currentTabIdx;
 
     if (currentTabIdx != 1 && mainModel->hasFriendNotification()) {
         mainTabBar->setTabText(1, "Friends*");

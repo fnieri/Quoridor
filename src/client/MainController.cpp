@@ -105,15 +105,15 @@ void MainController::processRelations(const std::string &serRequest)
 {
     json request(json::parse(serRequest));
     if (request.at("action") == toJsonString(FriendAction::FRIEND_REMOVE)) {
-        m_mainModel->removeFriend(request.at("friend_rm_receiver"));
+        m_mainModel->removeFriend(request.at("friend_rm_sender"));
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_ACCEPT)) {
-        m_mainModel->addFriend(request.at("friend_req_receiver"));
+        m_mainModel->acceptFriendRequest(request.at("friend_req_receiver"));
         m_mainModel->setHasFriends(true);
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REQUEST)) {
         m_mainModel->addFriendRequestReceived(request.at("friend_req_sender"));
         m_mainModel->setFriendNotification(true);
     } else if (request.at("action") == toJsonString(FriendAction::FRIEND_REFUSE)) {
-        m_mainModel->refuseFriendRequest(request.at("friend_req_sender"));
+        m_mainModel->refuseFriendRequest(request.at("friend_req_receiver"));
     }
 }
 

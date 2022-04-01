@@ -119,7 +119,6 @@ private:
     void updateRelations();
     void updateChats();
 
-    void updateChatEntries();
     void updateNotifications();
 };
 

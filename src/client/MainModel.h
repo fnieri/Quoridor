@@ -107,6 +107,7 @@ public:
     auto setFriendRequestsReceived(const std::vector<std::string> &) -> void;
     auto addFriendRequestReceived(const std::string &) -> void;
 
+    auto acceptFriendRequest(const std::string &) -> void;
     auto refuseFriendRequest(const std::string &) -> void;
 
     auto removeFriend(const std::string &) -> void;
