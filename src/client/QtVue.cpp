@@ -108,6 +108,7 @@ void QtVue::createLoginAndRegister()
     loginBoxLayout->addWidget(loginMessage);
 
     auto loginButton = new QPushButton("Login", this);
+    loginButton->setAutoDefault(true);
     connect(loginButton, &QPushButton::clicked, this, [this, loginTextEntry, passwordTextEntry]() {
         handleLoginButtonClicked(loginTextEntry->text().toStdString(), passwordTextEntry->text().toStdString());
     });
@@ -132,6 +133,7 @@ void QtVue::createLoginAndRegister()
     registerBoxLayout->addWidget(registerMessage);
 
     auto registerButton = new QPushButton("Register", this);
+    registerButton->setAutoDefault(true);
     connect(registerButton, &QPushButton::clicked, this, [this, registerUsernameTextEntry, registerPasswordTextEntry, registerPasswordConfirmTextEntry]() {
         handleRegisterButtonClicked(registerUsernameTextEntry->text().toStdString(), registerPasswordTextEntry->text().toStdString(),
             registerPasswordConfirmTextEntry->text().toStdString());
