@@ -556,7 +556,6 @@ void QtVue::createBoardChat(QBoxLayout *layout)
     messageLE->setPlaceholderText("Aa");
     auto messageLEAction = [this, messageLE]() {
         auto text = messageLE->text().toStdString();
-        std::cout << "Sending message: " << text << std::endl;
         if (!text.empty()) {
             std::vector<std::string> playersInGame = gameModel->getPlayersNames();
             serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, text, currentGameId);
@@ -575,7 +574,7 @@ void QtVue::drawBoard()
 {
     gameModel = mainModel->getCurrentGame();
     canvasPixmap->fill(Qt::white);
-    if (mainModel->isGameStarted() && gameModel) {
+    if (mainModel->isInGame() && gameModel) {
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 300, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
             selectHorizontalWall->setVisible(false);
@@ -583,7 +582,7 @@ void QtVue::drawBoard()
             selectPawnMove->setVisible(false);
             selectWallMove->setVisible(false);
             if (!isTrainingGame) {
-                surrenderButton->setVisible(false);
+            surrenderButton->setVisible(false);
                 quitButton->setVisible(true);
             }
         } else {
@@ -893,7 +892,6 @@ void QtVue::updateGame()
 {
     selectPawnMove->setVisible(true);
     selectWallMove->setVisible(true);
-    surrenderButton->setVisible(true);
     drawBoard();
 }
 
@@ -1127,7 +1125,6 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
     auto boardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     createBoard(boardLayout);
     boardLayout->addWidget(surrenderButton);
-    surrenderButton->setVisible(false);
     quitButton->setVisible(false);
     boardLayout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);

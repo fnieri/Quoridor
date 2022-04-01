@@ -67,7 +67,7 @@ class TerminalVue : public Observer
     int mouse_y = 0;
     bool mousePressed = false;
     int wallOrientation = 0; // indicate the orientation of the wall
-    int chatSelected = 0;
+    int gameChatSelected = 0;
     int friend_selected = 0, previousFriendSelected = -1, friendRequestSelected = 0;
     int chat_message_selected = 0;
     int gameSelected = 0;
@@ -80,7 +80,7 @@ class TerminalVue : public Observer
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
 
-    std::vector<std::string> chatElements;
+    std::vector<std::string> gameChatElements;
     std::vector<std::string> gameList;
     std::vector<int> gameListId;
     std::vector<CheckboxState> friendsListStates;
@@ -118,6 +118,8 @@ class TerminalVue : public Observer
 
 
     void updateChatEntries();
+
+    void updateGameChatEntries();
 
     /**
      * @brief Checks if it's someone's turn
