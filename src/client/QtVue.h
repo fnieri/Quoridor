@@ -142,6 +142,7 @@ private:
     void updateChats();
 
     void updateChatEntries();
+    void updateNotifications();
     void updateFriends();
     void updateGameIds();
     void updateGame();

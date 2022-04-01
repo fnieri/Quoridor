@@ -56,6 +56,7 @@ QtVue::QtVue(QWidget *parent)
     loginTabBar = new QTabWidget(this);
     createLoginAndRegister();
     mainTabBar = new QTabWidget(this);
+    connect(mainTabBar, &QTabWidget::tabBarClicked, this, &QtVue::updateNotifications);
 }
 
 QtVue::~QtVue()
@@ -619,6 +620,8 @@ void QtVue::update(QuoridorEvent event)
     default:
         break;
     }
+
+    updateNotifications();
 }
 
 void QtVue::updateELO()
@@ -678,8 +681,10 @@ void QtVue::updateRelations()
 
     auto updateRel = [](QListWidget *w, const std::vector<std::string> *l) {
         w->clear();
-        for (auto &entry : *l) {
-            w->addItem(QString::fromStdString(entry));
+        if (l) {
+            for (auto &entry : *l) {
+                w->addItem(QString::fromStdString(entry));
+            }
         }
     };
 
@@ -725,11 +730,39 @@ void QtVue::updateChats()
     updateChatEntries();
 }
 
+void QtVue::updateNotifications()
+{
+    auto currentTabIdx = mainTabBar->currentIndex();
+    if (currentTabIdx == -1)
+        return;
+
+    if (currentTabIdx != 1 && mainModel->hasFriendNotification()) {
+        mainTabBar->setTabText(1, "Friends*");
+    } else if (currentTabIdx == 1 && mainModel->hasFriendNotification()) {
+        mainModel->setFriendNotification(false);
+        mainTabBar->setTabText(1, "Friends");
+    } else {
+        mainTabBar->setTabText(1, "Friends");
+    }
+
+    if (currentTabIdx != 0 && mainModel->hasGameNotification()) {
+        mainTabBar->setTabText(0, "Games*");
+    } else if (currentTabIdx == 0 && mainModel->hasGameNotification()) {
+        mainModel->setGameNotification(false);
+        mainTabBar->setTabText(0, "Games");
+    } else {
+        mainTabBar->setTabText(0, "Games");
+    }
+}
+
 void QtVue::createMainPage()
 {
     createGamePage();
     createFriendsPage();
     createLeaderboardPage();
+    createLeaderboardPage();
+
+    serverController->fetchData();
 
     stackWidget->addWidget(mainTabBar);
     stackWidget->setCurrentWidget(mainTabBar);
