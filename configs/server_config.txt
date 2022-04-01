@@ -1,0 +1,2 @@
+db_address=mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority
+server_port=12345

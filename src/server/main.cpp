@@ -9,12 +9,16 @@
 #include "ServerUser.h"
 #include "UserHandler.h"
 #include "Database.h"
+#include "Config.h"
+#include "ConfigEnums.h"
 
 int main(int argc, char *argv[])
 {
-    //    DatabaseHandler::deleteGame(1189641421);
-    //    std::cout << "Server started" << std::endl;
+    unsigned short port = stoi(ConfigHandler::Instance()->getServerProperty(ServerProperty::PORT));
+    std::cout << "Server started on port " << port << std::endl;
     UserHub userHub;
-    LandingPool entryDoor {12346, userHub};
+    LandingPool entryDoor {port, userHub};
+    DatabaseHandler::sendFriendRequest("testing", "bar");
+
     return entryDoor.openToConnections();
 }

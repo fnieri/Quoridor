@@ -20,14 +20,14 @@ ChatBox::ChatBox(UserHub &userHub)
 {
 }
 
-void ChatBox::processRequest(const std::string &serMessage)
+auto ChatBox::processRequest(const std::string &serMessage) -> void
 {
     recordMessage(serMessage);
     std::cout << "ChatBox::processRequest" << std::endl;
     relayMessage(serMessage);
 }
 
-void ChatBox::recordMessage(const std::string &serRequest)
+auto ChatBox::recordMessage(const std::string &serRequest) -> void
 {
     std::cout <<  serRequest << std::endl;
     auto request = json::parse(serRequest);
@@ -46,7 +46,7 @@ void ChatBox::recordMessage(const std::string &serRequest)
     }
 }
 
-void ChatBox::relayMessage(const std::string &serRequest)
+auto ChatBox::relayMessage(const std::string &serRequest) -> void
 {
     auto request=  json::parse(serRequest);
 
