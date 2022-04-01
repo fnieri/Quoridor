@@ -421,7 +421,7 @@ void QtVue::createBoardChat(QBoxLayout *layout)
     auto chatL = new QVBoxLayout {};
 
     gameChatHistLW = new QListWidget {};
-    chatL->addWidget(chatHistLW);
+    chatL->addWidget(gameChatHistLW);
 
     auto messageLE = new QLineEdit {};
     messageLE->setPlaceholderText("Aa");
