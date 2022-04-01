@@ -400,7 +400,7 @@ void QtVue::drawBoard()
     canvasPixmap->fill(Qt::white);
     if (mainModel->isGameStarted() && gameModel) {
         if (gameModel->hasWinner()) {
-            painter->drawText(QRect(0, 0, 100, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
+            painter->drawText(QRect(0, 0, 300, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
         } else {
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
@@ -505,12 +505,13 @@ void QtVue::drawBoard()
     drawLabel->setPixmap(*canvasPixmap);
 }
 
-void QtVue::createBoard()
+void QtVue::createBoard(QBoxLayout *layout)
 {
     // this is board
     canvasPixmap = new QPixmap(QSize(620, 740));
     painter = new QPainter(canvasPixmap);
     drawLabel = new DrawLabel(this, this);
+    layout->addWidget(drawLabel);
 
     selectPawnMove = new QPushButton("Pawn");
     selectWallMove = new QPushButton("Wall");
@@ -528,6 +529,15 @@ void QtVue::createBoard()
     selectHorizontalWall->setChecked(true);
     selectHorizontalWall->setVisible(false);
     selectVerticalWall->setVisible(false);
+    auto selectWallOrientationLayout = new QHBoxLayout;
+    selectWallOrientationLayout->addWidget(selectHorizontalWall);
+    selectWallOrientationLayout->addWidget(selectVerticalWall);
+    layout->addLayout(selectWallOrientationLayout);
+
+    auto selectPawnWallLayout = new QHBoxLayout;
+    selectPawnWallLayout->addWidget(selectPawnMove);
+    selectPawnWallLayout->addWidget(selectWallMove);
+    layout->addLayout(selectPawnWallLayout);
 }
 
 void QtVue::createTrainingPage()
@@ -538,21 +548,11 @@ void QtVue::createTrainingPage()
     tLabel->setAlignment(Qt::AlignTop);
     trainingPageLayout->addWidget(tLabel);
 
-    createBoard();
-    trainingPageLayout->addWidget(drawLabel);
+    createBoard(trainingPageLayout);
+//    trainingPageLayout->addWidget(drawLabel);
 
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
-
-    auto selectWallOrientationLayout = new QHBoxLayout;
-    selectWallOrientationLayout->addWidget(selectHorizontalWall);
-    selectWallOrientationLayout->addWidget(selectVerticalWall);
-    trainingPageLayout->addLayout(selectWallOrientationLayout);
-
-    auto selectPawnWallLayout = new QHBoxLayout;
-    selectPawnWallLayout->addWidget(selectPawnMove);
-    selectPawnWallLayout->addWidget(selectWallMove);
-    trainingPageLayout->addLayout(selectPawnWallLayout);
 
     auto trainingStartButton = new QPushButton("Start training", this);
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
@@ -890,8 +890,11 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
     isTrainingGame = false;
     mainModel->setIsGameStarted(false);
     serverController->joinGame(gameId, *mainModel->getUsername());
-    createBoard();
-    gameStack->addWidget(drawLabel);
+    auto layout = new QBoxLayout(QBoxLayout::TopToBottom);
+    createBoard(layout);
+    auto boardWidget = new QWidget(this);
+    boardWidget->setLayout(layout);
+    gameStack->addWidget(boardWidget);
     gameStack->setCurrentWidget(drawLabel);
     drawBoard();
 }

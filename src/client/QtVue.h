@@ -124,7 +124,7 @@ private:
     void createGamePage();
     void createFriendsPage();
     void createLeaderboardPage();
-    void createBoard();
+    void createBoard(QBoxLayout *layout);
     void createTrainingPage();
 
     void drawBoard();
