@@ -2,6 +2,8 @@
 
 #include "PlayerEnum.h"
 
+#include <nlohmann/json.hpp>
+
 #include <iostream>
 #include <memory>
 
@@ -24,7 +26,6 @@ bool PlayerAction::isActionValid()
 
 bool PlayerAction::isGameOver()
 {
-
     return board->isPositionOnFinishLine(player->getMatrixPosition(), player->getFinishLine());
 }
 
@@ -40,10 +41,16 @@ bool PlayerAction::executeAction()
 
 json PlayerAction::serialized()
 {
-    Point initialPosition = player->getPosition();
+    Point initialPosition = player->getPosition() * 2;
 
     int playerID = (int)player->getColor();
 
-    json actionJson = {{"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
+    json actionJson
+        = {{"action_type", "player"}, {"initial_position", initialPosition.serialized()}, {"end_position", destination.serialized()}, {"player_id", playerID}};
     return actionJson;
+}
+
+Point PlayerAction::getDestination() const
+{
+    return destination;
 }

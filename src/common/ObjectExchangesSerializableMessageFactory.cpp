@@ -1,6 +1,7 @@
 #include "ObjectExchangesSerializableMessageFactory.h"
 
 #include "MessageEnums/Domain.h"
+
 using json = nlohmann::json;
 
 json ObjectExchangesSerializableMessageFactory::serializeRequestExchange(DataType dataType)

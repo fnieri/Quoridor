@@ -39,14 +39,14 @@ private:
      * @param serRequest json formatted requet according to the standard
      * @return requestAnswer json formatted answer according to the standard
      */
-    std::string tryRegister(const std::string &);
+    auto tryRegister(const std::string &) -> std::string;
     /**
      * Check whether the request results in a positive login
      *
      * @param serRequest json formatted requet according to the standard
      * @return requestAnswer json formatted answer according to the standard
      */
-    std::string tryLogIn(const std::string &);
+    auto tryLogIn(const std::string &) -> std::string;
 
 public:
     AuthHandler(UserHub &);
@@ -62,5 +62,5 @@ public:
      * confirmation. Otherwise, it must be a login. Check the credentials and let
      * him in if they're correct.
      */
-    std::string processRequest(const std::string &);
+    auto processRequest(const std::string &) -> std::string;
 };

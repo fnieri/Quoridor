@@ -53,7 +53,8 @@ void UserHandler::handleRequests()
                 m_syncRequest.lock();
 
                 auto serRequest {receive()};
-                std::cerr << "Received : " << serRequest << m_userHandled->getUsername() << std::endl;
+
+                std::cerr << "Received : " << serRequest << " from : " << m_userHandled->getUsername() << "\n\n";
 
                 // Do not continue if the thread was terminated during or after the receive
                 if (m_isFinished || m_wasTerminated)
@@ -62,6 +63,7 @@ void UserHandler::handleRequests()
                 processRequest(serRequest);
             }
         }
+
         // Client was disconnected
         // FIXME: unable to send may be thrown by another user
         catch (UnableToRead &) {
@@ -76,8 +78,25 @@ void UserHandler::handleRequests()
     // Only run this if the connection was lost,
     // not if the server is shuting itself down.
     if (!m_wasTerminated && isInGame()) {
-        auto req {SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername())};
-        processRequest(req.dump());
+        auto req = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, m_userHandled->getUsername()).dump();
+
+        // This is very ugly but will do for the moment.
+        // Basically, in order to process the surrend request,
+        // the user must be logged in. At this point, he is not.
+        // So, we log him in for just a little more.
+        m_isFinished = false;
+        processRequest(req);
+        m_isFinished = true;
+
+    } else {
+        auto username = m_userHandled->getUsername();
+        for (auto &gameID : m_userHandled->getGameIDs()) {
+            auto req = SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameID, username).dump();
+
+            m_isFinished = false;
+            processRequest(req);
+            m_isFinished = true;
+        }
     }
 
     m_userHub->eraseFinished();
@@ -153,40 +172,60 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     json data;
 
     if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST)) {
-        data = json {m_userHandled->getFriendList()};
+        data = json::array();
+        for (auto &f : m_userHandled->getFriendList())
+            data.push_back(f);
         dataType = DataType::FRIENDS_LIST;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
-        data = json {m_userHandled->getFriendRequestsSent()};
+        data = json::array();
+        for (auto &f : m_userHandled->getFriendRequestsSent())
+            data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_SENT;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
-        data = json {m_userHandled->getFriendRequestsReceived()};
+        data = json::array();
+        for (auto &f : m_userHandled->getFriendRequestsReceived())
+            data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
 
     } else if (request["data_type"] == toJsonString(DataType::CHATS)) {
-        data = json {DatabaseHandler::getMessages(request["sender"], request["receiver"])};
+        json chats;
+        for (auto &m : DatabaseHandler::getMessages(request["sender"], request["receiver"]))
+            chats.push_back(m);
+        data["friend"] = request["receiver"];
+        data["chats"] = chats;
         dataType = DataType::CHATS;
 
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
-        data = json {m_userHandled->getGameIDs()};
+        data = json::array();
+        for (auto &g : m_userHandled->getGameIDs()) {
+            std::cerr << "ID : " << g << std::endl;
+            ;
+            data.push_back({
+                {"game_id", g                                     },
+                {"config",  DatabaseHandler::getGameBoardConfig(g)}
+            });
+        }
         dataType = DataType::GAME_IDS;
 
     } else if (request["data_type"] == toJsonString(DataType::ELO)) {
-        data = json {m_userHandled->getELO()};
+        data = m_userHandled->getELO();
         dataType = DataType::ELO;
 
     } else if (request["data_type"] == toJsonString(DataType::LEADERBOARD)) {
-        data = json {DatabaseHandler::getLeaderboard(10)};
+        data = DatabaseHandler::getLeaderboard(50);
         dataType = DataType::LEADERBOARD;
     }
 
     auto answer {SerializableMessageFactory::serializeAnswerExchange(dataType, data).dump()};
+    std::cout << "Sending answer: " << answer << std::endl;
     send(answer);
 }
 
 void UserHandler::processGameSetup(const std::string &serRequest)
 {
+    std::cout << "Processing game setup request" << std::endl;
     m_gameHub->processRequest(serRequest);
 }
 
@@ -220,7 +259,7 @@ std::string UserHandler::getUsername() const noexcept
 bool UserHandler::isInGame() const noexcept
 {
     /* return static_cast<bool>(m_activeGame); */
-    return !m_activeGame.expired();
+    return !m_activeGame.expired() && !m_activeGame.lock()->isFinished();
 }
 
 void UserHandler::terminate()
@@ -234,8 +273,7 @@ void UserHandler::relayMessage(const std::string &serRequest)
     // TODO: verification for user updates on certain specific messages
     auto request(json::parse(serRequest));
 
-    if (request["domain"] == toJsonString(Domain::RELATIONS)) {
-        // Sync friend lists
+    if (request["domain"] == toJsonString(Domain::RELATIONS) || request["domain"] == toJsonString(Domain::GAME_SETUP)) {
         m_userHandled->syncWithDB();
 
     } else if (request["domain"] == toJsonString(Domain::IN_GAME_RELATED) && request["action"] == toJsonString(GameAction::START_GAME)) {
@@ -245,13 +283,13 @@ void UserHandler::relayMessage(const std::string &serRequest)
         m_activeGame.reset();
     }
 
-    std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
-
     // This mutex is to avoid sending the message
     // if a sync request is in the process. That is a request
     // expecting an answer that is not the answer from
     // this function.
     std::lock_guard<std::mutex> guard {m_syncRequest};
+
+    std::cerr << "Sending : " << serRequest << m_userHandled->getUsername() << std::endl;
     send(serRequest);
 }
 
@@ -263,6 +301,7 @@ UserHub::UserHub()
     : m_authHandler {std::make_shared<AuthHandler>(*this)}
     , m_relationsHandler {std::make_shared<RelationsHandler>(*this)}
     , m_chatboxHandler {std::make_shared<ChatBox>(*this)}
+    , m_gameHub {std::make_shared<GameHub>(this)}
 {
 }
 
@@ -318,7 +357,6 @@ void UserHub::relayMessageTo(const std::string &username, const std::string &mes
     }
     // In case the target disconnects during the writing
     catch (UnableToRead &) {
-
         // Should always be valid but who knows, better avoid them segfaults !
         if (receiver) {
             receiver->terminate();

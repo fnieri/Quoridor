@@ -7,9 +7,12 @@
 
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
+
 #include <stdexcept>
 
 using json = nlohmann::json;
+
 // Point
 
 Point::operator std::string() const noexcept
@@ -54,4 +57,10 @@ json Point::serialized()
 {
     json pointJson = {{"x", x()}, {"y", y()}};
     return pointJson;
+}
+
+Point Point::deserialized(const std::string &ser)
+{
+    auto deser(json::parse(ser));
+    return Point {deser["x"], deser["y"]};
 }

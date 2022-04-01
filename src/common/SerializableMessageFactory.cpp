@@ -1,4 +1,5 @@
 #include "SerializableMessageFactory.h"
+
 #include <nlohmann/json.hpp>
 
 using json = nlohmann::json;
@@ -8,9 +9,9 @@ json SerializableMessageFactory::serializeUserRequest(ClientAuthAction action, c
     return AuthSerializableMessageFactory::serializeUserRequest(action, username, password);
 }
 
-json SerializableMessageFactory::serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn)
+json SerializableMessageFactory::serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn, const std::string& username)
 {
-    return AuthSerializableMessageFactory::serializeServerAnswer(action, status, authReturn);
+    return AuthSerializableMessageFactory::serializeServerAnswer(action, status, authReturn, username);
 }
 
 json SerializableMessageFactory::serializePawnAction(PlayerAction &pawnAction, int playerID)
@@ -112,14 +113,14 @@ json SerializableMessageFactory::serializeGameSetup(GameMode gameMode, std::vect
     return GameSetupSerializableMessageFactory::serializeGameSetup(gameMode, players);
 }
 
-json SerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID)
+json SerializableMessageFactory::serializeGameParticipationRequest(GameSetup gameSetup, int gameID, std::string username)
 {
-    return GameSetupSerializableMessageFactory::serializeGameParticipationRequest(gameSetup, gameID);
+    return GameSetupSerializableMessageFactory::serializeGameParticipationRequest(gameSetup, gameID, std::move(username));
 }
 
 json SerializableMessageFactory::serializeGameCreationRequest(const std::string &sender, std::vector<std::string> &receivers, json configuration)
 {
-    return GameSetupSerializableMessageFactory::serializeGameCreationRequest(sender, receivers, configuration);
+    return GameSetupSerializableMessageFactory::serializeGameCreationRequest(sender, receivers, std::move(configuration));
 }
 
 /*

@@ -6,6 +6,8 @@
 
 #include "PasswordEncrypter.h"
 
+#include <nlohmann/json.hpp>
+
 // avoids having long namespaces
 using bsoncxx::builder::stream::close_array;
 using bsoncxx::builder::stream::close_document;
@@ -25,7 +27,7 @@ DatabaseHandler::DatabaseHandler()
 
 std::mutex DatabaseHandler::m_dbMutex;
 
-void DatabaseHandler::quickTest()
+auto DatabaseHandler::quickTest() -> void
 {
     static std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -49,7 +51,7 @@ void DatabaseHandler::quickTest()
     std::cout << "Data sent" << std::endl;
 }
 
-bool DatabaseHandler::createAccount(const std::string &username, const std::string &password)
+auto DatabaseHandler::createAccount(const std::string &username, const std::string &password) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -81,7 +83,7 @@ bool DatabaseHandler::createAccount(const std::string &username, const std::stri
     return true;
 }
 
-bool DatabaseHandler::doesUsernameExist(const std::string &username)
+auto DatabaseHandler::doesUsernameExist(const std::string &username) -> bool
 {
     // get user collection
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
@@ -93,7 +95,7 @@ bool DatabaseHandler::doesUsernameExist(const std::string &username)
     return false;
 }
 
-bool DatabaseHandler::checkLogin(const std::string &username, const std::string &password)
+auto DatabaseHandler::checkLogin(const std::string &username, const std::string &password) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -116,7 +118,7 @@ bool DatabaseHandler::checkLogin(const std::string &username, const std::string 
     return false;
 }
 
-void DatabaseHandler::deleteAccount(const std::string &username)
+auto DatabaseHandler::deleteAccount(const std::string &username) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -127,7 +129,7 @@ void DatabaseHandler::deleteAccount(const std::string &username)
     userColl.delete_one(document {} << "username" << username << finalize);
 }
 
-std::vector<std::string> DatabaseHandler::getFriends(const std::string &username)
+auto DatabaseHandler::getFriends(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -152,10 +154,11 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
             i++;
         }
     }
+
     return friends;
 }
 
-std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::string &username)
+auto DatabaseHandler::getSentFriendRequests(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -181,7 +184,7 @@ std::vector<std::string> DatabaseHandler::getSentFriendRequests(const std::strin
     return sentFriendRequests;
 }
 
-std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::string &username)
+auto DatabaseHandler::getReceivedFriendRequests(const std::string &username) -> std::vector<std::string>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -208,7 +211,7 @@ std::vector<std::string> DatabaseHandler::getReceivedFriendRequests(const std::s
 }
 
 // TODO : may cause issues with threads
-void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
     // verification just in case but this should not be necessary if everything is implemented correctly
     std::vector<std::string> sentFriendRequests = getSentFriendRequests(friendRequestSender);
@@ -255,7 +258,7 @@ void DatabaseHandler::acceptFriendRequest(const std::string &friendRequestSender
     }
 }
 
-void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -278,7 +281,7 @@ void DatabaseHandler::removeFriendRequest(const std::string &friendRequestSender
     }
 }
 
-void DatabaseHandler::addFriend(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::addFriend(const std::string &username, const std::string &friendUsername) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -306,7 +309,7 @@ void DatabaseHandler::addFriend(const std::string &username, const std::string &
     }
 }
 
-void DatabaseHandler::removeFriend(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::removeFriend(const std::string &username, const std::string &friendUsername) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -328,7 +331,7 @@ void DatabaseHandler::removeFriend(const std::string &username, const std::strin
 }
 
 // TODO : may cause issues with threads
-void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver)
+auto DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver) -> void
 {
 
     // check that they are not already friends. this verification should not be necessary if everything is implemented correctly
@@ -374,7 +377,7 @@ void DatabaseHandler::sendFriendRequest(const std::string &friendRequestSender, 
     }
 }
 
-int DatabaseHandler::getELO(const std::string &username)
+auto DatabaseHandler::getELO(const std::string &username) -> int
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -390,7 +393,7 @@ int DatabaseHandler::getELO(const std::string &username)
     return elo;
 }
 
-void DatabaseHandler::setELO(const std::string &username, const int &elo)
+auto DatabaseHandler::setELO(const std::string &username, const int &elo) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -404,7 +407,7 @@ void DatabaseHandler::setELO(const std::string &username, const int &elo)
     }
 }
 
-std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId)
+auto DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId) -> std::string
 {
     std::string idStr1, idStr2;
     if (senderId < receiverId) {
@@ -418,7 +421,7 @@ std::string DatabaseHandler::getChatId(bsoncxx::oid senderId, bsoncxx::oid recei
     return chatId;
 }
 
-void DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message)
+auto DatabaseHandler::recordMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -442,7 +445,7 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
     }
 }
 
-std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername)
+auto DatabaseHandler::getMessages(const std::string &username, const std::string &friendUsername) -> std::vector<std::vector<std::string>>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -482,7 +485,7 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const std::st
     return messages;
 }
 
-void DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId)
+auto DatabaseHandler::recordMessage(const std::string &sender, const std::string &message, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -500,7 +503,7 @@ void DatabaseHandler::recordMessage(const std::string &sender, const std::string
     }
 }
 
-std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &gameId)
+auto DatabaseHandler::getMessages(const int &gameId) -> std::vector<std::vector<std::string>>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -510,25 +513,27 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &ga
     // check if gameId is contained in the collection
     if (maybeResult) {
         auto gameView = maybeResult->view();
-        auto messagesArray = gameView["messages"].get_array().value;
-        int i = 0;
-        // get all received friend requests
-        while (messagesArray.find(i) != messagesArray.end()) {
-            bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
-            auto messageJson = json::parse(bsoncxx::to_json(messageView));
-            for (auto &element : messageJson.items()) {
-                std::vector<std::string> message;
-                message.push_back(element.key());
-                message.push_back(element.value().get<std::string>());
-                messages.push_back(message);
+        if (gameView.find("messages") != gameView.end()) {
+            auto messagesArray = gameView["messages"].get_array().value;
+            int i = 0;
+            // get all received friend requests
+            while (messagesArray.find(i) != messagesArray.end()) {
+                bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
+                auto messageJson = json::parse(bsoncxx::to_json(messageView));
+                for (auto &element : messageJson.items()) {
+                    std::vector<std::string> message;
+                    message.push_back(element.key());
+                    message.push_back(element.value().get<std::string>());
+                    messages.push_back(message);
+                }
+                i++;
             }
-            i++;
         }
     }
     return messages;
 }
 
-void DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::addGameIdToUser(const std::string &username, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -543,7 +548,7 @@ void DatabaseHandler::addGameIdToUser(const std::string &username, const int &ga
     }
 }
 
-void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::addGameIdInviteToUser(const std::string &username, const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -556,8 +561,10 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
     }
 }
 
-void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
+auto DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId) -> void
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -569,7 +576,7 @@ void DatabaseHandler::removeGameIdFromUser(const std::string &username, const in
     }
 }
 
-bool DatabaseHandler::isGameIdUsed(const int &gameId)
+auto DatabaseHandler::isGameIdUsed(const int &gameId) -> bool
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -582,7 +589,7 @@ bool DatabaseHandler::isGameIdUsed(const int &gameId)
     return false;
 }
 
-void DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig)
+auto DatabaseHandler::createGame(const int &gameId, const std::vector<std::string> &players, const int &nPlayers, const json &boardConfig) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -596,7 +603,7 @@ void DatabaseHandler::createGame(const int &gameId, const std::vector<std::strin
                                     << "board_config" << bsoncxx::from_json(boardConfig.dump()) << finalize);
 }
 
-json DatabaseHandler::getGameBoardConfig(const int &gameId)
+auto DatabaseHandler::getGameBoardConfig(const int &gameId) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -612,7 +619,7 @@ json DatabaseHandler::getGameBoardConfig(const int &gameId)
     return json();
 }
 
-json DatabaseHandler::getGameConfig(const int &gameId)
+auto DatabaseHandler::getGameConfig(const int &gameId) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -628,7 +635,7 @@ json DatabaseHandler::getGameConfig(const int &gameId)
     return json();
 }
 
-std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
+auto DatabaseHandler::getPlayerGameIds(const std::string &username) -> std::vector<int>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -642,14 +649,16 @@ std::vector<int> DatabaseHandler::getPlayerGameIds(const std::string &username)
         json acceptedGameIdsJson = userViewJson["accepted_gameId"];
         std::vector<int> gameIds;
         for (auto &gameId : acceptedGameIdsJson) {
-            gameIds.push_back(gameId);
+            if (gameId.is_number()) {
+                gameIds.push_back(gameId.get<int>());
+            }
         }
         return gameIds;
     }
     return std::vector<int>();
 }
 
-std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &username)
+auto DatabaseHandler::getPlayerInviteGameIds(const std::string &username) -> std::vector<int>
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -670,7 +679,7 @@ std::vector<int> DatabaseHandler::getPlayerInviteGameIds(const std::string &user
     return std::vector<int>();
 }
 
-void DatabaseHandler::deleteGame(const int &gameId)
+auto DatabaseHandler::deleteGame(const int &gameId) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -683,16 +692,16 @@ void DatabaseHandler::deleteGame(const int &gameId)
         auto gameViewBson = bsoncxx::to_json(gameView);
         json gameViewJson = json::parse(gameViewBson);
         json playersJson = gameViewJson["players"];
-        for (auto &player : playersJson) {
-            // delete player from user collection
-            removeGameIdFromUser(player, gameId);
-        }
+        /* for (auto &player : playersJson) { */
+        /*     // delete player from user collection */
+        /*     removeGameIdFromUser(player, gameId); */
+        /* } */
         // delete game from game collection
         gameColl.delete_one(document {} << "game_id" << gameId << finalize);
     }
 }
 
-void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig)
+auto DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardConfig) -> void
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
@@ -700,141 +709,27 @@ void DatabaseHandler::setGameBoardConfig(const int &gameId, const json &boardCon
     gameColl.update_one(document {} << "game_id" << gameId << finalize,
         document {} << "$set" << open_document << "board_config" << bsoncxx::from_json(boardConfig.dump()) << close_document << finalize);
 }
-template <class K, class T>
-void sortByKey(K * keys, T * data, size_t size){
-    std::vector<size_t> p(size,0);
-    std::vector<size_t> rp(size);
-    std::vector<bool> sorted(size, false);
-    size_t i = 0;
 
-    // Sort
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-        [&](size_t i, size_t j){ return keys[i] < keys[j]; });
-
-    // ----------- Apply permutation in-place ---------- //
-
-    // Get reverse permutation item>position
-    for (i = 0; i < size; ++i){
-        rp[p[i]] = i;
-    }
-
-    i = 0;
-    K savedKey;
-    T savedData;
-    while ( i < size){
-        size_t pos = i;
-        // Save This element;
-        if ( ! sorted[pos] ){
-            savedKey = keys[p[pos]];
-            savedData = data[p[pos]];
-        }
-        while ( ! sorted[pos] ){
-            // Hold item to be replaced
-            K heldKey  = keys[pos];
-            T heldData = data[pos];
-            // Save where it should go
-            size_t heldPos = rp[pos];
-
-            // Replace
-            keys[pos] = savedKey;
-            data[pos] = savedData;
-
-            // Get last item to be the pivot
-            savedKey = heldKey;
-            savedData = heldData;
-
-            // Mark this item as sorted
-            sorted[pos] = true;
-
-            // Go to the held item proper location
-            pos = heldPos;
-        }
-        ++i;
-    }
-}
-
-template <class K, class T>
-void DatabaseHandler::sortByKey(K * keys, T * data, size_t size){
-    std::vector<size_t> p(size,0);
-    std::vector<size_t> rp(size);
-    std::vector<bool> sorted(size, false);
-    size_t i = 0;
-
-    // Sort
-    std::iota(p.begin(), p.end(), 0);
-    std::sort(p.begin(), p.end(),
-        [&](size_t i, size_t j){ return keys[i] < keys[j]; });
-
-    // ----------- Apply permutation in-place ---------- //
-
-    // Get reverse permutation item>position
-    for (i = 0; i < size; ++i){
-        rp[p[i]] = i;
-    }
-
-    i = 0;
-    K savedKey;
-    T savedData;
-    while ( i < size){
-        size_t pos = i;
-        // Save This element;
-        if ( ! sorted[pos] ){
-            savedKey = keys[p[pos]];
-            savedData = data[p[pos]];
-        }
-        while ( ! sorted[pos] ){
-            // Hold item to be replaced
-            K heldKey  = keys[pos];
-            T heldData = data[pos];
-            // Save where it should go
-            size_t heldPos = rp[pos];
-
-            // Replace
-            keys[pos] = savedKey;
-            data[pos] = savedData;
-
-            // Get last item to be the pivot
-            savedKey = heldKey;
-            savedData = heldData;
-
-            // Mark this item as sorted
-            sorted[pos] = true;
-
-            // Go to the held item proper location
-            pos = heldPos;
-        }
-        ++i;
-    }
-}
-
-json DatabaseHandler::getLeaderboard(const int &nPlayers)
+auto DatabaseHandler::getLeaderboard(const int &nPlayers) -> json
 {
     std::lock_guard<std::mutex> guard {m_dbMutex};
 
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
-    // get all user's elo
-    auto cursor = userColl.find(document {} << finalize);
-    std::vector<int> elo;
-    std::vector<std::string> username;
+
+    auto order = document {} << "elo" << -1 << finalize;
+    auto opts = mongocxx::options::find {};
+    opts.limit(nPlayers);
+    opts.sort(order.view());
+    auto cursor = userColl.find({}, opts);
+
+    json leaderboard;
     for (auto doc : cursor) {
         auto usersViewBson = bsoncxx::to_json(doc);
         json usersViewJson = json::parse(usersViewBson);
-        elo.push_back(usersViewJson["elo"]);
-        username.push_back(usersViewJson["username"]);
-    }
-
-    // sort by elo
-    sortByKey(&elo[0], &username[0], elo.size());
-
-    json leaderboard;
-    int j = 0;
-    for (int i = (int) elo.size()-1; j < nPlayers; --i) {
-        if (i > -1)
-            leaderboard.push_back(json {{"username", username[i]}, {"elo", elo[i]}});
-        else
-            break;
-        ++j;
+        leaderboard.push_back(json {
+            {"username", usersViewJson["username"]},
+            {"elo",      usersViewJson["elo"]     }
+        });
     }
 
     return leaderboard;

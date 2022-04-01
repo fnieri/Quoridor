@@ -6,7 +6,7 @@
 #include "PlayerEnum.h"
 #include "src/common/Point.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 #include <string>
@@ -63,6 +63,8 @@ public:
      * @returns bool whether or not the move was executed
      */
     bool executeAction();
+
+    Point getDestination() const;
 
     /**
      * Serialize the PlayerAction to json format.

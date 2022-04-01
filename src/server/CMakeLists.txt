@@ -9,6 +9,7 @@ add_library(${PREFIX}_server
     AuthHandler.cpp
     RelationsHandler.cpp
     Database.cpp
+    Config.cpp
     EloCalculator.cpp
     )
 
@@ -17,8 +18,10 @@ target_link_libraries(${PREFIX}_server
         nlohmann_json
         sockpp
         ${PREFIX}_common
+        ${PREFIX}_client  # temporary, for GameModel
         bsoncxx_shared
         mongocxx_shared
+        stdc++fs
     PRIVATE
         cryptopp_shared
         pthread
@@ -39,4 +42,6 @@ target_link_libraries(server
         ${PREFIX}_server
 )
 
-target_compile_features(server PRIVATE cxx_std_17)
+target_compile_features(server PRIVATE
+  cxx_std_17 
+)

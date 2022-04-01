@@ -12,7 +12,7 @@
 #include "MessageEnums/Actions/AuthActions.h"
 #include "MessageEnums/Status.h"
 
-#include <nlohmann/json.hpp>
+#include <nlohmann/json_fwd.hpp>
 
 #include <string>
 
@@ -37,5 +37,5 @@ public:
      * @param authReturn Return which auth error occured
      * @return nlohmann::json
      */
-    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn);
+    static nlohmann::json serializeServerAnswer(ClientAuthAction action, RequestStatus status, ServerAuthReturn authReturn, const std::string& username);
 };

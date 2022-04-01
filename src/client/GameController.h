@@ -11,13 +11,13 @@
 #include "PlayerAction.h"
 #include "PlayerEnum.h"
 #include "ServerBridge.h"
-#include "ServerController.h"
+//#include "ServerController.h"
+#include "MainController.h"
 #include "WallAction.h"
 #include "WallEnum.h"
+#include "src/common/Observer.h"
 #include "src/common/Point.h"
 #include "src/common/SerializableMessageFactory.h"
-#include "MainController.h"
-#include "src/common/Observer.h"
 
 #include <iostream>
 #include <memory>
@@ -38,7 +38,7 @@ class GameController : public Observer
     json groupMessage;
     json directMessage;
 
-    std::shared_ptr<ServerController> serverController = std::make_shared<ServerController>();
+    //    std::shared_ptr<ServerController> serverController = std::make_shared<ServerController>();
     std::shared_ptr<Board> board = std::make_shared<Board>();
     int nPlayers;
     std::vector<std::shared_ptr<Player>> players;
@@ -47,7 +47,7 @@ class GameController : public Observer
     std::string gameSetup;
     const int freeCell = 0, playerOne = 1, playerTwo = 2, playerThree = 3, playerFour = 4, emptyQuoridor = 5, occupiedVerticalQuoridor = 6,
               occupiedHorizontalQuoridor = 7;
-    MainController mainController {"localhost", 12345};
+    MainController mainController; // TODO choose server ip
 
 public:
     GameController(int nPlayers, int currentPlayerIndex, int gameId);
@@ -95,7 +95,7 @@ public:
      * @param x in the corresponding matrix
      * @param y
      */
-    void movePlayer(int x, int y);
+    void movePlayer(Point);
 
     /**
      * @brief Plays a WallAction, when the current player places one of his walls on the board
@@ -104,7 +104,7 @@ public:
      * @param y
      * @param orientation either a horizontal or a vertical wall
      */
-    void placeWall(int x, int y, int orientation);
+    void placeWall(Point, int orientation);
 
     bool registerPlayer(std::string username, std::string password);
     bool logIn(std::string username, std::string password);
@@ -132,7 +132,7 @@ public:
      * @return true
      * @return false
      */
-    bool isMoveValid(int x, int y);
+    bool isMoveValid(Point);
 
     /**
      * @brief Checks wether a wallAction was valid or not
@@ -143,7 +143,7 @@ public:
      * @return true
      * @return false
      */
-    bool isWallValid(int x, int y, int orientation);
+    bool isWallValid(Point, int orientation);
 
     /* Server Receipt : We handle in ViewController the Message from the Server
     Or do we just send with multiple methods
@@ -158,12 +158,6 @@ public:
     void receiveDirectMessage(std::string msg);
 
     // Getters
-    //  nlohmann::json getLogInReceipts();
-    //  nlohmann::json getRegisterReceipts();
-    // nlohmann::json getFriendsListReceipt();
-    // nlohmann::json getFriendsRequestReceipts();
-    // nlohmann::json getFriendsRequestSentList();
-    // nlohmann::json getFriendsRequestReceivedList();
     nlohmann::json getDirectMessage();
     nlohmann::json getGroupMessage();
     nlohmann::json getLeaderboard();
@@ -171,7 +165,7 @@ public:
     nlohmann::json loadExistingGames();
 
     void createGame(std::vector<std::string> &players);
-    void getFriendsChats();
+    json getFriendsChats();
     void acceptFriendRequest(const std::string &friendRequestSender, const std::string &friendRequestReceiver);
     void removeFriendRequest(const std::string &friendRemoveSender, const std::string &friendRemoveReceiver);
     // Booleans

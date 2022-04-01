@@ -22,7 +22,7 @@ add_library(${PREFIX}_common
         Observer.cpp
         RequestHandler.cpp
         JoinGame.cpp
-)
+        aiPlayer.cpp aiPlayer.h)
 
 target_link_libraries(${PREFIX}_common
     PUBLIC

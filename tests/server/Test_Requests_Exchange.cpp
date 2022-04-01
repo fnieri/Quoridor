@@ -1,5 +1,6 @@
 #include <catch2/catch.hpp>
 
+#include "src/client/GameModel.h"
 #include "src/common/SerializableMessageFactory.h"
 #include "src/common/SocketUser.h"
 #include "src/server/Database.h"
@@ -9,6 +10,7 @@
 
 #include <future>
 #include <iostream>
+#include <nlohmann/json.hpp>
 #include <sockpp/tcp_connector.h>
 
 class TestConnector : public SocketUser
@@ -21,9 +23,14 @@ public:
         setSocket(std::move(connector));
     }
 
-    ~TestConnector()
+    auto disconnect() -> void
     {
         close();
+    }
+
+    ~TestConnector()
+    {
+        disconnect();
     }
 };
 
@@ -87,15 +94,15 @@ void makeFriends(TestConnector &a, const std::string &aName, TestConnector &b, c
     auto accRecv {a.receive()};
 }
 
-/* template <typename T> */
-/* T dataFromSerialized(const std::string &serRequest) */
-/* { */
-/*     json request(json::parse(serRequest)); */
-/*     json jsonData = request["serialized_data"]; */
-/*     T data = jsonData[0].get<T>(); */
-
-/*     return data; */
-/* } */
+void endGame(std::vector<TestConnector *> players)
+{
+    for (auto i = 0; i < players.size() - 1; ++i) {
+        players[i]->disconnect();
+        for (auto j = i + 1; j < players.size(); ++j) {
+            players[j]->receive();
+        }
+    }
+}
 
 // Server
 TestServer serv {12345};
@@ -112,8 +119,9 @@ SCENARIO("Authentification")
             auto req {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, "foo", "12345").dump()};
 
             auto ansSuccess {getAnswer(test, req)};
-            auto expAnsSuccess {
-                SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+            auto expAnsSuccess {SerializableMessageFactory::serializeServerAnswer(
+                ClientAuthAction::REGISTRATION, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo")
+                                    .dump()};
 
             REQUIRE(ansSuccess == expAnsSuccess);
 
@@ -121,7 +129,7 @@ SCENARIO("Authentification")
             {
                 auto ansFail {getAnswer(test, req)};
                 auto expAnsFail {SerializableMessageFactory::serializeServerAnswer(
-                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE)
+                    ClientAuthAction::REGISTRATION, RequestStatus::FAILURE, ServerAuthReturn::REGISTER_USERNAME_IN_USE, "foo")
                                      .dump()};
                 REQUIRE(ansFail == expAnsFail);
             }
@@ -134,7 +142,7 @@ SCENARIO("Authentification")
                     auto reqLogSuccess {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "12345").dump()};
                     auto ansLogSuccess {getAnswer(test, reqLogSuccess)};
                     auto expAnsLogSuccess {
-                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT).dump()};
+                        SerializableMessageFactory::serializeServerAnswer(ClientAuthAction::LOGIN, RequestStatus::SUCCESS, ServerAuthReturn::CORRECT, "foo").dump()};
                     REQUIRE(ansLogSuccess == expAnsLogSuccess);
                 }
 
@@ -143,7 +151,7 @@ SCENARIO("Authentification")
                     auto reqLogFail {SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, "foo", "54321").dump()};
                     auto ansLogFail {getAnswer(test, reqLogFail)};
                     auto expAnsLogFail {SerializableMessageFactory::serializeServerAnswer(
-                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME)
+                        ClientAuthAction::LOGIN, RequestStatus::FAILURE, ServerAuthReturn::LOGIN_INCORRECT_USERNAME, "foo")
                                             .dump()};
 
                     REQUIRE(ansLogFail == expAnsLogFail);
@@ -254,6 +262,119 @@ SCENARIO("GameSetup")
     createAndLogUser(bar, "bar", "12345");
 
     makeFriends(foo, "foo", bar, "bar");
+
+    GIVEN("Game creation")
+    {
+        auto sender {"foo"};
+        auto receivers {std::vector<std::string> {"bar"}};
+        auto config = GameModel {
+            std::vector<std::string> {"foo",
+                                      "bar"}
+        }.serialized();
+        auto gameCreatReq {SerializableMessageFactory::serializeGameCreationRequest(sender, receivers, config).dump()};
+
+        foo.send(gameCreatReq);
+
+        REQUIRE(foo.receive() == bar.receive());
+
+        auto gameIDReqfoo {SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS).dump()};
+        auto gameIDResfoo {getAnswer(foo, gameIDReqfoo)};
+
+        auto gameIDReqbar {SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS).dump()};
+        auto gameIDResbar {getAnswer(bar, gameIDReqbar)};
+
+        REQUIRE(gameIDResfoo == gameIDResbar);
+
+        auto gameID {json::parse(gameIDResfoo)["serialized_data"][0]["game_id"].get<int>()};
+
+        GIVEN("Join created game")
+        {
+            auto joinReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "foo").dump()};
+            auto quitReqfoo {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameID, "foo").dump()};
+
+            auto joinReqbar {SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameID, "bar").dump()};
+
+            foo.send(joinReqfoo);
+            foo.send(quitReqfoo);
+
+            foo.send(joinReqfoo);
+            bar.send(joinReqbar);
+
+            auto gameStartfoo {foo.receive()};
+            auto gameStartbar {bar.receive()};
+
+            REQUIRE(gameStartfoo == gameStartbar);
+
+            auto gameModel = GameModel {json::parse(gameStartfoo)["configuration"].dump()};
+
+            GIVEN("Player actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getPlayerAction(Point {4, 7});
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializePawnAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
+
+            GIVEN("Wall actions")
+            {
+                gameModel.debugPrintBoard();
+
+                auto action = gameModel.getWallAction(Point {0, 0}, WallOrientation::Horizontal);
+                auto playerID = *gameModel.getCurrentPlayer();
+                auto req = SerializableMessageFactory::serializeWallAction(action, playerID).dump();
+
+                foo.send(req);
+                auto ans = bar.receive();
+
+                gameModel.processAction(json::parse(ans)["move"].dump());
+                gameModel.debugPrintBoard();
+
+                endGame(std::vector<TestConnector *> {&foo, &bar});
+            }
+
+            GIVEN("Surrender by request")
+            {
+                auto surrReqfoo = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, "foo");
+                foo.send(surrReqfoo.dump());
+
+                /* auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()}; */
+                auto endGame {bar.receive()};
+
+                surrReqfoo["sender"] = "foo";
+
+                REQUIRE(endGame == surrReqfoo.dump());
+
+                REQUIRE(DatabaseHandler::getPlayerGameIds("foo").empty());
+                REQUIRE(DatabaseHandler::getPlayerGameIds("bar").empty());
+            }
+
+            GIVEN("Surrender by disconnect")
+            {
+                auto surrReqfoo = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, "foo");
+                foo.disconnect();
+
+                /* auto expEndGame {GameRelatedActionsSerializableMessageFactory::serializeGameEnded(gameID).dump()}; */
+                auto endGame {bar.receive()};
+
+                surrReqfoo["sender"] = "foo";
+
+                REQUIRE(endGame == surrReqfoo.dump());
+            }
+        }
+
+    }
+
+    foo.disconnect();
+    bar.disconnect();
 
     sleep(1);
 }

@@ -7,6 +7,9 @@
  */
 
 #include "ChatBoxSerializableMessageFactory.h"
+
+#include <nlohmann/json.hpp>
+
 #include "MessageEnums/Domain.h"
 
 #include <string>
@@ -27,9 +30,7 @@ json ChatBoxSerializableMessageFactory::serializeInGameMessage(
 
 json ChatBoxSerializableMessageFactory::serializeFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message)
 {
-    json receiversArray = json::array();
-    receiversArray.push_back(receiver);
     json messageJson = {{"action", toJsonString(ChatInteraction::FRIEND_MESSAGE)}, {"domain", toJsonString(Domain::CHAT)}, {"sender", sender},
-        {"receivers", receiversArray}, {"message", message}};
+        {"receiver", receiver}, {"message", message}};
     return messageJson;
 }

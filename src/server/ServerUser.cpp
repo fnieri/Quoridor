@@ -32,7 +32,6 @@ void ServerUser::syncWithDB()
     m_cachedFriends = DatabaseHandler::getFriends(m_username);
     m_cachedRequestsSent = DatabaseHandler::getSentFriendRequests(m_username);
     m_cachedRequestsReceived = DatabaseHandler::getReceivedFriendRequests(m_username);
-    m_cachedGameIds = DatabaseHandler::getPlayerGameIds(m_username);
 }
 
 float ServerUser::getELO() const noexcept
@@ -57,5 +56,5 @@ UserList ServerUser::getFriendRequestsReceived() const noexcept
 
 std::vector<int> ServerUser::getGameIDs() const noexcept
 {
-    return m_cachedGameIds;
+    return DatabaseHandler::getPlayerGameIds(m_username);
 }

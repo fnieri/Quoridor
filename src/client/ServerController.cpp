@@ -1,187 +1,155 @@
 #include "ServerController.h"
-#include "../common/Point.h"
-#include "../common/SerializableMessageFactory.h"
-#include "Board.h"
-#include "BoardComponent.h"
-#include "Controller.h"
-#include "Player.h"
-#include "PlayerAction.h"
-#include "PlayerEnum.h"
-#include "WallAction.h"
-#include "WallEnum.h"
 
-#include <memory>
-#include <vector>
+#include "src/client/PlayerAction.h"
+#include "src/client/WallAction.h"
 
-using json = nlohmann::json;
+#include "src/server/Config.h"
+#include <nlohmann/json.hpp>
 
-class Player;
-
-ServerController::ServerController()
+ServerController::ServerController(MainController *mainController)
 {
+    std::string serverIP = ConfigHandler::Instance()->getClientProperty(ClientProperty::SERVER_IP);
+    bridge = std::make_unique<ServerBridge>(serverIP, 12345, mainController);
+    bridge->startHandling();
 }
 
-void ServerController::setBoard(std::shared_ptr<Board> theBoard)
+auto ServerController::sendJson(const json &toSend) -> void
 {
-    board = theBoard;
+    bridge->sendAsync(toSend.dump());
 }
 
-void ServerController::setPlayers(std::vector<std::shared_ptr<Player>> thePlayers)
+auto ServerController::sendSyncJson(const json &toSend) -> json
 {
-    players = thePlayers;
+    return json::parse(bridge->getSyncAnswer(toSend.dump()));
 }
 
-void ServerController::setDict(std::map<PawnColors, std::shared_ptr<Player>> dict_player)
+auto ServerController::login(const std::string &username, const std::string &password) -> bool
 {
-    dictPlayer = dict_player;
+    auto answer = sendSyncJson(SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, username, password));
+    return answer["action"] == toJsonString(ClientAuthAction::LOGIN) && answer["status"] == toJsonString(RequestStatus::SUCCESS);
 }
 
-bool ServerController::isGameOver(bool over)
+auto ServerController::registerUser(const std::string &username, const std::string &password) -> bool
 {
-    return over;
+    auto answer = sendSyncJson(SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, username, password));
+    return answer["action"] == toJsonString(ClientAuthAction::REGISTRATION) && answer["status"] == toJsonString(RequestStatus::SUCCESS);
 }
 
-void ServerController::movePlayer(std::string action)
+auto ServerController::sendFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void
 {
-    json playerAction = json::parse(action); // String to json
-
-    int x {playerAction["move"]["end_position"]["x"]};
-    int y {playerAction["move"]["end_position"]["y"]};
-    Point end_position {x, y};
-    PawnColors playerColor = (PawnColors)playerAction["player_id"]; // Spot playerID
-    std::shared_ptr<Player> player = dictPlayer[playerColor];
-    std::shared_ptr<PlayerAction> playersAction = std::make_shared<PlayerAction>(board, player, end_position / 2);
-    playersAction->executeAction();
-    if (playersAction->isGameOver())
-        isGameOver(true);
+    sendJson(SerializableMessageFactory::serializeFriendMessage(sender, receiver, message));
 }
 
-void ServerController::placeWall(std::string action)
+auto ServerController::sendFriendRequest(const std::string &sender, const std::string &receiver) -> void
 {
-    json wallAction = json::parse(action); // String to json
-
-    int x {wallAction["move"]["wall_cell"]["x"]};
-    int y {wallAction["move"]["wall_cell"]["y"]};
-    // WallOrientation wallOrientation = wallAction["move"]["wall_orientation"].jsonToOrientation;
-    // Point wallCell {x, y};
-    // PawnColors playerColor = (PawnColors)wallAction["player_id"]; // Spot playerID
-
-    // std::shared_ptr<WallAction> wallAction {board, dictPlayer[playerColor], end_position / 2, wallOrientation};
-
-    // wallAction->executeAction();
-    // if (wallAction->isGameOver()) isGameOver(true);
+    sendJson(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receiver));
 }
 
-// TODO getReceivers() // we need this to send messages to all gamers in the group chat
-// need the server to send this
-
-void ServerController::sendDirectMessage(std::string sender, std::string receiver, std::string msg)
+auto ServerController::acceptFriendRequest(const std::string &sender, const std::string &receiver) -> void
 {
-    json to_send = SerializableMessageFactory::serializeFriendMessage(sender, receiver, msg); // make a json formated message
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_ACCEPT, sender, receiver));
 }
 
-void ServerController::sendGroupMessage(std::string sender, std::string msg, int gameId)
+auto ServerController::declineFriendRequest(const std::string &sender, const std::string &receiver) -> void
 {
-    // TODO get all receivers
-    // json to_send = SerializableMessageFactory::serializeInGameMessage(sender, receivers, message, gameID);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REFUSE, sender, receiver));
 }
 
-bool ServerController::isDirectMessageReceived(bool received)
+auto ServerController::sendGameMessage(const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID) -> void
 {
-    return received;
+    sendJson(SerializableMessageFactory::serializeInGameMessage(sender, receivers, message, gameID));
 }
 
-bool ServerController::isGroupMessageReceived(bool received)
+auto ServerController::fetchData() -> void
 {
-    return received;
+    fetchFriends();
+    fetchElo();
+    fetchLeaderboard();
+    fetchFriendRequestsReceived();
+    fetchFriendRequestsSent();
+    fetchGameIds();
 }
 
-json ServerController::receiveGroupMessage(std::string msg)
+auto ServerController::fetchFriends() -> void
 {
-    isGroupMessageReceived(true);
-    return json::parse(msg);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::FRIENDS_LIST));
 }
 
-json ServerController::receiveDirectMessage(std::string msg)
+auto ServerController::fetchLeaderboard() -> void
 {
-    isDirectMessageReceived(true);
-    return json::parse(msg);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::LEADERBOARD));
 }
 
-void ServerController::loadDirectMessages(std::string username)
+auto ServerController::fetchFriendRequestsReceived() -> void
 {
-    // json to_send = SerializableMessageFactory::serializeUserChatBoxRequest(ChatInteraction::SERVER_RELAY_MESSAGE, ?);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_RECEIVED));
 }
 
-void ServerController::loadGroupMessages(int gameId)
+auto ServerController::fetchFriendRequestsSent() -> void
 {
-    // json to_send = SerializableMessageFactory::serializeUserChatBoxRequest(ChatInteraction::SERVER_RELAY_MESSAGE, ?);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::FRIEND_REQUESTS_SENT));
 }
 
-void ServerController::sendFriendRequest(std::string receiver)
+auto ServerController::fetchElo() -> void
 {
-    // json to_send = SerializableMessageFactory::serializeFriendRequest(FriendAction::FRIEND_REQUEST, sender, receivers);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::ELO));
 }
 
-void ServerController::checkLeaderBoard()
+auto ServerController::fetchFriendMessages(const std::string &requester, const std::string &receiver) -> void
 {
-    // how to access leaderboard .. send a pointer to it
+    sendJson(SerializableMessageFactory::serializeFriendChatRequest(requester, receiver));
 }
 
-void ServerController::sendInvite(std::string aFriend, std::string gameSetup)
+auto ServerController::fetchGameIds() -> void
 {
-    // json to_send = SerializableMessageFactory::serializeGameRequest(GameAction gameAction ?, afriend); // not implemented yet
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::GAME_IDS));
 }
 
-void ServerController::joinGame(int gameId)
+auto ServerController::removeFriend(const std::string &sender, const std::string &receiver) -> void
 {
-    // json to_send = SerializableMessageFactory::serializeQueueJoinRequest(QueueAction::JOIN_QUEUE, GameMode::CLASSIC, username, ELO); // not implemented yet
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeFriendRemove(sender, receiver));
 }
 
-void ServerController::askToPause(std::string aFriend)
+auto ServerController::createGame(const std::string &username, const std::vector<std::string> &players) -> void
 {
-    // json to_send = SerializableMessageFactory::serializeInGameRequest(GameAction::ASK_PAUSE, username);
-    // send(to_send);
+    auto gamePlayers = players;
+    gamePlayers.push_back(username);
+    GameModel defaultGameModel {gamePlayers};
+    sendJson(
+        SerializableMessageFactory::serializeGameCreationRequest(username, const_cast<std::vector<std::string> &>(players), defaultGameModel.serialized()));
 }
 
-void ServerController::registerPlayer(std::string username, std::string password)
+auto ServerController::isConnected() const -> bool
 {
-    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::REGISTRATION, username, password);
-    // send(to_send);
+    return bridge->isConnected();
 }
 
-void ServerController::logIn(std::string username, std::string password)
+auto ServerController::joinGame(const int &gameId, const std::string &username) -> void
 {
-    json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGIN, username, password);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
 }
 
-void ServerController::logOut()
+auto ServerController::quitGame(const int &gameId, const std::string &username) -> void
 {
-    // need to add log out to enum class of ClientAuthAction
-    // json to_send = SerializableMessageFactory::serializeUserRequest(ClientAuthAction::LOGOUT,username, password);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameId, username));
 }
 
-void ServerController::startGame()
+auto ServerController::playPlayerAction(PlayerAction action, const int &playerIdx) -> void
 {
+    sendJson(SerializableMessageFactory::serializePawnAction(action, playerIdx));
 }
 
-void ServerController::saveGame(std::string username)
+auto ServerController::playWallAction(WallAction action, const int &playerIdx) -> void
 {
-    json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::PROPOSE_SAVE, username);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeWallAction(action, playerIdx));
 }
 
-void ServerController::pauseGame(std::string username)
+auto ServerController::surrend(const std::string &username) -> void
 {
-    // json to_send = SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::ASK_PAUSE, username);
-    // send(to_send);
+    sendJson(SerializableMessageFactory::serializeInGameRelatedRequest(GameAction::SURRENDER, username));
+}
+
+auto ServerController::fetchGameMessages(int) -> void
+{
+//    sendJson(SerializableMessageFactory::serializeRequestExchange(DataType::));
 }

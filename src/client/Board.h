@@ -13,7 +13,8 @@
 #include "BoardComponent.h"
 #include "Player.h"
 #include "WallEnum.h"
-#include <nlohmann/json.hpp>
+
+#include <nlohmann/json_fwd.hpp>
 
 #include <memory>
 #include <vector>
@@ -175,6 +176,13 @@ public:
     void spawnPlayer(std::shared_ptr<Player> player);
 
     /**
+     * Removes the given player from the board.
+     *
+     * @param player the Player to remove
+     */
+    void removePlayer(std::shared_ptr<Player> player);
+
+    /**
      * Sets a full wall into the board.
      * DO NOT CALL THIS FUNCTION DIRECTLY!
      * Create a WallAction and call WallAction::executeAction() instead.
@@ -297,6 +305,9 @@ public:
     std::vector<std::vector<std::shared_ptr<BoardComponent>>> getRotatedBoardMatrix(FinishLine rotation);
 
     void debugPrint();
+
+    auto getSerializedWalls() -> nlohmann::json;
+    auto putSerializedWalls(nlohmann::json wallPos) -> void;
 
     ~Board();
 

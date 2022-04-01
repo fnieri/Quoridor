@@ -1,0 +1,2 @@
+db_address=mongodb://quoridor:ulb123@46.101.255.42:47984
+server_port=12345

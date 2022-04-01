@@ -13,6 +13,7 @@
 #include "Player.h"
 #include "src/common/Point.h"
 
+#include <nlohmann/json.hpp>
 
 #include <iostream>
 #include <memory>
@@ -188,6 +189,12 @@ void Board::spawnPlayer(std::shared_ptr<Player> player)
     std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->placePlayer(player);
 }
 
+void Board::removePlayer(std::shared_ptr<Player> player)
+{
+    auto matrixPos = player->getMatrixPosition();
+    std::dynamic_pointer_cast<Cell>(matrix.at(matrixPos.x()).at(matrixPos.y()))->removePlayer();
+}
+
 void Board::placeWallPieces(const Point &firstHalf, const Point &secondHalf)
 {
     std::dynamic_pointer_cast<Corridor>(matrix.at(firstHalf.x()).at(firstHalf.y()))->placeWall();
@@ -306,11 +313,21 @@ int Board::getCellSize()
 void Board::debugPrint()
 {
     auto m = getRotatedBoardMatrix(FinishLine::North);
+    auto players = findPlayers();
 
     for (int y = 0; y < MATRIX_SIZE; y++) {
         for (int x = 0; x < MATRIX_SIZE; x++) {
-            if (isCell({x, y})) {
-                std::cout << "■";
+            int isPlayer = false;
+            for (auto &player : players) {
+                if (player->getPosition()*2 == Point {x, y}) {
+                    isPlayer = true;
+                    break;
+                }
+            }
+            if (isPlayer) {
+                std::cout << "X";
+            } else if (isCell({x, y})) {
+                std::cout << ".";
             } else if (m.at(x).at(y) && m.at(x).at(y)->isOccupied()) {
                 auto orientation = std::dynamic_pointer_cast<Corridor>(m.at(x).at(y))->getOrientation();
                 std::cout << (orientation == WallOrientation::Vertical ? "│" : "─");
@@ -360,15 +377,56 @@ std::vector<std::vector<std::shared_ptr<BoardComponent>>> Board::getRotatedBoard
             rotated.at(p.x()).at(p.y()) = matrix.at(x).at(y);
 
             // make sure to rotate the direction of the walls when needed
-            if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) {
-                auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y()));
+            /* if ((rotation == FinishLine::East || rotation == FinishLine::West) && rotated.at(p.x()).at(p.y()) && !isCell(p)) { */
+            /*     auto wall = std::dynamic_pointer_cast<Corridor>(rotated.at(p.x()).at(p.y())); */
 
-                wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal);
-            }
+            /*     wall->setOrientation(wall->getOrientation() == WallOrientation::Horizontal ? WallOrientation::Vertical : WallOrientation::Horizontal); */
+            /* } */
         }
     }
 
     return rotated;
+}
+
+auto Board::getSerializedWalls() -> json
+{
+    auto wallPos(json::array());
+
+    for (int i = 0; i < MATRIX_SIZE; i++) {
+        for (int j = 0; j < MATRIX_SIZE; j++) {
+
+            auto comp {matrix.at(i).at(j)};
+            auto position {
+                Point {i, j}
+            };
+
+            if (comp && comp->isOccupied() && !isCell(position)) {
+
+                auto orientation {std::dynamic_pointer_cast<Corridor>(comp)->getOrientation()};
+
+                wallPos.push_back({
+                    {"orientation", orientation          },
+                    {"position",    position.serialized()},
+                });
+            }
+        }
+    }
+
+    return wallPos;
+}
+
+auto Board::putSerializedWalls(json wallPos) -> void
+{
+    for (auto &i_wall : wallPos) {
+
+        auto ori {static_cast<WallOrientation>(i_wall["orientation"])};
+        auto pos {Point::deserialized(i_wall["position"].dump())};
+
+        auto corridor {std::make_shared<Corridor>(ori)};
+        corridor->placeWall();
+
+        matrix.at(pos.x()).at(pos.y()) = corridor;
+    }
 }
 
 json Board::serialized()

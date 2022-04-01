@@ -5,15 +5,20 @@
  * @date 02/25/22
  */
 
+#include "Config.h"
+#include "ConfigEnums.h"
+#include "Database.h"
 #include "LandingPool.h"
 #include "ServerUser.h"
 #include "UserHandler.h"
-#include "Database.h"
 
 int main(int argc, char *argv[])
 {
-    std::cout << "Server started" << std::endl;
+    unsigned short port = stoi(ConfigHandler::Instance()->getServerProperty(ServerProperty::PORT));
+    std::cout << "Server started on port " << port << std::endl;
     UserHub userHub;
-    LandingPool entryDoor {12345, userHub};
+    LandingPool entryDoor {port, userHub};
+    DatabaseHandler::sendFriendRequest("testing", "bar");
+
     return entryDoor.openToConnections();
 }
