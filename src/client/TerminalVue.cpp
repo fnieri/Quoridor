@@ -83,10 +83,8 @@ auto TerminalVue::createCanvas()
                 });
             }
 
-            if (player == -1) {
-                player = gameModel->getPlayerIdx(*mainModel->getUsername());
-                playerTurn = gameModel->getCurrentPlayer();
-            }
+            player = gameModel->getPlayerIdx(*mainModel->getUsername());
+            playerTurn = gameModel->getCurrentPlayer();
 
             gameModel->updateBoardIntMatrix(boardIntMatrix, player);
 

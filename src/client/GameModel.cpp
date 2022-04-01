@@ -206,6 +206,10 @@ auto GameModel::playerSurrended(const std::string &p_username) -> void
     m_board->removePlayer(player);
     m_players.erase(playerIt);
 
+    if (m_players.size() == m_currentPlayerIdx) {
+        m_currentPlayerIdx--;
+    }
+
     if (m_players.size() == 1) {
         m_winner = m_players.front()->getUsername();
     }
@@ -322,10 +326,13 @@ auto GameModel::serialized() -> json
 
 auto GameModel::getPlayerIdx(const std::string &username) const noexcept -> int
 {
-    for (auto &i_player : m_players) {
-        if (i_player->getUsername() == username)
-            return i_player->getIndex();
-    }
+    for (auto i = 0; i < m_players.size(); ++i)
+        if (m_players.at(i)->getUsername() == username)
+            return i;
+    /* for (auto &i_player : m_players) { */
+    /*     if (i_player->getUsername() == username) */
+    /*         return i_player->getIndex(); */
+    /* } */
     return -2;
 }
 
