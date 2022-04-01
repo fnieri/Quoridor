@@ -150,11 +150,11 @@ void MainController::processGameAction(const std::string &serRequest)
         // set game started to true in main model
         m_mainModel->setIsGameStarted(true);
 
-    } else if (request.at("action") == toJsonString(GameAction::END_GAME)) {
-        // m_mainModel->process
-
     } else if (request.at("action") == toJsonString(JsonPlayerAction::MOVE_PAWN) || request.at("action") == toJsonString(JsonPlayerAction::PLACE_WALL)) {
         m_mainModel->processGameAction(request.at("move").dump());
+
+    } else if (request.at("action") == toJsonString(GameAction::SURRENDER)) {
+        m_mainModel->playerSurrended(request.at("username"));
     }
 
     std::cerr << "MainController::processGameAction: after processing\n";

@@ -172,16 +172,19 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     json data;
 
     if (request["data_type"] == toJsonString(DataType::FRIENDS_LIST)) {
+        data = json::array();
         for (auto &f : m_userHandled->getFriendList())
             data.push_back(f);
         dataType = DataType::FRIENDS_LIST;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
+        data = json::array();
         for (auto &f : m_userHandled->getFriendRequestsSent())
             data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_SENT;
 
     } else if (request["data_type"] == toJsonString(DataType::FRIEND_REQUESTS_RECEIVED)) {
+        data = json::array();
         for (auto &f : m_userHandled->getFriendRequestsReceived())
             data.push_back(f);
         dataType = DataType::FRIEND_REQUESTS_RECEIVED;
@@ -197,6 +200,8 @@ void UserHandler::processResourceRequest(const std::string &serRequest)
     } else if (request["data_type"] == toJsonString(DataType::GAME_IDS)) {
         data = json::array();
         for (auto &g : m_userHandled->getGameIDs()) {
+            std::cerr << "ID : " << g << std::endl;
+            ;
             data.push_back({
                 {"game_id", g                                     },
                 {"config",  DatabaseHandler::getGameBoardConfig(g)}

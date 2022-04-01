@@ -46,4 +46,6 @@ public:
 
     auto playPlayerAction(PlayerAction, const int &playerIdx) -> void;
     auto playWallAction(WallAction, const int &playerIdx) -> void;
+
+    auto surrend(const std::string &username) -> void;
 };

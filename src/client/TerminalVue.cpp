@@ -6,6 +6,11 @@
 #include "nlohmann/json.hpp"
 #include <nlohmann/json_fwd.hpp>
 
+TerminalVue::TerminalVue()
+{
+    mainModel->registerObserver(this);
+}
+
 bool TerminalVue::mouseInCell(int x, int y) const
 {
     if (actionToggleSelected != 0)
@@ -228,10 +233,11 @@ auto TerminalVue::createBoardGameRenderer()
 {
     auto actionToggle = createActionToggle();
     auto orientationToggle = createOrientationToggle();
-    auto pauseGameButton = Button(
-        "Pause",
+    auto surrendButton = Button(
+        "Surrend",
         [&] {
-            // TODO pause game
+            serverController->surrend(*mainModel->getUsername());
+            serverController->fetchGameIds();
             homeTabIndex = 0;
         },
         &buttonOption);
@@ -250,10 +256,10 @@ auto TerminalVue::createBoardGameRenderer()
         }
         return false;
     });
-    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse});
-    return Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, pauseGameButton, tabWithMouse] {
+    auto boardGameContainer = Container::Vertical({boardCanvas, actionToggle, orientationToggle, surrendButton, tabWithMouse});
+    return Renderer(boardGameContainer, [boardCanvas, actionToggle, orientationToggle, surrendButton, tabWithMouse] {
         return vbox({boardCanvas->Render(), separator(),
-            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), pauseGameButton->Render()) | center});
+            hbox(actionToggle->Render(), separator(), orientationToggle->Render(), separator(), surrendButton->Render()) | center});
     });
 }
 
@@ -712,4 +718,13 @@ void TerminalVue::run()
 bool TerminalVue::isConnectedToServer() const
 {
     return serverController->isConnected();
+}
+
+void TerminalVue::update(QuoridorEvent event)
+{
+    switch (event) {
+    case QuoridorEvent::GameIdsUpdated:
+        updateGameIds();
+        break;
+    }
 }

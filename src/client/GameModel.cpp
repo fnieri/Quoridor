@@ -192,7 +192,7 @@ auto GameModel::getPlayersCount() const -> int
     return m_players.size();
 }
 
-auto GameModel::playerSurrendered(const std::string &p_username) -> void
+auto GameModel::playerSurrended(const std::string &p_username) -> void
 {
     auto playerIt {std::find_if(m_players.begin(), m_players.end(), [p_username](auto &p) { return p->getUsername() == p_username; })};
 

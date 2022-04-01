@@ -91,7 +91,7 @@ public:
     /**
      * @note Winner can be established.
      */
-    auto playerSurrendered(const std::string &) -> void;
+    auto playerSurrended(const std::string &) -> void;
 
     auto rotatedBoard(FinishLine fl) -> std::vector<std::vector<std::shared_ptr<BoardComponent>>>;
     auto debugPrintBoard() -> void;

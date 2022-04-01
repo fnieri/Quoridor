@@ -119,6 +119,10 @@ void GameHandler::terminate()
 
 void GameHandler::deleteFromDB()
 {
+    for (const auto &player : m_gameModel->getPlayersNames()) {
+        DatabaseHandler::removeGameIdFromUser(player, getID());
+    }
+
     DatabaseHandler::deleteGame(getID());
 }
 
@@ -150,7 +154,8 @@ void GameHandler::updateELO(const std::string &winner)
 
 std::string GameHandler::processAndGetAnswerForSurrender(const json &request)
 {
-    m_gameModel->playerSurrendered(request["sender"]);
+    m_gameModel->playerSurrended(request["sender"]);
+    DatabaseHandler::removeGameIdFromUser(request["sender"], getID());
 
     return processEndGameEval(request);
 }

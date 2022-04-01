@@ -563,6 +563,8 @@ void DatabaseHandler::addGameIdInviteToUser(const std::string &username, const i
 
 void DatabaseHandler::removeGameIdFromUser(const std::string &username, const int &gameId)
 {
+    std::lock_guard<std::mutex> guard {m_dbMutex};
+
     mongocxx::collection userColl = Instance()->db[database::kUserCollectionName];
     bsoncxx::stdx::optional<bsoncxx::document::value> maybeResult = userColl.find_one(document {} << "username" << username << finalize);
     // check if usernames are contained in the collection
@@ -690,10 +692,10 @@ void DatabaseHandler::deleteGame(const int &gameId)
         auto gameViewBson = bsoncxx::to_json(gameView);
         json gameViewJson = json::parse(gameViewBson);
         json playersJson = gameViewJson["players"];
-        for (auto &player : playersJson) {
-            // delete player from user collection
-            removeGameIdFromUser(player, gameId);
-        }
+        /* for (auto &player : playersJson) { */
+        /*     // delete player from user collection */
+        /*     removeGameIdFromUser(player, gameId); */
+        /* } */
         // delete game from game collection
         gameColl.delete_one(document {} << "game_id" << gameId << finalize);
     }

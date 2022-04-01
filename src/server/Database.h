@@ -54,7 +54,6 @@ class DatabaseHandler
      */
     static bool doesUsernameExist(const std::string &username);
     static std::string getChatId(bsoncxx::oid senderId, bsoncxx::oid receiverId);
-    static void removeGameIdFromUser(const std::string &username, const int &gameId);
 
     DatabaseHandler();
     static std::unique_ptr<DatabaseHandler> &Instance()
@@ -180,6 +179,13 @@ public:
      * @note if you call this and the gameId is not in the user's invite list, it will not throw an error.
      */
     static void addGameIdToUser(const std::string &username, const int &gameId);
+
+    /**
+     * @brief remove game id to the user's list
+     * @param username string, gameId int.
+     * @note if you call this and the gameId is not in the user's invite list, it will not throw an error.
+     */
+    static void removeGameIdFromUser(const std::string &username, const int &gameId);
 
     /**
      * @brief Add game id to the user's list of invited games.

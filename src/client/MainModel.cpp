@@ -282,3 +282,8 @@ auto MainModel::processGameAction(const std::string &serAction) -> void
     m_currentGame->processAction(serAction);
     notifyObservers(QuoridorEvent::GameUpdated);
 }
+
+auto MainModel::playerSurrended(const std::string &username) -> void
+{
+    m_currentGame->playerSurrended(username);
+}
