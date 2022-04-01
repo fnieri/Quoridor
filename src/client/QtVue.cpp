@@ -161,17 +161,27 @@ void QtVue::createGamePage()
     joinGameTitle->setStyleSheet("QLabel { font-weight: bold; }");
     pickJoinGameLayout->addWidget(joinGameTitle, 0, Qt::AlignTop);
 
-    joinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    auto joinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
+    joinGameLayout->setAlignment(Qt::AlignTop);
     auto joinGameScrollArea = new QScrollArea(this);
-    auto joinGameScroll = new QWidget(this);
-    for (int i = 0; i < 10; i++) {
-        auto tLabel = new QPushButton("Game id, players");
-        connect(tLabel, &QPushButton::clicked, this, [&, i]() { handleJoinGameButtonClicked(i); });
-        joinGameLayout->addWidget(tLabel);
-    }
-    joinGameScroll->setLayout(joinGameLayout);
+    gameIdsScroll = new QStackedWidget(this);
+    joinGameLayout->addWidget(new QLabel("Loading games..."));
+    auto pickGameWidget = new QWidget(this);
+    pickGameWidget->setLayout(joinGameLayout);
+    gameIdsScroll->addWidget(pickGameWidget);
+    gameIdsScroll->setMinimumSize(500, 300);
+    joinGameScrollArea->setWidget(gameIdsScroll);
     pickJoinGameLayout->addWidget(joinGameScrollArea);
-    joinGameScrollArea->setWidget(joinGameScroll);
+
+    //    auto joinGameScroll = new QWidget(this);
+    //    for (int i = 0; i < 10; i++) {
+    //        auto tLabel = new QPushButton("Game id, players");
+    //        connect(tLabel, &QPushButton::clicked, this, [&, i]() { handleJoinGameButtonClicked(i); });
+    //        joinGameLayout->addWidget(tLabel);
+    //    }
+    //    joinGameScroll->setLayout(joinGameLayout);
+    //    pickJoinGameLayout->addWidget(joinGameScrollArea);
+    //    joinGameScrollArea->setWidget(joinGameScroll);
 
     auto joinGameWidget = new QFrame(this);
     joinGameWidget->setFrameShape(QFrame::Box);
@@ -516,14 +526,25 @@ void QtVue::updateGameIds()
 {
     auto gameIds = mainModel->getGameIDs();
     auto gameIdsLayout = new QVBoxLayout;
-    for (auto &g : *gameIds) {
-        auto gameId = new QLabel(QString::fromStdString(g));
-        gameIdsLayout->addWidget(gameId);
+    for (auto &i : *gameIds) {
+        std::string friendsListStr;
+        for (int j = 0; j < i.second.size() - 1; ++j) {
+            friendsListStr += i.second[j] + ", ";
+        }
+        friendsListStr += i.second[i.second.size() - 1];
+        std::string gameDescription = "Game ID: " + std::to_string(i.first) + "     " + friendsListStr;
+
+        auto joinGameBtn = new QPushButton(QString::fromStdString(gameDescription));
+        connect(joinGameBtn, &QPushButton::clicked, this, [&, i]() { handleJoinGameButtonClicked(i.first); });
+        gameIdsLayout->addWidget(joinGameBtn);
     }
 
-    auto oldGameIdsLayout = gameIdsScroll->currentWidget();
-    gameIdsScroll->addWidget(new QWidget);
-    gameIdsScroll->removeWidget(oldGameIdsLayout);
+    auto gameIdsListWidget = new QWidget(this);
+    gameIdsLayout->setAlignment(Qt::AlignTop);
+    gameIdsListWidget->setLayout(gameIdsLayout);
+    auto oldGameIdWidget = gameIdsScroll->currentWidget();
+    gameIdsScroll->addWidget(gameIdsListWidget);
+    gameIdsScroll->removeWidget(oldGameIdWidget);
 }
 
 void QtVue::updateChats()
@@ -654,8 +675,7 @@ void QtVue::handleCreateGameButtonClicked()
     }
 }
 
-void QtVue::handleJoinGameButtonClicked(const int &idx)
+void QtVue::handleJoinGameButtonClicked(const int &gameId)
 {
-    std::cout << "join game " << idx << std::endl;
-    auto gamePicked = mainModel->getGameIDs()->at(idx);
+    std::cout << "join game " << gameId << std::endl;
 }

@@ -61,7 +61,7 @@ private slots:
     void handleVerticalWallButtonClicked();
 
     void handleCreateGameButtonClicked();
-    void handleJoinGameButtonClicked(const int &idx);
+    void handleJoinGameButtonClicked(const int &gameId);
 
 private:
     Ui::QtVue *ui;
@@ -73,7 +73,6 @@ private:
 
     QTabWidget *mainTabBar {};
 
-    QBoxLayout *joinGameLayout {};
     QStackedWidget *gameIdsScroll {};
     QStackedWidget *createGameScroll {};
     QList<QCheckBox *> *pickFriendsList {};
