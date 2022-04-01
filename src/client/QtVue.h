@@ -53,6 +53,8 @@ public:
     void handleBoardPress(int x, int y);
     void handleBoardMove(int x, int y);
 
+    bool isConnectedToServer();
+
 private slots:
     void handleLoginButtonClicked(const std::string &username, const std::string &password);
     void handleRegisterButtonClicked(const std::string &username, const std::string &password, const std::string &repeatPassword);

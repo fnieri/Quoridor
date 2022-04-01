@@ -82,9 +82,6 @@ auto launchTUI()
         vue.run();
     }
 
-    std::thread t1(&TerminalVue::run, &vue);
-    t1.join();
-
     return 0;
 }
 
@@ -92,6 +89,12 @@ auto launchGUI(int argc, char *argv[]) -> int
 {
     QApplication QuoridorApp(argc, argv);
     QtVue vue;
+    if (!vue.isConnectedToServer()) {
+        std::cerr << "Could not connect to the server! That's a bummer, innit?\n";
+        exit(1);
+    } else {
+        vue.show();
+    }
     vue.show();
     return QuoridorApp.exec();
 }

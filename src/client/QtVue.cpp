@@ -1033,3 +1033,8 @@ void QtVue::handleSurrenderButtonClicked()
     serverController->surrend(*mainModel->getUsername());
     handleQuitGameButtonClicked();
 }
+
+bool QtVue::isConnectedToServer()
+{
+    serverController->isConnected();
+}
