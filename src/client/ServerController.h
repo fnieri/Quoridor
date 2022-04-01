@@ -24,6 +24,7 @@ public:
     auto registerUser(const std::string &username, const std::string &password) -> bool;
 
     auto joinGame(const int &gameId, const std::string &username) -> void;
+    auto quitGame(const int &gameId, const std::string &username) -> void;
     auto sendGameMessage(const std::string &sender, std::vector<std::string> &receivers, const std::string &message, int gameID) -> void;
 
     auto sendFriendMessage(const std::string &sender, const std::string &receiver, const std::string &message) -> void;

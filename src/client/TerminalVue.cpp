@@ -53,8 +53,12 @@ auto TerminalVue::createCanvas()
     auto mainScreenButton = Button(
         "Return to main screen",
         [&]() {
-            serverController->fetchGameIds();
-            unloadCurrentGame();
+            if (gameModel && gameModel->hasWinner()) {
+                serverController->fetchGameIds();
+                unloadCurrentGame();
+            } else {
+                serverController->quitGame(currentGameId, *mainModel->getUsername());
+            }
             homeTabIndex = 0;
         },
         &buttonOption);
@@ -168,7 +172,18 @@ auto TerminalVue::createCanvas()
         }
 
         gameModel = mainModel->getCurrentGame();
-        return text("Loading...");
+        return vbox({
+            hbox({
+                filler(),
+                text("Loading..."),
+                filler(),
+            }),
+            hbox({
+                filler(),
+                mainScreenButton->Render(),
+                filler(),
+            }),
+        });
     });
 }
 
@@ -615,7 +630,9 @@ void TerminalVue::joinGame()
 {
     if (!gameListId.empty()) {
         /* std::cerr << "Game selected : " << gameListId[gameSelected] << " with index " << gameSelected << std::endl; */
-        serverController->joinGame(gameListId[gameSelected], *mainModel->getUsername());
+        currentGameId = gameListId[gameSelected];
+        serverController->joinGame(currentGameId, *mainModel->getUsername());
+
         homeTabIndex = 2;
         rightSize = 40;
     }

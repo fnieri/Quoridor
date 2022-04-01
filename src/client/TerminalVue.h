@@ -116,7 +116,6 @@ class TerminalVue : public Observer
     int previousHomeTabIndex = homeTabIndex;
     Component playWithContainer = Container::Vertical({});
 
-
     void updateChatEntries();
 
     /**

@@ -129,6 +129,11 @@ auto ServerController::joinGame(const int &gameId, const std::string &username) 
     sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
 }
 
+auto ServerController::quitGame(const int &gameId, const std::string &username) -> void
+{
+    sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameId, username));
+}
+
 auto ServerController::playPlayerAction(PlayerAction action, const int &playerIdx) -> void
 {
     sendJson(SerializableMessageFactory::serializePawnAction(action, playerIdx));
