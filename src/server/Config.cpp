@@ -36,8 +36,7 @@ auto ConfigHandler::getKeyValue(const std::string &line) -> std::pair<std::strin
     return std::make_pair(key, value);
 }
 
-auto ConfigHandler::getMapFromConfigFile(const std::string &config_file) ->
-std::map<std::string, std::string>
+auto ConfigHandler::getMapFromConfigFile(const std::string &config_file) -> std::map<std::string, std::string>
 {
     std::ifstream file(config_file);
     std::string line;
@@ -53,8 +52,7 @@ std::map<std::string, std::string>
     return extractedValues;
 }
 
-auto ConfigHandler::getServerConfig() ->
-std::map<std::string, std::string>
+auto ConfigHandler::getServerConfig() -> std::map<std::string, std::string>
 {
     return Instance()->getMapFromConfigFile(std::string(fs::current_path()) + "/configs/server_config.txt");
 }

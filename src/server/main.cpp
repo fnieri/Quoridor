@@ -5,12 +5,12 @@
  * @date 02/25/22
  */
 
+#include "Config.h"
+#include "ConfigEnums.h"
+#include "Database.h"
 #include "LandingPool.h"
 #include "ServerUser.h"
 #include "UserHandler.h"
-#include "Database.h"
-#include "Config.h"
-#include "ConfigEnums.h"
 
 int main(int argc, char *argv[])
 {

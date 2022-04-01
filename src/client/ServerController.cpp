@@ -3,8 +3,8 @@
 #include "src/client/PlayerAction.h"
 #include "src/client/WallAction.h"
 
-#include <nlohmann/json.hpp>
 #include "src/server/Config.h"
+#include <nlohmann/json.hpp>
 
 ServerController::ServerController(MainController *mainController)
 {
@@ -127,6 +127,11 @@ auto ServerController::isConnected() const -> bool
 auto ServerController::joinGame(const int &gameId, const std::string &username) -> void
 {
     sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::JOIN_GAME, gameId, username));
+}
+
+auto ServerController::quitGame(const int &gameId, const std::string &username) -> void
+{
+    sendJson(SerializableMessageFactory::serializeGameParticipationRequest(GameSetup::QUIT_GAME, gameId, username));
 }
 
 auto ServerController::playPlayerAction(PlayerAction action, const int &playerIdx) -> void

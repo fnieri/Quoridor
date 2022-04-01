@@ -34,7 +34,7 @@ namespace database
 {
 //// need to actually use username and password
 //// constexpr char kMongoDbUri[] {"mongodb+srv://louis:randompass456@quoridor.fbwoc.mongodb.net/myFirstDatabase?retryWrites=true&w=majority"};
-//constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@46.101.255.42:47984"};
+// constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@46.101.255.42:47984"};
 ////constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@localhost:47984"};
 
 const std::string kMongoDbUri = ConfigHandler::Instance()->getServerProperty(ServerProperty::DB_ADDRESS);

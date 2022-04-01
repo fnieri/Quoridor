@@ -399,6 +399,8 @@ class TerminalVue : public Observer
      */
     void joinGame();
 
+    void unloadCurrentGame();
+
 public:
     TerminalVue();
 

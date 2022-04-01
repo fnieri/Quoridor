@@ -12,7 +12,6 @@
 #include <fstream> // to open and read in a given file
 #include <iostream>
 #include <map>
-#include <map>
 #include <memory>
 
 class ConfigHandler
