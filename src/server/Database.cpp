@@ -155,8 +155,6 @@ std::vector<std::string> DatabaseHandler::getFriends(const std::string &username
         }
     }
 
-
-
     return friends;
 }
 
@@ -515,19 +513,21 @@ std::vector<std::vector<std::string>> DatabaseHandler::getMessages(const int &ga
     // check if gameId is contained in the collection
     if (maybeResult) {
         auto gameView = maybeResult->view();
-        auto messagesArray = gameView["messages"].get_array().value;
-        int i = 0;
-        // get all received friend requests
-        while (messagesArray.find(i) != messagesArray.end()) {
-            bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
-            auto messageJson = json::parse(bsoncxx::to_json(messageView));
-            for (auto &element : messageJson.items()) {
-                std::vector<std::string> message;
-                message.push_back(element.key());
-                message.push_back(element.value().get<std::string>());
-                messages.push_back(message);
+        if (gameView.find("messages") != gameView.end()) {
+            auto messagesArray = gameView["messages"].get_array().value;
+            int i = 0;
+            // get all received friend requests
+            while (messagesArray.find(i) != messagesArray.end()) {
+                bsoncxx::document::view messageView = messagesArray.find(i)->get_document().view();
+                auto messageJson = json::parse(bsoncxx::to_json(messageView));
+                for (auto &element : messageJson.items()) {
+                    std::vector<std::string> message;
+                    message.push_back(element.key());
+                    message.push_back(element.value().get<std::string>());
+                    messages.push_back(message);
+                }
+                i++;
             }
-            i++;
         }
     }
     return messages;
@@ -726,7 +726,10 @@ json DatabaseHandler::getLeaderboard(const int &nPlayers)
     for (auto doc : cursor) {
         auto usersViewBson = bsoncxx::to_json(doc);
         json usersViewJson = json::parse(usersViewBson);
-        leaderboard.push_back(json {{"username", usersViewJson["username"]}, {"elo", usersViewJson["elo"]}});
+        leaderboard.push_back(json {
+            {"username", usersViewJson["username"]},
+            {"elo",      usersViewJson["elo"]     }
+        });
     }
 
     return leaderboard;

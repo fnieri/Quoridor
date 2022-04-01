@@ -120,6 +120,7 @@ private:
     std::atomic<bool> gameUpdated {false};
     std::atomic<bool> friendsUpdated {false};
     std::atomic<bool> gameIdsUpdated {false};
+    std::atomic<bool> gameChatUpdated {false};
 
     // Friends
     QListWidget *friendListLW;
@@ -152,6 +153,7 @@ private:
     void updateLeaderboard();
     void updateRelations();
     void updateChats();
+    void updateGameChat();
 
     void updateNotifications();
     void updateFriends();

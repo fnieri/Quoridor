@@ -632,6 +632,7 @@ void QtVue::updateValues()
     updatePart(friendsUpdated, [this]() { this->updateFriends(); });
     updatePart(gameIdsUpdated, [this]() { this->updateGameIds(); });
     updatePart(gameUpdated, [this]() { this->updateGame(); });
+    updatePart(gameChatUpdated, [this]() { this->updateGameChat(); });
 }
 
 template <typename Callable>
@@ -666,6 +667,9 @@ void QtVue::update(QuoridorEvent event)
         break;
     case QuoridorEvent::GameUpdated:
         gameUpdated = true;
+        break;
+    case QuoridorEvent::GameChatUpdated:
+        gameChatUpdated = true;
         break;
     default:
         break;
@@ -808,6 +812,32 @@ void QtVue::updateChats()
             }
         }
     }
+}
+
+void QtVue::updateGameChat()
+{
+    //    if (mainModel->getHasFriends()) {
+    //        auto userItem = friendListLW->currentItem();
+    //        if (userItem) {
+    //            auto user = userItem->text().toStdString();
+    //            /* serverController->fetchFriendMessages(*mainModel->getUsername(), user); */
+    //            auto chat = mainModel->getChatWith(user);
+    //
+    //            chatHistLW->clear();
+    //
+    //            for (const auto &entry : *chat) {
+    //                auto msg = entry.sender + ": " + entry.sentMessage;
+    //                auto qmsg = QString::fromStdString(msg);
+    //                /* auto qmsg = QString::fromStdString(entry.sentMessage); */
+    //                /* auto listItem = new QListWidgetItem {qmsg}; */
+    //                /* if (entry.sender == *mainModel->getUsername()) { */
+    //                /*     listItem->setTextAlignment(Qt::AlignRight); */
+    //                /* } */
+    //                /* chatHistLW->addItem(listItem); */
+    //                chatHistLW->addItem(qmsg);
+    //            }
+    //        }
+    //    }
 }
 
 void QtVue::updateNotifications()
