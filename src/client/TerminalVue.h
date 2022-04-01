@@ -67,7 +67,7 @@ class TerminalVue : public Observer
     int mouse_y = 0;
     bool mousePressed = false;
     int wallOrientation = 0; // indicate the orientation of the wall
-    int chatSelected = 0;
+    int gameChatSelected = 0;
     int friend_selected = 0, previousFriendSelected = -1, friendRequestSelected = 0;
     int chat_message_selected = 0;
     int gameSelected = 0;
@@ -80,7 +80,7 @@ class TerminalVue : public Observer
     ToggleOption actionToggleOption;
     ButtonOption buttonOption;
 
-    std::vector<std::string> chatElements;
+    std::vector<std::string> gameChatElements;
     std::vector<std::string> gameList;
     std::vector<int> gameListId;
     std::vector<CheckboxState> friendsListStates;
@@ -116,7 +116,13 @@ class TerminalVue : public Observer
     int previousHomeTabIndex = homeTabIndex;
     Component playWithContainer = Container::Vertical({});
 
+    /**
+     * @brief Updates responsively all chat entries
+     *
+     */
     void updateChatEntries();
+
+    void updateGameChatEntries();
 
     /**
      * @brief Checks if it's someone's turn
@@ -199,7 +205,7 @@ class TerminalVue : public Observer
     void handleCellClick(int x, int y);
 
     /**
-     * @brief
+     * @brief handler of wall additions to the gameModel
      *
      * @param x
      * @param y
@@ -213,11 +219,22 @@ class TerminalVue : public Observer
      */
     auto createActionToggle();
 
+    /**
+     * @brief Create a Training Renderer object; renders the game of a player against an AI
+     *
+     * @return Renderer
+     */
     auto createTrainingRenderer();
+
+    /**
+     * @brief Create a Board Game Renderer object
+     *
+     * @return auto
+     */
     auto createBoardGameRenderer();
 
     /**
-     * @brief Create a Orientation Toggle object, to chose in which direction you place your wall
+     * @brief Create an Orientation Toggle object, to chose in which direction you place your wall
      *
      * @return Toggle
      */
@@ -265,6 +282,13 @@ class TerminalVue : public Observer
      */
     auto createLoginRenderer();
 
+
+    /**
+     * @brief Create a Friends Renderer object; displays your friends list and offers other friend related actions
+     * [@details other actions being: Add a friend, look what friendrequests we received]
+     *
+     * @return Renderer
+     */
     auto createFriendsRenderer();
 
     /**
@@ -294,12 +318,30 @@ class TerminalVue : public Observer
      */
     void loginUser();
 
+    /**
+     * @brief Handler of registring process, displays error messages in needed cases
+     *
+     */
     void registerUser();
 
+    /**
+     * @brief Handles the in-Game messages you send
+     *
+     * @param message string
+     * @param gameId int
+     */
     void sendMessageGame(const std::string &message, int gameId);
 
+    /**
+     * @brief Handles the messages you send to any of your friends
+     *
+     */
     void sendUserMessage();
 
+    /**
+     * @brief Game creator, manages the invited persons, send them invitation
+     *
+     */
     void userCreateGame();
 
     /**
@@ -310,23 +352,51 @@ class TerminalVue : public Observer
     void sendFriendRequest();
 
     /**
-     * @brief Delete a friend from your friends list
+     * @brief Delete a friend from your friends list, updates server data
      *
      */
     void deleteFriend();
 
+    /**
+     * @brief Handles accepted friend requests, updates server data
+     *
+     */
     void acceptFriendRequest();
 
+    /**
+     * @brief Handles declinated friend requests, updates server data
+     *
+     */
     void declineFriendRequest();
 
+    /**
+     * @brief Handles all tabs from the Tab widget
+     *
+     */
     void updateFriendTabsIndex();
 
+    /**
+     * @brief Updates responsively "Game" or "Friends" tab if there is a notification
+     *
+     */
     void updateNotifications();
 
+    /**
+     * @brief Updates friends checkboxes with friends list from server
+     *
+     */
     void updateFriendsListCheckboxes();
 
+    /**
+     * @brief Updates responsively currently joinable games
+     *
+     */
     void updateGameIds();
 
+    /**
+     * @brief Makes possible for the user to join a particular game
+     *
+     */
     void joinGame();
 
     void unloadCurrentGame();
@@ -334,8 +404,18 @@ class TerminalVue : public Observer
 public:
     TerminalVue();
 
+    /**
+     * @brief Displays the program continuously
+     *
+     */
     void run();
 
+    /**
+     * @brief States if the application is connected or not to the server
+     *
+     * @return true
+     * @return false
+     */
     bool isConnectedToServer() const;
 
     void update(QuoridorEvent) override;

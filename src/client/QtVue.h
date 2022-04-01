@@ -133,33 +133,137 @@ private:
     // Game chat
     QListWidget *gameChatHistLW;
 
+    /**
+     * @brief Creates the layout of Login And Register tabs
+     *
+     */
     void createLoginAndRegister();
+
+    /**
+     * @brief Creates a Main Page object accessible by a logged in user
+     *
+     */
     void createMainPage();
+
+    /**
+     * @brief Creates the layout of a Game Page, with joinable games from friends invitations and creation game interface
+     *
+     */
     void createGamePage();
+
+    /**
+     * @brief Creates the layout of a Friends tab, with chat, friend requests and friends list
+     *
+     */
     void createFriendsPage();
+
+    /**
+     * @brief Creates a Leaderboard Page object with top 10 players of the server shown
+     * [@details also shows your rank]
+     */
     void createLeaderboardPage();
+
+    /**
+     * @brief Creates a Board object, its graphic representation and action buttons
+     *
+     * @param layout
+     */
     void createBoard(QBoxLayout *layout);
+    /**
+     * @brief Creates a Board chat
+     *
+     * @param layout
+     */
     void createBoardChat(QBoxLayout *layout);
+    /**
+     * @brief Creates a Training Page object, with dedicated creation of the board to the user and AI
+     *
+     */
     void createTrainingPage();
 
+    /**
+     * @brief Loads the board from the server mainModel and draws it in its state
+     *
+     */
     void drawBoard();
+
+    /**
+     * @brief Get the Cell Coordinates object
+     *
+     * @param x
+     * @param y
+     * @return Point
+     */
     Point getCellCoordinates(int x, int y) const;
 
+    /**
+     * @brief Updates all values responsively by fetching client's data with the server's
+     *
+     */
     void updateValues();
+
+    /**
+     * @brief Function that calls updateNotifications() if any event modifies a notification value
+     *
+     */
     void update(QuoridorEvent) override;
 
     template <typename Callable>
+    /**
+     * @brief Toggles the values of the notifications when called in updateValues
+     *
+     * @param toBeUpdated
+     * @param updateFunc
+     */
     void updatePart(std::atomic<bool> &toBeUpdated, Callable updateFunc);
 
+    /**
+     * @brief Updates user's elo from fetched data from the server
+     *
+     */
     void updateELO();
+
+    /**
+     * @brief Updates and Draws the leaderboard shown in the "LeaderBboard" tab
+     *
+     */
     void updateLeaderboard();
+
+    /**
+     * @brief Fetches from server and displays all friends related requests
+     *
+     */
     void updateRelations();
+
+    /**
+     * @brief Fetches from server all chats and updates the displayed chat messages
+     *
+     */
     void updateChats();
     void updateGameChat();
 
+    /**
+     * @brief Updates the labels of tabs where a changement has been made and not yet seen by the user
+     * [@details puts the "*" symbol in the tab to display the notification]
+     */
     void updateNotifications();
+
+    /**
+     * @brief Fetches from server all friends you have in your friends list in order to display in the "Friends" tab
+     *
+     */
     void updateFriends();
+
+    /**
+     * @brief Displays all joinable games you are invited to and handles the user connection process
+     *
+     */
     void updateGameIds();
+
+    /**
+     * @brief Draws the board with updated values following a player's turn
+     *
+     */
     void updateGame();
 };
 
@@ -167,13 +271,37 @@ class DrawLabel : public QLabel
 {
     Q_OBJECT
 public:
+    /**
+     * @brief Construct a new Draw Label object containing the whole canva of the board
+     *
+     * @param parent
+     * @param vue
+     */
     explicit DrawLabel(QWidget *parent = nullptr, QtVue *vue = nullptr);
 
 private:
     QtVue *vue;
 
+    /**
+     * @brief Represents events made on the board
+     *
+     * @param e
+     * @return true
+     * @return false
+     */
     bool event(QEvent *e) override;
 
+    /**
+     * @brief Mouse press event listener, gets the position of the mouse on click
+     * [@details gives the position of the mouse to a board click handler]
+     * @param event
+     */
     void mousePressEvent(QMouseEvent *event) override;
+
+    /**
+     * @brief Hover event listener, gets the position of the mouse on hovering a board element
+     * [@details gives the position of the mouse to a board hover handler]
+     * @param event
+     */
     void hoverMoveEvent(QHoverEvent *event);
 };

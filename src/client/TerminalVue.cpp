@@ -242,11 +242,10 @@ auto TerminalVue::createChatRenderer()
 {
     auto chatInput = Input(&message, "Aa");
 
-    auto chatMenu = Menu(&chatElements, &chatSelected);
+    auto chatMenu = Menu(&gameChatElements, &gameChatSelected);
     auto sendButton = Button(
         "Send",
         [&] {
-            // TODO send message
             if (!message.empty()) {
                 sendMessageGame(message, currentGameId);
             }
@@ -341,6 +340,7 @@ auto TerminalVue::createBoardRenderer()
     return Renderer(homeTab, [&, homeTab] {
         updateFriendsListCheckboxes();
         updateGameIds();
+        updateGameChatEntries();
         return homeTab->Render();
     });
 }
@@ -640,6 +640,11 @@ void TerminalVue::joinGame()
 
 void TerminalVue::sendMessageGame(const std::string &mess, int gameId)
 {
+    if (!mess.empty()) {
+        std::vector<std::string> playersInGame = gameModel->getPlayersNames();
+        serverController->sendGameMessage(*mainModel->getUsername(), playersInGame, mess, currentGameId);
+        message.clear();
+    }
 }
 
 void TerminalVue::sendUserMessage()
@@ -664,6 +669,18 @@ void TerminalVue::updateChatEntries()
     for (const auto &chat : *friendChatEntries) {
         std::string mess = chat.sender + ": " + chat.sentMessage;
         chatEntry.push_back(mess);
+    }
+}
+
+void TerminalVue::updateGameChatEntries()
+{
+    if (mainModel->isInGame()) {
+        auto gameChat = mainModel->getGameMessages();
+        gameChatElements.clear();
+        for (const auto &chat : *gameChat) {
+            std::string mess = chat.sender + ": " + chat.sentMessage;
+            gameChatElements.push_back(mess);
+        }
     }
 }
 
