@@ -49,7 +49,7 @@ void MainController::processResourceRequest(const std::string &serRequest)
             m_mainModel->setHasFriends(true);
         }
     } else if (request.at("data_type") == toJsonString(DataType::GAME_CONFIG)) {
-        std::cout << "Game config received" << std::endl;
+        /* std::cout << "Game config received" << std::endl; */
     } else if (request.at("data_type") == toJsonString(DataType::FRIEND_REQUESTS_SENT)) {
         std::vector<std::string> friendRequestsSent;
         for (const auto &userFriend : request.at("serialized_data"))
@@ -160,7 +160,7 @@ void MainController::processGameAction(const std::string &serRequest)
         m_mainModel->playerSurrended(request.at("username"));
     }
 
-    std::cerr << "MainController::processGameAction: after processing\n";
+    /* std::cerr << "MainController::processGameAction: after processing\n"; */
 }
 
 MainModel *MainController::getMainModel()

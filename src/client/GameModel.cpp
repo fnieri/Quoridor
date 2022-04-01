@@ -90,16 +90,16 @@ auto GameModel::processAction(const std::string &p_action) -> void
 {
     auto action = json::parse(p_action);
 
-    std::cerr << "Before action\n";
+    /* std::cerr << "Before action\n"; */
 
     if (action["action_type"] == "wall") {
         auto specAction {getWallActionFromSer(action.dump())};
 
         assert(specAction.isWallPlacementLegal() && specAction.isWallPlacementValid());
 
-        std::cerr << "Before exec action\n";
+        /* std::cerr << "Before exec action\n"; */
         specAction.executeAction();
-        std::cerr << "After exec action\n";
+        /* std::cerr << "After exec action\n"; */
 
     } else if (action["action_type"] == "player") {
         auto specAction {getPlayerActionFromSer(action.dump())};
@@ -112,7 +112,7 @@ auto GameModel::processAction(const std::string &p_action) -> void
         }
     }
 
-    std::cerr << "After action\n";
+    /* std::cerr << "After action\n"; */
 
     // Next turn
     m_currentPlayerIdx = ++m_currentPlayerIdx % m_players.size();
