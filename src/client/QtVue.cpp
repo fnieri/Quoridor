@@ -157,6 +157,11 @@ void QtVue::createLoginAndRegister()
 
 void QtVue::createGamePage()
 {
+    quitButton = new QPushButton("Exit to main menu", this);
+    connect(quitButton, SIGNAL(clicked()), this, SLOT(handleQuitGameButtonClicked()));
+    surrenderButton = new QPushButton("Surrender", this);
+    connect(surrenderButton, SIGNAL(clicked()), this, SLOT(handleSurrenderButtonClicked()));
+
     auto gamePickerLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
     auto pickJoinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
@@ -415,6 +420,14 @@ void QtVue::drawBoard()
     if (mainModel->isGameStarted() && gameModel) {
         if (gameModel->hasWinner()) {
             painter->drawText(QRect(0, 0, 300, 100), "Player: " + QString::fromStdString(gameModel->getWinner()) + " has won!");
+            selectHorizontalWall->setVisible(false);
+            selectVerticalWall->setVisible(false);
+            selectPawnMove->setVisible(false);
+            selectWallMove->setVisible(false);
+            if (!isTrainingGame) {
+                surrenderButton->setVisible(false);
+                quitButton->setVisible(true);
+            }
         } else {
             if (player == -1) {
                 player = gameModel->getPlayerIdx(*mainModel->getUsername());
@@ -558,17 +571,13 @@ void QtVue::createTrainingPage()
 {
     auto trainingPageLayout = new QBoxLayout(QBoxLayout::TopToBottom);
 
-    auto tLabel = new QLabel("Training page");
-    tLabel->setAlignment(Qt::AlignTop);
-    trainingPageLayout->addWidget(tLabel);
-
     createBoard(trainingPageLayout);
-//    trainingPageLayout->addWidget(drawLabel);
+    //    trainingPageLayout->addWidget(drawLabel);
 
     selectPawnMove->setVisible(false);
     selectWallMove->setVisible(false);
 
-    auto trainingStartButton = new QPushButton("Start training", this);
+    auto trainingStartButton = new QPushButton("Start training with Jürgen the AI", this);
     connect(trainingStartButton, &QPushButton::clicked, this, [this, trainingStartButton]() {
         isTrainingGame = true;
         mainModel->createAiGame();
@@ -720,6 +729,7 @@ void QtVue::updateGame()
 {
     selectPawnMove->setVisible(true);
     selectWallMove->setVisible(true);
+    surrenderButton->setVisible(true);
     drawBoard();
 }
 
@@ -819,7 +829,7 @@ void QtVue::createMainPage()
 
 Point QtVue::getCellCoordinates(int x, int y) const
 {
-    int i = (y - 10) / cellSize;
+    int i = (y - cellSize * 2) / cellSize;
     int j = (x - 10) / cellSize;
     return {j, i};
 }
@@ -829,18 +839,18 @@ void QtVue::handleBoardPress(int x, int y)
     if (gameModel) {
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
-            if (gameModel->isMoveValid(cellCoordinates/ 2, *gameModel->getCurrentPlayer())) {
-                auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
+            if (gameModel->isMoveValid(cellCoordinates / 2, player)) {
+                auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, player);
                 gameModel->processAction(playerAction.serialized().dump());
                 if (!isTrainingGame)
-                    serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
+                    serverController->playPlayerAction(playerAction, player);
             }
         } else if (moveType == 1) {
-            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
-                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer());
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player)) {
+                auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, player);
                 gameModel->processAction(wallAction.serialized().dump());
                 if (!isTrainingGame)
-                    serverController->playWallAction(wallAction, *gameModel->getCurrentPlayer());
+                    serverController->playWallAction(wallAction, player);
             }
         }
         drawBoard();
@@ -854,14 +864,14 @@ void QtVue::handleBoardMove(int x, int y)
         boardMoveIntMatrix = boardIntMatrix;
         try {
             if (moveType == 0) {
-                if (gameModel->isMoveValid(cellCoordinates / 2, *gameModel->getCurrentPlayer())) {
+                if (gameModel->isMoveValid(cellCoordinates / 2, player)) {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
             } else if (moveType == 1) {
                 // TODO handle orientation
-                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
+                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player)) {
                     int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
                     int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
@@ -937,9 +947,25 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
     serverController->joinGame(gameId, *mainModel->getUsername());
     auto layout = new QBoxLayout(QBoxLayout::TopToBottom);
     createBoard(layout);
+    layout->addWidget(surrenderButton);
+    surrenderButton->setVisible(false);
+    quitButton->setVisible(false);
+    layout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);
     boardWidget->setLayout(layout);
     gameStack->addWidget(boardWidget);
-    gameStack->setCurrentWidget(drawLabel);
+    gameStack->setCurrentWidget(boardWidget);
     drawBoard();
+}
+
+void QtVue::handleQuitGameButtonClicked()
+{
+    gameStack->removeWidget(gameStack->currentWidget());
+}
+
+void QtVue::handleSurrenderButtonClicked()
+{
+    //    serverController->surrend(*mainModel->getUsername());
+    handleQuitGameButtonClicked();
+    serverController->fetchGameIds();
 }

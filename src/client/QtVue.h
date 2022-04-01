@@ -63,6 +63,8 @@ private slots:
 
     void handleCreateGameButtonClicked();
     void handleJoinGameButtonClicked(const int &gameId);
+    void handleQuitGameButtonClicked();
+    void handleSurrenderButtonClicked();
 
 private:
     Ui::QtVue *ui;
@@ -93,6 +95,8 @@ private:
     GameModel *gameModel;
 
     bool isTrainingGame = false;
+    QPushButton *quitButton {};
+    QPushButton *surrenderButton {};
     QPushButton *selectPawnMove{};
     QPushButton *selectWallMove{};
     QPushButton *selectHorizontalWall{};
@@ -111,7 +115,6 @@ private:
     std::atomic<bool> gameUpdated {false};
     std::atomic<bool> friendsUpdated {false};
     std::atomic<bool> gameIdsUpdated {false};
-    std::atomic<bool> gameLoaded {false};
 
     // Friends
     QListWidget *friendListLW;
