@@ -750,14 +750,15 @@ void QtVue::handleBoardPress(int x, int y)
     if (gameModel) {
         auto cellCoordinates = getCellCoordinates(x, y);
         if (moveType == 0) {
-            if (gameModel->isMoveValid(cellCoordinates) / 2, *gameModel->getCurrentPlayer()) {
+            if (gameModel->isMoveValid(cellCoordinates/ 2, *gameModel->getCurrentPlayer())) {
+                std::cout << "Pawn move" << std::endl;
                 auto playerAction = gameModel->getPlayerAction(cellCoordinates / 2, *gameModel->getCurrentPlayer());
                 gameModel->processAction(playerAction.serialized().dump());
                 if (!isTrainingGame)
                     serverController->playPlayerAction(playerAction, *gameModel->getCurrentPlayer());
             }
         } else if (moveType == 1) {
-            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation), *gameModel->getCurrentPlayer()) {
+            if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer())) {
                 auto wallAction = gameModel->getWallAction(cellCoordinates / 2, wallOrientation, *gameModel->getCurrentPlayer());
                 gameModel->processAction(wallAction.serialized().dump());
                 if (!isTrainingGame)
