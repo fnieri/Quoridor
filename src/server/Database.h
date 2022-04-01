@@ -38,8 +38,8 @@ namespace database
 ////constexpr char kMongoDbUri[] {"mongodb://quoridor:ulb123@localhost:47984"};
 
 const std::string kMongoDbUri = ConfigHandler::Instance()->getServerProperty(ServerProperty::DB_ADDRESS);
-constexpr char kDatabaseName[] {"testing"};
-constexpr char kCollectionName[] {"TestCollection"};
+constexpr char kDatabaseName[] {"Quoridor"};
+constexpr char kCollectionName[] {"QuoridorCollection"};
 constexpr char kUserCollectionName[] {"UserCollection"};
 constexpr char kChatCollectionName[] {"ChatCollection"};
 constexpr char kGameCollectionName[] {"GameCollection"};

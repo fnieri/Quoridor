@@ -9,7 +9,8 @@
 ServerController::ServerController(MainController *mainController)
 {
     std::string serverIP = ConfigHandler::Instance()->getClientProperty(ClientProperty::SERVER_IP);
-    bridge = std::make_unique<ServerBridge>(serverIP, 12345, mainController);
+    int serverPort = std::stoi(ConfigHandler::Instance()->getClientProperty(ClientProperty::PORT));
+    bridge = std::make_unique<ServerBridge>(serverIP, serverPort, mainController);
     bridge->startHandling();
 }
 
