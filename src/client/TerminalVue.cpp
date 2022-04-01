@@ -263,7 +263,7 @@ auto TerminalVue::createBoardGameRenderer()
     auto actionToggle = createActionToggle();
     auto orientationToggle = createOrientationToggle();
     auto surrendButton = Button(
-        "Surrend",
+        "Surrender",
         [&] {
             serverController->surrend(*mainModel->getUsername());
             serverController->fetchGameIds();

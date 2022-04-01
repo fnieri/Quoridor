@@ -289,6 +289,7 @@ void QtVue::createGamePage()
     quitButton = new QPushButton("Exit to main menu", this);
     connect(quitButton, SIGNAL(clicked()), this, SLOT(handleQuitGameButtonClicked()));
     surrenderButton = new QPushButton("Surrender", this);
+    surrenderButton->setVisible(false);
     connect(surrenderButton, SIGNAL(clicked()), this, SLOT(handleSurrenderButtonClicked()));
     gameChatHistLW = new QListWidget {};
 
@@ -582,7 +583,7 @@ void QtVue::drawBoard()
             selectPawnMove->setVisible(false);
             selectWallMove->setVisible(false);
             if (!isTrainingGame) {
-            surrenderButton->setVisible(false);
+                surrenderButton->setVisible(false);
                 quitButton->setVisible(true);
             }
         } else {
@@ -890,8 +891,10 @@ void QtVue::updateRelations()
 
 void QtVue::updateGame()
 {
+    quitButton->setVisible(false);
     selectPawnMove->setVisible(true);
     selectWallMove->setVisible(true);
+    surrenderButton->setVisible(true);
     drawBoard();
 }
 
@@ -1125,7 +1128,7 @@ void QtVue::handleJoinGameButtonClicked(const int &gameId)
     auto boardLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     createBoard(boardLayout);
     boardLayout->addWidget(surrenderButton);
-    quitButton->setVisible(false);
+//    quitButton->setVisible(false);
     boardLayout->addWidget(quitButton);
     auto boardWidget = new QWidget(this);
     boardWidget->setLayout(boardLayout);
@@ -1145,6 +1148,13 @@ void QtVue::handleQuitGameButtonClicked()
 {
     gameStack->removeWidget(gameStack->currentWidget());
     serverController->fetchGameIds();
+    if (gameModel && gameModel->hasWinner()) {
+        serverController->fetchGameIds();
+        mainModel->unloadGame();
+        gameModel = nullptr;
+    } else {
+        serverController->quitGame(currentGameId, *mainModel->getUsername());
+    }
 }
 
 void QtVue::handleSurrenderButtonClicked()
