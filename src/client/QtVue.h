@@ -25,7 +25,6 @@
 #include <QWidget>
 #include <QHoverEvent>
 #include <QRadioButton>
-#include <QButtonGroup>
 #include <QFrame>
 
 #include "MainModel.h"
@@ -61,6 +60,9 @@ private slots:
     void handleHorizontalWallButtonClicked();
     void handleVerticalWallButtonClicked();
 
+    void handleCreateGameButtonClicked();
+    void handleJoinGameButtonClicked(const int &idx);
+
 private:
     Ui::QtVue *ui;
     QStackedWidget *stackWidget;
@@ -69,9 +71,12 @@ private:
     QLabel *loginMessage {};
     QLabel *registerMessage {};
 
-    QTabWidget *mainTabBar;
+    QTabWidget *mainTabBar {};
 
-    QBoxLayout *joinGameLayout;
+    QBoxLayout *joinGameLayout {};
+    QStackedWidget *gameIdsScroll {};
+    QStackedWidget *createGameScroll {};
+    QList<QCheckBox *> *pickFriendsList {};
 
     QLabel *userEloLabel {};
     QTableWidget *leaderboardLayout {};
@@ -80,6 +85,7 @@ private:
     DrawLabel *drawLabel {};
     QPixmap *canvasPixmap {};
     QPainter *painter {};
+
 
     MainController mainController;
     MainModel *mainModel;
@@ -101,6 +107,9 @@ private:
     std::atomic<bool> leaderboardUpdated {false};
     std::atomic<bool> relationsUpdated {false};
     std::atomic<bool> chatsUpdated {false};
+    std::atomic<bool> gameUpdated {false};
+    std::atomic<bool> friendsUpdated {false};
+    std::atomic<bool> gameIdsUpdated {false};
 
     void createLoginAndRegister();
     void createMainPage();
@@ -122,6 +131,8 @@ private:
     void updateLeaderboard();
     void updateRelations();
     void updateChats();
+    void updateFriends();
+    void updateGameIds();
 };
 
 class DrawLabel : public QLabel

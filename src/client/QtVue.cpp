@@ -163,14 +163,13 @@ void QtVue::createGamePage()
 
     joinGameLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     auto joinGameScrollArea = new QScrollArea(this);
-    joinGameScrollArea->resize(100, 30);
-    joinGameScrollArea->setWidgetResizable(false);
     auto joinGameScroll = new QWidget(this);
-    joinGameScroll->setLayout(joinGameLayout);
     for (int i = 0; i < 10; i++) {
-        auto tLabel = new QPushButton("test");
+        auto tLabel = new QPushButton("Game id, players");
+        connect(tLabel, &QPushButton::clicked, this, [&, i]() { handleJoinGameButtonClicked(i); });
         joinGameLayout->addWidget(tLabel);
     }
+    joinGameScroll->setLayout(joinGameLayout);
     pickJoinGameLayout->addWidget(joinGameScrollArea);
     joinGameScrollArea->setWidget(joinGameScroll);
 
@@ -187,18 +186,16 @@ void QtVue::createGamePage()
 
     auto pickFriendsLayout = new QBoxLayout(QBoxLayout::TopToBottom);
     auto pickFriendsScrollArea = new QScrollArea(this);
-    pickFriendsScrollArea->resize(100, 30);
-    pickFriendsScrollArea->setWidgetResizable(false);
-    auto createGameScroll = new QWidget(this);
-    createGameScroll->setLayout(pickFriendsLayout);
-    for (int i = 0; i < 10; i++) {
-        auto tLabel = new QPushButton("test");
-        pickFriendsLayout->addWidget(tLabel);
-    }
+    createGameScroll = new QStackedWidget(this);
+    pickFriendsLayout->addWidget(new QLabel("Loading friends..."));
+    auto pickFriendsWidget = new QWidget(this);
+    pickFriendsWidget->setLayout(pickFriendsLayout);
+    createGameScroll->addWidget(pickFriendsWidget);
     pickFriendsScrollArea->setWidget(createGameScroll);
     createGameLayout->addWidget(pickFriendsScrollArea);
 
     auto createGameButton = new QPushButton("Invite friends and create game");
+    connect(createGameButton, SIGNAL(clicked()), this, SLOT(handleCreateGameButtonClicked()));
     createGameLayout->addWidget(createGameButton);
     createGameLayout->setGeometry(QRect(0, 0, 100, 100));
 
@@ -423,6 +420,8 @@ void QtVue::updateValues()
     updatePart(leaderboardUpdated, [this]() { this->updateLeaderboard(); });
     updatePart(relationsUpdated, [this]() { this->updateRelations(); });
     updatePart(chatsUpdated, [this]() { this->updateChats(); });
+    updatePart(friendsUpdated, [this]() { this->updateFriends(); });
+    updatePart(gameIdsUpdated, [this]() { this->updateGameIds(); });
 }
 
 template <typename Callable>
@@ -449,6 +448,14 @@ void QtVue::update(QuoridorEvent event)
     case QuoridorEvent::ChatsUpdated:
         chatsUpdated = true;
         break;
+    case QuoridorEvent::FriendsUpdated:
+        friendsUpdated = true;
+        break;
+    case QuoridorEvent::GameIdsUpdated:
+        gameIdsUpdated = true;
+        break;
+    default:
+        break;
     }
 }
 
@@ -462,7 +469,7 @@ void QtVue::updateLeaderboard()
 {
     auto lb = mainModel->getLeaderboard();
 
-    leaderboardLayout->setRowCount(lb->size());
+    leaderboardLayout->setRowCount((int)lb->size());
 
     for (auto i = 0; i < lb->size(); ++i) {
         auto username = lb->at(i).first;
@@ -476,18 +483,58 @@ void QtVue::updateLeaderboard()
     }
 }
 
+void QtVue::updateFriends()
+{
+    if (mainModel->getHasFriends()) {
+        pickFriendsList = new QList<QCheckBox *>;
+        auto friendList = mainModel->getFriendList();
+        auto friendListLayout = new QVBoxLayout;
+        for (auto &f : *friendList) {
+            auto friendCheckbox = new QCheckBox(QString::fromStdString(f));
+            pickFriendsList->append(friendCheckbox);
+            friendListLayout->addWidget(friendCheckbox);
+        }
+
+        auto friendListWidget = new QWidget(this);
+        friendListWidget->setLayout(friendListLayout);
+
+        auto oldFriendListWidget = createGameScroll->currentWidget();
+        createGameScroll->addWidget(friendListWidget);
+        createGameScroll->removeWidget(oldFriendListWidget);
+    } else {
+        auto oldFriendListWidget = createGameScroll->currentWidget();
+        createGameScroll->addWidget(new QLabel("No friends :("));
+        createGameScroll->removeWidget(oldFriendListWidget);
+    }
+}
+
 void QtVue::updateRelations()
 {
 }
 
+void QtVue::updateGameIds()
+{
+    auto gameIds = mainModel->getGameIDs();
+    auto gameIdsLayout = new QVBoxLayout;
+    for (auto &g : *gameIds) {
+        auto gameId = new QLabel(QString::fromStdString(g));
+        gameIdsLayout->addWidget(gameId);
+    }
+
+    auto oldGameIdsLayout = gameIdsScroll->currentWidget();
+    gameIdsScroll->addWidget(new QWidget);
+    gameIdsScroll->removeWidget(oldGameIdsLayout);
+}
+
 void QtVue::updateChats()
 {
+    std::cout << "Updating chats" << std::endl;
 }
 
 void QtVue::createMainPage()
 {
-    createLeaderboardPage();
     createGamePage();
+    createLeaderboardPage();
     createFriendsPage();
 
     stackWidget->addWidget(mainTabBar);
@@ -592,4 +639,23 @@ void QtVue::handleVerticalWallButtonClicked()
     }
     wallOrientation = WallOrientation::Vertical;
     selectHorizontalWall->setChecked(false);
+}
+
+void QtVue::handleCreateGameButtonClicked()
+{
+    std::vector<std::string> friendsPicked;
+    for (auto &friendCheckbox : *pickFriendsList) {
+        if (friendCheckbox->isChecked()) {
+            friendsPicked.push_back(friendCheckbox->text().toStdString());
+        }
+    }
+    for (auto &f : friendsPicked) {
+        std::cout << f << std::endl;
+    }
+}
+
+void QtVue::handleJoinGameButtonClicked(const int &idx)
+{
+    std::cout << "join game " << idx << std::endl;
+    auto gamePicked = mainModel->getGameIDs()->at(idx);
 }

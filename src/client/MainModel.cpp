@@ -144,6 +144,7 @@ auto MainModel::addFriendMessage(const std::string &friendUsername, const Messag
         m_chats.insert({friendUsername, std::make_shared<std::vector<Message>>()});
     }
     m_chats.at(friendUsername)->push_back(msg);
+    notifyObservers(QuoridorEvent::ChatsUpdated);
 }
 
 // auto MainModel::addGameMessage(const std::string &sender, const std::vector<std::string> &players, const std::string &message) -> void
@@ -161,6 +162,7 @@ auto MainModel::setLeaderboard(const std::vector<std::pair<std::string, float>> 
 auto MainModel::setGameIds(const std::map<int, std::vector<std::string>> &gameIDs) -> void
 {
     updatePtrValue(m_gameIDs, gameIDs);
+    notifyObservers(QuoridorEvent::GameIdsUpdated);
 }
 
 auto MainModel::updateFriendsChatMap() noexcept -> void
@@ -172,6 +174,7 @@ auto MainModel::updateFriendsChatMap() noexcept -> void
             m_chats[friendUsername] = std::make_shared<std::vector<Message>>();
         }
     }
+    notifyObservers(QuoridorEvent::FriendsUpdated);
 }
 
 auto MainModel::clearFriendMessages(const std::string &friendUsername) -> void
@@ -235,6 +238,7 @@ auto MainModel::createAiGame() noexcept -> void
 auto MainModel::addGameId(const int &gId, const std::vector<std::string> &players) -> void
 {
     m_gameIDs->insert({gId, players});
+    notifyObservers(QuoridorEvent::GameIdsUpdated);
 }
 
 auto MainModel::isGameStarted() const noexcept -> bool
