@@ -1,7 +1,8 @@
 #pragma once
 
 enum class ClientProperty {
-    SERVER_IP
+    SERVER_IP,
+    PORT
 };
 
 inline const char* toConfigString(ClientProperty c)
@@ -9,6 +10,8 @@ inline const char* toConfigString(ClientProperty c)
     switch (c) {
         case ClientProperty::SERVER_IP:
             return "server_ip";
+        case ClientProperty::PORT:
+            return "server_port";
     }
     return "";
 }
