@@ -189,7 +189,15 @@ void QtVue::createFriendsPage()
     friendListL->addWidget(friendListTitle);
 
     friendListLW = new QListWidget {};
-    connect(friendListLW, &QListWidget::itemClicked, this, &QtVue::updateChats);
+    auto friendListLWAction = [this]() {
+        auto userItem = friendListLW->currentItem();
+        if (userItem) {
+            auto user = userItem->text().toStdString();
+            serverController->fetchFriendMessages(*mainModel->getUsername(), user);
+            updateChats();
+        }
+    };
+    connect(friendListLW, &QListWidget::itemClicked, this, friendListLWAction);
     friendListL->addWidget(friendListLW);
 
     auto remFriendButton = new QPushButton {"Remove friend"};
