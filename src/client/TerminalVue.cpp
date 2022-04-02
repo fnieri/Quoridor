@@ -347,7 +347,12 @@ auto TerminalVue::createLeaderBoardRenderer()
 {
     auto listLeaders = Menu(&listLeadersWithElo, &leader_selected);
     auto refreshBtn = Button(
-        "Refresh", [&] { serverController->fetchLeaderboard(); }, &buttonOption);
+        "Refresh",
+        [&] {
+            serverController->fetchLeaderboard();
+            serverController->fetchElo();
+        },
+        &buttonOption);
     auto leaderBoardContainer = Container::Vertical({listLeaders, refreshBtn});
 
     return Renderer(leaderBoardContainer, [&, listLeaders, refreshBtn] {

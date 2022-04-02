@@ -133,12 +133,14 @@ void GameHandler::saveToDB()
 
 void GameHandler::updateELO(const std::string &winner)
 {
+    std::vector<std::string> usernames;
     std::vector<float> currentELOs;
     std::vector<bool> winningState;
 
     auto gameConf = DatabaseHandler::getGameConfig(getID());
 
     for (auto &i_player : gameConf["players"]) {
+        usernames.push_back(i_player);
         currentELOs.push_back(DatabaseHandler::getELO(i_player));
         winningState.push_back(i_player == winner);
     }
@@ -147,8 +149,8 @@ void GameHandler::updateELO(const std::string &winner)
     eloCalc.calculateELO();
     auto finalELOs {eloCalc.getFinalELOs()};
 
-    for (auto i {0}; i < m_gameModel->getPlayersNames().size(); ++i) {
-        DatabaseHandler::setELO(m_gameModel->getPlayersNames().at(i), finalELOs.at(i));
+    for (auto i {0}; i < usernames.size(); ++i) {
+        DatabaseHandler::setELO(usernames.at(i), finalELOs.at(i));
     }
 }
 
