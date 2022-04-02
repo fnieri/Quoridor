@@ -63,11 +63,25 @@ auto GameModel::addPlayer(PawnColors color, const Point &pos, int remWalls, Fini
     m_board->spawnPlayer(m_players.back());
 }
 
+auto GameModel::getPlayerFromColorId(const int &id) -> std::shared_ptr<Player>
+{
+    auto player = std::shared_ptr<Player> {};
+    auto color = static_cast<PawnColors>(id);
+
+    auto playerIt = std::find_if(m_players.begin(), m_players.end(), [color](const auto &p) { return color == p->getColor(); });
+    if (playerIt != m_players.end())
+        player = *playerIt;
+
+    assert(player != nullptr);
+
+    return player;
+}
+
 auto GameModel::getWallActionFromSer(const std::string &ser) -> WallAction
 {
     auto deser(json::parse(ser));
 
-    auto player {m_players[deser["player_id"]]};
+    auto player = getPlayerFromColorId(deser["player_id"]);
     auto destCell {Point::deserialized(deser["wall_cell"].dump())};
     auto wallOri {deser["wall_orientation"] == toJsonOutput(WallOrientation::Horizontal) ? WallOrientation::Horizontal : WallOrientation::Vertical};
 
@@ -78,7 +92,7 @@ auto GameModel::getPlayerActionFromSer(const std::string &ser) -> PlayerAction
 {
     auto deser(json::parse(ser));
 
-    auto player {m_players[deser["player_id"]]};
+    auto player = getPlayerFromColorId(deser["player_id"]);
     auto endPos {Point::deserialized(deser["end_position"].dump())};
 
     // The division by two is neccessary due to ctor of PlayerAction.
@@ -203,8 +217,23 @@ auto GameModel::playerSurrended(const std::string &p_username) -> void
 
     auto player {*playerIt};
 
+    auto newCurrentPlayer = m_players.at(m_currentPlayerIdx)->getUsername();
+    if (newCurrentPlayer == p_username)
+        newCurrentPlayer = m_players.at((m_currentPlayerIdx + 1) % m_players.size())->getUsername();
+
     m_board->removePlayer(player);
     m_players.erase(playerIt);
+
+    m_currentPlayerIdx = -1;
+    for (auto i = 0; i < m_players.size(); ++i) {
+        m_players.at(i)->setIndex(i);
+        if (m_players.at(i)->getUsername() == newCurrentPlayer) {
+            m_currentPlayerIdx = i;
+            break;
+        }
+    }
+
+    assert(m_currentPlayerIdx != -1);
 
     if (m_players.size() == 1) {
         m_winner = m_players.front()->getUsername();
@@ -322,10 +351,13 @@ auto GameModel::serialized() -> json
 
 auto GameModel::getPlayerIdx(const std::string &username) const noexcept -> int
 {
-    for (auto &i_player : m_players) {
-        if (i_player->getUsername() == username)
-            return i_player->getIndex();
-    }
+    for (auto i = 0; i < m_players.size(); ++i)
+        if (m_players.at(i)->getUsername() == username)
+            return i;
+    /* for (auto &i_player : m_players) { */
+    /*     if (i_player->getUsername() == username) */
+    /*         return i_player->getIndex(); */
+    /* } */
     return -2;
 }
 
