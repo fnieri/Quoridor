@@ -587,10 +587,9 @@ void QtVue::drawBoard()
                 quitButton->setVisible(true);
             }
         } else {
-            if (player == -1) {
-                player = gameModel->getPlayerIdx(*mainModel->getUsername());
-                playerTurn = gameModel->getCurrentPlayer();
-            }
+            player = gameModel->getPlayerIdx(*mainModel->getUsername());
+            playerTurn = gameModel->getCurrentPlayer();
+
             gameModel->updateBoardIntMatrix(boardIntMatrix, player);
             if (boardMoveIntMatrix.empty()) {
                 boardMoveIntMatrix = boardIntMatrix;
@@ -1038,17 +1037,20 @@ void QtVue::handleBoardPress(int x, int y)
 void QtVue::handleBoardMove(int x, int y)
 {
     if (gameModel) {
+        if (gameUpdated)
+            updateValues();
+
         auto cellCoordinates = getCellCoordinates(x, y);
         boardMoveIntMatrix = boardIntMatrix;
         try {
             if (moveType == 0) {
-                if (gameModel->isMoveValid(cellCoordinates / 2, player) && *gameModel->getCurrentPlayer() == player) {
+                if (*gameModel->getCurrentPlayer() == player && gameModel->isMoveValid(cellCoordinates / 2, player)) {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;
                 } else {
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = incorrectMove;
                 }
             } else if (moveType == 1) {
-                if (gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player) && *gameModel->getCurrentPlayer() == player) {
+                if (*gameModel->getCurrentPlayer() == player && gameModel->isWallValid(cellCoordinates / 2, wallOrientation, player)) {
                     int dx = wallOrientation == WallOrientation::Horizontal ? 1 : 0;
                     int dy = wallOrientation == WallOrientation::Vertical ? 1 : 0;
                     boardMoveIntMatrix.at(cellCoordinates.y()).at(cellCoordinates.x()) = correctMove;

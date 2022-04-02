@@ -42,6 +42,7 @@ private:
 
     auto addPlayer(PawnColors, const Point &, int, FinishLine, const std::string &) -> void;
 
+    auto getPlayerFromColorId(const int &id) -> std::shared_ptr<Player>;
     auto getWallActionFromSer(const std::string &) -> WallAction;
     auto getPlayerActionFromSer(const std::string &) -> PlayerAction;
 
