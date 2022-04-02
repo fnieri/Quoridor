@@ -83,6 +83,8 @@ auto MainModel::setUsername(const std::string &username) -> void
 auto MainModel::setElo(const float &elo) -> void
 {
     updatePtrValue(m_elo, elo);
+
+    notifyObservers(QuoridorEvent::EloModified);
 }
 auto MainModel::loginNotSuccessful() -> void
 {

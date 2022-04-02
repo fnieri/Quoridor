@@ -535,7 +535,10 @@ void QtVue::createLeaderboardPage()
     leaderboardPageLayout->addWidget(eloWidget);
 
     auto refreshButton = new QPushButton {"Refresh"};
-    connect(refreshButton, &QPushButton::clicked, this, [&]() { serverController->fetchLeaderboard(); });
+    connect(refreshButton, &QPushButton::clicked, this, [&]() {
+        serverController->fetchLeaderboard();
+        serverController->fetchElo();
+    });
     leaderboardPageLayout->addWidget(refreshButton);
 
     auto leaderboardPage = new QWidget(this);
