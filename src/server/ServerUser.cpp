@@ -36,7 +36,7 @@ void ServerUser::syncWithDB()
 
 float ServerUser::getELO() const noexcept
 {
-    return m_cachedELO;
+    return DatabaseHandler::getELO(m_username);
 }
 
 UserList ServerUser::getFriendList() const noexcept
